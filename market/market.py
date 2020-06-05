@@ -13,12 +13,12 @@ class Market(object):
         answer, metadata = ts.get_quote_endpoint(symbol)
         qoute = Qoute(
             symbol=answer['01. symbol'],
-            open=answer['02. open'],
-            high=answer['03. high'],
-            low=answer['04. low'],
-            price=answer['05. price'],
-            volume=answer['06. volume'],
-            change=answer['09. change'],
-            change_percent=answer['10. change percent']
+            open=float(answer['02. open']),
+            high=float(answer['03. high']),
+            low=float(answer['04. low']),
+            price=float(answer['05. price']),
+            volume=int(answer['06. volume']),
+            change=float(answer['09. change']),
+            change_percent=float(answer['10. change percent'].strip('%'))
         )
         return qoute

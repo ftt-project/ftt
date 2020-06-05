@@ -3,8 +3,9 @@
 
 from spectator.strategy import StrategyAdviser
 
-adviser = StrategyAdviser(symbol='GOOGL', enter_price='1390', sell_price='1400')
+adviser = StrategyAdviser(symbol='GOOGL', enter_price=1390, sell_price=1400, loss_threshold_percent=5)
 print(adviser.advised_to_sell())
+print(adviser.advised_to_exit())
 
 #ts = TimeSeries(key='KHRYFWCSGMXTXR9U')
 #data, meta_data = ts.get_intraday('GOOGL')
