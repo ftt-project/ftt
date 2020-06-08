@@ -1,4 +1,4 @@
-from market.market import Market, Qoute
+from market.market import Market
 
 class StrategyAdviser(object):
     def __init__(self, symbol, enter_price, sell_price, loss_threshold_percent):
@@ -14,7 +14,7 @@ class StrategyAdviser(object):
         return False when current price is in the threshold range
         """
         minimal_acceptanble_price = self.enter_price - (self.enter_price / 100 * self.loss_threshold_percent)
-        qoute = Market.get_quote_endpoint(self.symbol)
+        qoute = Market().get_quote_endpoint(self.symbol)
 
         if minimal_acceptanble_price >= qoute.price:
             return True
@@ -28,7 +28,7 @@ class StrategyAdviser(object):
         returns False when the current price haven't reach sell price
         returns True when the current price have reach sell price
         """
-        qoute = Market.get_quote_endpoint(self.symbol)
+        qoute = Market().get_quote_endpoint(self.symbol)
         if qoute.price >= self.enter_price:
             return True
         else:

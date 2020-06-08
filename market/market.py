@@ -1,24 +1,12 @@
-from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.techindicators import TechIndicators
 
-from .qoute import Qoute
+from market.adapters import alpha_vantage
+from market.adapters import yfinance
 
 class Market(object):
-    key = 'KHRYFWCSGMXTXR9U'
+    def __init__(self, adapter=alpha_vantage.Adapter):
+        self.adapter = adapter
 
-    @classmethod
-    def get_quote_endpoint(cls, symbol):
+    def get_quote_endpoint(self, symbol):
         '''Return Qoute object with current price, volume and stats of the symbol'''
-        ts = TimeSeries(key=cls.key)
-        answer, metadata = ts.get_quote_endpoint(symbol)
-        qoute = Qoute(
-            symbol=answer['01. symbol'],
-            open=float(answer['02. open']),
-            high=float(answer['03. high']),
-            low=float(answer['04. low']),
-            price=float(answer['05. price']),
-            volume=int(answer['06. volume']),
-            change=float(answer['09. change']),
-            change_percent=float(answer['10. change percent'].strip('%'))
-        )
-        return qoute
+        return self.adapter.get_quote_endpoint(symbol)
