@@ -10,3 +10,6 @@ class Qoute:
     volume: int = None
     change: float = None
     change_percent: float = None
+
+    def __str__(self):
+        return str(self.__class__) + ": " + str(self.__dict__)

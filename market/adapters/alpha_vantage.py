@@ -2,12 +2,11 @@ from alpha_vantage.timeseries import TimeSeries
 
 from market.qoute import Qoute
 
-
 class Adapter:
     key = 'KHRYFWCSGMXTXR9U'
 
     @classmethod
-    def get_quote_endpoint(cls, symbol):
+    def get_quote(cls, symbol):
         ts = TimeSeries(key=cls.key)
         answer, metadata = ts.get_quote_endpoint(symbol)
         qoute = Qoute(

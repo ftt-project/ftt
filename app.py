@@ -1,11 +1,10 @@
 #from alpha_vantage.timeseries import TimeSeries
 #from alpha_vantage.techindicators import TechIndicators
 
-import yaml
+import yaml, time
 
 from spectator.strategy import StrategyAdviser
 
-adviser = StrategyAdviser(symbol='GOOGL', enter_price=1390, sell_price=1400, loss_threshold_percent=5)
 #print(adviser.advised_to_sell())
 #print(adviser.advised_to_exit())
 
@@ -22,3 +21,13 @@ adviser = StrategyAdviser(symbol='GOOGL', enter_price=1390, sell_price=1400, los
 
 with open('config/symbols.yml') as f:
     data = yaml.load(f, Loader=yaml.FullLoader)
+    while(True):
+        for symbol in data['track']:
+            adviser = StrategyAdviser(
+                symbol=symbol,
+                enter_price=1390,
+                sell_price=1400,
+                loss_threshold_percent=5
+            )
+            print(adviser.qoute)
+        time.sleep(11)

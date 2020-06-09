@@ -6,6 +6,11 @@ class StrategyAdviser(object):
         self.enter_price = enter_price
         self.loss_threshold_percent = loss_threshold_percent
 
+    @property
+    def qoute(self):
+        self._qoute = Market().get_quote(self.symbol)
+        return self._qoute
+
     def advised_to_exit(self):
         """
         Advised to exit to have the smallest loss
@@ -14,9 +19,8 @@ class StrategyAdviser(object):
         return False when current price is in the threshold range
         """
         minimal_acceptanble_price = self.enter_price - (self.enter_price / 100 * self.loss_threshold_percent)
-        qoute = Market().get_quote_endpoint(self.symbol)
 
-        if minimal_acceptanble_price >= qoute.price:
+        if minimal_acceptanble_price >= self.qoute.price:
             return True
         else:
             return False
@@ -28,8 +32,7 @@ class StrategyAdviser(object):
         returns False when the current price haven't reach sell price
         returns True when the current price have reach sell price
         """
-        qoute = Market().get_quote_endpoint(self.symbol)
-        if qoute.price >= self.enter_price:
+        if self.qoute.price >= self.enter_price:
             return True
         else:
             return False

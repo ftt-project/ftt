@@ -4,9 +4,9 @@ from market.adapters import alpha_vantage
 from market.adapters import yfinance
 
 class Market(object):
-    def __init__(self, adapter=alpha_vantage.Adapter):
+    def __init__(self, adapter=yfinance.Adapter):
         self.adapter = adapter
 
-    def get_quote_endpoint(self, symbol):
+    def get_quote(self, symbol):
         '''Return Qoute object with current price, volume and stats of the symbol'''
-        return self.adapter.get_quote_endpoint(symbol)
+        return self.adapter.get_quote(symbol)

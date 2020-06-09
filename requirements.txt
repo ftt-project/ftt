@@ -1,4 +1,0 @@
-alpha_vantage
-pandas
-pyyaml
-yfinance
