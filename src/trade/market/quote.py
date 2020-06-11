@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 @dataclass
-class Qoute:
+class Quote:
     symbol: str
     open: float = None
     high: float = None

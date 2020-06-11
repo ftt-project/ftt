@@ -1,22 +1,29 @@
 import yfinance as yf
 
-from src.trade.market.quote import Qoute
+from src.trade.market.quote import Quote
 
 class Adapter:
     @classmethod
     def get_quote(cls, symbol):
         ticker = yf.Ticker(symbol)
-        data = ticker.history(period='1d', interval='1d')
+        data = ticker.history(period='10m', interval='1m')
         rows, columns = data.shape
         latest = data.iloc[rows-1]
-        qoute = Qoute(
+        quote = Quote(
             symbol=symbol,
             open=latest.get('Open'),
             high=latest.get('High'),
             low=latest.get('Low'),
             close=latest.get('Close'),
             volume=latest.get('Volume'),
-            change=None,
+            change=cls.change(data, rows),
             change_percent=None
         )
-        return qoute
+        return quote
+
+    @classmethod
+    def change(cls, collection, rows):
+        last = collection.iloc[rows-1]
+        before_last = collection.iloc[rows - 2]
+        change = before_last.get('Close') - last.get('Close')
+        return round(change, 2)
