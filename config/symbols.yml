@@ -2,7 +2,7 @@
 track:
   - ZQQ.TO
   - SHOP.TO
-  - TMD
+  - TMD.TO
 
 portfolio:
   ZQQ.TO:
@@ -10,7 +10,7 @@ portfolio:
     sell_price: 75
     quit_price: 73.5
         
-  TMD:
+  TMD.TO:
     enter_price: 1.82
     sell_price: 1.9
     quit_price: 1.5

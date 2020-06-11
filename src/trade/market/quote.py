@@ -6,7 +6,7 @@ class Qoute:
     open: float = None
     high: float = None
     low: float = None
-    price: float = None
+    close: float = None
     volume: int = None
     change: float = None
     change_percent: float = None

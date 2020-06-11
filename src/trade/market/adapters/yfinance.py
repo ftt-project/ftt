@@ -1,6 +1,6 @@
 import yfinance as yf
 
-from src.trade.market.qoute import Qoute
+from src.trade.market.quote import Qoute
 
 class Adapter:
     @classmethod
@@ -14,7 +14,7 @@ class Adapter:
             open=latest.get('Open'),
             high=latest.get('High'),
             low=latest.get('Low'),
-            price=latest.get('Close'),
+            close=latest.get('Close'),
             volume=latest.get('Volume'),
             change=None,
             change_percent=None
