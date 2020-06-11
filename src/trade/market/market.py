@@ -1,7 +1,5 @@
-from alpha_vantage.techindicators import TechIndicators
+from src.trade.market.adapters import yfinance
 
-from market.adapters import alpha_vantage
-from market.adapters import yfinance
 
 class Market(object):
     def __init__(self, adapter=yfinance.Adapter):

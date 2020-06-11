@@ -1,6 +1,6 @@
 import yfinance as yf
 
-from market.qoute import Qoute
+from src.trade.market.qoute import Qoute
 
 class Adapter:
     @classmethod

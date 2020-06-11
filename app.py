@@ -1,29 +1,26 @@
-#from alpha_vantage.timeseries import TimeSeries
-#from alpha_vantage.techindicators import TechIndicators
-
 import yaml, time
 
-from spectator.strategy import StrategyAdviser
-
-#print(adviser.advised_to_sell())
-#print(adviser.advised_to_exit())
-
-#ts = TimeSeries(key='KHRYFWCSGMXTXR9U')
-#data, meta_data = ts.get_intraday('GOOGL')
-#data, meta_data = ts.get_quote_endpoint('GOOGL')
-#print(meta_data)
-#print(data)
-
-#ti = TechIndicators(key='KHRYFWCSGMXTXR9U')
-#data, meta_data = ti.get_sma('GOOGL', interval='5min', time_period='200', series_type='high')
-#print(meta_data)
-#print(data)
+from src.trade.adviser.adviser import Adviser
+from src.trade.market.qoute_portfolio import QoutePortfolio
 
 with open('config/symbols.yml') as f:
-    data = yaml.load(f, Loader=yaml.FullLoader)
-    while(True):
-        for symbol in data['track']:
-            adviser = StrategyAdviser(
+    configuration = yaml.load(f, Loader=yaml.FullLoader)
+    quote_portfolios = []
+    for symbol, data in configuration['portfolio'].items():
+        quote_portfolios.append(QoutePortfolio(
+            symbol=symbol,
+            enter_price=data['enter_price'],
+            quit_price=data['quit_price'],
+            sell_price=data['sell_price']
+        ))
+    for symbol in configuration['track']:
+        quote_portfolios.append(QoutePortfolio(
+            symbol=symbol
+        ))
+
+    while True:
+        for symbol in quote_portfolios:
+            adviser = Adviser(
                 symbol=symbol,
                 enter_price=1390,
                 sell_price=1400,

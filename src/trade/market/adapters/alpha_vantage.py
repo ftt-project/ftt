@@ -1,6 +1,6 @@
 from alpha_vantage.timeseries import TimeSeries
 
-from market.qoute import Qoute
+from src.trade.market.qoute import Qoute
 
 class Adapter:
     key = 'KHRYFWCSGMXTXR9U'

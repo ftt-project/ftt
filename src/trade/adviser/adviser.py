@@ -1,9 +1,10 @@
-from market.market import Market
+from src.trade.market.market import Market
 
-class StrategyAdviser(object):
+class Adviser(object):
     def __init__(self, symbol, enter_price, sell_price, loss_threshold_percent):
         self.symbol = symbol
         self.enter_price = enter_price
+        self.sell_price = sell_price
         self.loss_threshold_percent = loss_threshold_percent
 
     @property
