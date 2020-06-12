@@ -1,10 +1,9 @@
-import yaml, time
+import time
+import yaml
 
 from src.trade.market.adapters import yfinance
-
-from src.trade.adviser.adviser import Adviser
-from src.trade.market.quote_portfolio import QuotePortfolio
 from src.trade.market.market import Market
+from src.trade.market.quote_portfolio import QuotePortfolio
 
 with open('config/symbols.yml') as f:
     configuration = yaml.load(f, Loader=yaml.FullLoader)

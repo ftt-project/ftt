@@ -22,7 +22,12 @@ class Adapter(Basic):
             data = ticker.history()
             rows, columns = data.shape
             latest = data.iloc[rows - 1]
-            quote = cls.__map_ticker_to_quote(ticker, latest, cls.__change(data, rows))
+            quote = cls.__map_ticker_to_quote(
+                ticker,
+                latest,
+                cls.__change(data, rows),
+                cls.__change_percent(data, rows)
+            )
             quotes.append(quote)
 
         return quotes
@@ -46,4 +51,11 @@ class Adapter(Basic):
         last = collection.iloc[rows - 1]
         before_last = collection.iloc[rows - 2]
         change = before_last.get('Close') - last.get('Close')
+        return round(change, 2)
+
+    @classmethod
+    def __change_percent(cls, collection, rows):
+        last = collection.iloc[rows - 1]
+        absolute_change = cls.__change(collection, rows)
+        change = absolute_change / last.get('Close') * 100
         return round(change, 2)
