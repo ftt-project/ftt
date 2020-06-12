@@ -1,5 +1,6 @@
 from src.trade.market.market import Market
 
+
 class Adviser(object):
     def __init__(self, symbol, enter_price, sell_price, loss_threshold_percent):
         self.symbol = symbol
@@ -37,4 +38,3 @@ class Adviser(object):
             return True
         else:
             return False
-

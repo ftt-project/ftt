@@ -1,5 +1,7 @@
 import yaml, time
 
+from src.trade.market.adapters import yfinance
+
 from src.trade.adviser.adviser import Adviser
 from src.trade.market.quote_portfolio import QuotePortfolio
 from src.trade.market.market import Market
@@ -23,7 +25,7 @@ with open('config/symbols.yml') as f:
     quote_portfolios = sorted(quote_portfolios)
 
     while True:
-        for quote in quote_portfolios:
-            result = Market().get_quote(quote)
-            print(result)
+        quotes = Market(adapter=yfinance.Adapter).get_quotes(quote_portfolios)
+        for quote in quotes:
+            print(quote)
         time.sleep(11)

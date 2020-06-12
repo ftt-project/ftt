@@ -1,8 +1,10 @@
 from alpha_vantage.timeseries import TimeSeries
 
+from src.trade.market.adapters.basic import Basic
 from src.trade.market.quote import Quote
 
-class Adapter:
+
+class Adapter(Basic):
     key = 'KHRYFWCSGMXTXR9U'
 
     @classmethod
@@ -20,3 +22,6 @@ class Adapter:
             change_percent=float(answer['10. change percent'].strip('%'))
         )
         return quote
+
+    def get_quotes(self):
+        pass
