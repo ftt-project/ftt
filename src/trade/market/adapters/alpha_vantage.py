@@ -23,5 +23,5 @@ class Adapter(Basic):
         )
         return quote
 
-    def get_quotes(self):
+    def get_quotes(self, symbols):
         pass
