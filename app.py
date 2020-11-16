@@ -2,6 +2,7 @@ import time
 import yaml
 
 from src.trade.market.adapters import yfinance
+from src.trade.market.adapters import alpha_vantage
 from src.trade.market.market import Market
 from src.trade.market.quote_portfolio import QuotePortfolio
 
@@ -27,4 +28,5 @@ with open('config/symbols.yml') as f:
         quotes = Market(adapter=yfinance.Adapter).get_quotes(quote_portfolios)
         for quote in quotes:
             print(quote)
+        print('')
         time.sleep(11)

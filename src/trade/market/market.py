@@ -1,4 +1,5 @@
 from src.trade.market.adapters import yfinance
+from src.trade.market.adapters import alpha_vantage
 
 
 class Market(object):
