@@ -2,6 +2,7 @@ import pandas as pd
 import scipy.stats
 import numpy as np
 from scipy.stats import norm
+from scipy.optimize import minimize
 
 def drawdown(return_series: pd.Series):
     """Takes a time series of asset return.
@@ -36,7 +37,7 @@ def get_hfi_returns():
     Load and format the EDHEC Hedge Fund Index Returns
     """
     rets = pd.read_csv(
-        "data/edhec-hedgefundindices.csv",
+        "../data/edhec-hedgefundindices.csv",
         header=0, index_col=0, parse_dates=True
     )
     rets = rets/100
@@ -138,7 +139,7 @@ def var_gaussian(r, level=5, modified=False):
         s = skewness(r)
         k = kurtosis(r)
         z = (z + 
-             (z**2 - 1)* s / 6 +
+            (z**2 - 1)* s / 6 +
              (z**3 - 3 * z)*(k - 3)/24 -
              (2 * z**3 - 5 * z) * (s**2)/36
             )
@@ -155,3 +156,142 @@ def cvar_historic(r, level=5):
         return -r[is_beyond].mean()
     else:
         raise TypeError("Expected r to be Series or DataFrame")
+
+def portfolio_return(weights, returns):
+    """
+    Weights -> Returns
+    """
+    return weights.T @ returns
+
+def portfolio_vol(weights, covmat):
+    """
+    Weights -> Vol
+    """
+    return (weights.T @ covmat @ weights)**0.5
+
+def plot_ef2(n_points, er, cov):
+    """
+    Plots the 2-asset efficient frontier
+    """
+    if er.shape[0] != 2 or er.shape[0] != 2:
+        raise ValueError("plot_ef2 can only plot 2-asset frontiers")
+        
+    weights = [np.array([w, 1 - w]) for w in np.linspace(0, 1, n_points)]
+    rets = [portfolio_return(w, er) for w in weights]
+    vols = [portfolio_vol(w, cov) for w in weights]
+    ef = pd.DataFrame({
+        "Returns": rets, 
+        "Volatility": vols
+    })
+    return ef.plot.scatter(x="Volatility", y="Returns", style="-")
+
+def minimize_vol(target_return, er, cov):
+    """
+    target return -> weight vector (W)
+    """
+    n = er.shape[0]
+    init_guess = np.repeat(1/n, n)
+    bounds = ((0.0, 1),) * n
+    return_is_target = {
+        'type': 'eq',
+        'args': (er,),
+        'fun': lambda weights, er: target_return - portfolio_return(weights, er)
+    }
+    weights_sum_to_1 = {
+        'type': 'eq',
+        'fun': lambda weights: np.sum(weights) - 1
+    }
+    results = minimize(
+        portfolio_vol, 
+        init_guess, 
+        args=(cov,), 
+        method="SLSQP", 
+        options={'disp': False}, 
+        constraints=(return_is_target, weights_sum_to_1),
+        bounds=bounds
+    )
+    return results.x
+
+def optimal_weights(n_points, er, cov):
+    """
+    -> list -f weights to run the optimizer on to minimize the vol
+    """
+    target_rs = np.linspace(er.min(), er.max(), n_points)
+    weights = [minimize_vol(target_return, er, cov) for target_return in target_rs]
+    return weights
+
+def gmv(cov):
+    """
+    Return the weights of the global minimum Vol portfolio
+    given covariance matrix
+    """
+    n = cov.shape[0]
+    return msr(0, np.repeat(1, n), cov)
+
+def plot_ef(n_points, er, cov, show_cml=False, style=".-", riskfree_rate=0, show_ew=False, show_gmv=False):
+    """
+    Plots the N-asset efficient frontier
+    ew Equally weighted
+    """
+    weights = optimal_weights(n_points, er, cov)
+    rets = [portfolio_return(w, er) for w in weights]
+    vols = [portfolio_vol(w, cov) for w in weights]
+    ef = pd.DataFrame({
+        "Returns": rets, 
+        "Volatility": vols
+    })
+    ax = ef.plot.scatter(x="Volatility", y="Returns", style=style)
+    if show_ew:
+        n = er.shape[0]
+        w_ew = np.repeat(1/n, n)
+        r_ew = portfolio_return(w_ew, er)
+        vol_ew = portfolio_vol(w_ew, cov)
+        ax.plot([vol_ew], [r_ew], color="goldenrod", markersize=12, marker="o")
+    if show_gmv:
+        w_gmv = gmv(cov)
+        r_gmv = portfolio_return(w_gmv, er)
+        vol_gmv = portfolio_vol(w_gmv, cov)
+        ax.plot([vol_gmv], [r_gmv], color="midnightblue", markersize=10, marker="o")
+    if show_cml:
+        w_msr = msr(riskfree_rate, er, cov)
+        r_msr = portfolio_return(w_msr, er)
+        v_msr = portfolio_vol(w_msr, cov)
+        # Add CMD (capital market line)
+        cml_x = [0, v_msr]
+        cml_y = [riskfree_rate, r_msr]
+        ax.plot(cml_x, cml_y, color="green", marker="o", 
+                linestyle="dashed", markersize=12, linewidth=2)
+    return ax
+
+def msr(riskfree_rate, er, cov):
+    """
+    Maximum possible Sharpe ratio
+    riskfree rate + ER + COV -> weight vector (W)
+    """
+    n = er.shape[0]
+    init_guess = np.repeat(1/n, n)
+    bounds = ((0.0, 1),) * n
+
+    weights_sum_to_1 = {
+        'type': 'eq',
+        'fun': lambda weights: np.sum(weights) - 1
+    }
+    
+    def neg_sharpe_ratio(weights, riskfree_rate, er, cov):
+        """
+        Returns of negative of the sharpe ratio, given weights
+        """
+        r = portfolio_return(weights, er)
+        vol = portfolio_vol(weights, cov)
+        return -(r - riskfree_rate) / vol
+    
+    results = minimize(
+        neg_sharpe_ratio, 
+        init_guess, 
+        args=(riskfree_rate, er, cov,), 
+        method="SLSQP", 
+        options={'disp': False}, 
+        constraints=(weights_sum_to_1),
+        bounds=bounds
+    )
+    return results.x
