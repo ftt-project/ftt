@@ -32,6 +32,17 @@ def get_ffme_returns():
     rets.index = pd.to_datetime(rets.index, format="%Y%m").to_period("M")
     return rets
 
+def get_ffme_20_returns():
+    me_m = pd.read_csv(
+        "data/Portfolios_Formed_on_ME_monthly_EW.csv",
+        header=0, index_col=0, na_values=-99.99
+    )
+    rets = me_m[["Lo 20", "Hi 20"]]
+    rets.columns = ["SmallCap", "LargeCap"]
+    rets = rets/100
+    rets.index = pd.to_datetime(rets.index, format="%Y%m").to_period("M")
+    return rets
+
 def get_hfi_returns():
     """
     Load and format the EDHEC Hedge Fund Index Returns
