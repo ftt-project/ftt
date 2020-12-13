@@ -414,3 +414,18 @@ def summary_stats(r, riskfree_rate=0.03):
         "Sharpe Ratio": ann_sr,
         "Max Drawdown": dd
     })
+
+def gbm(n_years=10, n_scenarios=100, mu=.07, sigma=.15, steps_per_year=12, s_0=100.0, prices=True):
+    """
+    Evolution of a Stock Price using Geometric Brownian Motion model
+    """
+    dt = 1/steps_per_year
+    n_steps = int(n_years * steps_per_year) + 1
+    # rets = np.random.normal(loc=1+mu*dt, scale=(sigma * np.sqrt(dt)),size=(n_steps, n_scenarios))
+    # rets[0] = 1 # to start from 100 as a start point
+    # ret_val = s_0*pd.DataFrame(rets).cumprod() if prices else rets-1
+    # return ret_val
+    rets_plus_1 = np.random.normal(loc=(1+mu)**dt, scale=(sigma*np.sqrt(dt)), size=(n_steps, n_scenarios))
+    rets_plus_1[0] = 1
+    ret_val = s_0*pd.DataFrame(rets_plus_1).cumprod() if prices else rets_plus_1-1
+    return ret_val
