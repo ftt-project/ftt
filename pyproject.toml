@@ -11,8 +11,12 @@ alpha_vantage = "^2.2.0"
 pandas = "^1.0.4"
 pyyaml = "^5.3.1"
 pandas_datareader = "^0.8.1"
-
 numpy = "^1.19.4"
+fire = "^0.3.1"
+Yahoo-ticker-downloader = "^3.0.1"
+peewee = "^3.14.0"
+psycopg2 = "^2.8.6"
+
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.3"
 black = "^19.10b0"
