@@ -1,8 +1,31 @@
+import csv
+import glob
+from datetime import datetime
 import fire
 import os
-import db.models as models
+from trade.logger import logger
+import pickle
+
+import yfinance as yf
+
+from db.models import Ticker
 import db.configuration as configuration
 import db.setup as dbsetup
+
+
+class TickerProgressTracker:
+    @staticmethod
+    def safe(data, filename='progress.pickle'):
+        with open(filename, "wb") as f:
+            pickle.dump(data, file=f, protocol=pickle.HIGHEST_PROTOCOL)
+
+    @staticmethod
+    def load(filename='progress.pickle'):
+        try:
+            with open(filename, "rb") as f:
+                return pickle.load(f)
+        except FileNotFoundError:
+            return []
 
 
 class Tickers:
@@ -10,27 +33,111 @@ class Tickers:
     Tickers manipulations
     """
 
-    def load(self):
+    def generic(self):
         """
         Parses files from data folder and persist them using db.models.Ticker model
         """
         configuration.establish_connection()
         dbsetup.setup_database()
 
-        for filename in os.listdir('./data'):
+        with open(os.path.join(os.getcwd(), 'data', 'generic.csv'), 'r') as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            line_count = 0
+            for row in csv_reader:
+                if line_count == 0:
+                    print(f'Column names are {", ".join(row)}')
+                    line_count += 1
+                    continue
+                Ticker.create(
+                    ticker=row[0],
+                    company_name=row[1],
+                    exchange=row[2],
+                    exchange_name=row[3],
+                    type=row[4],
+                    type_display=row[5],
+                    updated_at=datetime.now()
+                )
+
+        imported_records_count = Ticker.select().count()
+        print(f"Imported {imported_records_count} records")
+
+    def exchange_lists(self):
+        """
+        Because `find` method is missing some tickers this method uses eoddata.com data
+        to double check NYSE and TSX stocks
+        """
+        configuration.establish_connection()
+        dbsetup.setup_database()
+
+        for filename in glob.glob(os.path.join(os.getcwd(), 'data', '*.txt')):
             with open(os.path.join(os.getcwd(), 'data', filename), 'r') as f:
-                print(f"Processing {filename} file")
+                logger.info(f"Processing {filename} file")
                 lines = f.readlines()
-                exchange = filename.split('.')[0]
+                exchange = os.path.basename(filename).split('.')[0]
+                not_loaded_tickers = TickerProgressTracker.load()
+
                 for line in lines:
                     line_data = line.split(maxsplit=1)
                     ticker = line_data[0].strip()
-                    company_name = line_data[1].strip() if len(line_data) > 1 else None
-                    models.Ticker.create(ticker=ticker, company_name=company_name, exchange=exchange)
+                    ticker = self.__normalize_ticker(ticker, exchange)
 
-        imported_records_count = models.Ticker.select().count()
-        print(f"Import {imported_records_count} records")
+                    db_request = Ticker.select().where(
+                        Ticker.ticker == ticker,
+                        Ticker.exchange == exchange
+                    )
+                    logger.debug(f"Request: {db_request}")
+                    if db_request.count() > 0:
+                        continue
+                    logger.info(f"Missing ticker detected: <{ticker}> for <{exchange}>")
+
+                    if ticker in not_loaded_tickers:
+                        logger.debug(f"Found in skipped table <{ticker}> for <{exchange}>. Skipping")
+                        continue
+
+                    info = self.__request_ticker_info(ticker)
+                    if not info:
+                        not_loaded_tickers.append(ticker)
+                        TickerProgressTracker.safe(not_loaded_tickers)
+                        logger.debug(f"Skipping {ticker}")
+                        continue
+
+                    Ticker.create(
+                        ticker=ticker,
+                        company_name=info['longName'],
+                        exchange=info['exchange'],
+                        exchange_name=self.__normalize_exchange_name(info['exchange']),
+                        type='?',
+                        type_display=info['quoteType'],
+                        industry=info['industry'] if 'industry' in info else None,
+                        currency=info['currency'],
+                        updated_at=datetime.now(),
+                        tickers_failed_to_load={'a': 'b'}
+                    )
+
+    def __request_ticker_info(self, ticker):
+        try:
+            ticker_object = yf.Ticker(ticker)
+            info = ticker_object.info
+            return info
+        except ValueError as e:
+            logger.error(f"Ticker information not found: <{ticker}>: {e}")
+        except KeyError as e:
+            logger.error(f"Failed to load ticker <{ticker}>: {e}")
+        except Exception as e:
+            logger.error(f"Failed to load ticker <{ticker}>: {e}")
+
+    def __normalize_ticker(self, ticker, exchange):
+        if exchange == 'TOR':
+            return f"{ticker}.TO"
+        else:
+            return ticker
+
+    def __normalize_exchange_name(self, exchange_name):
+        if exchange_name == 'TOR':
+            return 'Toronto'
+        else:
+            return exchange_name
 
 
 if __name__ == '__main__':
-  fire.Fire(Tickers)
+    fire.Fire(Tickers)

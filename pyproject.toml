@@ -16,6 +16,9 @@ fire = "^0.3.1"
 Yahoo-ticker-downloader = "^3.0.1"
 peewee = "^3.14.0"
 psycopg2 = "^2.8.6"
+html5lib = "^1.1"
+beautifulsoup4 = "^4.9.3"
+rich = "^9.5.1"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.3"

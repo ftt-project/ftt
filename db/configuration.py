@@ -1,7 +1,8 @@
-from peewee import Model, PostgresqlDatabase
+from peewee import Model
+from playhouse.postgres_ext import PostgresqlExtDatabase
 
-pg_db = PostgresqlDatabase('trade', user='postgres', password='trade',
-                           host='127.0.0.1', port=5432)
+pg_db = PostgresqlExtDatabase('trade', user='postgres', password='trade',
+                           host='127.0.0.1', port=5432, register_hstore=True)
 
 
 class BaseModel(Model):
