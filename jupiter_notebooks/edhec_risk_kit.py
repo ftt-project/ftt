@@ -6,18 +6,18 @@ from scipy.optimize import minimize
 import math
 
 def drawdown(return_series: pd.Series):
-    """Takes a time series of asset return.
-    Returns a DataFrame with columns for the wealth index,
-    the previous peaks, and the percentage drawdown
+    """Takes a time series of asset returns.
+       returns a DataFrame with columns for
+       the wealth index, 
+       the previous peaks, and 
+       the percentage drawdown
     """
     wealth_index = 1000*(1+return_series).cumprod()
     previous_peaks = wealth_index.cummax()
-    drawdown = (wealth_index - previous_peaks)/previous_peaks
-    return pd.DataFrame({
-        "Wealth": wealth_index,
-        "Peaks": previous_peaks,
-        "Drawdown": drawdown
-    })
+    drawdowns = (wealth_index - previous_peaks)/previous_peaks
+    return pd.DataFrame({"Wealth": wealth_index, 
+                         "Previous Peak": previous_peaks, 
+                         "Drawdown": drawdowns})
 
 def get_ffme_returns():
     """
@@ -644,3 +644,55 @@ def glidepath_allocator(r1, r2, start_glide=1, end_glide=0.0):
     paths.index = r1.index
     paths.columns = r1.columns
     return paths
+
+def floor_allocator(psp_r, ghp_r, floor, zc_prices, m=3):
+    """
+    Allocate between PSP and GHP with the goal to provide exposure to the upside
+    of the PSP without going violating the floor.
+    Uses a CPPI-style dynamic risk budgeting algorithm by investing a multiple
+    of the cushion in the PSP
+    Returns a DataFrame with the same shape as the psp/ghp representing the weights in the PSP
+    """
+    if zc_prices.shape != psp_r.shape:
+        raise ValueError("PSP and ZC Prices must have the same shape")
+    n_steps, n_scenarios = psp_r.shape
+    account_value = np.repeat(1, n_scenarios)
+    floor_value = np.repeat(1, n_scenarios)
+    w_history = pd.DataFrame(index=psp_r.index, columns=psp_r.columns)
+    for step in range(n_steps):
+        floor_value = floor*zc_prices.iloc[step] ## PV of Floor assuming today's rates and flat YC
+        cushion = (account_value - floor_value)/account_value
+        psp_w = (m*cushion).clip(0, 1) # same as applying min and max
+        ghp_w = 1-psp_w
+        psp_alloc = account_value*psp_w
+        ghp_alloc = account_value*ghp_w
+        # recompute the new account value at the end of this step
+        account_value = psp_alloc*(1+psp_r.iloc[step]) + ghp_alloc*(1+ghp_r.iloc[step])
+        w_history.iloc[step] = psp_w
+    return w_history
+
+def drawdown_allocator(psp_r, ghp_r, maxdd, m=3):
+    """
+    Allocate between PSP and GHP with the goal to provide exposure to the upside
+    of the PSP without going violating the floor.
+    Uses a CPPI-style dynamic risk budgeting algorithm by investing a multiple
+    of the cushion in the PSP
+    Returns a DataFrame with the same shape as the psp/ghp representing the weights in the PSP
+    """
+    n_steps, n_scenarios = psp_r.shape
+    account_value = np.repeat(1, n_scenarios)
+    floor_value = np.repeat(1, n_scenarios)
+    peak_value = np.repeat(1, n_scenarios)
+    w_history = pd.DataFrame(index=psp_r.index, columns=psp_r.columns)
+    for step in range(n_steps):
+        floor_value = (1-maxdd)*peak_value ### Floor is based on Prev Peak
+        cushion = (account_value - floor_value)/account_value
+        psp_w = (m*cushion).clip(0, 1) # same as applying min and max
+        ghp_w = 1-psp_w
+        psp_alloc = account_value*psp_w
+        ghp_alloc = account_value*ghp_w
+        # recompute the new account value and prev peak at the end of this step
+        account_value = psp_alloc*(1+psp_r.iloc[step]) + ghp_alloc*(1+ghp_r.iloc[step])
+        peak_value = np.maximum(peak_value, account_value)
+        w_history.iloc[step] = psp_w
+    return w_history
