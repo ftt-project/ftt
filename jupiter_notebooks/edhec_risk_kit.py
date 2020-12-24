@@ -506,11 +506,11 @@ def bond_total_return(monthly_prices, principal, coupon_rate, coupons_per_year):
 
 def macaulay_duration(flows, discount_rate):
     """
-    Computes the Macaulay Duration of a sequence of cash flows
+    Computes the Macaulay Duration of a sequence of cash flows, given a per-period discount rate
     """
-    discounted_flows = discount(flows.index, discount_rate) * flows
+    discounted_flows = discount(flows.index, discount_rate)*pd.DataFrame(flows)
     weights = discounted_flows/discounted_flows.sum()
-    return np.average(flows.index, weights=weights)
+    return np.average(flows.index, weights=weights.iloc[:,0])
 
 def match_durations(cf_t, cf_s, cf_l, discount_rate):
     """
