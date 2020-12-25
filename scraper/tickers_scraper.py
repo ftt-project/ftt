@@ -1,4 +1,5 @@
 import math
+import urllib
 from time import sleep
 
 import chime
@@ -26,10 +27,7 @@ class TickersScraper:
                 info = ticker_object.info
                 success = True
                 return info
-            except (requests.HTTPError,
-                    requests.exceptions.ChunkedEncodingError,
-                    requests.exceptions.ReadTimeout,
-                    requests.exceptions.ConnectionError) as e:
+            except urllib.error.HTTPError as e:
                 if retry_count < max_retries:
                     pause_interval = math.pow(5, retry_count)
                     logger.debug(f"Retry attempt: {retry_count+1}. Sleep period: {pause_interval}")

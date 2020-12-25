@@ -1,12 +1,12 @@
 import csv
 import glob
 from datetime import datetime
+
+import chime
 import fire
 import os
 from trade.logger import logger
 import pickle
-
-import yfinance as yf
 
 from scraper.tickers_scraper import TickersScraper
 
@@ -144,4 +144,8 @@ class Tickers:
 
 
 if __name__ == '__main__':
-    fire.Fire(Tickers)
+    try:
+        fire.Fire(Tickers)
+    except Exception as e:
+        chime.error()
+        raise e

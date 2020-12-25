@@ -6,7 +6,7 @@ import datetime
 
 class Ticker(configuration.BaseModel):
     ticker = peewee.CharField()
-    company_name = peewee.CharField()
+    company_name = peewee.CharField(null=True)
     exchange = peewee.CharField(index=True)
     exchange_name = peewee.CharField(index=True)
     type = peewee.CharField(index=True)

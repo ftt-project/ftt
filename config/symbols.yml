@@ -8,6 +8,16 @@ track:
   - TMD.TO
   - KEY.TO
 
+scrape:
+  tickers:
+    - SHOP
+    - SHOP.TO
+    - AC.TO
+    - QQQ
+  interval_start: 2019-10-01
+  interval_end: 2020-12-25
+  interval: 1d
+
 portfolio:
   ZQQ.TO:
     enter_price: 72.14
