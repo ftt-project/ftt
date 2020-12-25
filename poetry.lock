@@ -119,6 +119,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "chime"
+version = "0.6.0"
+description = "Python sound notifications made easy."
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[[package]]
 name = "click"
 version = "7.1.2"
 description = "Composable command line interface toolkit"
@@ -519,7 +527,7 @@ requests = ">=2.20"
 [metadata]
 lock-version = "1.1"
 python-versions = "3.8.6"
-content-hash = "270b4f7d1bde11d7cd91fbb510688dcc238dfa99e7f350858df415f907c9cd10"
+content-hash = "1e1179ceba29bc6ece519cec3d5c0bcfd0de3ca34221a25501a16ba64ad024ff"
 
 [metadata.files]
 aiohttp = [
@@ -596,6 +604,10 @@ certifi = [
 chardet = [
     {file = "chardet-3.0.4-py2.py3-none-any.whl", hash = "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"},
     {file = "chardet-3.0.4.tar.gz", hash = "sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae"},
+]
+chime = [
+    {file = "chime-0.6.0-py3-none-any.whl", hash = "sha256:a2668941d98a043bab360ae007c13d446ba59dac60aadda38c5cc58052dfaef1"},
+    {file = "chime-0.6.0.tar.gz", hash = "sha256:c087800a495c0b0cb3615928e740adcf3960e251b428fd35fb04c6bdde7e0d53"},
 ]
 click = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},

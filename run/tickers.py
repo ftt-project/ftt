@@ -8,6 +8,8 @@ import pickle
 
 import yfinance as yf
 
+from scraper.tickers_scraper import TickersScraper
+
 from db.models import Ticker
 import db.configuration as configuration
 import db.setup as dbsetup
@@ -61,7 +63,15 @@ class Tickers:
         imported_records_count = Ticker.select().count()
         print(f"Imported {imported_records_count} records")
 
-    def exchange_lists(self):
+    def remove_ticker_from_progress(self, ticker):
+        """
+        Remove particular ticker from progress pickle file
+        """
+        saved = TickerProgressTracker.load()
+        saved.remove(ticker)
+        TickerProgressTracker.safe(saved)
+
+    def exchange_lists(self, exchange="ALL"):
         """
         Because `find` method is missing some tickers this method uses eoddata.com data
         to double check NYSE and TSX stocks
@@ -69,7 +79,11 @@ class Tickers:
         configuration.establish_connection()
         dbsetup.setup_database()
 
-        for filename in glob.glob(os.path.join(os.getcwd(), 'data', '*.txt')):
+        mask = "*.txt"
+        if exchange != "ALL":
+            mask = f"{exchange}.txt"
+
+        for filename in glob.glob(os.path.join(os.getcwd(), 'data', mask)):
             with open(os.path.join(os.getcwd(), 'data', filename), 'r') as f:
                 logger.info(f"Processing {filename} file")
                 lines = f.readlines()
@@ -88,13 +102,14 @@ class Tickers:
                     logger.debug(f"Request: {db_request}")
                     if db_request.count() > 0:
                         continue
-                    logger.info(f"Missing ticker detected: <{ticker}> for <{exchange}>")
 
                     if ticker in not_loaded_tickers:
-                        logger.debug(f"Found in skipped table <{ticker}> for <{exchange}>. Skipping")
+                        logger.debug(f"Found in skipped table <{ticker}> in <{exchange}>. Skipping")
                         continue
 
-                    info = self.__request_ticker_info(ticker)
+                    logger.info(f"Missing ticker detected: <{ticker}> in <{exchange}>")
+
+                    info = TickersScraper.load(ticker)
                     if not info:
                         not_loaded_tickers.append(ticker)
                         TickerProgressTracker.safe(not_loaded_tickers)
@@ -113,18 +128,7 @@ class Tickers:
                         updated_at=datetime.now(),
                         tickers_failed_to_load={'a': 'b'}
                     )
-
-    def __request_ticker_info(self, ticker):
-        try:
-            ticker_object = yf.Ticker(ticker)
-            info = ticker_object.info
-            return info
-        except ValueError as e:
-            logger.error(f"Ticker information not found: <{ticker}>: {e}")
-        except KeyError as e:
-            logger.error(f"Failed to load ticker <{ticker}>: {e}")
-        except Exception as e:
-            logger.error(f"Failed to load ticker <{ticker}>: {e}")
+                    logger.info(f"Ticker loaded: <{ticker}> in <{exchange}>")
 
     def __normalize_ticker(self, ticker, exchange):
         if exchange == 'TOR':
