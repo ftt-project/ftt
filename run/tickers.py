@@ -108,7 +108,8 @@ class Tickers:
                         )
                         continue
 
-                    logger.info(f"Missing ticker detected: <{ticker}> in <{exchange}>")
+                    logger.info(
+                        f"Missing ticker detected: <{ticker}> in <{exchange}>")
 
                     info = TickersScraper.load(ticker)
                     if not info:
@@ -121,7 +122,8 @@ class Tickers:
                         ticker=ticker,
                         company_name=info["longName"],
                         exchange=info["exchange"],
-                        exchange_name=self.__normalize_exchange_name(info["exchange"]),
+                        exchange_name=self.__normalize_exchange_name(
+                            info["exchange"]),
                         type="?",
                         type_display=info["quoteType"],
                         industry=info["industry"] if "industry" in info else None,
