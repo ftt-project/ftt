@@ -10,6 +10,7 @@ track:
 
 scrape:
   tickers:
+    - AAPL
     - SHOP
     - SHOP.TO
     - AC.TO

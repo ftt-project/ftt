@@ -29,7 +29,7 @@ class TickersScraper:
                 return info
             except urllib.error.HTTPError as e:
                 if retry_count < max_retries:
-                    pause_interval = math.pow(5, retry_count)
+                    pause_interval = math.pow(2, retry_count)
                     logger.debug(
                         f"Retry attempt: {retry_count+1}. Sleep period: {pause_interval}"
                     )

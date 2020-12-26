@@ -1,13 +1,17 @@
 import fire
+import peewee
+
+from trade.logger import logger
+import chime
 
 from scraper.history_scraper import HistoryScraper
 from trade.logger import logger
-
-
 from trade.configuration import Configuration
 from db.models import Ticker, TickerReturn
 import db.configuration as configuration
 import db.setup as dbsetup
+
+chime.theme("big-sur")
 
 
 class History:
@@ -15,55 +19,42 @@ class History:
     Loads historic data from yahoo
     """
 
-    def load(self, ticker="ALL"):
+    def load(self):
         """
-        Loads the last day in 5 minutes intervals
+        :param: ticker optionally specify ticker to load
         """
         configuration.establish_connection()
         dbsetup.setup_database()
 
         config = Configuration().scrape()
-        historical_data = HistoryScraper.load(config)
-        # r1 = data.iloc[1]
-        # Adj Close  AC.TO    4.254000e+01
-        #            QQQ      1.826122e+02
-        #            SHOP     3.103600e+02
-        # Close      AC.TO    4.254000e+01
-        #            QQQ      1.840500e+02
-        #            SHOP     3.103600e+02
-        # High       AC.TO    4.320000e+01
-        #            QQQ      1.860300e+02
-        #            SHOP     3.111700e+02
-        # Low        AC.TO    4.180000e+01
-        #            QQQ      1.830200e+02
-        #            SHOP     3.007000e+02
-        # Open       AC.TO    4.278000e+01
-        #            QQQ      1.860000e+02
-        #            SHOP     3.096400e+02
-        # Volume     AC.TO    1.690844e+06
-        #            QQQ      4.854430e+07
-        #            SHOP     2.206200e+06
-        # ------
-        # r1.index
-        # MultiIndex([('Adj Close', 'AC.TO'),
-        #             ('Adj Close', 'QQQ'),
-        #             ('Adj Close', 'SHOP'),
-        #             ('Close', 'AC.TO'),
-        #             ('Close', 'QQQ'),
-        #             ('Close', 'SHOP'),
-        #             ('High', 'AC.TO'),
-        #             ('High', 'QQQ'),
-        #             ('High', 'SHOP'),
-        #             ('Low', 'AC.TO'),
-        #             ('Low', 'QQQ'),
-        #             ('Low', 'SHOP'),
-        #             ('Open', 'AC.TO'),
-        #             ('Open', 'QQQ'),
-        #             ('Open', 'SHOP'),
-        #             ('Volume', 'AC.TO'),
-        #             ('Volume', 'QQQ'),
-        #             ('Volume', 'SHOP')],
-        print(historical_data)
+        data_frame = HistoryScraper.load(config)
+        grouped_by_ticker = {idx: data_frame.xs(idx, level=1, axis=1) for idx, gp in
+                             data_frame.groupby(level=1, axis=1)}
+        for ticker_name in grouped_by_ticker.keys():
+            ticker_data = grouped_by_ticker[ticker_name]
+            ticker_data = ticker_data[ticker_data['Close'].notnull()]
+            created_num = 0
+            for index, row in ticker_data.iterrows():
+                ins, created = TickerReturn.get_or_create(
+                    ticker=Ticker.get(ticker=ticker_name),
+                    datetime=index,
+                    interval=config.interval,
+                    defaults={
+                        "open": row["Open"],
+                        "high": row["High"],
+                        "low": row["Low"],
+                        "close": row["Close"],
+                        "volume": row["Volume"],
+                        "change": row["Close"] - row["Open"],
+                        "percent_change": (row["Close"] - row["Open"]) / row["Close"] * 100
+                    }
+                )
+                if created:
+                    created_num += 1
+
+        logger.info(
+            f"Created {created_num} records for {config.tickers} <{config.interval_start}>:<{config.interval_end}> with interval <{config.interval}>")
+        chime.success()
 
 
 if __name__ == "__main__":

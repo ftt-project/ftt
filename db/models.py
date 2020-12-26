@@ -6,8 +6,8 @@ import datetime
 
 class Ticker(configuration.BaseModel):
     ticker = peewee.CharField()
-    company_name = peewee.CharField(null=True)
     exchange = peewee.CharField(index=True)
+    company_name = peewee.CharField(null=True)
     exchange_name = peewee.CharField(index=True)
     type = peewee.CharField(index=True)
     type_display = peewee.CharField()
@@ -25,17 +25,18 @@ class Ticker(configuration.BaseModel):
 
 class TickerReturn(configuration.BaseModel):
     ticker = peewee.ForeignKeyField(Ticker, backref='returns')
-    date = peewee.DateTimeField()
+    datetime = peewee.DateTimeField()
     open = peewee.DecimalField()
     high = peewee.DecimalField()
     low = peewee.DecimalField()
     close = peewee.DecimalField()
     volume = peewee.IntegerField()
     interval = peewee.CharField()
+    change = peewee.DecimalField()
     percent_change = peewee.FloatField()
 
     class Meta:
         indexes = (
-            (('ticker', 'interval'), True),
+            (('ticker', 'datetime', 'interval'), True),
         )
         table_name = 'ticker_returns'

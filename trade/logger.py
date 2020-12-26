@@ -2,6 +2,7 @@ import logging
 from rich.logging import RichHandler
 
 logger = logging.getLogger(__name__)
+logger = logging.getLogger('peewee')
 
 shell_handler = RichHandler()
 file_handler = logging.FileHandler("debug.log")

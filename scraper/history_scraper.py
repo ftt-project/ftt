@@ -1,10 +1,11 @@
 from pandas_datareader import data as pdr
 import yfinance as yf
+import pandas as pd
 
 
 class HistoryScraper:
     @staticmethod
-    def load(config):
+    def load(config) -> pd.DataFrame:
         """
         Loading tickers information from Yahoo
         """
@@ -15,4 +16,4 @@ class HistoryScraper:
             end=config.interval_end,
             interval=config.interval,
         )
-        print(data.head())
+        return data

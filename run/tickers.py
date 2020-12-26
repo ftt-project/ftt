@@ -14,6 +14,8 @@ from db.models import Ticker
 import db.configuration as configuration
 import db.setup as dbsetup
 
+chime.theme("big-sur")
+
 
 class TickerProgressTracker:
     @staticmethod
@@ -83,6 +85,7 @@ class Tickers:
         if exchange != "ALL":
             mask = f"{exchange}.txt"
 
+        created_num = 0
         for filename in glob.glob(os.path.join(os.getcwd(), "data", mask)):
             with open(os.path.join(os.getcwd(), "data", filename), "r") as f:
                 logger.info(f"Processing {filename} file")
@@ -118,20 +121,25 @@ class Tickers:
                         logger.debug(f"Skipping {ticker}")
                         continue
 
-                    Ticker.create(
+                    inst, created = Ticker.get_or_create(
                         ticker=ticker,
-                        company_name=info["longName"],
                         exchange=info["exchange"],
-                        exchange_name=self.__normalize_exchange_name(
-                            info["exchange"]),
-                        type="?",
-                        type_display=info["quoteType"],
-                        industry=info["industry"] if "industry" in info else None,
-                        currency=info["currency"],
-                        updated_at=datetime.now(),
-                        tickers_failed_to_load={"a": "b"},
+                        defaults={
+                            "company_name": info["longName"],
+                            "exchange_name": self.__normalize_exchange_name(info["exchange"]),
+                            "type": "?",
+                            "type_display": info["quoteType"],
+                            "industry": info["industry"] if "industry" in info else None,
+                            "currency": info["currency"],
+                            "updated_at": datetime.now()
+                        }
                     )
                     logger.info(f"Ticker loaded: <{ticker}> in <{exchange}>")
+                    if created:
+                        created_num += 1
+        logger.info(
+            f"Created {created_num} new ticker records")
+        chime.success()
 
     def __normalize_ticker(self, ticker, exchange):
         if exchange == "TOR":
@@ -142,6 +150,10 @@ class Tickers:
     def __normalize_exchange_name(self, exchange_name):
         if exchange_name == "TOR":
             return "Toronto"
+        elif exchange_name == "NCM":
+            return "NASDAQ"
+        elif exchange_name == "NYQ":
+            return "NYSE"
         else:
             return exchange_name
 
