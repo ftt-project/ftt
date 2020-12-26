@@ -14,6 +14,7 @@ class History:
     """
     Loads historic data from yahoo
     """
+
     def load(self, ticker="ALL"):
         """
         Loads the last day in 5 minutes intervals
@@ -65,5 +66,5 @@ class History:
         print(historical_data)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     fire.Fire(History)

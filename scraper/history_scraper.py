@@ -13,6 +13,6 @@ class HistoryScraper:
             config.tickers,
             start=config.interval_start,
             end=config.interval_end,
-            interval=config.interval
+            interval=config.interval,
         )
         print(data.head())

@@ -17,12 +17,12 @@ import db.setup as dbsetup
 
 class TickerProgressTracker:
     @staticmethod
-    def safe(data, filename='progress.pickle'):
+    def safe(data, filename="progress.pickle"):
         with open(filename, "wb") as f:
             pickle.dump(data, file=f, protocol=pickle.HIGHEST_PROTOCOL)
 
     @staticmethod
-    def load(filename='progress.pickle'):
+    def load(filename="progress.pickle"):
         try:
             with open(filename, "rb") as f:
                 return pickle.load(f)
@@ -42,8 +42,8 @@ class Tickers:
         configuration.establish_connection()
         dbsetup.setup_database()
 
-        with open(os.path.join(os.getcwd(), 'data', 'generic.csv'), 'r') as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
+        with open(os.path.join(os.getcwd(), "data", "generic.csv"), "r") as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=",")
             line_count = 0
             for row in csv_reader:
                 if line_count == 0:
@@ -57,7 +57,7 @@ class Tickers:
                     exchange_name=row[3],
                     type=row[4],
                     type_display=row[5],
-                    updated_at=datetime.now()
+                    updated_at=datetime.now(),
                 )
 
         imported_records_count = Ticker.select().count()
@@ -83,11 +83,11 @@ class Tickers:
         if exchange != "ALL":
             mask = f"{exchange}.txt"
 
-        for filename in glob.glob(os.path.join(os.getcwd(), 'data', mask)):
-            with open(os.path.join(os.getcwd(), 'data', filename), 'r') as f:
+        for filename in glob.glob(os.path.join(os.getcwd(), "data", mask)):
+            with open(os.path.join(os.getcwd(), "data", filename), "r") as f:
                 logger.info(f"Processing {filename} file")
                 lines = f.readlines()
-                exchange = os.path.basename(filename).split('.')[0]
+                exchange = os.path.basename(filename).split(".")[0]
                 not_loaded_tickers = TickerProgressTracker.load()
 
                 for line in lines:
@@ -96,15 +96,16 @@ class Tickers:
                     ticker = self.__normalize_ticker(ticker, exchange)
 
                     db_request = Ticker.select().where(
-                        Ticker.ticker == ticker,
-                        Ticker.exchange == exchange
+                        Ticker.ticker == ticker, Ticker.exchange == exchange
                     )
                     logger.debug(f"Request: {db_request}")
                     if db_request.count() > 0:
                         continue
 
                     if ticker in not_loaded_tickers:
-                        logger.debug(f"Found in skipped table <{ticker}> in <{exchange}>. Skipping")
+                        logger.debug(
+                            f"Found in skipped table <{ticker}> in <{exchange}>. Skipping"
+                        )
                         continue
 
                     logger.info(f"Missing ticker detected: <{ticker}> in <{exchange}>")
@@ -118,32 +119,32 @@ class Tickers:
 
                     Ticker.create(
                         ticker=ticker,
-                        company_name=info['longName'],
-                        exchange=info['exchange'],
-                        exchange_name=self.__normalize_exchange_name(info['exchange']),
-                        type='?',
-                        type_display=info['quoteType'],
-                        industry=info['industry'] if 'industry' in info else None,
-                        currency=info['currency'],
+                        company_name=info["longName"],
+                        exchange=info["exchange"],
+                        exchange_name=self.__normalize_exchange_name(info["exchange"]),
+                        type="?",
+                        type_display=info["quoteType"],
+                        industry=info["industry"] if "industry" in info else None,
+                        currency=info["currency"],
                         updated_at=datetime.now(),
-                        tickers_failed_to_load={'a': 'b'}
+                        tickers_failed_to_load={"a": "b"},
                     )
                     logger.info(f"Ticker loaded: <{ticker}> in <{exchange}>")
 
     def __normalize_ticker(self, ticker, exchange):
-        if exchange == 'TOR':
+        if exchange == "TOR":
             return f"{ticker}.TO"
         else:
             return ticker
 
     def __normalize_exchange_name(self, exchange_name):
-        if exchange_name == 'TOR':
-            return 'Toronto'
+        if exchange_name == "TOR":
+            return "Toronto"
         else:
             return exchange_name
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         fire.Fire(Tickers)
     except Exception as e:

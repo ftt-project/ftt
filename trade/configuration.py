@@ -4,7 +4,7 @@ import yaml
 
 
 class Configuration:
-    FILE = 'config/symbols.yml'
+    FILE = "config/symbols.yml"
 
     def tickers_to_track(self) -> list:
         """
@@ -12,7 +12,7 @@ class Configuration:
         """
         tickers = set()
         configuration = self.__read_config()
-        for symbol in configuration['track']:
+        for symbol in configuration["track"]:
             tickers.append(symbol)
 
         return tickers
@@ -22,7 +22,9 @@ class Configuration:
         :returns: a configuration for scraping
         """
         configuration = self.__read_config()
-        return namedtuple("Scrape", configuration['scrape'].keys())(**configuration['scrape'])
+        return namedtuple("Scrape", configuration["scrape"].keys())(
+            **configuration["scrape"]
+        )
 
     def __read_config(self):
         with open(Configuration.FILE) as f:

@@ -8,7 +8,7 @@ import requests
 
 from trade.logger import logger
 
-chime.theme('big-sur')
+chime.theme("big-sur")
 
 
 class TickersScraper:
@@ -30,12 +30,16 @@ class TickersScraper:
             except urllib.error.HTTPError as e:
                 if retry_count < max_retries:
                     pause_interval = math.pow(5, retry_count)
-                    logger.debug(f"Retry attempt: {retry_count+1}. Sleep period: {pause_interval}")
+                    logger.debug(
+                        f"Retry attempt: {retry_count+1}. Sleep period: {pause_interval}"
+                    )
                     retry_count += retry_count
                     sleep(pause_interval)
                 else:
                     chime.warning()
-                    raise TickersScraper.TickerLoadingError(f"Ticker <{ticker}> loading exhausted")
+                    raise TickersScraper.TickerLoadingError(
+                        f"Ticker <{ticker}> loading exhausted"
+                    )
             except ValueError as e:
                 success = True
                 logger.error(f"Ticker information not found: <{ticker}>: {e}")

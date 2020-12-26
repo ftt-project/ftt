@@ -20,7 +20,9 @@ class Adviser(object):
         return True when current price is lower when enter price minus loss threshold
         return False when current price is in the threshold range
         """
-        minimal_acceptanble_price = self.enter_price - (self.enter_price / 100 * self.loss_threshold_percent)
+        minimal_acceptanble_price = self.enter_price - (
+            self.enter_price / 100 * self.loss_threshold_percent
+        )
 
         if minimal_acceptanble_price >= self.qoute.price:
             return True
