@@ -80,6 +80,17 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "backtrader"
+version = "1.9.76.123"
+description = "BackTesting Engine"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+plotting = ["matplotlib"]
+
+[[package]]
 name = "beautifulsoup4"
 version = "4.9.3"
 description = "Screen-scraping library"
@@ -539,7 +550,7 @@ requests = ">=2.20"
 [metadata]
 lock-version = "1.1"
 python-versions = "3.8.6"
-content-hash = "3c44016c236d47350622040f442944b0c870e3c8870219dc083898c27760b58e"
+content-hash = "54d3c118abe2f604d39d1d597d6a09eb467e006b6818dbb679c833e676fd6148"
 
 [metadata.files]
 aiohttp = [
@@ -602,6 +613,9 @@ autopep8 = [
 "backports.csv" = [
     {file = "backports.csv-1.0.7-py2.py3-none-any.whl", hash = "sha256:21f6e09bab589e6c1f877edbc40277b65e626262a86e69a70137db714eaac5ce"},
     {file = "backports.csv-1.0.7.tar.gz", hash = "sha256:1277dfff73130b2e106bf3dd347adb3c5f6c4340882289d88f31240da92cbd6d"},
+]
+backtrader = [
+    {file = "backtrader-1.9.76.123-py2.py3-none-any.whl", hash = "sha256:0dc8912a98352b75122f8d7084bc63ee47f61c2a1d16f506d4d82aee3941297a"},
 ]
 beautifulsoup4 = [
     {file = "beautifulsoup4-4.9.3-py2-none-any.whl", hash = "sha256:4c98143716ef1cb40bf7f39a8e3eec8f8b009509e74904ba3a7b315431577e35"},

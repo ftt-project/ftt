@@ -29,3 +29,7 @@ portfolio:
     enter_price: 1.82
     sell_price: 1.9
     quit_price: 1.5
+
+tbills:
+  url: https://www.bankofcanada.ca/valet/observations/group/tbill_all/csv
+  1year:

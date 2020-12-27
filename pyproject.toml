@@ -21,6 +21,7 @@ beautifulsoup4 = "^4.9.3"
 rich = "^9.5.1"
 chime = "^0.6.0"
 autopep8 = "^1.5.4"
+backtrader = "^1.9.76"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.3"
