@@ -1,6 +1,7 @@
 import fire
 import backtrader as bt
 import backtrader.feeds as btfeeds
+import backtrader.analyzers as btanalyzers
 import pandas as pd
 import pyfolio as pf
 import pandas_datareader
@@ -46,7 +47,7 @@ class Analyze(BaseCommand):
         def __init__(self):
             # Keep a reference to the "close" line in the data[0] dataseries
             self.dataclose = self.datas[0].close
-            bt.feeds.YahooFinanceCSVData
+
             self.order = None
             self.buyprice = None
             self.buycomm = None
@@ -140,12 +141,30 @@ class Analyze(BaseCommand):
         cerebro.addstrategy(Analyze.TestStrategy)
         data = Analyze.PandasData(dataname=self.__dataframe())
         cerebro.adddata(data)
+
         cerebro.broker.setcash(10000.0)
+
         cerebro.addsizer(bt.sizers.FixedSize, stake=10)
+
         cerebro.broker.setcommission(commission=0.0)
+
+        cerebro.addanalyzer(btanalyzers.SharpeRatio, _name='sharpe')
+        cerebro.addanalyzer(bt.analyzers.PyFolio)
+
         print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
-        cerebro.run()
+        thestrats = cerebro.run()
         print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
+        sharpe = thestrats[0].analyzers.sharpe
+        print('Sharpe Ratio:', sharpe.get_analysis())
+
+        pyfolio = thestrats[0].analyzers.pyfolio
+        returns, positions, transactions, gross_lev = pyfolio.get_pf_items()
+        print('Pyfolio returns:')
+        print(returns)
+        print('Pyfolio positions:')
+        print(positions)
+        print('Pyfolio transactions:')
+        print(transactions)
         cerebro.plot()
 
     def simple(self):
