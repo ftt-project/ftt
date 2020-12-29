@@ -22,6 +22,9 @@ rich = "^9.5.1"
 chime = "^0.6.0"
 autopep8 = "^1.5.4"
 backtrader = "^1.9.76"
+Pf = "^0.1"
+pyfolio = "^0.9.2"
+matplotlib = "3.2.2"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.3"
