@@ -53,7 +53,8 @@ class History:
                     created_num += 1
 
         logger.info(
-            f"Created {created_num} records for {config.tickers} <{config.interval_start}>:<{config.interval_end}> with interval <{config.interval}>")
+            f"Created {created_num} records for {config.tickers} <{config.interval_start}>:<{config.interval_end}> with interval <{config.interval}>"
+        )
         chime.success()
 
 

@@ -260,8 +260,7 @@ def gmv(cov):
 
 def plot_ef(n_points, er, cov, show_cml=False, style=".-", riskfree_rate=0, show_ew=False, show_gmv=False):
     """
-    Plots the N-asset efficient frontier
-    ew Equally weighted
+    Plots the multi-asset efficient frontier
     """
     weights = optimal_weights(n_points, er, cov)
     rets = [portfolio_return(w, er) for w in weights]
@@ -270,27 +269,31 @@ def plot_ef(n_points, er, cov, show_cml=False, style=".-", riskfree_rate=0, show
         "Returns": rets, 
         "Volatility": vols
     })
-    ax = ef.plot.scatter(x="Volatility", y="Returns", style=style)
+    ax = ef.plot.line(x="Volatility", y="Returns", style=style)
+    if show_cml:
+        ax.set_xlim(left = 0)
+        # get MSR
+        w_msr = msr(riskfree_rate, er, cov)
+        r_msr = portfolio_return(w_msr, er)
+        vol_msr = portfolio_vol(w_msr, cov)
+        # add CML
+        cml_x = [0, vol_msr]
+        cml_y = [riskfree_rate, r_msr]
+        ax.plot(cml_x, cml_y, color='green', marker='o', linestyle='dashed', linewidth=2, markersize=10)
     if show_ew:
         n = er.shape[0]
         w_ew = np.repeat(1/n, n)
         r_ew = portfolio_return(w_ew, er)
         vol_ew = portfolio_vol(w_ew, cov)
-        ax.plot([vol_ew], [r_ew], color="goldenrod", markersize=12, marker="o")
+        # add EW
+        ax.plot([vol_ew], [r_ew], color='goldenrod', marker='o', markersize=10)
     if show_gmv:
         w_gmv = gmv(cov)
         r_gmv = portfolio_return(w_gmv, er)
         vol_gmv = portfolio_vol(w_gmv, cov)
-        ax.plot([vol_gmv], [r_gmv], color="midnightblue", markersize=10, marker="o")
-    if show_cml:
-        w_msr = msr(riskfree_rate, er, cov)
-        r_msr = portfolio_return(w_msr, er)
-        v_msr = portfolio_vol(w_msr, cov)
-        # Add CMD (capital market line)
-        cml_x = [0, v_msr]
-        cml_y = [riskfree_rate, r_msr]
-        ax.plot(cml_x, cml_y, color="green", marker="o", 
-                linestyle="dashed", markersize=12, linewidth=2)
+        # add EW
+        ax.plot([vol_gmv], [r_gmv], color='midnightblue', marker='o', markersize=10)
+        
     return ax
 
 def msr(riskfree_rate, er, cov):

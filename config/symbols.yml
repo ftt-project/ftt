@@ -14,8 +14,26 @@ scrape:
     - SHOP
     - SHOP.TO
     - AC.TO
+    - ZQQ.TO
+    - TMD.TO
+    - KEY.TO
     - QQQ
-  interval_start: 2019-10-01
+    - MU
+    - PHM
+#    - MDYG
+    - VNQI
+    - ENB
+    - IBKR
+    - MSFT
+    - SPY
+    - TSLA
+    - BABA
+    - DCBO.TO
+    - VRE.TO
+    - DASH
+    - PFE
+    - XUU.TO
+  interval_start: 2015-10-01
   interval_end: 2020-12-25
   interval: 1d
 

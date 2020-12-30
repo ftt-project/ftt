@@ -167,32 +167,6 @@ class Analyze(BaseCommand):
         print(transactions)
         cerebro.plot()
 
-    def simple(self):
-        data = Analyze.PandasData(dataname=self.__dataframe())
-
-        cerebro = bt.Cerebro(stdstats=False)
-        cerebro.broker.set_cash(100000)
-        cerebro.addanalyzer(bt.analyzers.PyFolio, _name='pyfolio')
-        # cerebro.addstrategy(bt.Strategy)
-        cerebro.addstrategy(Analyze.TestStrategy)
-        cerebro.adddata(data)
-        result = cerebro.run()
-
-        strat = result[0]
-        print(result[0])
-
-        pyfolio = strat.analyzers.getbyname('pyfolio')
-
-        returns, positions, transactions, gross_lev = pyfolio.get_pf_items()
-        print(returns)
-        pf.create_full_tear_sheet(
-            returns,
-            positions=positions,
-            transactions=transactions,
-            live_start_date='2019-10-02',  # This date is sample specific
-            round_trips=True
-        )
-
     def __dataframe(self):
         query = TickerReturn.select(
             TickerReturn.datetime,
@@ -204,7 +178,7 @@ class Analyze(BaseCommand):
         ).where(
             TickerReturn.ticker == Ticker.get(Ticker.ticker == 'SHOP'),
             TickerReturn.interval == '1d'
-        )
+        ).order_by(TickerReturn.datetime.asc())
 
         # cur = database_connection().cursor()
         # raw_query = cur.mogrify(*query.sql())
