@@ -19,7 +19,7 @@ class History:
     Loads historic data from yahoo
     """
 
-    def load(self):
+    def load(self, ticker="ALL"):
         """
         :param: ticker optionally specify ticker to load
         """
@@ -27,9 +27,18 @@ class History:
         dbsetup.setup_database()
 
         config = Configuration().scrape()
+        if ticker != "ALL":
+            config.tickers = [ticker]
+
         data_frame = HistoryScraper.load(config)
-        grouped_by_ticker = {idx: data_frame.xs(idx, level=1, axis=1) for idx, gp in
-                             data_frame.groupby(level=1, axis=1)}
+        if len(config.tickers) == 1:
+            grouped_by_ticker = {
+                config.tickers[0]: data_frame
+            }
+        else:
+            grouped_by_ticker = {idx: data_frame.xs(idx, level=1, axis=1) for idx, gp in
+                                 data_frame.groupby(level=1, axis=1)}
+
         for ticker_name in grouped_by_ticker.keys():
             ticker_data = grouped_by_ticker[ticker_name]
             ticker_data = ticker_data[ticker_data['Close'].notnull()]

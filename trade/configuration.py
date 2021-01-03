@@ -1,6 +1,13 @@
-from collections import namedtuple
+from dataclasses import dataclass
 
 import yaml
+
+@dataclass
+class Scrape:
+    tickers: str
+    interval_start: str
+    interval_end: str
+    interval: str
 
 
 class Configuration:
@@ -22,9 +29,7 @@ class Configuration:
         :returns: a configuration for scraping
         """
         configuration = self.__read_config()
-        return namedtuple("Scrape", configuration["scrape"].keys())(
-            **configuration["scrape"]
-        )
+        return Scrape(**configuration["scrape"])
 
     def __read_config(self):
         with open(Configuration.FILE) as f:

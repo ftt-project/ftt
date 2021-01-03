@@ -5,6 +5,8 @@ from datetime import datetime
 import chime
 import fire
 import os
+
+from trade.base_command import BaseCommand
 from trade.logger import logger
 import pickle
 
@@ -32,7 +34,7 @@ class TickerProgressTracker:
             return []
 
 
-class Tickers:
+class Tickers(BaseCommand):
     """
     Tickers manipulations
     """
@@ -72,6 +74,34 @@ class Tickers:
         saved = TickerProgressTracker.load()
         saved.remove(ticker)
         TickerProgressTracker.safe(saved)
+
+    def find_ticker(self, ticker):
+        ticker = ticker.strip()
+
+        db_request = Ticker.select().where(
+            Ticker.ticker == ticker
+        )
+        logger.debug(f"Request: {db_request}")
+        if db_request.count() > 0:
+            logger.warning(f"Possible duplication of <{ticker}> in <{db_request[0]} {db_request[0].ticker}:{db_request[0].exchange}>")
+
+        info = TickersScraper.load(ticker)
+
+        inst, created = Ticker.get_or_create(
+            ticker=ticker,
+            exchange=info["exchange"],
+            defaults={
+                "company_name": info["longName"],
+                "exchange_name": self.__normalize_exchange_name(info["exchange"]),
+                "type": "?",
+                "type_display": info["quoteType"],
+                "industry": info["industry"] if "industry" in info else None,
+                "currency": info["currency"],
+                "updated_at": datetime.now()
+            }
+        )
+        if created:
+            logger.info(f"Ticker loaded: <{inst}>")
 
     def exchange_lists(self, exchange="ALL"):
         """
