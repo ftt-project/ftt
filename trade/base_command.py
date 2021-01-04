@@ -15,10 +15,10 @@ class BaseCommand(ABC):
         logger.debug(message)
 
     def log_info(self, message):
-        pass
+        logger.info(message)
 
     def log_warning(self, message):
-        pass
+        logger.warning(message)
 
     def failed(self, message):
         pass

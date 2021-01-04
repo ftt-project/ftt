@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import yaml
 
 @dataclass
-class Scrape:
+class ScrapeConfig:
     tickers: str
     interval_start: str
     interval_end: str
@@ -29,7 +29,7 @@ class Configuration:
         :returns: a configuration for scraping
         """
         configuration = self.__read_config()
-        return Scrape(**configuration["scrape"])
+        return ScrapeConfig(**configuration["scrape"])
 
     def __read_config(self):
         with open(Configuration.FILE) as f:

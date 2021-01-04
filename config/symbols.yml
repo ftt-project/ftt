@@ -8,6 +8,11 @@ track:
   - TMD.TO
   - KEY.TO
 
+exchanges_to_scrape:
+  - TOR
+  - NCM
+  - NYQ
+
 scrape:
   tickers:
     - AAPL
@@ -20,7 +25,7 @@ scrape:
     - QQQ
     - MU
     - PHM
-#    - MDYG
+    - MDYG
     - VNQI
     - ENB
     - IBKR

@@ -26,7 +26,7 @@ class Ticker(configuration.BaseModel):
 class TickerReturn(configuration.BaseModel):
     ticker = peewee.ForeignKeyField(Ticker, backref='returns')
     datetime = peewee.DateTimeField()
-    open = peewee.DecimalField()
+    open = peewee.DecimalField(max_digits=12)
     high = peewee.DecimalField()
     low = peewee.DecimalField()
     close = peewee.DecimalField()
