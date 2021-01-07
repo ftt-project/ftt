@@ -422,6 +422,22 @@ genshi = ["genshi"]
 lxml = ["lxml"]
 
 [[package]]
+name = "ibpy2"
+version = "0.8.0"
+description = "IbPy - Interactive Brokers Python API"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "ibpythonic"
+version = "0.1.6"
+description = "IbPy-like interface for the Interactive Brokers Python API"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "idna"
 version = "2.10"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -1678,7 +1694,7 @@ requests = ">=2.20"
 [metadata]
 lock-version = "1.1"
 python-versions = "3.8.6"
-content-hash = "b3bfacf8e553d7891a4bd0075a31aefc1cf6a36ee272bff2abb29f9e39db4053"
+content-hash = "37200f978402b93c6d77ce9cde5cf9a9dc498714c59fab42b08fb59f1ea44a63"
 
 [metadata.files]
 aiohttp = [
@@ -1960,6 +1976,13 @@ future = [
 html5lib = [
     {file = "html5lib-1.1-py2.py3-none-any.whl", hash = "sha256:0d78f8fde1c230e99fe37986a60526d7049ed4bf8a9fadbad5f00e22e58e041d"},
     {file = "html5lib-1.1.tar.gz", hash = "sha256:b2e5b40261e20f354d198eae92afc10d750afb487ed5e50f9c4eaf07c184146f"},
+]
+ibpy2 = [
+    {file = "IbPy2-0.8.0.tar.gz", hash = "sha256:f0f401734bfa2573f9f5bae212ce8d2a48b6779bd153dd11e7603a34f4fcfd7c"},
+]
+ibpythonic = [
+    {file = "ibpythonic-0.1.6-py3-none-any.whl", hash = "sha256:4481041fe15b62f247745465d12003ac0be6f64469e0016b82ba879e79f97c31"},
+    {file = "ibpythonic-0.1.6.tar.gz", hash = "sha256:f97054e444f8f9cc79610184994215edbddd6c93b22a02785d96e87e205bbee9"},
 ]
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},

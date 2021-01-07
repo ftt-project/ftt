@@ -142,14 +142,17 @@ class Analyze(BaseCommand):
         data = Analyze.PandasData(dataname=self.__dataframe())
         cerebro.adddata(data)
 
-        cerebro.broker.setcash(10000.0)
-
         cerebro.addsizer(bt.sizers.FixedSize, stake=10)
 
-        cerebro.broker.setcommission(commission=0.0)
+        # cerebro.broker.setcommission(commission=0.0)
 
         cerebro.addanalyzer(btanalyzers.SharpeRatio, _name='sharpe')
         cerebro.addanalyzer(bt.analyzers.PyFolio)
+
+        store = bt.stores.ibstore.IBStore(host='127.0.0.1', port=7496, clientId=35)
+        cerebro.broker = store.getbroker()
+        print(store.get_acc_values())
+        # cerebro.broker.setcash(10000.0)
 
         print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
         thestrats = cerebro.run()
