@@ -16,7 +16,7 @@ class History(BaseCommand):
     Loads historic data from yahoo
     """
 
-    def load_all(self, exchange):
+    def load_all(self, exchange, offset=0):
         tickers_query = Ticker.select(Ticker.ticker) \
             .where(Ticker.exchange == exchange) \
             .order_by(Ticker.ticker)
@@ -25,7 +25,6 @@ class History(BaseCommand):
             return
 
         limit = 10
-        offset = 470
         tickers_batch = tickers_query.limit(limit).offset(offset)
         while tickers_batch.count() > 0:
             tickers = [ticker.ticker for ticker in tickers_batch]

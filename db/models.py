@@ -27,12 +27,12 @@ class TickerReturn(configuration.BaseModel):
     ticker = peewee.ForeignKeyField(Ticker, backref='returns')
     datetime = peewee.DateTimeField()
     open = peewee.DecimalField(max_digits=12)
-    high = peewee.DecimalField()
-    low = peewee.DecimalField()
-    close = peewee.DecimalField()
+    high = peewee.DecimalField(max_digits=12)
+    low = peewee.DecimalField(max_digits=12)
+    close = peewee.DecimalField(max_digits=12)
     volume = peewee.IntegerField()
     interval = peewee.CharField()
-    change = peewee.DecimalField()
+    change = peewee.DecimalField(max_digits=12)
     percent_change = peewee.FloatField()
 
     class Meta:
