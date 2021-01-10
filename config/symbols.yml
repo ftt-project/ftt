@@ -8,6 +8,30 @@ track:
   - TMD.TO
   - KEY.TO
 
+# https://etfdb.com/etfs/investment-style/dividend-etfs/#etfs__dividends&sort_name=dividend_yield&sort_order=desc&page=1
+ETF_track:
+  - DNL
+  - SPHQ
+  - VIG
+  - OGIG
+  - PTH
+  - PTF
+  - KBWY
+  - KBWD
+  - TADS
+  - ALTY
+  - SDIV
+  - DIV
+  - NUSI
+  - WBIY
+  # canadian
+  - HEWC
+  - POTX
+  - IPFF
+  - ZCAN
+  - FLCA
+  - BBCA
+
 exchanges_to_scrape:
   - TOR
   - NCM
