@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
 import yaml
+import os
+
 
 @dataclass
 class ScrapeConfig:
@@ -11,7 +13,15 @@ class ScrapeConfig:
 
 
 class Configuration:
-    FILE = "config/symbols.yml"
+    FILE = os.path.join(os.path.dirname(__file__), "../config/symbols.yml")
+
+    def etfs(self) -> list:
+        tickers = set()
+        configuration = self.__read_config()
+        for symbol in configuration["ETFs"]:
+            tickers.add(symbol)
+
+        return tickers
 
     def tickers_to_track(self) -> list:
         """
@@ -20,7 +30,7 @@ class Configuration:
         tickers = set()
         configuration = self.__read_config()
         for symbol in configuration["track"]:
-            tickers.append(symbol)
+            tickers.add(symbol)
 
         return tickers
 

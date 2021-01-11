@@ -1,5 +1,5 @@
 ---
-track:
+Equities:
   - SHOP
   - AAPL
   - AC.TO
@@ -9,28 +9,43 @@ track:
   - KEY.TO
 
 # https://etfdb.com/etfs/investment-style/dividend-etfs/#etfs__dividends&sort_name=dividend_yield&sort_order=desc&page=1
-ETF_track:
-  - DNL
-  - SPHQ
-  - VIG
-  - OGIG
-  - PTH
-  - PTF
-  - KBWY
-  - KBWD
-  - TADS
-  - ALTY
-  - SDIV
-  - DIV
-  - NUSI
-  - WBIY
-  # canadian
-  - HEWC
-  - POTX
-  - IPFF
-  - ZCAN
-  - FLCA
-  - BBCA
+# https://www.etf.com/etfanalytics/etf-finder/
+ETFs:
+  # US
+  - XITK
+  - XSD
+  - SMH
+  - XBI
+  - XRT
+  - FDIS
+  - SIVR
+  - VCR
+  - FDN
+  - JKK
+  - QQQ
+  - VGT
+  - HDEF
+  - CIBR
+  - GQRE
+  - FTC
+  - VLUE
+  - SPY
+  - IWM
+  # US Corp bonds
+  - HYG
+  - LQD
+  # North America
+  - EWC
+  - FXC
+  - PXI
+  - RPV
+  - XMLV
+  # Asia Pacific
+  - VPL
+  - FLJP
+  - EWY
+  # Developed Markets
+  - SCHF
 
 exchanges_to_scrape:
   - TOR
