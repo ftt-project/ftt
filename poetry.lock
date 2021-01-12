@@ -422,6 +422,19 @@ genshi = ["genshi"]
 lxml = ["lxml"]
 
 [[package]]
+name = "ibapi"
+version = "9.76.1"
+description = "Python IB API"
+category = "main"
+optional = false
+python-versions = "*"
+develop = false
+
+[package.source]
+type = "directory"
+url = "pythonclient"
+
+[[package]]
 name = "ibpy2"
 version = "0.8.0"
 description = "IbPy - Interactive Brokers Python API"
@@ -1694,7 +1707,7 @@ requests = ">=2.20"
 [metadata]
 lock-version = "1.1"
 python-versions = "3.8.6"
-content-hash = "37200f978402b93c6d77ce9cde5cf9a9dc498714c59fab42b08fb59f1ea44a63"
+content-hash = "7a37dc80f068f8d10cb6b1299c5e44b7db08afb0e0be1582c6783ea5950dfe3b"
 
 [metadata.files]
 aiohttp = [
@@ -1977,6 +1990,7 @@ html5lib = [
     {file = "html5lib-1.1-py2.py3-none-any.whl", hash = "sha256:0d78f8fde1c230e99fe37986a60526d7049ed4bf8a9fadbad5f00e22e58e041d"},
     {file = "html5lib-1.1.tar.gz", hash = "sha256:b2e5b40261e20f354d198eae92afc10d750afb487ed5e50f9c4eaf07c184146f"},
 ]
+ibapi = []
 ibpy2 = [
     {file = "IbPy2-0.8.0.tar.gz", hash = "sha256:f0f401734bfa2573f9f5bae212ce8d2a48b6779bd153dd11e7603a34f4fcfd7c"},
 ]
