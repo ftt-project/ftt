@@ -20,7 +20,7 @@ class AccountStatus(EClient, EWrapper):
 class Account(BaseCommand):
     def status(self):
         app = AccountStatus()
-        app.connect('127.0.0.1', 7496, 0)
+        app.connect('127.0.0.1', 7497, 0)
         t = threading.Thread(target=app.run)
         t.daemon = True
         t.start()

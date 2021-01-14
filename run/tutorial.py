@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; py-indent-offset:4 -*-
+from datetime import datetime
 
 import fire
 import backtrader as bt
@@ -24,34 +25,39 @@ class St(bt.Strategy):
         if status == data.LIVE:
             self.data_live = True
 
-    def notify_order(self, order):
-        if order.status == order.Completed:
-            buysell = 'BUY ' if order.isbuy() else 'SELL'
-            txt = '{} {}@{}'.format(buysell, order.executed.size,
-                                    order.executed.price)
-            print(txt)
+    # def notify_order(self, order):
+    #     if order.status == order.Completed:
+    #         buysell = 'BUY ' if order.isbuy() else 'SELL'
+    #         txt = '{} {}@{}'.format(buysell, order.executed.size,
+    #                                 order.executed.price)
+    #         print(txt)
 
     bought = 0
     sold = 0
 
     def next(self):
         self.logdata()
-        if not self.data_live:
-            return
+        # if not self.data_live:
+        #     return
 
-        if not self.bought:
-            self.bought = len(self)  # keep entry bar
-            self.buy()
-        elif not self.sold:
-            if len(self) == (self.bought + 3):
-                self.sell()
+        # if not self.bought:
+        #     self.bought = len(self)  # keep entry bar
+        #     print('buy')
+        #     self.buy()
+        # elif not self.sold:
+        #     if len(self) == (self.bought + 3):
+        #         print('sell')
+        #         self.sell()
 
 
 def run(args=None):
     cerebro = bt.Cerebro(stdstats=False)
-    store = bt.stores.IBStore(port=7497)
+    store = bt.stores.IBStore(port=7496, clientId=0)
 
-    data = store.getdata(dataname='TWTR', timeframe=bt.TimeFrame.Ticks)
+    data = store.getdata(dataname='1H3-STK-SGX-SGD', timeframe=bt.TimeFrame.Ticks, compression=5,
+                         fromdate=datetime.strptime('2021-01-13T00:00:00', '%Y-%m-%d' + 'T%H:%M:%S')
+                         )
+
     cerebro.resampledata(data, timeframe=bt.TimeFrame.Seconds, compression=10)
 
     cerebro.broker = store.getbroker()
