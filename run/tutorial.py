@@ -52,9 +52,10 @@ class St(bt.Strategy):
 
 def run(args=None):
     cerebro = bt.Cerebro(stdstats=False)
-    store = bt.stores.IBStore(port=7496, clientId=0)
+    store = bt.stores.IBStore(port=7497, clientId=0)
 
-    data = store.getdata(dataname='1H3-STK-SGX-SGD', timeframe=bt.TimeFrame.Ticks, compression=5,
+    data = store.getdata(dataname='1H3-STK-SGX-SGD', timeframe=bt.TimeFrame.Ticks, #compression=5,
+                         rtbar=True,
                          fromdate=datetime.strptime('2021-01-13T00:00:00', '%Y-%m-%d' + 'T%H:%M:%S')
                          )
 
