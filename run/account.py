@@ -13,16 +13,9 @@ class AccountStatus(EClient, EWrapper):
     def __init__(self):
         EClient.__init__(self, self)
 
-    # request account data:
-    def my_reqAccountSummary(self, reqId:int, groupName:str, tags:str):
-        self.reqAccountSummary(reqId, "All", "TotalCashValue")
-
-
-    # The received data is passed to accountSummary()
     def accountSummary(self, reqId: int, account: str, tag: str, value: str, currency: str):
         super().accountSummary(reqId, account, tag, value, currency)
         print("Acct# Summary. ReqId>:", reqId, "Acct:", account, "Tag: ", tag, "Value:", value, "Currency:", currency)
-        return value  #This is my attempt which doesn't work
 
 class Account(BaseCommand):
     def status(self):
@@ -33,10 +26,7 @@ class Account(BaseCommand):
         t.start()
         time.sleep(1)
 
-        app.my_reqAccountSummary(9001, "All", AccountSummaryTags.AllTags)
-        time.sleep(1)
-        result = app.accountSummary(9001, 'All', AccountSummaryTags.AllTags, '', 'CAD')
-        print(result)
+        app.reqAccountSummary(9001, "All", AccountSummaryTags.AllTags)
 
         time.sleep(2)  # Sleep interval to allow time for incoming price data
         app.disconnect()
