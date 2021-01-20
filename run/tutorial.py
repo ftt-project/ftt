@@ -9,6 +9,8 @@ import backtrader as bt
 class St(bt.Strategy):
     params = (
         ('maperiod', 15),
+        ('pfast', 9),
+        ('pslow', 21)
     )
 
     def __init__(self):
@@ -18,17 +20,21 @@ class St(bt.Strategy):
         self.buyprice = None
         self.buycomm = None
 
+        sma1 = bt.ind.SMA(period=self.p.pfast)
+        sma2 = bt.ind.SMA(period=self.p.pslow)
+        self.crossover = bt.ind.CrossOver(sma1, sma2)
+
         self.sma = bt.indicators.MovingAverageSimple(self.dataclose, period=self.params.maperiod)
 
         # Plotting
-        bt.indicators.ExponentialMovingAverage(self.dataclose, period=25)
-        bt.indicators.WeightedMovingAverage(self.dataclose, period=25,
-                                            subplot=True)
-        bt.indicators.StochasticSlow(self.datas[0])
-        bt.indicators.MACDHisto(self.datas[0])
-        rsi = bt.indicators.RSI(self.datas[0])
-        bt.indicators.SmoothedMovingAverage(rsi, period=10)
-        bt.indicators.ATR(self.datas[0], plot=False)
+        # bt.indicators.ExponentialMovingAverage(self.dataclose, period=25)
+        # bt.indicators.WeightedMovingAverage(self.dataclose, period=25,
+        #                                     subplot=True)
+        # bt.indicators.StochasticSlow(self.datas[0])
+        # bt.indicators.MACDHisto(self.datas[0])
+        # rsi = bt.indicators.RSI(self.datas[0])
+        # bt.indicators.SmoothedMovingAverage(rsi, period=10)
+        # bt.indicators.ATR(self.datas[0], plot=False)
 
     def log(self, txt, dt=None):
         ''' Logging function for this strategy'''
@@ -87,7 +93,26 @@ class St(bt.Strategy):
         self.log('OPERATION PROFIT, GROSS %.2f, NET %.2f' %
                  (trade.pnl, trade.pnlcomm))
 
+    bought = 0
+    sold = 0
+
     def next(self):
+        self.logdata()
+        if not self.data_live:
+            return
+
+        if not self.bought:
+            self.bought = len(self)
+            self.log('BUY CREATE, %.2f' % self.dataclose[0])
+            self.buy()
+            self.sold = 0
+        elif not self.sold:
+            if len(self) == (self.bought + 3):
+                self.log('SELL CREATE, %.2f' % self.dataclose[0])
+                self.sell()
+                self.bought = 0
+        return
+
         self.logdata()
 
         if not self.data_live:
@@ -99,18 +124,13 @@ class St(bt.Strategy):
             return
 
         if not self.position:
-            self.log("No position")
-            if self.dataclose[0] > self.sma[0]:
-                self.log("dataclose[0] > sma[0]: TRUE")
-                if self.dataclose[-1] < self.dataclose[-2]:
-                    self.log('BUY CREATE, %.2f' % self.dataclose[0])
-                    self.order = self.buy()
+            if self.crossover > 0:
+                self.log('BUY CREATE, %.2f' % self.dataclose[0])
+                self.order = self.buy()
             else:
-                self.log("dataclose[0] > sma[0]: FALSE")
+                self.log("crossover < 0")
         else:
-            self.log("Have position")
-            # Already in the market ... we might sell
-            if self.dataclose[0] < self.sma[0]:
+            if self.crossover < 0:
                 self.log('SELL CREATE, %.2f' % self.dataclose[0])
                 self.order = self.sell()
 
@@ -118,18 +138,19 @@ def run(args=None):
     cerebro = bt.Cerebro(stdstats=False)
     store = bt.stores.IBStore(port=7497, clientId=0)
 
-    data = store.getdata(dataname='1H3-STK-SGX-SGD', timeframe=bt.TimeFrame.Ticks, #compression=5,
+    data = store.getdata(dataname='1D3-STK-SGX-SGD', timeframe=bt.TimeFrame.Ticks, #compression=5,
                          rtbar=True,
                          fromdate=datetime.strptime('2021-01-19T00:00:00', '%Y-%m-%d' + 'T%H:%M:%S')
                          )
 
     cerebro.resampledata(data, timeframe=bt.TimeFrame.Seconds, compression=10)
+    cerebro.addsizer(bt.sizers.FixedSize, stake=100)
 
     cerebro.broker = store.getbroker()
 
     cerebro.addstrategy(St)
     cerebro.run()
-    cerebro.plot()
+    # cerebro.plot()
 
 
 if __name__ == "__main__":
