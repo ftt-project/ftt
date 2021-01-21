@@ -11,6 +11,7 @@ from db.configuration import database_connection
 from trade.logger import logger
 
 from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
+from trade.strategies.sma_strategy import SMAStrategy
 
 
 class PandasData(bt.feeds.PandasData):
@@ -64,7 +65,8 @@ def data():
 
 def run():
     cerebro = bt.Cerebro()
-    cerebro.addstrategy(SMACrossoverStrategy, fast=10, slow=30)
+    cerebro.addstrategy(SMACrossoverStrategy, fast=1, slow=5)
+    # cerebro.addstrategy(SMAStrategy)
     cerebro.adddata(data())
     cerebro.addsizer(bt.sizers.FixedSize, stake=10)
     cerebro.broker.setcash(10000.0)
