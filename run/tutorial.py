@@ -96,6 +96,9 @@ class St(bt.Strategy):
     bought = 0
     sold = 0
 
+    # https://medium.com/@danjrod/interactive-brokers-in-python-with-backtrader-23dea376b2fc
+    # multiple datas
+    # https://backtest-rookies.com/2017/08/22/backtrader-multiple-data-feeds-indicators/
     def next(self):
         self.logdata()
         if not self.data_live:
