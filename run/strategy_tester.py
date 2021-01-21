@@ -43,8 +43,8 @@ def load_data():
         TickerReturn.close,
         TickerReturn.volume
     ).where(
-        TickerReturn.ticker == Ticker.get(Ticker.ticker == 'SHOP'),
-        TickerReturn.interval == '1d'
+        TickerReturn.ticker == Ticker.get(Ticker.ticker == 'AAPL'),
+        TickerReturn.interval == '1h'
     ).order_by(TickerReturn.datetime.asc())
 
     dataframe = pd.read_sql(query.sql()[0], database_connection(),
@@ -64,7 +64,7 @@ def data():
 
 def run():
     cerebro = bt.Cerebro()
-    cerebro.addstrategy(SMACrossoverStrategy)
+    cerebro.addstrategy(SMACrossoverStrategy, fast=10, slow=30)
     cerebro.adddata(data())
     cerebro.addsizer(bt.sizers.FixedSize, stake=10)
     cerebro.broker.setcash(10000.0)
