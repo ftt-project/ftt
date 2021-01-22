@@ -7,11 +7,7 @@ import backtrader as bt
 
 
 class St(bt.Strategy):
-    params = (
-        ('maperiod', 15),
-        ('pfast', 9),
-        ('pslow', 21)
-    )
+    params = (("maperiod", 15), ("pfast", 9), ("pslow", 21))
 
     def __init__(self):
         self.dataclose = self.datas[0].close
@@ -24,7 +20,9 @@ class St(bt.Strategy):
         sma2 = bt.ind.SMA(period=self.p.pslow)
         self.crossover = bt.ind.CrossOver(sma1, sma2)
 
-        self.sma = bt.indicators.MovingAverageSimple(self.dataclose, period=self.params.maperiod)
+        self.sma = bt.indicators.MovingAverageSimple(
+            self.dataclose, period=self.params.maperiod
+        )
 
         # Plotting
         # bt.indicators.ExponentialMovingAverage(self.dataclose, period=25)
@@ -37,25 +35,25 @@ class St(bt.Strategy):
         # bt.indicators.ATR(self.datas[0], plot=False)
 
     def log(self, txt, dt=None):
-        ''' Logging function for this strategy'''
+        """ Logging function for this strategy"""
         dt = dt or self.datas[0].datetime.date(0)
-        print('%s, %s' % (dt.isoformat(), txt))
+        print("%s, %s" % (dt.isoformat(), txt))
 
     def logdata(self):
         txt = []
-        txt.append('{}'.format(len(self)))
-        txt.append('{}'.format(self.data.datetime.datetime(0).isoformat()))
-        txt.append('{:.2f}'.format(self.data.open[0]))
-        txt.append('{:.2f}'.format(self.data.high[0]))
-        txt.append('{:.2f}'.format(self.data.low[0]))
-        txt.append('{:.2f}'.format(self.data.close[0]))
-        txt.append('{:.2f}'.format(self.data.volume[0]))
-        print(','.join(txt))
+        txt.append("{}".format(len(self)))
+        txt.append("{}".format(self.data.datetime.datetime(0).isoformat()))
+        txt.append("{:.2f}".format(self.data.open[0]))
+        txt.append("{:.2f}".format(self.data.high[0]))
+        txt.append("{:.2f}".format(self.data.low[0]))
+        txt.append("{:.2f}".format(self.data.close[0]))
+        txt.append("{:.2f}".format(self.data.volume[0]))
+        print(",".join(txt))
 
     data_live = False
 
     def notify_data(self, data, status, *args, **kwargs):
-        print('*' * 5, 'DATA NOTIF:', data._getstatusname(status), *args)
+        print("*" * 5, "DATA NOTIF:", data._getstatusname(status), *args)
         if status == data.LIVE:
             self.data_live = True
 
@@ -66,23 +64,22 @@ class St(bt.Strategy):
         if order.status in [order.Completed]:
             if order.isbuy():
                 self.log(
-                    'BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
-                    (order.executed.price,
-                     order.executed.value,
-                     order.executed.comm))
+                    "BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f"
+                    % (order.executed.price, order.executed.value, order.executed.comm)
+                )
 
                 self.buyprice = order.executed.price
                 self.buycomm = order.executed.comm
             else:  # Sell
-                self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
-                         (order.executed.price,
-                          order.executed.value,
-                          order.executed.comm))
+                self.log(
+                    "SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f"
+                    % (order.executed.price, order.executed.value, order.executed.comm)
+                )
 
             self.bar_executed = len(self)
 
         elif order.status in [order.Canceled, order.Margin, order.Rejected]:
-            self.log('Order Canceled/Margin/Rejected')
+            self.log("Order Canceled/Margin/Rejected")
 
         self.order = None
 
@@ -90,8 +87,7 @@ class St(bt.Strategy):
         if not trade.isclosed:
             return
 
-        self.log('OPERATION PROFIT, GROSS %.2f, NET %.2f' %
-                 (trade.pnl, trade.pnlcomm))
+        self.log("OPERATION PROFIT, GROSS %.2f, NET %.2f" % (trade.pnl, trade.pnlcomm))
 
     bought = 0
     sold = 0
@@ -106,12 +102,12 @@ class St(bt.Strategy):
 
         if not self.bought:
             self.bought = len(self)
-            self.log('BUY CREATE, %.2f' % self.dataclose[0])
+            self.log("BUY CREATE, %.2f" % self.dataclose[0])
             self.buy()
             self.sold = 0
         elif not self.sold:
             if len(self) == (self.bought + 3):
-                self.log('SELL CREATE, %.2f' % self.dataclose[0])
+                self.log("SELL CREATE, %.2f" % self.dataclose[0])
                 self.sell()
                 self.bought = 0
         return
@@ -119,32 +115,35 @@ class St(bt.Strategy):
         self.logdata()
 
         if not self.data_live:
-            print('Not live')
+            print("Not live")
             return
 
         if self.order:
-            print('Order exists')
+            print("Order exists")
             return
 
         if not self.position:
             if self.crossover > 0:
-                self.log('BUY CREATE, %.2f' % self.dataclose[0])
+                self.log("BUY CREATE, %.2f" % self.dataclose[0])
                 self.order = self.buy()
             else:
                 self.log("crossover < 0")
         else:
             if self.crossover < 0:
-                self.log('SELL CREATE, %.2f' % self.dataclose[0])
+                self.log("SELL CREATE, %.2f" % self.dataclose[0])
                 self.order = self.sell()
+
 
 def run(args=None):
     cerebro = bt.Cerebro(stdstats=False)
     store = bt.stores.IBStore(port=7497, clientId=0)
 
-    data = store.getdata(dataname='1D3-STK-SGX-SGD', timeframe=bt.TimeFrame.Ticks, #compression=5,
-                         rtbar=True,
-                         fromdate=datetime.strptime('2021-01-19T00:00:00', '%Y-%m-%d' + 'T%H:%M:%S')
-                         )
+    data = store.getdata(
+        dataname="1D3-STK-SGX-SGD",
+        timeframe=bt.TimeFrame.Ticks,  # compression=5,
+        rtbar=True,
+        fromdate=datetime.strptime("2021-01-19T00:00:00", "%Y-%m-%d" + "T%H:%M:%S"),
+    )
 
     cerebro.resampledata(data, timeframe=bt.TimeFrame.Seconds, compression=10)
     cerebro.addsizer(bt.sizers.FixedSize, stake=100)

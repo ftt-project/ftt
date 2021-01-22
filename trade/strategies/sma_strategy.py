@@ -3,9 +3,7 @@ from trade.logger import logger
 
 
 class SMAStrategy(bt.Strategy):
-    params = (
-        ('period', 10),
-    )
+    params = (("period", 10),)
 
     def __init__(self):
         self.dataclose = self.datas[0].close
@@ -17,8 +15,9 @@ class SMAStrategy(bt.Strategy):
         )
 
     def buy_sig(self):
-        return (self.dataclose[0] > self.sma[0] and
-                self.dataclose[-1] < self.dataclose[-2])
+        return (
+            self.dataclose[0] > self.sma[0] and self.dataclose[-1] < self.dataclose[-2]
+        )
 
     def sell_sig(self):
         return self.dataclose[0] < self.sma[0]
@@ -30,20 +29,19 @@ class SMAStrategy(bt.Strategy):
         if order.status in [order.Completed]:
             if order.isbuy():
                 logger.info(
-                    'BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
-                    (order.executed.price,
-                     order.executed.value,
-                     order.executed.comm))
+                    "BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f"
+                    % (order.executed.price, order.executed.value, order.executed.comm)
+                )
 
             else:
-                logger.info('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
-                         (order.executed.price,
-                          order.executed.value,
-                          order.executed.comm))
+                logger.info(
+                    "SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f"
+                    % (order.executed.price, order.executed.value, order.executed.comm)
+                )
             self.bar_executed = len(self)
 
         elif order.status in [order.Canceled, order.Margin, order.Rejected]:
-            logger.info('Order Canceled/Margin/Rejected')
+            logger.info("Order Canceled/Margin/Rejected")
 
         self.order = None
 
@@ -53,11 +51,9 @@ class SMAStrategy(bt.Strategy):
 
         if len(self.position):
             if self.sell_sig():
-                logger.info('SELL CREATE, %.2f' % self.dataclose[0])
+                logger.info("SELL CREATE, %.2f" % self.dataclose[0])
                 self.order = self.sell()
         else:
             if self.buy_sig():
-                logger.info('BUY CREATE, %.2f' % self.dataclose[0])
+                logger.info("BUY CREATE, %.2f" % self.dataclose[0])
                 self.order = self.buy()
-
-

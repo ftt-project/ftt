@@ -78,12 +78,12 @@ class Tickers(BaseCommand):
     def find_ticker(self, ticker):
         ticker = ticker.strip()
 
-        db_request = Ticker.select().where(
-            Ticker.ticker == ticker
-        )
+        db_request = Ticker.select().where(Ticker.ticker == ticker)
         logger.debug(f"Request: {db_request}")
         if db_request.count() > 0:
-            logger.warning(f"Possible duplication of <{ticker}> in <{db_request[0]} {db_request[0].ticker}:{db_request[0].exchange}>")
+            logger.warning(
+                f"Possible duplication of <{ticker}> in <{db_request[0]} {db_request[0].ticker}:{db_request[0].exchange}>"
+            )
 
         info = TickersScraper.load(ticker)
 
@@ -97,8 +97,8 @@ class Tickers(BaseCommand):
                 "type_display": info["quoteType"],
                 "industry": info["industry"] if "industry" in info else None,
                 "currency": info["currency"],
-                "updated_at": datetime.now()
-            }
+                "updated_at": datetime.now(),
+            },
         )
         if created:
             logger.info(f"Ticker loaded: <{inst}>")
@@ -141,8 +141,7 @@ class Tickers(BaseCommand):
                         )
                         continue
 
-                    logger.info(
-                        f"Missing ticker detected: <{ticker}> in <{exchange}>")
+                    logger.info(f"Missing ticker detected: <{ticker}> in <{exchange}>")
 
                     info = TickersScraper.load(ticker)
                     if not info:
@@ -156,19 +155,22 @@ class Tickers(BaseCommand):
                         exchange=info["exchange"],
                         defaults={
                             "company_name": info["longName"],
-                            "exchange_name": self.__normalize_exchange_name(info["exchange"]),
+                            "exchange_name": self.__normalize_exchange_name(
+                                info["exchange"]
+                            ),
                             "type": "?",
                             "type_display": info["quoteType"],
-                            "industry": info["industry"] if "industry" in info else None,
+                            "industry": info["industry"]
+                            if "industry" in info
+                            else None,
                             "currency": info["currency"],
-                            "updated_at": datetime.now()
-                        }
+                            "updated_at": datetime.now(),
+                        },
                     )
                     logger.info(f"Ticker loaded: <{ticker}> in <{exchange}>")
                     if created:
                         created_num += 1
-        logger.info(
-            f"Created {created_num} new ticker records")
+        logger.info(f"Created {created_num} new ticker records")
         chime.success()
 
     def __normalize_ticker(self, ticker, exchange):

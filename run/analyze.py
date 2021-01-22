@@ -17,32 +17,35 @@ class Analyze(BaseCommand):
     class PandasData(bt.feeds.PandasData):
         linesoverride = False  # discard usual OHLC structure
         # datetime must be present and last
-        lines = ('close',)
+        lines = ("close",)
         datafields = [
-            'datetime', 'open', 'high', 'low', 'close', 'volume',
+            "datetime",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
         ]
         params = (
-            ('datetime', None),
-            ('open', 'open'),
-            ('high', 'high'),
-            ('low', 'low'),
-            ('close', 'close'),
-            ('volume', 'volume'),
-            ('adj_close', None),
-            ('pct', 'pct'),
-            ('pct2', 'pct2'),
-            ('pct3', 'pct3'),
+            ("datetime", None),
+            ("open", "open"),
+            ("high", "high"),
+            ("low", "low"),
+            ("close", "close"),
+            ("volume", "volume"),
+            ("adj_close", None),
+            ("pct", "pct"),
+            ("pct2", "pct2"),
+            ("pct3", "pct3"),
         )
 
     class TestStrategy(bt.Strategy):
-        params = (
-            ('maperiod', 15),
-        )
+        params = (("maperiod", 15),)
 
         def log(self, txt, dt=None):
-            ''' Logging function for this strategy'''
+            """ Logging function for this strategy"""
             dt = dt or self.datas[0].datetime.date(0)
-            print('%s, %s' % (dt.isoformat(), txt))
+            print("%s, %s" % (dt.isoformat(), txt))
 
         def __init__(self):
             # Keep a reference to the "close" line in the data[0] dataseries
@@ -53,12 +56,13 @@ class Analyze(BaseCommand):
             self.buycomm = None
 
             # breakpoint()
-            self.sma = bt.indicators.MovingAverageSimple(self.dataclose, period=self.params.maperiod)
+            self.sma = bt.indicators.MovingAverageSimple(
+                self.dataclose, period=self.params.maperiod
+            )
 
             # Indicators for the plotting show
             bt.indicators.ExponentialMovingAverage(self.dataclose, period=25)
-            bt.indicators.WeightedMovingAverage(self.dataclose, period=25,
-                                                subplot=True)
+            bt.indicators.WeightedMovingAverage(self.dataclose, period=25, subplot=True)
             bt.indicators.StochasticSlow(self.datas[0])
             bt.indicators.MACDHisto(self.datas[0])
             rsi = bt.indicators.RSI(self.datas[0])
@@ -75,23 +79,30 @@ class Analyze(BaseCommand):
             if order.status in [order.Completed]:
                 if order.isbuy():
                     self.log(
-                        'BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
-                        (order.executed.price,
-                         order.executed.value,
-                         order.executed.comm))
+                        "BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f"
+                        % (
+                            order.executed.price,
+                            order.executed.value,
+                            order.executed.comm,
+                        )
+                    )
 
                     self.buyprice = order.executed.price
                     self.buycomm = order.executed.comm
                 else:  # Sell
-                    self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
-                             (order.executed.price,
-                              order.executed.value,
-                              order.executed.comm))
+                    self.log(
+                        "SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f"
+                        % (
+                            order.executed.price,
+                            order.executed.value,
+                            order.executed.comm,
+                        )
+                    )
 
                 self.bar_executed = len(self)
 
             elif order.status in [order.Canceled, order.Margin, order.Rejected]:
-                self.log('Order Canceled/Margin/Rejected')
+                self.log("Order Canceled/Margin/Rejected")
 
             self.order = None
 
@@ -99,12 +110,13 @@ class Analyze(BaseCommand):
             if not trade.isclosed:
                 return
 
-            self.log('OPERATION PROFIT, GROSS %.2f, NET %.2f' %
-                     (trade.pnl, trade.pnlcomm))
+            self.log(
+                "OPERATION PROFIT, GROSS %.2f, NET %.2f" % (trade.pnl, trade.pnlcomm)
+            )
 
         def next(self):
             # Simply log the closing price of the series from the reference
-            self.log('Close, %.2f' % self.dataclose[0])
+            self.log("Close, %.2f" % self.dataclose[0])
 
             # Check if an order is pending ... if yes, we cannot send a 2nd one
             if self.order:
@@ -121,7 +133,7 @@ class Analyze(BaseCommand):
                         # previous close less than the previous close
 
                         # BUY, BUY, BUY!!! (with default parameters)
-                        self.log('BUY CREATE, %.2f' % self.dataclose[0])
+                        self.log("BUY CREATE, %.2f" % self.dataclose[0])
 
                         # Keep track of the created order to avoid a 2nd order
                         self.order = self.buy()
@@ -131,7 +143,7 @@ class Analyze(BaseCommand):
                 # Already in the market ... we might sell
                 if self.dataclose[0] < self.sma[0]:
                     # SELL, SELL, SELL!!! (with all possible default parameters)
-                    self.log('SELL CREATE, %.2f' % self.dataclose[0])
+                    self.log("SELL CREATE, %.2f" % self.dataclose[0])
 
                     # Keep track of the created order to avoid a 2nd order
                     self.order = self.sell()
@@ -144,51 +156,57 @@ class Analyze(BaseCommand):
 
         cerebro.addsizer(bt.sizers.FixedSize, stake=10)
 
-        cerebro.addanalyzer(btanalyzers.SharpeRatio, _name='sharpe')
+        cerebro.addanalyzer(btanalyzers.SharpeRatio, _name="sharpe")
         cerebro.addanalyzer(bt.analyzers.PyFolio)
 
         cerebro.broker.setcash(10000.0)
 
-        print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
+        print("Starting Portfolio Value: %.2f" % cerebro.broker.getvalue())
         thestrats = cerebro.run()
-        print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
+        print("Final Portfolio Value: %.2f" % cerebro.broker.getvalue())
         sharpe = thestrats[0].analyzers.sharpe
-        print('Sharpe Ratio:', sharpe.get_analysis())
+        print("Sharpe Ratio:", sharpe.get_analysis())
 
         pyfolio = thestrats[0].analyzers.pyfolio
         returns, positions, transactions, gross_lev = pyfolio.get_pf_items()
-        print('Pyfolio returns:')
+        print("Pyfolio returns:")
         print(returns)
-        print('Pyfolio positions:')
+        print("Pyfolio positions:")
         print(positions)
-        print('Pyfolio transactions:')
+        print("Pyfolio transactions:")
         print(transactions)
         cerebro.plot()
 
     def __dataframe(self):
-        query = TickerReturn.select(
-            TickerReturn.datetime,
-            TickerReturn.open,
-            TickerReturn.high,
-            TickerReturn.low,
-            TickerReturn.close,
-            TickerReturn.volume
-        ).where(
-            TickerReturn.ticker == Ticker.get(Ticker.ticker == 'SHOP'),
-            TickerReturn.interval == '1d'
-        ).order_by(TickerReturn.datetime.asc())
+        query = (
+            TickerReturn.select(
+                TickerReturn.datetime,
+                TickerReturn.open,
+                TickerReturn.high,
+                TickerReturn.low,
+                TickerReturn.close,
+                TickerReturn.volume,
+            )
+            .where(
+                TickerReturn.ticker == Ticker.get(Ticker.ticker == "SHOP"),
+                TickerReturn.interval == "1d",
+            )
+            .order_by(TickerReturn.datetime.asc())
+        )
 
         # cur = database_connection().cursor()
         # raw_query = cur.mogrify(*query.sql())
 
-        dataframe = pd.read_sql(query.sql()[0], database_connection(),
-                                params=query.sql()[1],
-                                # parse_dates='datetime',
-                                index_col='datetime'
-                                )
-        dataframe['pct'] = dataframe.close.pct_change(1)
-        dataframe['pct2'] = dataframe.close.pct_change(5)
-        dataframe['pct3'] = dataframe.close.pct_change(10)
+        dataframe = pd.read_sql(
+            query.sql()[0],
+            database_connection(),
+            params=query.sql()[1],
+            # parse_dates='datetime',
+            index_col="datetime",
+        )
+        dataframe["pct"] = dataframe.close.pct_change(1)
+        dataframe["pct2"] = dataframe.close.pct_change(5)
+        dataframe["pct3"] = dataframe.close.pct_change(10)
         return dataframe
 
 

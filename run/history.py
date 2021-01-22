@@ -17,9 +17,11 @@ class History(BaseCommand):
     """
 
     def load_all(self, exchange, offset=0):
-        tickers_query = Ticker.select(Ticker.ticker) \
-            .where(Ticker.exchange == exchange) \
+        tickers_query = (
+            Ticker.select(Ticker.ticker)
+            .where(Ticker.exchange == exchange)
             .order_by(Ticker.ticker)
+        )
         if tickers_query.count() == 0:
             self.log_warning(f"No tickers found for <{exchange}>")
             return
@@ -31,7 +33,8 @@ class History(BaseCommand):
 
             inserted_num = self.load(tickers)
             self.log_info(
-                f"Processed <{len(tickers)}> tickers. Loaded {inserted_num} historic records. Offset <{offset}>. The last is {tickers[-1]}")
+                f"Processed <{len(tickers)}> tickers. Loaded {inserted_num} historic records. Offset <{offset}>. The last is {tickers[-1]}"
+            )
 
             offset += limit
             tickers_batch = tickers_query.limit(limit).offset(offset)
@@ -48,40 +51,46 @@ class History(BaseCommand):
             elif isinstance(ticker, list):
                 config.tickers = ticker
             else:
-                raise ValueError(f"Unknown type {type(ticker)}. Must be `str` or `list`")
+                raise ValueError(
+                    f"Unknown type {type(ticker)}. Must be `str` or `list`"
+                )
 
         data_frame = HistoryScraper.load(config)
         if len(config.tickers) == 1:
-            grouped_by_ticker = {
-                config.tickers[0]: data_frame
-            }
+            grouped_by_ticker = {config.tickers[0]: data_frame}
         else:
-            grouped_by_ticker = {idx: data_frame.xs(idx, level=1, axis=1) for idx, gp in
-                                 data_frame.groupby(level=1, axis=1)}
+            grouped_by_ticker = {
+                idx: data_frame.xs(idx, level=1, axis=1)
+                for idx, gp in data_frame.groupby(level=1, axis=1)
+            }
 
         created_num = 0
         for ticker_name in grouped_by_ticker.keys():
             self.log_info(f"Loading <{ticker_name}> ...")
             ticker_data = grouped_by_ticker[ticker_name]
-            ticker_data = ticker_data[ticker_data['Close'].notnull()]
+            ticker_data = ticker_data[ticker_data["Close"].notnull()]
             before = TickerReturn.select().count()
             for index, row in ticker_data.iterrows():
-                ins = TickerReturn.insert(
-                    ticker=Ticker.get(ticker=ticker_name),
-                    datetime=index,
-                    interval=config.interval,
-                    open=row["Open"],
-                    high=row["High"],
-                    low=row["Low"],
-                    close=row["Close"],
-                    volume=row["Volume"],
-                    change=row["Close"] - row["Open"],
-                    percent_change=round((row["Close"] - row["Open"]) / row["Close"] * 100, 5)
-                ) \
-                    .on_conflict_ignore() \
+                ins = (
+                    TickerReturn.insert(
+                        ticker=Ticker.get(ticker=ticker_name),
+                        datetime=index,
+                        interval=config.interval,
+                        open=row["Open"],
+                        high=row["High"],
+                        low=row["Low"],
+                        close=row["Close"],
+                        volume=row["Volume"],
+                        change=row["Close"] - row["Open"],
+                        percent_change=round(
+                            (row["Close"] - row["Open"]) / row["Close"] * 100, 5
+                        ),
+                    )
+                    .on_conflict_ignore()
                     .execute()
+                )
             after = TickerReturn.select().count()
-            created_num += (after - before)
+            created_num += after - before
             self.log_info(f"Loaded <{ticker_name}> history data")
 
         logger.info(

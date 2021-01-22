@@ -30,4 +30,3 @@ class BaseCommand(ABC):
         """
         logger.info(message)
         chime.success()
-
