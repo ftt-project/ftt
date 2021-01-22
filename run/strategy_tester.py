@@ -9,6 +9,7 @@ import pandas as pd
 from db.models import TickerReturn, Ticker
 from db.configuration import database_connection
 from trade.logger import logger
+from trade.strategies.bollinger_strategy import BollingerStrategy
 
 from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
 from trade.strategies.sma_strategy import SMAStrategy
@@ -65,8 +66,9 @@ def data():
 
 def run():
     cerebro = bt.Cerebro()
-    cerebro.addstrategy(SMACrossoverStrategy, fast=1, slow=5)
+    # cerebro.addstrategy(SMACrossoverStrategy, fast=1, slow=5)
     # cerebro.addstrategy(SMAStrategy)
+    cerebro.addstrategy(BollingerStrategy)
     cerebro.adddata(data())
     cerebro.addsizer(bt.sizers.FixedSize, stake=10)
     cerebro.broker.setcash(10000.0)
