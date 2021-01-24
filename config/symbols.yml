@@ -77,9 +77,9 @@ scrape:
     - DASH
     - PFE
     - XUU.TO
-  interval_start: 2020-01-01
-  interval_end: 2021-01-21
-  interval: 1h
+  interval_start: 2021-01-15
+  interval_end: 2021-01-22
+  interval: 1m
 
 portfolio:
   ZQQ.TO:

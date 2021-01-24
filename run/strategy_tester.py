@@ -1,94 +1,58 @@
 #!/usr/bin/env python
-from datetime import datetime
 
 import fire
 import backtrader as bt
 import backtrader.analyzers as btanalyzers
-import pandas as pd
 
-from db.models import TickerReturn, Ticker
-from db.configuration import database_connection
+from trade.history_loader import HistoryLoader
 from trade.logger import logger
 from trade.strategies.bollinger_strategy import BollingerStrategy
-
+from trade.strategies.macd_strategy import MACDStrategy
 from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
 from trade.strategies.sma_strategy import SMAStrategy
 
 
-class PandasData(bt.feeds.PandasData):
-    linesoverride = False  # discard usual OHLC structure
-    # datetime must be present and last
-    lines = ("close",)
-    datafields = [
-        "datetime",
-        "open",
-        "high",
-        "low",
-        "close",
-        "volume",
-    ]
-    params = (
-        ("datetime", None),
-        ("open", "open"),
-        ("high", "high"),
-        ("low", "low"),
-        ("close", "close"),
-        ("volume", "volume"),
-        ("adj_close", None),
-        ("pct", "pct"),
-        ("pct2", "pct2"),
-        ("pct3", "pct3"),
-    )
-
-
-def load_data():
-    query = (
-        TickerReturn.select(
-            TickerReturn.datetime,
-            TickerReturn.open,
-            TickerReturn.high,
-            TickerReturn.low,
-            TickerReturn.close,
-            TickerReturn.volume,
-        )
-        .where(
-            TickerReturn.ticker == Ticker.get(Ticker.ticker == "AAPL"),
-            TickerReturn.interval == "1h",
-        )
-        .order_by(TickerReturn.datetime.asc())
-    )
-
-    dataframe = pd.read_sql(
-        query.sql()[0],
-        database_connection(),
-        params=query.sql()[1],
-        # parse_dates='datetime',
-        index_col="datetime",
-    )
-    dataframe["pct"] = dataframe.close.pct_change(1)
-    dataframe["pct2"] = dataframe.close.pct_change(5)
-    dataframe["pct3"] = dataframe.close.pct_change(10)
-    return dataframe
-
-
-def data():
-    return PandasData(dataname=load_data())
-
-
 def run():
+    data = HistoryLoader.load('KEY', interval="1m")
+
     cerebro = bt.Cerebro()
-    # cerebro.addstrategy(SMACrossoverStrategy, fast=1, slow=5)
+    # cerebro.addstrategy(SMACrossoverStrategy, fast=5, slow=50)
     # cerebro.addstrategy(SMAStrategy)
-    cerebro.addstrategy(BollingerStrategy)
-    cerebro.adddata(data())
+    # cerebro.addstrategy(BollingerStrategy)
+    cerebro.addstrategy(MACDStrategy, atrdist=4.0)
+
+    cerebro.adddata(data)
     cerebro.addsizer(bt.sizers.FixedSize, stake=10)
     cerebro.broker.setcash(10000.0)
 
     cerebro.addanalyzer(btanalyzers.SharpeRatio, _name="sharpe")
     cerebro.addanalyzer(bt.analyzers.PyFolio)
 
+    # Add TimeReturn Analyzers for self and the benchmark data
+    cerebro.addanalyzer(bt.analyzers.TimeReturn, _name='alltime_roi',
+                        timeframe=bt.TimeFrame.NoTimeFrame)
+
+    cerebro.addanalyzer(bt.analyzers.TimeReturn, data=data, _name='benchmark',
+                        timeframe=bt.TimeFrame.NoTimeFrame)
+
+    # Add TimeReturn Analyzers fot the annuyl returns
+    cerebro.addanalyzer(bt.analyzers.TimeReturn, timeframe=bt.TimeFrame.Years)
+    # Add a SharpeRatio
+    cerebro.addanalyzer(bt.analyzers.SharpeRatio, timeframe=bt.TimeFrame.Years,
+                        riskfreerate=0.1)
+
+    # Add SQN to qualify the trades
+    cerebro.addanalyzer(bt.analyzers.SQN)
+    cerebro.addobserver(bt.observers.DrawDown)  # visualize the drawdown evol
+
+
     logger.info("Starting Portfolio Value: %.2f" % cerebro.broker.getvalue())
     thestrats = cerebro.run()
+
+    # st0 = thestrats[0]
+    # for alyzer in st0.analyzers:
+    #     alyzer.print()
+
     logger.info("Final Portfolio Value: %.2f" % cerebro.broker.getvalue())
     sharpe = thestrats[0].analyzers.sharpe
     logger.info(f"Sharpe Ratio: {sharpe.get_analysis()}")
