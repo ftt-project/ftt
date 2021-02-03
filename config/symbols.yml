@@ -54,32 +54,41 @@ exchanges_to_scrape:
 
 scrape:
   tickers:
-    - AAPL
-    - SHOP
-    - SHOP.TO
-    - AC.TO
-    - ZQQ.TO
-    - TMD.TO
+    - T.TO
+    - BB
+    - ATD-B.TO
+    - REAL.TO
+    - QTRH.TO
+    - DRM.TO
+    - MX.TO
     - KEY.TO
-    - QQQ
-    - MU
-    - PHM
-    - MDYG
-    - VNQI
-    - ENB
-    - IBKR
-    - MSFT
-    - SPY
-    - TSLA
-    - BABA
-    - DCBO.TO
-    - VRE.TO
-    - DASH
-    - PFE
-    - XUU.TO
+    - FTT.TO
+    - BAM-A.TO
+    - BYD.TO
+    - L
+    - ADSK
+    - FSLY
+    - ANET
+    - ASML
+    - BERY
+    - BWA
+    - SCHW
+    - FLGT
+    - WAL
+    - TWTR
+    - SHOP
+    - ALS.TO
+    - NWH-UN.TO
+    - WSO
+    - FB
+    - SQ
+    - UPWK
+    - SWKS
+    - AAPL
+    - AMZN
   interval_start: 2021-01-15
-  interval_end: 2021-01-22
-  interval: 1m
+  interval_end: 2021-02-03
+  interval: 1d
 
 portfolio:
   ZQQ.TO:
