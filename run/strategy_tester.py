@@ -13,13 +13,13 @@ from trade.strategies.sma_strategy import SMAStrategy
 
 
 def run():
-    data = HistoryLoader.load('KEY', interval="1m")
+    data = HistoryLoader.load('KEY', interval="1d")
 
     cerebro = bt.Cerebro()
     # cerebro.addstrategy(SMACrossoverStrategy, fast=5, slow=50)
     # cerebro.addstrategy(SMAStrategy)
-    # cerebro.addstrategy(BollingerStrategy)
-    cerebro.addstrategy(MACDStrategy, atrdist=4.0)
+    cerebro.addstrategy(BollingerStrategy)
+    # cerebro.addstrategy(MACDStrategy, atrdist=3.0)
 
     cerebro.adddata(data)
     cerebro.addsizer(bt.sizers.FixedSize, stake=10)
@@ -56,6 +56,9 @@ def run():
     logger.info("Final Portfolio Value: %.2f" % cerebro.broker.getvalue())
     sharpe = thestrats[0].analyzers.sharpe
     logger.info(f"Sharpe Ratio: {sharpe.get_analysis()}")
+
+    sqn = thestrats[0].analyzers.sqn
+    logger.info(f"SQN: {sqn.get_analysis()}")
 
     pyfolio = thestrats[0].analyzers.pyfolio
     returns, positions, transactions, gross_lev = pyfolio.get_pf_items()

@@ -26,8 +26,8 @@ class MACDStrategy(bt.Strategy):
     """
     params = (
         # Standard MACD Parameters
-        ('macd1', 12),
-        ('macd2', 26),
+        ('macd1', 6),
+        ('macd2', 13),
         ('macdsig', 9),
         ('atrperiod', 14),  # ATR Period (standard)
         ('atrdist', 3.0),  # ATR distance for stop price
@@ -79,6 +79,14 @@ class MACDStrategy(bt.Strategy):
 
         if not order.alive():
             self.order = None
+
+    def notify_trade(self, trade):
+        if not trade.isclosed:
+            return
+
+        logger.info(
+            "OPERATION PROFIT, GROSS %.2f, NET %.2f" % (trade.pnl, trade.pnlcomm)
+        )
 
     def next(self):
         if self.order:
