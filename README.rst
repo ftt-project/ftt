@@ -6,6 +6,12 @@ Installation
 
 .. code:: bash
 
+    pip install --upgrade pip
+    pip install numpy
+    pip install qdldl
+    pip install osqp
+    pip install cvxpy
+    pip install cvxopt
     poetry install
 
 Download all tickers
