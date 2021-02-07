@@ -35,3 +35,10 @@ class HistoryLoader:
         dataframe["pct3"] = dataframe.close.pct_change(10)
 
         return PandasData(dataname=dataframe)
+
+    @staticmethod
+    def load_multiple(tickers, interval):
+        collection = {}
+        for ticker in tickers:
+            collection[ticker] = HistoryLoader.load(ticker, interval)
+        return collection
