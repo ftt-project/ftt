@@ -14,6 +14,12 @@ Docker version
    docker build --tag trade:v[x] .
    docker run --rm -it --network host -v "$PWD:/usr/src/app" trade:v[x] run/account.py status
 
+Create tables
+
+.. code:: bash
+    docker-compose up
+    docker-compose run trade python ./bin/db.py create
+
 Plain code version
 
 .. code:: bash
