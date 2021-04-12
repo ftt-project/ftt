@@ -8,6 +8,14 @@ I want to have a passive income based on investing.
 Installation
 ------------
 
+Docker version
+
+.. code:: bash
+   docker build --tag trade:v[x] .
+   docker run --rm -it --network host -v "$PWD:/usr/src/app" trade:v[x] run/account.py status
+
+Plain code version
+
 .. code:: bash
 
     pip install --upgrade pip

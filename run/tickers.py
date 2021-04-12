@@ -13,7 +13,7 @@ import pickle
 from scraper.tickers_scraper import TickersScraper
 
 from db.models import Ticker
-import db.configuration as configuration
+import trade.db.setup as configuration
 import db.setup as dbsetup
 
 chime.theme("big-sur")

@@ -1,8 +1,6 @@
 import chime
 from abc import ABC
 
-import db.configuration as configuration
-import db.setup as dbsetup
 from trade.logger import logger
 
 

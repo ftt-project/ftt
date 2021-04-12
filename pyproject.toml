@@ -5,7 +5,7 @@ description = ""
 authors = ["Artem Melnykov <melnykov.artem.v@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "3.9.1"
+python = "3.9.2"
 yfinance = "^0.1.54"
 alpha_vantage = "^2.2.0"
 pandas = "^1.0.4"
@@ -41,6 +41,7 @@ ibapi = {path = "pythonclient"}
 flake8 = "^3.8.3"
 black = "^19.10b0"
 pylint = "^2.6.0"
+pytest = "^6.2.3"
 
 [build-system]
 requires = ["poetry>=0.12"]

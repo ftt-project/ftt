@@ -1,16 +1,12 @@
 import fire
 import backtrader as bt
-import backtrader.feeds as btfeeds
 import backtrader.analyzers as btanalyzers
 import pandas as pd
-import pyfolio as pf
 import pandas_datareader
-from peewee import Value, SQL
 
 from db.models import TickerReturn, Ticker
 from trade.base_command import BaseCommand
-from db.configuration import database_connection
-from trade.logger import logger
+from trade.db.setup import database_connection
 
 
 class Analyze(BaseCommand):

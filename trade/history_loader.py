@@ -1,5 +1,6 @@
-from db.configuration import database_connection
-from db.models import TickerReturn, Ticker
+from trade.db.setup import database_connection
+
+from trade.db.ticker_return import TickerReturn
 from trade.pandas_data import PandasData
 
 import pandas as pd
