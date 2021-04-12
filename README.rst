@@ -54,3 +54,7 @@ Mar 28
 - [ ] Dockerize app
   - Jupyter image
   - Application image
+
+Apr 11
+^^^^^^
+- [ ] Docker composer with PG

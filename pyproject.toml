@@ -4,6 +4,9 @@ version = "0.1.0"
 description = ""
 authors = ["Artem Melnykov <melnykov.artem.v@gmail.com>"]
 
+[tool.poetry.script]
+test = ""
+
 [tool.poetry.dependencies]
 python = "3.9.2"
 yfinance = "^0.1.54"
