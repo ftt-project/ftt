@@ -1,5 +1,4 @@
 import peewee
-
 from trade.db.base import Base
 
 

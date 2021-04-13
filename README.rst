@@ -70,4 +70,4 @@ Mar 28
 Apr 11
 ^^^^^^
 - [x] Docker composer with PG
-- [ ] Different PG environments for test and development
+- [x] Different PG environments for test and development
