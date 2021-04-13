@@ -26,6 +26,11 @@ Run tests
 .. code:: bash
     docker-compose run -e ENV_FILE=.env.test trade pytest test
 
+Run Jupyter
+
+.. code:: bash
+    docker-compose run -e ENV_FILE=.env.dev -p 8888:8888 trade jupyter-lab --allow-root --ip=0.0.0.0
+
 Plain code version
 
 .. code:: bash
