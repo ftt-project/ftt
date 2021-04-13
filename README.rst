@@ -17,8 +17,9 @@ Docker version
 Create tables
 
 .. code:: bash
-    docker-compose up
-    docker-compose run trade python ./bin/db.py create
+    docker-compose --env-file .env.${ENV} up
+    docker-compose run -e ENV_FILE=.env.${ENV} trade python ./bin/db.py create_database
+    docker-compose run -e ENV_FILE=.env.${ENV} trade python ./bin/db.py create_tables
 
 Plain code version
 
@@ -63,4 +64,5 @@ Mar 28
 
 Apr 11
 ^^^^^^
-- [ ] Docker composer with PG
+- [x] Docker composer with PG
+- [ ] Different PG environments for test and development

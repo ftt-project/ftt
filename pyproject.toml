@@ -4,9 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["Artem Melnykov <melnykov.artem.v@gmail.com>"]
 
-[tool.poetry.script]
-test = ""
-
 [tool.poetry.dependencies]
 python = "3.9.2"
 yfinance = "^0.1.54"
@@ -39,6 +36,7 @@ pyportfolioopt = "^1.2.7"
 ibpythonic = "^0.1.6"
 IbPy2 = "^0.8.0"
 ibapi = {path = "pythonclient"}
+python-dotenv = "^0.17.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.3"

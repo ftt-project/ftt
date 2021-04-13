@@ -1,12 +1,14 @@
 import fire
 
-from peewee import Database
-from trade.db.setup import create_tables
+from trade.db.setup import create_tables, create_database
 from trade.db.base import Base
 
 
 class DB:
-    def create(self):
+    def create_database(self):
+        create_database()
+
+    def create_tables(self):
         models = Base.__subclasses__()
         create_tables(models)
 
