@@ -14,7 +14,7 @@ from scraper.tickers_scraper import TickersScraper
 
 from trade.db.ticker import Ticker
 import trade.db.setup as configuration
-from trade.services.ticker_loader import TickerLoad
+from trade.services.ticker_data_loader import TickerDataLoader
 
 chime.theme("big-sur")
 
@@ -81,7 +81,7 @@ class Tickers(BaseCommand):
         Load ticker from yahoo finance if it does not exist in database
         """
         ticker = ticker.strip()
-        TickerLoad(ticker).perform()
+        TickerDataLoader(ticker).perform()
 
     def exchange_lists(self, exchange="ALL"):
         """

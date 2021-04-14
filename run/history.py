@@ -6,7 +6,8 @@ import chime
 from scraper.history_scraper import HistoryScraper
 from trade.logger import logger
 from trade.configuration import Configuration
-from db.models import Ticker, TickerReturn
+from trade.db import TickerReturn
+from trade.db import Ticker
 
 chime.theme("big-sur")
 

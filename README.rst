@@ -79,5 +79,8 @@ Apr 11
 
 Apr 13
 ^^^^^^
+- [x] Check run/tickers
+- [x] Check run/history
+- [ ] Use HistoryDataLoader service
 - [ ] Calculate weights and save in DB
 - [ ] Using calculated weights buy

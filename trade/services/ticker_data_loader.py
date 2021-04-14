@@ -6,7 +6,7 @@ from trade.logger import logger
 from trade.services.exchange_name_normalizer import ExchangeNameNormalizer
 
 
-class TickerLoad:
+class TickerDataLoader:
     def __init__(self, ticker, scraper: TickersScraper):
         self.ticker = ticker.strip()
         self.scraper = scraper

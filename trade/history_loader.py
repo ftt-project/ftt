@@ -7,6 +7,9 @@ import pandas as pd
 
 
 class HistoryLoader:
+    """
+    Loading tickers data from database
+    """
     @staticmethod
     def load(ticker, interval="1m"):
         query = (

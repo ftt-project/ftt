@@ -55,7 +55,7 @@ exchanges_to_scrape:
 scrape:
   tickers:
     - T.TO
-    - BB
+#    - BB
 #    - ATD-B.TO
 #    - REAL.TO
 #    - QTRH.TO
