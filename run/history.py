@@ -8,6 +8,7 @@ from trade.logger import logger
 from trade.configuration import Configuration
 from trade.db import TickerReturn
 from trade.db import Ticker
+from trade.services import TickerDataLoader
 
 chime.theme("big-sur")
 
@@ -72,6 +73,9 @@ class History(BaseCommand):
             ticker_data = ticker_data[ticker_data["Close"].notnull()]
             before = TickerReturn.select().count()
             for index, row in ticker_data.iterrows():
+                ticker = Ticker.get_or_none(ticker=ticker_name)
+                if not ticker:
+                    TickerDataLoader(ticker_name).perform()
                 ins = (
                     TickerReturn.insert(
                         ticker=Ticker.get(ticker=ticker_name),

@@ -55,22 +55,22 @@ exchanges_to_scrape:
 scrape:
   tickers:
     - T.TO
-#    - BB
-#    - ATD-B.TO
-#    - REAL.TO
-#    - QTRH.TO
-#    - DRM.TO
-#    - MX.TO
-#    - KEY.TO
-#    - FTT.TO
-#    - BAM-A.TO
-#    - BYD.TO
-#    - L
-#    - ADSK
-#    - FSLY
-#    - ANET
-#    - ASML
-#    - BERY
+    - BB
+    - ATD-B.TO
+    - REAL.TO
+    - QTRH.TO
+    - DRM.TO
+    - MX.TO
+    - KEY.TO
+    - FTT.TO
+    - BAM-A.TO
+    - BYD.TO
+    - L
+    - ADSK
+    - FSLY
+    - ANET
+    - ASML
+    - BERY
 #    - BWA
 #    - SCHW
 #    - FLGT
@@ -87,7 +87,7 @@ scrape:
 #    - AAPL
 #    - AMZN
   interval_start: 2021-01-15
-  interval_end: 2021-02-03
+  interval_end: 2021-04-14
   interval: 1d
 
 portfolio:
