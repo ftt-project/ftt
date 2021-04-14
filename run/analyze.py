@@ -10,6 +10,9 @@ from trade.db.setup import database_connection
 
 
 class Analyze(BaseCommand):
+    """
+    Analyzer playground
+    """
     class PandasData(bt.feeds.PandasData):
         linesoverride = False  # discard usual OHLC structure
         # datetime must be present and last

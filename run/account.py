@@ -32,6 +32,9 @@ class AccountStatus(EClient, EWrapper):
 
 
 class Account(BaseCommand):
+    """
+    Returns account information from IB
+    """
     def status(self):
         app = AccountStatus()
         # TODO move host option to configuration

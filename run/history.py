@@ -15,7 +15,7 @@ chime.theme("big-sur")
 
 class History(BaseCommand):
     """
-    Loads historic data from yahoo
+    Loads historic data from yahoo and saves in DB
     """
 
     def load_all(self, exchange, offset=0):

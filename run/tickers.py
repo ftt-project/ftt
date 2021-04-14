@@ -36,7 +36,7 @@ class TickerProgressTracker:
 
 class Tickers(BaseCommand):
     """
-    Tickers manipulations
+    Script that requests information about tickers and saves in DB
     """
 
     def generic(self):

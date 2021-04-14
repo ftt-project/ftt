@@ -7,6 +7,9 @@ import backtrader as bt
 
 
 class St(bt.Strategy):
+    """
+    Strategies playground
+    """
     params = (("maperiod", 15), ("pfast", 9), ("pslow", 21))
 
     def __init__(self):
