@@ -13,7 +13,7 @@ from trade.configuration import Configuration
 from trade.db import Ticker, TickerReturn, DatabaseConnection
 
 
-class Weigths(BaseCommand):
+class Weights(BaseCommand):
     """
     Calculates weights of given in configuration tickers
     """
@@ -88,7 +88,7 @@ class Weigths(BaseCommand):
 if __name__ == "__main__":
     try:
         fire.Fire({
-            "calculate": Weigths().calculate
+            "calculate": Weights().calculate
         })
     except Exception as e:
         chime.error()
