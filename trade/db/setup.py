@@ -1,31 +1,46 @@
 import os
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 from peewee import DatabaseProxy, OperationalError
 from playhouse.postgres_ext import PostgresqlExtDatabase
 
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-load_dotenv(dotenv_path=os.environ["ENV_FILE"])
 
-config = {
-    "database": os.environ['DB_NAME'],
-    "user": os.environ['DB_USER'],
-    "password": os.environ['DB_PASSWORD'],
-    "host": os.environ["DB_HOST"],
-    "port": os.environ["DB_PORT"],
-}
-
-database = PostgresqlExtDatabase(config["database"], user=config["user"], password=config["password"],
-                                 host=config["host"], port=config["port"], autorollback=True)
+def read_configuration():
+    variables = dotenv_values(os.environ["ENV_FILE"])
+    return {
+        "database": variables['DB_NAME'],
+        "user": variables['DB_USER'],
+        "password": variables['DB_PASSWORD'],
+        "host": variables["DB_HOST"],
+        "port": variables["DB_PORT"],
+    }
 
 
-database_proxy = DatabaseProxy()
-database_proxy.initialize(database)
+class DatabaseConnection:
+    _instance = None
+
+    def __new__(cls, config=read_configuration()):
+        if cls._instance is None:
+            cls._instance = PostgresqlExtDatabase(
+                config["database"], user=config["user"], password=config["password"],
+                host=config["host"], port=config["port"], autorollback=True)
+        return cls._instance
 
 
-def database_connection():
-    return database
+# database = PostgresqlExtDatabase(CONFIG["database"], user=CONFIG["user"], password=CONFIG["password"],
+#                                  host=CONFIG["host"], port=CONFIG["port"], autorollback=True)
+#
+# database_proxy = DatabaseProxy()
+# database_proxy.initialize(database)
+
+
+def database_connection(config=read_configuration()):
+    """
+    TODO: remove function and singleton class
+    """
+    return DatabaseConnection(config)
 
 
 def establish_connection():
@@ -34,6 +49,7 @@ def establish_connection():
 
 
 def create_database():
+    config = read_configuration()
     conn = psycopg2.connect(host=config["host"], database="postgres", user=config["user"],
                             password=config["password"])
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT);

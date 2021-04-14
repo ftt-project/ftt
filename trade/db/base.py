@@ -1,6 +1,6 @@
 from peewee import Model
-from trade.db.setup import database_connection
+from trade.db import DatabaseConnection
 
 class Base(Model):
     class Meta:
-        database = database_connection()
+        database = DatabaseConnection()
