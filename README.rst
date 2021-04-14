@@ -68,7 +68,7 @@ Mar 28
   - Buy on the breakthrought upright moment
 - [ ] Monitor changes of each position and sell on peak
 - [ ] Monitor changes of each position and sell on reaching a drawdown limit (CPPI)
-- [ ] Dockerize app
+- [x] Dockerize app
   - Jupyter image
   - Application image
 
@@ -76,3 +76,8 @@ Apr 11
 ^^^^^^
 - [x] Docker composer with PG
 - [x] Different PG environments for test and development
+
+Apr 13
+^^^^^^
+- [ ] Calculate weights and save in DB
+- [ ] Using calculated weights buy

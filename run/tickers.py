@@ -12,9 +12,9 @@ import pickle
 
 from scraper.tickers_scraper import TickersScraper
 
-from db.models import Ticker
+from trade.db.ticker import Ticker
 import trade.db.setup as configuration
-import db.setup as dbsetup
+from trade.services.ticker_loader import TickerLoad
 
 chime.theme("big-sur")
 
@@ -42,9 +42,9 @@ class Tickers(BaseCommand):
     def generic(self):
         """
         Parses files from data folder and persist them using db.models.Ticker model
+        TODO: Refactor and remove me
         """
-        configuration.establish_connection()
-        dbsetup.setup_database()
+        # configuration.establish_connection()
 
         with open(os.path.join(os.getcwd(), "data", "generic.csv"), "r") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=",")
@@ -70,38 +70,18 @@ class Tickers(BaseCommand):
     def remove_ticker_from_progress(self, ticker):
         """
         Remove particular ticker from progress pickle file
+        TODO: Refactor and remove me
         """
         saved = TickerProgressTracker.load()
         saved.remove(ticker)
         TickerProgressTracker.safe(saved)
 
     def find_ticker(self, ticker):
+        """
+        Load ticker from yahoo finance if it does not exist in database
+        """
         ticker = ticker.strip()
-
-        db_request = Ticker.select().where(Ticker.ticker == ticker)
-        logger.debug(f"Request: {db_request}")
-        if db_request.count() > 0:
-            logger.warning(
-                f"Possible duplication of <{ticker}> in <{db_request[0]} {db_request[0].ticker}:{db_request[0].exchange}>"
-            )
-
-        info = TickersScraper.load(ticker)
-
-        inst, created = Ticker.get_or_create(
-            ticker=ticker,
-            exchange=info["exchange"],
-            defaults={
-                "company_name": info["longName"],
-                "exchange_name": self.__normalize_exchange_name(info["exchange"]),
-                "type": "?",
-                "type_display": info["quoteType"],
-                "industry": info["industry"] if "industry" in info else None,
-                "currency": info["currency"],
-                "updated_at": datetime.now(),
-            },
-        )
-        if created:
-            logger.info(f"Ticker loaded: <{inst}>")
+        TickerLoad(ticker).perform()
 
     def exchange_lists(self, exchange="ALL"):
         """
@@ -174,12 +154,18 @@ class Tickers(BaseCommand):
         chime.success()
 
     def __normalize_ticker(self, ticker, exchange):
+        """
+        TODO: Refactor and remove me
+        """
         if exchange == "TOR":
             return f"{ticker}.TO"
         else:
             return ticker
 
     def __normalize_exchange_name(self, exchange_name):
+        """
+        TODO: Refactor and remove me
+        """
         if exchange_name == "TOR":
             return "Toronto"
         elif exchange_name == "NCM":
@@ -192,7 +178,9 @@ class Tickers(BaseCommand):
 
 if __name__ == "__main__":
     try:
-        fire.Fire(Tickers)
+        fire.Fire({
+            "find_ticker": Tickers().find_ticker
+        })
     except Exception as e:
         chime.error()
         raise e
