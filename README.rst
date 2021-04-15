@@ -26,6 +26,11 @@ Run tests
 .. code:: bash
     docker-compose run -e ENV_FILE=.env.test trade pytest test
 
+Connect to database
+
+.. code:: bash
+    docker-compose exec db psql -U <USER> <DATABASE>
+
 Run Jupyter
 
 .. code:: bash

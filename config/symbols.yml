@@ -57,20 +57,20 @@ scrape:
     - T.TO
     - BB
     - ATD-B.TO
-    - REAL.TO
-    - QTRH.TO
-    - DRM.TO
-    - MX.TO
-    - KEY.TO
-    - FTT.TO
-    - BAM-A.TO
-    - BYD.TO
-    - L
-    - ADSK
-    - FSLY
-    - ANET
-    - ASML
-    - BERY
+#    - REAL.TO
+#    - QTRH.TO
+#    - DRM.TO
+#    - MX.TO
+#    - KEY.TO
+#    - FTT.TO
+#    - BAM-A.TO
+#    - BYD.TO
+#    - L
+#    - ADSK
+#    - FSLY
+#    - ANET
+#    - ASML
+#    - BERY
 #    - BWA
 #    - SCHW
 #    - FLGT

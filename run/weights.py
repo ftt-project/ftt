@@ -10,7 +10,7 @@ from pypfopt import DiscreteAllocation
 
 from trade.base_command import BaseCommand
 from trade.configuration import Configuration
-from trade.db import Ticker, TickerReturn, DatabaseConnection
+from trade.db import Ticker, TickerReturn, DatabaseConnection, Portfolio, Weight
 
 
 class Weights(BaseCommand):
@@ -18,7 +18,7 @@ class Weights(BaseCommand):
     Calculates weights of given in configuration tickers
     """
 
-    def calculate(self):
+    def calculate(self, persist: bool = False):
         """
         Returns recommended weights of a given portfolio
 
@@ -38,11 +38,16 @@ class Weights(BaseCommand):
 
         ef.portfolio_performance(verbose=True)
 
+        # TODO: take __total_portfolio_value from portfolio itself
         da = DiscreteAllocation(cleaned_weights, dataframes.iloc[-1],
                                 total_portfolio_value=self.__total_portfolio_value())
         alloc, leftover = da.lp_portfolio()
         print(f"Leftover: ${leftover:.2f}")
         print(pd.Series(alloc).sort_index())
+        if persist:
+            portfolio = self.__portfolio()
+            for ticker_name, value in alloc.items():
+                self.__persist_weight(portfolio, ticker_name, value)
 
     def __build_dataframes(self):
         dataframes = []
@@ -61,6 +66,19 @@ class Weights(BaseCommand):
             where(TickerReturn.ticker == Ticker.get(Ticker.ticker == ticker))
         return query.sql()
 
+    def __persist_weight(self, portfolio, ticker_name, value):
+        (Weight.insert(
+            portfolio=portfolio,
+            ticker=Ticker.get(ticker=ticker_name),
+            position=0,
+            planned_position=value,
+        )
+         .on_conflict(
+            conflict_target=(Weight.ticker, Weight.portfolio),
+            update={Weight.planned_position: value}
+        )
+         .execute())
+
     def __base_query(self):
         return TickerReturn.select(
             TickerReturn.datetime,
@@ -71,6 +89,9 @@ class Weights(BaseCommand):
         ).order_by(
             TickerReturn.datetime.asc()
         ).join(Ticker)
+
+    def __portfolio(self):
+        return Portfolio.get_by_id(1)
 
     @staticmethod
     def __start_period():
