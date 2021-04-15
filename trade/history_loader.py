@@ -1,3 +1,4 @@
+from trade.db import Ticker
 from trade.db.setup import database_connection
 
 from trade.db.ticker_return import TickerReturn

@@ -1,6 +1,5 @@
 import os
 from dotenv import dotenv_values
-from peewee import DatabaseProxy, OperationalError
 from playhouse.postgres_ext import PostgresqlExtDatabase
 
 import psycopg2
@@ -32,13 +31,6 @@ class DatabaseConnection:
                 autorollback=True,
             )
         return cls._instance
-
-
-# database = PostgresqlExtDatabase(CONFIG["database"], user=CONFIG["user"], password=CONFIG["password"],
-#                                  host=CONFIG["host"], port=CONFIG["port"], autorollback=True)
-#
-# database_proxy = DatabaseProxy()
-# database_proxy.initialize(database)
 
 
 def database_connection(config=read_configuration()):
