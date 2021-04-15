@@ -17,7 +17,5 @@ class Ticker(Base):
     updated_at = peewee.DateTimeField()
 
     class Meta:
-        indexes = (
-            (('ticker', 'exchange'), True),
-        )
-        table_name = 'tickers'
+        indexes = ((("ticker", "exchange"), True),)
+        table_name = "tickers"

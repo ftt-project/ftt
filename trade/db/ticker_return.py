@@ -5,7 +5,7 @@ from trade.db.ticker import Ticker
 
 
 class TickerReturn(Base):
-    ticker = peewee.ForeignKeyField(Ticker, backref='returns')
+    ticker = peewee.ForeignKeyField(Ticker, backref="returns")
     datetime = peewee.DateTimeField()
     open = peewee.DecimalField(max_digits=12)
     high = peewee.DecimalField(max_digits=12)
@@ -17,7 +17,5 @@ class TickerReturn(Base):
     percent_change = peewee.FloatField()
 
     class Meta:
-        indexes = (
-            (('ticker', 'datetime', 'interval'), True),
-        )
-        table_name = 'ticker_returns'
+        indexes = ((("ticker", "datetime", "interval"), True),)
+        table_name = "ticker_returns"

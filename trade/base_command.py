@@ -4,6 +4,7 @@ from abc import ABC
 from trade.logger import logger
 from trade.db.setup import establish_connection
 
+
 class BaseCommand(ABC):
     def __init__(self):
         establish_connection()

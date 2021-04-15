@@ -6,7 +6,5 @@ class Portfolio(Base):
     name = peewee.CharField(index=True)
 
     class Meta:
-        indexes = (
-            (('name', ), True),
-        )
-        table_name = 'portfolios'
+        indexes = ((("name",), True),)
+        table_name = "portfolios"

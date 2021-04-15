@@ -24,24 +24,27 @@ class MACDStrategy(bt.Strategy):
        - If not, update the stop price if the new stop price would be higher
          than the current
     """
+
     params = (
         # Standard MACD Parameters
-        ('macd1', 6),
-        ('macd2', 13),
-        ('macdsig', 9),
-        ('atrperiod', 14),  # ATR Period (standard)
-        ('atrdist', 3.0),  # ATR distance for stop price
-        ('smaperiod', 30),  # SMA Period (pretty standard)
-        ('dirperiod', 10),  # Lookback period to consider SMA trend direction
+        ("macd1", 6),
+        ("macd2", 13),
+        ("macdsig", 9),
+        ("atrperiod", 14),  # ATR Period (standard)
+        ("atrdist", 3.0),  # ATR distance for stop price
+        ("smaperiod", 30),  # SMA Period (pretty standard)
+        ("dirperiod", 10),  # Lookback period to consider SMA trend direction
     )
 
     def __init__(self):
         self.dataclose = self.datas[0].close
 
-        self.macd = bt.indicators.MACD(self.dataclose,
-                                       period_me1=self.p.macd1,
-                                       period_me2=self.p.macd2,
-                                       period_signal=self.p.macdsig)
+        self.macd = bt.indicators.MACD(
+            self.dataclose,
+            period_me1=self.p.macd1,
+            period_me2=self.p.macd2,
+            period_signal=self.p.macdsig,
+        )
 
         # Cross of macd.macd and macd.signal
         self.mcross = bt.indicators.CrossOver(self.macd.macd, self.macd.signal)

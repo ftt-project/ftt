@@ -11,7 +11,5 @@ class Weight(Base):
     planned_position = peewee.IntegerField()
 
     class Meta:
-        indexes = (
-            (('ticker', 'portfolio'), True),
-        )
-        table_name = 'weights'
+        indexes = ((("ticker", "portfolio"), True),)
+        table_name = "weights"

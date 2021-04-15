@@ -10,9 +10,9 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 def read_configuration():
     variables = dotenv_values(os.environ["ENV_FILE"])
     return {
-        "database": variables['DB_NAME'],
-        "user": variables['DB_USER'],
-        "password": variables['DB_PASSWORD'],
+        "database": variables["DB_NAME"],
+        "user": variables["DB_USER"],
+        "password": variables["DB_PASSWORD"],
         "host": variables["DB_HOST"],
         "port": variables["DB_PORT"],
     }
@@ -24,8 +24,13 @@ class DatabaseConnection:
     def __new__(cls, config=read_configuration()):
         if cls._instance is None:
             cls._instance = PostgresqlExtDatabase(
-                config["database"], user=config["user"], password=config["password"],
-                host=config["host"], port=config["port"], autorollback=True)
+                config["database"],
+                user=config["user"],
+                password=config["password"],
+                host=config["host"],
+                port=config["port"],
+                autorollback=True,
+            )
         return cls._instance
 
 
@@ -50,10 +55,16 @@ def establish_connection():
 
 def create_database():
     config = read_configuration()
-    conn = psycopg2.connect(host=config["host"], database="postgres", user=config["user"],
-                            password=config["password"])
-    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT);
-    conn.cursor().execute(f"CREATE DATABASE {config['database']} WITH OWNER {config['user']}")
+    conn = psycopg2.connect(
+        host=config["host"],
+        database="postgres",
+        user=config["user"],
+        password=config["password"],
+    )
+    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    conn.cursor().execute(
+        f"CREATE DATABASE {config['database']} WITH OWNER {config['user']}"
+    )
     conn.close()
 
 

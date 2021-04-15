@@ -26,9 +26,7 @@ class MDStrategy(bt.Strategy):
                 period_signal=self.p.macdsig,
             )
             self.inds[d]["macd"] = macd
-            cross_over = bt.indicators.CrossOver(
-                macd.macd, macd.signal
-            )
+            cross_over = bt.indicators.CrossOver(macd.macd, macd.signal)
             self.inds[d]["cross_over"] = cross_over
 
             atr = bt.indicators.ATR(d, period=self.p.atrperiod)
