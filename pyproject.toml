@@ -5,7 +5,7 @@ description = ""
 authors = ["Artem Melnykov <melnykov.artem.v@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "3.9.2"
+python = "3.9.4"
 yfinance = "^0.1.54"
 alpha_vantage = "^2.2.0"
 pandas = "^1.0.4"

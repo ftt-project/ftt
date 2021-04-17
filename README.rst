@@ -40,6 +40,14 @@ Plain code version
 
 .. code:: bash
 
+    brew install postgresql
+    echo '3.LATEST' > .python-version
+    pyenv install
+    poetry install
+
+Troubleshoots
+
+.. code: bash
     pip install --upgrade pip
     pip install numpy
     pip install qdldl

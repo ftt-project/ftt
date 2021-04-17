@@ -6,7 +6,7 @@ from trade.db.base import Base
 
 class Weight(Base):
     ticker = peewee.ForeignKeyField(Ticker)
-    portfolio = peewee.ForeignKeyField(Portfolio)
+    portfolio = peewee.ForeignKeyField(Portfolio, backref="weights")
     position = peewee.IntegerField()
     planned_position = peewee.IntegerField()
 
