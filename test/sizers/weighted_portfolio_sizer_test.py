@@ -11,14 +11,25 @@ class TestWeightedPortfolioSizer:
         def next(self):
             self.buy()
 
-    def broker(self):
-        return bt.brokers.BackBroker()
-
-    def strategy(self):
+    @staticmethod
+    def strategy():
         return TestWeightedPortfolioSizer.DummyStrategy
 
-    def data(self, did=0):
+    @staticmethod
+    def data(did=0):
         return testcommon.getdata(did)
+
+    @staticmethod
+    def planned_position():
+        return 10
+
+    @staticmethod
+    def current_position():
+        return 2
+
+    @staticmethod
+    def ticker_name():
+        return "SHOP"
 
     def prepare_portfolio(self):
         Weight.delete().execute()
@@ -26,7 +37,7 @@ class TestWeightedPortfolioSizer:
         Portfolio.delete().execute()
 
         self.ticker = Ticker.insert(
-            ticker="SHOP",
+            ticker=self.ticker_name(),
             exchange="TOR",
             exchange_name="TOR",
             type="stock",
@@ -42,8 +53,8 @@ class TestWeightedPortfolioSizer:
         self.weight = Weight.insert(
             portfolio=self.portfolio,
             ticker=self.ticker,
-            position=2,
-            planned_position=10
+            position=self.current_position(),
+            planned_position=self.planned_position()
         ).execute()
 
     def prepare_cerebro(self, data=None):
@@ -51,8 +62,8 @@ class TestWeightedPortfolioSizer:
 
         cerebro = bt.Cerebro()
         cerebro.addstrategy(self.strategy())
-        cerebro.addsizer(WeightedPortfolioSizer, dataname="SHOP", portfolio_id=self.portfolio)
-        cerebro.adddata(data, name="SHOP")
+        cerebro.addsizer(WeightedPortfolioSizer, dataname=self.ticker_name(), portfolio_id=self.portfolio)
+        cerebro.adddata(data, name=self.ticker_name())
         return cerebro
 
     def test_properly_utilized_by_cerebro(self):
@@ -67,7 +78,6 @@ class TestWeightedPortfolioSizer:
         self.prepare_portfolio()
         cerebro = self.prepare_cerebro()
         strats = cerebro.run()
-
 
         sizer = strats[0].getsizer()
         result = sizer.getsizing(self.data(), True)
