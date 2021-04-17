@@ -56,6 +56,7 @@ class TestWeightedPortfolioSizer:
         return cerebro
 
     def test_properly_utilized_by_cerebro(self):
+        self.prepare_portfolio()
         cerebro = self.prepare_cerebro()
         strats = cerebro.run()
 
