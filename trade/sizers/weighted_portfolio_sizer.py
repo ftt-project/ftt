@@ -6,6 +6,9 @@ from trade.db import Portfolio, Ticker, Weight
 
 
 class WeightedPortfolioSizer(bt.Sizer):
+    """
+    TODO: Rename to WeightedSizer
+    """
     params = (("dataname", None), ("portfolio_id", None))
 
     def _getsizing(self, comminfo, cash, data, isbuy):
