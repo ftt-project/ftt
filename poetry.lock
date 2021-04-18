@@ -1787,8 +1787,8 @@ requests = ">=2.20"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "3.9.2"
-content-hash = "178f909c29d197845085aa98f0ad04d012b1da1af400ae2de5b0aa48f58f4889"
+python-versions = "3.9.4"
+content-hash = "34bb4d59009f29a621c19e3a86143ae25d53b19b64025f8ec48faff95e0dd755"
 
 [metadata.files]
 aiohttp = [

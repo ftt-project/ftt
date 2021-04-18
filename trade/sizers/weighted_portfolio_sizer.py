@@ -10,13 +10,17 @@ class WeightedPortfolioSizer(bt.Sizer):
 
     def _getsizing(self, comminfo, cash, data, isbuy):
         # portfolio = Portfolio.get_weights(self.p.dataname)
+        # TODO: move this to Portfolio(Weight) class or service
+        ticker_name = data._name
+        portfolio_id = self.strategy.params.portfolio_id
+
         weights = (Weight.select()
                    .join(Portfolio, peewee.JOIN.LEFT_OUTER)
                    .switch(Weight)
                    .join(Ticker, peewee.JOIN.LEFT_OUTER)
-                   .where(Portfolio.id == self.p.portfolio_id)
-                   .where(Ticker.ticker == self.p.dataname)
+                   .where(Portfolio.id == portfolio_id)
+                   .where(Ticker.ticker == ticker_name)
                    .get())
-        self._data = self.strategy.getdatabyname(self.p.dataname)
+        self._data = self.strategy.getdatabyname(ticker_name)
 
         return weights.planned_position - weights.position

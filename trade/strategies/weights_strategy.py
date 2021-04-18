@@ -2,6 +2,8 @@ import backtrader as bt
 
 
 class WeightsStrategy(bt.Strategy):
+    params = (("portfolio_id", None),)
+
     def __init__(self):
         pass
 
@@ -10,4 +12,3 @@ class WeightsStrategy(bt.Strategy):
             dt, dn = self.datetime.date(), d._name
             position = self.getposition(d).size
             self.buy(data=d)
-

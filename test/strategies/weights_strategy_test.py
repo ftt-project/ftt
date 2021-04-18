@@ -3,10 +3,10 @@ from trade.sizers.weighted_portfolio_sizer import WeightedPortfolioSizer
 from trade.strategies import WeightsStrategy
 
 
-class TestStrategy:
+class TestWeightsStrategy:
     """
     Implementation:
-    - [ ] It must buy according to the given weights
+    - [ ] It must buy according to the given weights using Weight sizer
     """
 
     def test_it(self):

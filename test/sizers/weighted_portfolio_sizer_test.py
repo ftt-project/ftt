@@ -1,3 +1,6 @@
+import pytest
+import pytest as pytest
+
 from test import testcommon
 import backtrader as bt
 from datetime import datetime
@@ -8,30 +11,31 @@ from trade.sizers.weighted_portfolio_sizer import WeightedPortfolioSizer
 
 class TestWeightedPortfolioSizer:
     class DummyStrategy(bt.Strategy):
-        def next(self):
-            self.buy()
+        params = (("portfolio_id", None),)
 
-    @staticmethod
-    def strategy():
+        def next(self):
+            for i, d in enumerate(self.datas):
+                dt, dn = self.datetime.date(), d._name
+                # position = self.getposition(d).size
+                size = self.getsizing(d, True)
+                self.buy()
+
+    def strategy(self):
         return TestWeightedPortfolioSizer.DummyStrategy
 
-    @staticmethod
-    def data(did=0):
+    def data(self, did=0):
         return testcommon.getdata(did)
 
-    @staticmethod
-    def planned_position():
+    def planned_position(self):
         return 10
 
-    @staticmethod
-    def current_position():
+    def current_position(self):
         return 2
 
-    @staticmethod
-    def ticker_name():
+    def ticker_name(self):
         return "SHOP"
 
-    def prepare_portfolio(self):
+    def setup(self):
         Weight.delete().execute()
         Ticker.delete().execute()
         Portfolio.delete().execute()
@@ -61,13 +65,13 @@ class TestWeightedPortfolioSizer:
         data = self.data() if data is None else data
 
         cerebro = bt.Cerebro()
-        cerebro.addstrategy(self.strategy())
-        cerebro.addsizer(WeightedPortfolioSizer, dataname=self.ticker_name(), portfolio_id=self.portfolio)
+        cerebro.addstrategy(self.strategy(), portfolio_id=self.portfolio)
+        cerebro.addsizer(WeightedPortfolioSizer)
         cerebro.adddata(data, name=self.ticker_name())
         return cerebro
 
     def test_properly_utilized_by_cerebro(self):
-        self.prepare_portfolio()
+        self.setup()
         cerebro = self.prepare_cerebro()
         strats = cerebro.run()
 
@@ -75,10 +79,14 @@ class TestWeightedPortfolioSizer:
         assert type(strat.getsizer()) == WeightedPortfolioSizer
 
     def test_returns_on_buy_diff_from_portfolio(self):
-        self.prepare_portfolio()
+        self.setup()
         cerebro = self.prepare_cerebro()
         strats = cerebro.run()
 
-        sizer = strats[0].getsizer()
-        result = sizer.getsizing(self.data(), True)
+        strat = strats[0]
+        sizer = strat.getsizer()
+        result = sizer.getsizing(strat.data, True)
         assert 8 == result
+
+    def test_returns_on_sell_0(self):
+        assert False
