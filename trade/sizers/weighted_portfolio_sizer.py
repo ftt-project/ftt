@@ -14,6 +14,7 @@ class WeightedPortfolioSizer(bt.Sizer):
     def _getsizing(self, comminfo, cash, data, isbuy):
         # portfolio = Portfolio.get_weights(self.p.dataname)
         # TODO: move this to Portfolio(Weight) class or service
+        # TODO: handle sell event
         ticker_name = data._name
         portfolio_id = self.strategy.params.portfolio_id
 

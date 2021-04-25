@@ -59,7 +59,7 @@ class Weights(BaseCommand):
                                     )
             df = pd.DataFrame({ticker: dataframe.close}, index=dataframe.index)
             dataframes.append(df)
-        return pd.concat(dataframes, axis=1)  # .dropna()
+        return pd.concat(dataframes, axis=1).dropna()
 
     def __ticker_results(self, ticker):
         query = self.__base_query(). \
@@ -95,7 +95,7 @@ class Weights(BaseCommand):
 
     @staticmethod
     def __start_period():
-        return pendulum.naive(2019, 10, 1)
+        return pendulum.naive(2020, 1, 15)
 
     @staticmethod
     def __tickers():
@@ -103,7 +103,7 @@ class Weights(BaseCommand):
 
     @staticmethod
     def __total_portfolio_value():
-        return 10000
+        return 17000
 
 
 if __name__ == "__main__":

@@ -11,12 +11,14 @@ Installation
 Docker version
 
 .. code:: bash
+
    docker build --tag trade:v[x] .
    docker run --rm -it --network host -v "$PWD:/usr/src/app" trade:v[x] run/account.py status
 
 Create database & tables
 
 .. code:: bash
+
     docker-compose --env-file .env.${ENV} up
     docker-compose run -e ENV_FILE=.env.${ENV} trade python ./bin/db.py create_database
     docker-compose run -e ENV_FILE=.env.${ENV} trade python ./bin/db.py create_tables
@@ -24,16 +26,19 @@ Create database & tables
 Run tests
 
 .. code:: bash
+
     docker-compose run -e ENV_FILE=.env.test trade pytest test
 
 Connect to database
 
 .. code:: bash
+
     docker-compose exec db psql -U <USER> <DATABASE>
 
 Run Jupyter
 
 .. code:: bash
+
     docker-compose run -e ENV_FILE=.env.dev -p 8888:8888 trade jupyter-lab --allow-root --ip=0.0.0.0
 
 Plain code version
@@ -47,7 +52,7 @@ Plain code version
 
 Troubleshoots
 
-.. code: bash
+.. code:: bash
     pip install --upgrade pip
     pip install numpy
     pip install qdldl
@@ -95,5 +100,12 @@ Apr 13
 - [x] Check run/tickers
 - [x] Check run/history
 - [ ] Use HistoryDataLoader service
-- [ ] Calculate weights and save in DB
+- [x] Calculate weights and save in DB
 - [ ] Using calculated weights buy
+
+Apr 25
+^^^^^^
+- [ ] * Strategy that uses multiple data sources (simple version) loaded from Portfolio
+- [ ] * Strategy that uses multiple data sources (advance version)
+- [ ] Version weights by adding version to the model
+- [ ] Track latest portfolio version (Portfolio Version model) and associate weights with each version

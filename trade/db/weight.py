@@ -5,6 +5,9 @@ from trade.db.base import Base
 
 
 class Weight(Base):
+    """
+    TODO: add version column to remember the history of changes of the ticker weight in portfolio
+    """
     ticker = peewee.ForeignKeyField(Ticker)
     portfolio = peewee.ForeignKeyField(Portfolio, backref="weights")
     position = peewee.IntegerField()
