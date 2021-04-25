@@ -68,6 +68,10 @@ Download all tickers
 
     YahooTickerDownloader.py
 
+Application diagram
+-------------------
+.. image:: ./docs/relations.png
+
 Thought & ideas
 ---------------
 
