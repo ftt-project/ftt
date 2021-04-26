@@ -1,12 +1,10 @@
-import pytest
-import pytest as pytest
-
 from test import testcommon
 import backtrader as bt
 from datetime import datetime
 
+from test.test_helper import weights_seed
 from trade.db import Portfolio, Ticker, Weight
-from trade.sizers.weighted_portfolio_sizer import WeightedPortfolioSizer
+from trade.strategies.sizers import WeightedPortfolioSizer
 
 
 class TestWeightedPortfolioSizer:
@@ -26,42 +24,7 @@ class TestWeightedPortfolioSizer:
     def data(self, did=0):
         return testcommon.getdata(did)
 
-    def planned_position(self):
-        return 10
-
-    def current_position(self):
-        return 2
-
-    def ticker_name(self):
-        return "SHOP"
-
-    def setup(self):
-        Weight.delete().execute()
-        Ticker.delete().execute()
-        Portfolio.delete().execute()
-
-        self.ticker = Ticker.insert(
-            ticker=self.ticker_name(),
-            exchange="TOR",
-            exchange_name="TOR",
-            type="stock",
-            type_display="stock",
-            created_at=datetime.now(),
-            updated_at=datetime.now()
-        ).execute()
-
-        self.portfolio = Portfolio.insert(
-            name="P1"
-        ).execute()
-
-        self.weight = Weight.insert(
-            portfolio=self.portfolio,
-            ticker=self.ticker,
-            position=self.current_position(),
-            planned_position=self.planned_position()
-        ).execute()
-
-    def prepare_cerebro(self, data=None):
+    def prepare_cerebro(self, ticker_name, data=None):
         data = self.data() if data is None else data
 
         cerebro = bt.Cerebro()
@@ -70,17 +33,15 @@ class TestWeightedPortfolioSizer:
         cerebro.adddata(data, name=self.ticker_name())
         return cerebro
 
-    def test_properly_utilized_by_cerebro(self):
-        self.setup()
-        cerebro = self.prepare_cerebro()
+    def test_properly_utilized_by_cerebro(self, weights_seed):
+        cerebro = self.prepare_cerebro(weights_seed.ticker.ticker)
         strats = cerebro.run()
 
         strat = strats[0]
         assert type(strat.getsizer()) == WeightedPortfolioSizer
 
-    def test_returns_on_buy_diff_from_portfolio(self):
-        self.setup()
-        cerebro = self.prepare_cerebro()
+    def test_returns_on_buy_diff_from_portfolio(self, weights_seed):
+        cerebro = self.prepare_cerebro(weights_seed.ticker.ticker)
         strats = cerebro.run()
 
         strat = strats[0]

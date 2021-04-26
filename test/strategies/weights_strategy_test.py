@@ -1,6 +1,8 @@
 from test import testcommon
-from trade.sizers.weighted_portfolio_sizer import WeightedPortfolioSizer
+from trade.strategies.sizers import WeightedPortfolioSizer
 from trade.strategies import WeightsStrategy
+
+from test.test_helper import weights_seed
 
 
 class TestWeightsStrategy:
@@ -9,10 +11,14 @@ class TestWeightsStrategy:
     - [ ] It must buy according to the given weights using Weight sizer
     """
 
-    def test_it(self):
-        datas = {"AA.XX": testcommon.getdata(0)}  # it is multilines strategy
+    def test_it(self, weights_seed):
+        datas = {
+            "AA.BB": testcommon.getdata(0),
+        }
+
         testcommon.runtest(datas,
                            WeightsStrategy,
+                           portfolio_id=weights_seed.portfolio.id,
                            sizer=WeightedPortfolioSizer)
 
     def test_uses_the_total_cash_value(self):
