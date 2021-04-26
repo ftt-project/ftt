@@ -40,7 +40,7 @@ class BollingerStrategy(bt.Strategy):
             self.bar_executed = len(self)
 
         elif order.status in [order.Canceled, order.Margin, order.Rejected]:
-            logger.info("Order Canceled/Margin/Rejected")
+            logger.info(f"Order Canceled/Margin/Rejected {order.status}")
 
         self.order = None
 

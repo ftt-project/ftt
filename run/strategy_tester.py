@@ -9,12 +9,20 @@ from trade.history_loader import HistoryLoader
 from trade.logger import logger
 from trade.strategies.bollinger_strategy import BollingerStrategy
 from trade.strategies.macd_strategy import MACDStrategy
+from trade.strategies.md_macd_strategy import MdMACDStrategy
 from trade.strategies.md_strategy import MDStrategy
 from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
 from trade.strategies.sma_strategy import SMAStrategy
 
 
 def run():
+    """
+    Bollinger               10436.71
+    SMACrossoverStrategy    10726.09
+    SMAStrategy             10239.02
+    MACDStrategy            11425.63
+    MdMACDStrategy          11425.63
+    """
     config = Configuration().scrape()
 
     datas = HistoryLoader.load_multiple(config.tickers, interval="1d")
@@ -24,10 +32,11 @@ def run():
     # cerebro.addstrategy(SMAStrategy)
     # cerebro.addstrategy(BollingerStrategy)
     # cerebro.addstrategy(MACDStrategy, atrdist=3.0)
-    cerebro.addstrategy(MDStrategy)
+    # cerebro.addstrategy(MDStrategy)
+    cerebro.addstrategy(MdMACDStrategy)
 
     [cerebro.adddata(datas[key], name=key) for key in datas]
-    cerebro.addsizer(bt.sizers.FixedSize, stake=10)
+    cerebro.addsizer(bt.sizers.FixedSize, stake=1)
     cerebro.broker.setcash(10000.0)
 
     cerebro.addanalyzer(btanalyzers.SharpeRatio, _name="sharpe")
