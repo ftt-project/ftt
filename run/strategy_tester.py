@@ -5,12 +5,14 @@ import backtrader as bt
 import backtrader.analyzers as btanalyzers
 
 from trade.configuration import Configuration
+from trade.db import Portfolio
 from trade.history_loader import HistoryLoader
 from trade.logger import logger
 from trade.strategies.bollinger_strategy import BollingerStrategy
 from trade.strategies.macd_strategy import MACDStrategy
 from trade.strategies.md_macd_strategy import MdMACDStrategy
 from trade.strategies.md_strategy import MDStrategy
+from trade.strategies.sizers import WeightedPortfolioSizer
 from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
 from trade.strategies.sma_strategy import SMAStrategy
 
@@ -21,11 +23,12 @@ def run():
     SMACrossoverStrategy    10726.09
     SMAStrategy             10239.02
     MACDStrategy            11425.63
-    MdMACDStrategy          11425.63
+    MdMACDStrategy          14910.82
     """
     config = Configuration().scrape()
 
     datas = HistoryLoader.load_multiple(config.tickers, interval="1d")
+    # portfolio = Portfolio.get_by_id(1)
 
     cerebro = bt.Cerebro()
     # cerebro.addstrategy(SMACrossoverStrategy, fast=5, slow=50)
@@ -33,10 +36,11 @@ def run():
     # cerebro.addstrategy(BollingerStrategy)
     # cerebro.addstrategy(MACDStrategy, atrdist=3.0)
     # cerebro.addstrategy(MDStrategy)
-    cerebro.addstrategy(MdMACDStrategy)
+    cerebro.addstrategy(MdMACDStrategy, portfolio_id=1)
 
     [cerebro.adddata(datas[key], name=key) for key in datas]
-    cerebro.addsizer(bt.sizers.FixedSize, stake=1)
+    # cerebro.addsizer(bt.sizers.FixedSize, stake=1)
+    cerebro.addsizer(WeightedPortfolioSizer)
     cerebro.broker.setcash(10000.0)
 
     cerebro.addanalyzer(btanalyzers.SharpeRatio, _name="sharpe")
