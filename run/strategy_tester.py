@@ -19,11 +19,12 @@ from trade.strategies.sma_strategy import SMAStrategy
 
 def run():
     """
-    Bollinger               10436.71
-    SMACrossoverStrategy    10726.09
-    SMAStrategy             10239.02
-    MACDStrategy            11425.63
-    MdMACDStrategy          14910.82
+    Bollinger                               10436.71
+    SMACrossoverStrategy                    10726.09
+    SMAStrategy                             10239.02
+    MACDStrategy                            11425.63
+    MdMACDStrategy                          14910.82
+    MdMACDStrategy[WeightedPortfolioSizer]  17834.67
     """
     config = Configuration().scrape()
 
