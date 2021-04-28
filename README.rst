@@ -109,7 +109,10 @@ Apr 13
 
 Apr 25
 ^^^^^^
-- [ ] * Strategy that uses multiple data sources (simple version) loaded from Portfolio
-- [ ] * Strategy that uses multiple data sources (advance version)
+- [x] Strategy that uses multiple data sources (simple version) loaded from Portfolio
+- [x] Strategy that uses multiple data sources (advance version)
+- [ ] Check for margins
+- [ ] Use order_target_percent instead of buy
 - [ ] Version weights by adding version to the model
 - [ ] Track latest portfolio version (Portfolio Version model) and associate weights with each version
+- [ ] Why it doesn't sell?

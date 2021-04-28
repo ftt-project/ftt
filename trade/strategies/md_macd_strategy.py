@@ -60,18 +60,19 @@ class MdMACDStrategy(bt.Strategy):
                     self.orders[d._name] = self.buy(data=d)
                     self.orders[d._name].addinfo(d_name=d._name)
                     pdist = self.inds[d._name]["atr"][0] * self.p.atrdist
-                    self.pstop[d] = d.close[0] - pdist
+                    self.pstop[d._name] = d.close[0] - pdist
 
             else:  # in the market
                 pclose = d.close[0]
-                pstop = d in self.pstop
+                pstop = d._name in self.pstop
 
                 if pclose < pstop:
-                    self.close(data=d)  # stop met - get out
+                    self.orders[d._name] = self.close(data=d)  # stop met - get out
+                    self.orders[d._name].addinfo(d_name=d._name)
                 else:
                     pdist = self.inds[d._name]["atr"][0] * self.p.atrdist
                     # Update only if greater than
-                    self.pstop[d] = max(pstop, pclose - pdist)
+                    self.pstop[d._name] = max(pstop, pclose - pdist)
 
     def notify_order(self, order):
         if order.status in [order.Submitted, order.Accepted]:

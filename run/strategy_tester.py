@@ -87,7 +87,6 @@ def run():
     logger.info(positions)
     logger.info("Pyfolio transactions:")
     logger.info(transactions)
-    cerebro.plot()
 
 
 if __name__ == "__main__":
