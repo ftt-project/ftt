@@ -48,6 +48,9 @@ class MdMACDStrategy(bt.Strategy):
         self.pstop = {}
 
     def next(self):
+        if not self.data_live:
+            return
+
         for i, d in enumerate(self.datas):
             dt, dn = self.datetime.date(), d._name
             position = self.getposition(d).size
@@ -105,3 +108,8 @@ class MdMACDStrategy(bt.Strategy):
         logger.info(
             "OPERATION PROFIT, GROSS %.2f, NET %.2f" % (trade.pnl, trade.pnlcomm)
         )
+
+    def notify_data(self, data, status, *args, **kwargs):
+        print("*" * 5, "DATA NOTIF:", data._getstatusname(status), *args)
+        if status == data.LIVE:
+            self.data_live = True
