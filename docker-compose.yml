@@ -15,9 +15,11 @@ services:
       - "5432:5432"
   trade:
     build: .
+    network_mode: "host"
     ports:
       - "8888"
     volumes:
       - .:/usr/src/app
     depends_on:
       - db
+
