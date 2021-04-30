@@ -1,3 +1,6 @@
+from collections import OrderedDict
+from datetime import date
+
 from trade.db import Ticker
 from trade.db.setup import database_connection
 
@@ -13,7 +16,7 @@ class HistoryLoader:
     """
 
     @staticmethod
-    def load(ticker, interval="1m"):
+    def load(ticker: str, start_date: date, end_date: date,  interval: str = "1m") -> PandasData:
         query = (
             TickerReturn.select(
                 TickerReturn.datetime,
@@ -26,6 +29,7 @@ class HistoryLoader:
             .where(
                 TickerReturn.ticker == Ticker.get(Ticker.ticker == ticker),
                 TickerReturn.interval == interval,
+                ((TickerReturn.datetime >= start_date) | (TickerReturn.datetime <= end_date))
             )
             .order_by(TickerReturn.datetime.asc())
         )
@@ -43,8 +47,8 @@ class HistoryLoader:
         return PandasData(dataname=dataframe)
 
     @staticmethod
-    def load_multiple(tickers, interval):
+    def load_multiple(tickers: dict, start_date: date, end_date: date, interval: str) -> dict:
         collection = {}
         for ticker in tickers:
-            collection[ticker] = HistoryLoader.load(ticker, interval)
-        return collection
+            collection[ticker] = HistoryLoader.load(ticker, start_date, end_date, interval)
+        return OrderedDict(sorted(collection.items()))

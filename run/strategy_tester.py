@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from collections import OrderedDict
+from datetime import date
 
 import fire
 import backtrader as bt
@@ -17,8 +19,11 @@ from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
 from trade.strategies.sma_strategy import SMAStrategy
 
 
-def run():
+def run(portfolio_id: int) -> None:
     """
+    Parameters:
+        portfolio_id: Portfolio to use
+
     Bollinger                               10436.71
     SMACrossoverStrategy                    10726.09
     SMAStrategy                             10239.02
@@ -26,10 +31,11 @@ def run():
     MdMACDStrategy                          14910.82
     MdMACDStrategy[WeightedPortfolioSizer]  17834.67
     """
+    portfolio = Portfolio.get_by_id(portfolio_id)
+
     config = Configuration().scrape()
 
-    datas = HistoryLoader.load_multiple(config.tickers, interval="1d")
-    # portfolio = Portfolio.get_by_id(1)
+    # datas = HistoryLoader.load_multiple(config.tickers, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
 
     cerebro = bt.Cerebro()
     # cerebro.addstrategy(SMACrossoverStrategy, fast=5, slow=50)
@@ -37,9 +43,18 @@ def run():
     # cerebro.addstrategy(BollingerStrategy)
     # cerebro.addstrategy(MACDStrategy, atrdist=3.0)
     # cerebro.addstrategy(MDStrategy)
-    cerebro.addstrategy(MdMACDStrategy, portfolio_id=1)
+    cerebro.addstrategy(MdMACDStrategy, portfolio_id=portfolio.id)
 
-    [cerebro.adddata(datas[key], name=key) for key in datas]
+    tickers = [weight.ticker.ticker for weight in portfolio.weights]
+    datas = HistoryLoader.load_multiple(tickers, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
+    [cerebro.adddata(datas[key], name=key) for key in OrderedDict(sorted(datas.items()))]
+
+    # for weight in portfolio.weights:
+    #     data = HistoryLoader.load(weight.ticker.ticker, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
+    #     cerebro.adddata(data, name=weight.ticker.ticker)
+
+    # [cerebro.adddata(datas[key], name=key) for key in OrderedDict(sorted(datas.items()))]
+
     # cerebro.addsizer(bt.sizers.FixedSize, stake=1)
     cerebro.addsizer(WeightedPortfolioSizer)
     cerebro.broker.setcash(10000.0)
