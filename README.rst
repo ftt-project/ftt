@@ -105,7 +105,7 @@ Apr 13
 - [x] Check run/history
 - [ ] Use HistoryDataLoader service
 - [x] Calculate weights and save in DB
-- [ ] Using calculated weights buy
+- [ ] Use calculated weights buy
 
 Apr 25
 ^^^^^^
@@ -116,3 +116,7 @@ Apr 25
 - [ ] Version weights by adding version to the model
 - [ ] Track latest portfolio version (Portfolio Version model) and associate weights with each version
 - [ ] Why it doesn't sell?
+
+Apr 30
+^^^^^^
+- [ ] Try out strategy on 5 minutes tickers
