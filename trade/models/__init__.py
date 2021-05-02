@@ -7,3 +7,5 @@ from .portfolio import Portfolio
 from .ticker import Ticker
 from .ticker_return import TickerReturn
 from .weight import Weight
+from .portfolio_version import PortfolioVersion
+from .order import Order

@@ -1,4 +1,4 @@
-from trade.db import Weight
+from trade.models import Weight
 
 
 class TestWeight:
