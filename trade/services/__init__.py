@@ -1,3 +1,3 @@
-from .history_data_loader import HistoryDataLoader
-from .ticker_data_loader import TickerDataLoader
+from .history_data_persister import HistoryDataPersister
+from .ticker_data_persister import TickerDataPersister
 from .exchange_name_normalizer import ExchangeNameNormalizer

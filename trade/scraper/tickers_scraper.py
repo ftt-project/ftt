@@ -4,7 +4,6 @@ from time import sleep
 
 import chime
 import yfinance as yf
-import requests
 
 from trade.logger import logger
 
@@ -16,7 +15,7 @@ class TickersScraper:
         pass
 
     @staticmethod
-    def load(ticker):
+    def load(ticker: str):
         success = False
         max_retries = 5
         retry_count = 0

@@ -45,13 +45,13 @@ def run(portfolio_id: int) -> None:
     # cerebro.addstrategy(MDStrategy)
     cerebro.addstrategy(MdMACDStrategy, portfolio_id=portfolio.id)
 
-    tickers = [weight.ticker.ticker for weight in portfolio.weights]
+    tickers = [weight.name.name for weight in portfolio.weights]
     datas = HistoryLoader.load_multiple(tickers, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
     [cerebro.adddata(datas[key], name=key) for key in OrderedDict(sorted(datas.items()))]
 
     # for weight in portfolio.weights:
-    #     data = HistoryLoader.load(weight.ticker.ticker, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
-    #     cerebro.adddata(data, name=weight.ticker.ticker)
+    #     data = HistoryLoader.load(weight.name.name, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
+    #     cerebro.adddata(data, name=weight.name.name)
 
     # [cerebro.adddata(datas[key], name=key) for key in OrderedDict(sorted(datas.items()))]
 

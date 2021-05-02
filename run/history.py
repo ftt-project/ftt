@@ -3,12 +3,12 @@ import fire
 from trade.base_command import BaseCommand
 import chime
 
-from scraper.history_scraper import HistoryScraper
+from trade.scraper.history_scraper import HistoryScraper
 from trade.logger import logger
 from trade.configuration import Configuration
 from trade.models import TickerReturn
 from trade.models import Ticker
-from trade.services import TickerDataLoader
+from trade.services import TickerDataPersister
 
 chime.theme("big-sur")
 
@@ -20,9 +20,9 @@ class History(BaseCommand):
 
     def load_all(self, exchange, offset=0):
         tickers_query = (
-            Ticker.select(Ticker.ticker)
+            Ticker.select(Ticker.name)
             .where(Ticker.exchange == exchange)
-            .order_by(Ticker.ticker)
+            .order_by(Ticker.name)
         )
         if tickers_query.count() == 0:
             self.log_warning(f"No tickers found for <{exchange}>")
@@ -31,7 +31,7 @@ class History(BaseCommand):
         limit = 10
         tickers_batch = tickers_query.limit(limit).offset(offset)
         while tickers_batch.count() > 0:
-            tickers = [ticker.ticker for ticker in tickers_batch]
+            tickers = [ticker.name for ticker in tickers_batch]
 
             inserted_num = self.load(tickers)
             self.log_info(
@@ -75,7 +75,7 @@ class History(BaseCommand):
             for index, row in ticker_data.iterrows():
                 ticker = Ticker.get_or_none(ticker=ticker_name)
                 if not ticker:
-                    TickerDataLoader(ticker_name).perform()
+                    TickerDataPersister(ticker_name).perform()
                 ins = (
                     TickerReturn.insert(
                         ticker=Ticker.get(ticker=ticker_name),

@@ -63,7 +63,7 @@ class Weights(BaseCommand):
 
     def __ticker_results(self, ticker):
         query = self.__base_query(). \
-            where(TickerReturn.ticker == Ticker.get(Ticker.ticker == ticker))
+            where(TickerReturn.ticker == Ticker.get(Ticker.name == ticker))
         return query.sql()
 
     def __persist_weight(self, portfolio, ticker_name, value):

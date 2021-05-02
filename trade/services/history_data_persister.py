@@ -1,4 +1,4 @@
-class HistoryDataLoader:
+class HistoryDataPersister:
     def __init__(self):
         pass
 

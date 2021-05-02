@@ -1,5 +1,5 @@
 from peewee import Model
-from trade.db import DatabaseConnection
+from trade.models import DatabaseConnection
 
 
 class Base(Model):

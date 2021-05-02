@@ -10,11 +10,11 @@ from trade.base_command import BaseCommand
 from trade.logger import logger
 import pickle
 
-from scraper.tickers_scraper import TickersScraper
+from trade.scraper import TickersScraper
 
 from trade.models import Ticker
 import trade.models as configuration
-from trade.services.ticker_data_loader import TickerDataLoader
+from trade.services.ticker_data_persister import TickerDataPersister
 
 chime.theme("big-sur")
 
@@ -81,7 +81,7 @@ class Tickers(BaseCommand):
         Load ticker from yahoo finance if it does not exist in database
         """
         ticker = ticker.strip()
-        TickerDataLoader(ticker).perform()
+        TickerDataPersister(ticker).perform()
 
     def exchange_lists(self, exchange="ALL"):
         """
@@ -109,7 +109,7 @@ class Tickers(BaseCommand):
                     ticker = self.__normalize_ticker(ticker, exchange)
 
                     db_request = Ticker.select().where(
-                        Ticker.ticker == ticker, Ticker.exchange == exchange
+                        Ticker.name == ticker, Ticker.exchange == exchange
                     )
                     logger.debug(f"Request: {db_request}")
                     if db_request.count() > 0:

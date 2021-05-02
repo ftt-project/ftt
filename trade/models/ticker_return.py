@@ -1,7 +1,7 @@
 import peewee
 
-from trade.db.base import Base
-from trade.db.ticker import Ticker
+from trade.models import Base
+from trade.models import Ticker
 
 
 class TickerReturn(Base):

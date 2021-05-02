@@ -1,12 +1,12 @@
 from datetime import datetime
 
 import peewee
-from trade.db.base import Base
+from trade.models import Base
 
 
 class Portfolio(Base):
     name = peewee.CharField(index=True)
-    created_at = peewee.DateTimeField(default=datetime.datetime.now)
+    created_at = peewee.DateTimeField(default=datetime.now)
     updated_at = peewee.DateTimeField()
 
     class Meta:

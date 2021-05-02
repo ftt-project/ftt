@@ -1,18 +1,24 @@
 from datetime import datetime
 
-from scraper.tickers_scraper import TickersScraper
-from trade.db import Ticker
+from trade.scraper import TickersScraper
+from trade.models import Ticker
 from trade.logger import logger
 from trade.services.exchange_name_normalizer import ExchangeNameNormalizer
 
 
-class TickerDataLoader:
+class TickerDataPersister:
+    """
+    Receives tickers data to persist
+    """
     def __init__(self, ticker, scraper=TickersScraper):
+        """
+        # TODO: refactor, do not accept scraper, accept data to persist
+        """
         self.ticker = ticker.strip()
         self.scraper = scraper
 
     def perform(self):
-        db_request = Ticker.select().where(Ticker.ticker == self.ticker)
+        db_request = Ticker.select().where(Ticker.name == self.ticker)
         logger.debug(f"Request: {db_request}")
         if db_request.count() > 0:
             logger.warning(

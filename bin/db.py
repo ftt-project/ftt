@@ -1,14 +1,16 @@
 import fire
 
-from trade.db.setup import create_tables, create_database
-from trade.db.base import Base
+from trade.models.setup import create_tables, create_database
+from trade.models import Base
 
 
 class DB:
-    def create_database(self):
+    @staticmethod
+    def create_database():
         create_database()
 
-    def create_tables(self):
+    @staticmethod
+    def create_tables():
         models = Base.__subclasses__()
         create_tables(models)
 

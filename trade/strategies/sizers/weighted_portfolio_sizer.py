@@ -23,7 +23,7 @@ class WeightedPortfolioSizer(bt.Sizer):
                    .switch(Weight)
                    .join(Ticker, peewee.JOIN.LEFT_OUTER)
                    .where(Portfolio.id == portfolio_id)
-                   .where(Ticker.ticker == ticker_name)
+                   .where(Ticker.name == ticker_name)
                    .get())
         self._data = self.strategy.getdatabyname(ticker_name)
 

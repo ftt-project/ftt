@@ -5,7 +5,7 @@ from trade.models import Base
 
 
 class Ticker(Base):
-    ticker = peewee.CharField()
+    name = peewee.CharField()
     exchange = peewee.CharField(index=True)
     company_name = peewee.CharField(null=True)
     exchange_name = peewee.CharField(index=True)
@@ -17,5 +17,5 @@ class Ticker(Base):
     updated_at = peewee.DateTimeField()
 
     class Meta:
-        indexes = ((("ticker", "exchange"), True),)
+        indexes = ((("name", "exchange"), True),)
         table_name = "tickers"

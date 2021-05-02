@@ -16,14 +16,14 @@ def run():
     portfolio = Portfolio.get_by_id(1)
     for weight in portfolio.weights:
         ticker = weight.ticker
-        dataname = f"{ticker.ticker}-STK-{ticker.exchange}"
+        dataname = f"{ticker.name}-STK-{ticker.exchange}"
         data = store.getdata(
             dataname=dataname,
             timeframe=bt.TimeFrame.Ticks,  # compression=5,
             rtbar=True,
             fromdate=datetime.strptime("2021-01-19T00:00:00", "%Y-%m-%d" + "T%H:%M:%S"),
         )
-        cerebro.resampledata(data, name=ticker.ticker, timeframe=bt.TimeFrame.Seconds, compression=10)
+        cerebro.resampledata(data, name=ticker.name, timeframe=bt.TimeFrame.Seconds, compression=10)
 
     cerebro.broker = store.getbroker()
 
