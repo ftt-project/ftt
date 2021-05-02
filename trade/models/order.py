@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import peewee
 
 from trade.models import Base, Ticker, PortfolioVersion

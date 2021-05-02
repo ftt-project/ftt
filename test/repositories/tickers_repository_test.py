@@ -59,3 +59,10 @@ class TestTickersRepository:
         assert result.exchange == data["exchange"]
         assert result.updated_at is not None
         assert result.created_at is not None
+
+    def test_exist(self, subject, ticker):
+        result = subject.exist(ticker.name)
+        assert result
+
+        result = subject.exist('random-name')
+        assert not result
