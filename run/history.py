@@ -20,9 +20,9 @@ class History(BaseCommand):
 
     def load_all(self, exchange, offset=0):
         tickers_query = (
-            Ticker.select(Ticker.name)
+            Ticker.select(Ticker.symbol)
             .where(Ticker.exchange == exchange)
-            .order_by(Ticker.name)
+            .order_by(Ticker.symbol)
         )
         if tickers_query.count() == 0:
             self.log_warning(f"No tickers found for <{exchange}>")
@@ -31,7 +31,7 @@ class History(BaseCommand):
         limit = 10
         tickers_batch = tickers_query.limit(limit).offset(offset)
         while tickers_batch.count() > 0:
-            tickers = [ticker.name for ticker in tickers_batch]
+            tickers = [ticker.symbol for ticker in tickers_batch]
 
             inserted_num = self.load(tickers)
             self.log_info(

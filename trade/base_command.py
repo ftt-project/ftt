@@ -2,7 +2,7 @@ import chime
 from abc import ABC
 
 from trade.logger import logger
-from trade.db.setup import establish_connection
+from trade.models import establish_connection
 
 
 class BaseCommand(ABC):

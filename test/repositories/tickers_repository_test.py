@@ -15,7 +15,7 @@ class TestTickersRepository:
     @fixture
     def data(self):
         return {
-            "name": "AA.XX",
+            "symbol": "AA.XX",
             "exchange": "SYD",
             "company_name": "Company AAXX",
             "exchange_name": "SYD",
@@ -40,23 +40,23 @@ class TestTickersRepository:
         Ticker.delete().execute()
 
     def test_get_by_name(self, ticker, subject):
-        found = subject.get_by_name(ticker.name)
+        found = subject.get_by_name(ticker.symbol)
         assert ticker.id == found.id
 
     def test_save(self, ticker, subject):
-        ticker.name = "BB.YY"
+        ticker.symbol = "BB.YY"
         result = subject.save(ticker)
         found = Ticker.get_by_id(ticker.id)
 
         assert type(result) is Ticker
-        assert found.name == "BB.YY"
+        assert found.symbol == "BB.YY"
 
     def test_upsert_new_record(self, data, subject):
         result, created = subject.upsert(pd.Series(data))
 
         assert type(result) == Ticker
         assert result.id is not None
-        assert result.name == data["name"]
+        assert result.symbol == data["symbol"]
         assert result.exchange == data["exchange"]
         assert result.updated_at is not None
         assert result.created_at is not None
@@ -70,8 +70,8 @@ class TestTickersRepository:
         assert not created
 
     def test_exist(self, subject, ticker):
-        result = subject.exist(ticker.name)
+        result = subject.exist(ticker.symbol)
         assert result
 
-        result = subject.exist('random-name')
+        result = subject.exist('random-symbol')
         assert not result

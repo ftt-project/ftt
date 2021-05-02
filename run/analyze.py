@@ -187,7 +187,7 @@ class Analyze(BaseCommand):
                 TickerReturn.volume,
             )
             .where(
-                TickerReturn.ticker == Ticker.get(Ticker.name == "SHOP"),
+                TickerReturn.ticker == Ticker.get(Ticker.symbol == "SHOP"),
                 TickerReturn.interval == "1d",
             )
             .order_by(TickerReturn.datetime.asc())

@@ -18,7 +18,7 @@ class TickerDataPersister:
         self.scraper = scraper
 
     def perform(self):
-        db_request = Ticker.select().where(Ticker.name == self.ticker)
+        db_request = Ticker.select().where(Ticker.symbol == self.ticker)
         logger.debug(f"Request: {db_request}")
         if db_request.count() > 0:
             logger.warning(

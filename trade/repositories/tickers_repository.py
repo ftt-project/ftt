@@ -11,7 +11,7 @@ class TickersRepository(RepositoryInterface):
         self.model = model
 
     def get_by_name(self, name: str) -> Base:
-        return self.model.get(self.model.name == name)
+        return self.model.get(self.model.symbol == name)
 
     def get_by_id(self, id: int) -> Base:
         return self.model.get_by_id(id)
@@ -25,12 +25,12 @@ class TickersRepository(RepositoryInterface):
         data["updated_at"] = datetime.now()
         data["created_at"] = datetime.now()
         result = self.model.get_or_create(
-            name=data["name"],
+            symbol=data["symbol"],
             exchange=data["exchange"],
             defaults=data.to_dict()
         )
         return result
 
     def exist(self, name: str) -> int:
-        count = self.model.select().where(self.model.name == name).count()
+        count = self.model.select().where(self.model.symbol == name).count()
         return count > 0

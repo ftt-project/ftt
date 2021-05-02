@@ -34,14 +34,14 @@ class TestWeightedPortfolioSizer:
         return cerebro
 
     def test_properly_utilized_by_cerebro(self, weights_seed):
-        cerebro = self.prepare_cerebro(weights_seed.name.name)
+        cerebro = self.prepare_cerebro(weights_seed.symbol.symbol)
         strats = cerebro.run()
 
         strat = strats[0]
         assert type(strat.getsizer()) == WeightedPortfolioSizer
 
     def test_returns_on_buy_diff_from_portfolio(self, weights_seed):
-        cerebro = self.prepare_cerebro(weights_seed.name.name)
+        cerebro = self.prepare_cerebro(weights_seed.symbol.symbol)
         strats = cerebro.run()
 
         strat = strats[0]
