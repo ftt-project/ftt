@@ -1,6 +1,6 @@
 @startuml
 
-package "trade.db" {
+package "trade.models" {
     class StockMarket {
         + id
         + name
@@ -8,6 +8,11 @@ package "trade.db" {
     class Portfolio {
         + id
         + name
+    }
+    abstract class PortfolioVersion #aliceblue {
+        + id
+        + portfolio_id
+        + version
     }
     class TickerReturn {
         + id
@@ -29,7 +34,7 @@ package "trade.db" {
         + {abstract} _version
     }
     class Ticker {
-        + ticker
+        + name
         + exchange
         + company_name
         + exchange_name
@@ -38,7 +43,7 @@ package "trade.db" {
         + industry
         + currency
     }
-    abstract class Order {
+    abstract class Order #aliceblue {
         + id
         + portfolio_id
         + ticker_id
@@ -67,9 +72,10 @@ object IBLifeTrading {
     + Portfolio ID
 }
 
-
 IBLifeTrading -> Cerebro : Initiailizes the instance
 IBLifeTrading -> Portfolio : Loading required tickers to work with
+
+Portfolio --{ PortfolioVersion
 
 Cerebro -o Strategy : Takes Portfolio ID to work agains
 Cerebro --o WeightedPortfolioSizer
@@ -77,8 +83,12 @@ Cerebro --o WeightedPortfolioSizer
 ' Strategy -> Portfolio :  As ID to pass over to Sizer
 Strategy -* WeightedPortfolioSizer : Uses Portfolio ID to and ticker name to return the weight
 
-Portfolio "1" *-- "many" Weights
-Ticker "1" *-- "many" Weights
+PortfolioVersion --{ Weights
+Ticker --{ Weights
+Ticker --{ TickerReturns
+
+Ticker --{ Order
+Order }-- PortfolioVersion
 
 WeightedPortfolioSizer -> Portfolio
 WeightedPortfolioSizer -> Weights : fetch positions (ticker_name, portfolio_id)
