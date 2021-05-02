@@ -3,6 +3,7 @@ import urllib
 from time import sleep
 
 import chime
+import pandas as pd
 import yfinance as yf
 
 from trade.logger import logger
@@ -15,7 +16,7 @@ class TickersScraper:
         pass
 
     @staticmethod
-    def load(ticker: str):
+    def load(ticker: str) -> pd.Series:
         success = False
         max_retries = 5
         retry_count = 0
@@ -25,7 +26,8 @@ class TickersScraper:
                 ticker_object = yf.Ticker(ticker)
                 info = ticker_object.info
                 success = True
-                return info
+                info['name'] = info.pop("ticker")
+                return pd.Series(info)
             except urllib.error.HTTPError as e:
                 if retry_count < max_retries:
                     pause_interval = math.pow(2, retry_count)

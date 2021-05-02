@@ -1,5 +1,7 @@
 from datetime import datetime
 
+import pandas as pd
+
 from trade.models import Base, Ticker
 from trade.repositories.repository_interface import RepositoryInterface
 
@@ -19,10 +21,15 @@ class TickersRepository(RepositoryInterface):
         record.save()
         return record
 
-    def create(self, data: dict) -> Base:
+    def upsert(self, data: pd.Series) -> Base:
         data["updated_at"] = datetime.now()
         data["created_at"] = datetime.now()
-        return self.model.create(**data)
+        result = self.model.get_or_create(
+            name=data["name"],
+            exchange=data["exchange"],
+            defaults=data.to_dict()
+        )
+        return result
 
     def exist(self, name: str) -> int:
         count = self.model.select().where(self.model.name == name).count()

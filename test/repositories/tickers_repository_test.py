@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pandas as pd
 from pytest import fixture
 
 from trade.models import Ticker
@@ -21,13 +22,13 @@ class TestTickersRepository:
             "type": "Stock",
             "type_display": "Stock",
             "industry": "Technologie",
-            "currency": "USD",
-            "created_at": datetime.now(),
-            "updated_at": datetime.now()
+            "currency": "USD"
         }
 
     @fixture
     def ticker(self, data):
+        data["updated_at"] = datetime.now()
+        data["created_at"] = datetime.now()
         ticker = Ticker.create(**data)
         yield ticker
         ticker.delete_instance()
@@ -50,8 +51,8 @@ class TestTickersRepository:
         assert type(result) is Ticker
         assert found.name == "BB.YY"
 
-    def test_create(self, data, subject):
-        result = subject.create(data)
+    def test_upsert_new_record(self, data, subject):
+        result, created = subject.upsert(pd.Series(data))
 
         assert type(result) == Ticker
         assert result.id is not None
@@ -59,6 +60,14 @@ class TestTickersRepository:
         assert result.exchange == data["exchange"]
         assert result.updated_at is not None
         assert result.created_at is not None
+        assert created
+
+    def test_upsert_existing_record(self, data, subject, ticker):
+        result, created = subject.upsert(pd.Series(data))
+
+        assert type(result) == Ticker
+        assert result.id == ticker.id
+        assert not created
 
     def test_exist(self, subject, ticker):
         result = subject.exist(ticker.name)
