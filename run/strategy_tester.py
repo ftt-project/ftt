@@ -7,7 +7,7 @@ import backtrader as bt
 import backtrader.analyzers as btanalyzers
 
 from trade.configuration import Configuration
-from trade.db import Portfolio
+from trade.models import Portfolio
 from trade.history_loader import HistoryLoader
 from trade.logger import logger
 from trade.strategies.bollinger_strategy import BollingerStrategy

@@ -120,3 +120,5 @@ Apr 25
 Apr 30
 ^^^^^^
 - [ ] Try out strategy on 5 minutes tickers
+- [ ] Save executed and attempted orders in DB
+- [ ] Repository to handle data creation like created_at and updated_at

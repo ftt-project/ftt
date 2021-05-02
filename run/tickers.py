@@ -12,8 +12,8 @@ import pickle
 
 from scraper.tickers_scraper import TickersScraper
 
-from trade.db.ticker import Ticker
-import trade.db.setup as configuration
+from trade.models import Ticker
+import trade.models as configuration
 from trade.services.ticker_data_loader import TickerDataLoader
 
 chime.theme("big-sur")

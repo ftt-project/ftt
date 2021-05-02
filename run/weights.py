@@ -10,7 +10,7 @@ from pypfopt import DiscreteAllocation
 
 from trade.base_command import BaseCommand
 from trade.configuration import Configuration
-from trade.db import Ticker, TickerReturn, DatabaseConnection, Portfolio, Weight
+from trade.models import Ticker, TickerReturn, DatabaseConnection, Portfolio, Weight
 
 
 class Weights(BaseCommand):

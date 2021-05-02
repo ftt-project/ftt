@@ -4,7 +4,7 @@ import fire
 import backtrader as bt
 
 from trade.logger import logger
-from trade.db import Portfolio
+from trade.models import Portfolio
 from trade.strategies.md_macd_strategy import MdMACDStrategy
 from trade.strategies.sizers import WeightedPortfolioSizer
 

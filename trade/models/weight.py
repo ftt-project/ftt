@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import peewee
 
 from trade.db import Ticker, Portfolio
@@ -12,6 +14,8 @@ class Weight(Base):
     portfolio = peewee.ForeignKeyField(Portfolio, backref="weights")
     position = peewee.IntegerField()
     planned_position = peewee.IntegerField()
+    created_at = peewee.DateTimeField(default=datetime.datetime.now)
+    updated_at = peewee.DateTimeField()
 
     class Meta:
         indexes = ((("ticker", "portfolio"), True),)

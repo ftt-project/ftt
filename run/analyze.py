@@ -4,9 +4,9 @@ import backtrader.analyzers as btanalyzers
 import pandas as pd
 import pandas_datareader
 
-from db.models import TickerReturn, Ticker
+from trade.models import TickerReturn, Ticker
 from trade.base_command import BaseCommand
-from trade.db.setup import database_connection
+from trade.models import database_connection
 
 
 class Analyze(BaseCommand):

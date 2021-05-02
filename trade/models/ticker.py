@@ -1,7 +1,7 @@
 import peewee
 import datetime
 
-from trade.db.base import Base
+from trade.models import Base
 
 
 class Ticker(Base):
