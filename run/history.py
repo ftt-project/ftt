@@ -106,4 +106,12 @@ class History(BaseCommand):
 
 
 if __name__ == "__main__":
-    fire.Fire(History)
+    try:
+        fire.Fire({
+            "load": History().load,
+            "load_all": History.load_all
+        })
+    except Exception as e:
+        chime.error()
+        raise e
+
