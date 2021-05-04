@@ -18,7 +18,7 @@ class PortfoliosRepository(RepositoryInterface):
     def get_by_name(self, name: str) -> Base:
         return self.model.get(self.model.name == name)
 
-    def create(self, data):
+    def create(self, data: dict) -> Base:
         data["created_at"] = datetime.now()
         data["updated_at"] = datetime.now()
         portfolio = self.model.create(**data)

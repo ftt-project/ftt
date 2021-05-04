@@ -42,3 +42,4 @@ class TestPortfoliosRepository:
         assert type(result) == Portfolio
         assert len(result.versions) == 1
         assert type(result.versions[0]) == PortfolioVersion
+
