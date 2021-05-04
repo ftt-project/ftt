@@ -126,4 +126,4 @@ Apr 30
 May 3
 ^^^^^
 - [ ] mypy
-- [ ] use tickers returns repository in histry runner
+- [ ] use tickers returns repository in history runner

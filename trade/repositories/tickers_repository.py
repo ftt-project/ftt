@@ -34,3 +34,6 @@ class TickersRepository(RepositoryInterface):
     def exist(self, name: str) -> int:
         count = self.model.select().where(self.model.symbol == name).count()
         return count > 0
+
+    def create(self, data: dict) -> Base:
+        raise NotImplementedError()
