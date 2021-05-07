@@ -6,7 +6,7 @@ from trade.repositories.repository_interface import RepositoryInterface
 
 class PortfolioVersionsRepository(RepositoryInterface):
     def __init__(self, model=PortfolioVersion):
-        self.model = PortfolioVersion
+        self.model = model
 
     def save(self, model: Base) -> Base:
         raise NotImplementedError()

@@ -1,3 +1,5 @@
+from typing import Optional
+
 import fire
 import chime
 import pendulum
@@ -11,6 +13,8 @@ from pypfopt import DiscreteAllocation
 from trade.base_command import BaseCommand
 from trade.configuration import Configuration
 from trade.models import Ticker, TickerReturn, DatabaseConnection, Portfolio, Weight
+from trade.repositories.portfolio_versions_repository import PortfolioVersionsRepository
+from trade.repositories.portfolios_repository import PortfoliosRepository
 
 
 class Weights(BaseCommand):
@@ -18,7 +22,11 @@ class Weights(BaseCommand):
     Calculates weights of given in configuration tickers
     """
 
-    def calculate(self, persist: bool = False):
+    def __init__(self, portfolio_id: int, portfolio_version_id: Optional[int] = None):
+        self._portfolio_id = portfolio_id
+        self.portfolio_version_id = portfolio_version_id
+
+    def calculate(self, persist: bool = False) -> None:
         """
         Returns recommended weights of a given portfolio
 
@@ -45,7 +53,7 @@ class Weights(BaseCommand):
         print(f"Leftover: ${leftover:.2f}")
         print(pd.Series(alloc).sort_index())
         if persist:
-            portfolio = self.__portfolio()
+            portfolio = self.__portfolio(self._portfolio_id)
             for ticker_name, value in alloc.items():
                 self.__persist_weight(portfolio, ticker_name, value)
 
@@ -57,13 +65,13 @@ class Weights(BaseCommand):
                                     params=params,
                                     index_col='datetime'
                                     )
-            df = pd.DataFrame({ticker: dataframe.close}, index=dataframe.index)
+            df = pd.DataFrame({ticker.symbol: dataframe.close}, index=dataframe.index)
             dataframes.append(df)
         return pd.concat(dataframes, axis=1).dropna()
 
     def __ticker_results(self, ticker):
         query = self.__base_query(). \
-            where(TickerReturn.ticker == Ticker.get(Ticker.symbol == ticker))
+            where(TickerReturn.ticker == Ticker.get(Ticker.symbol == ticker.symbol))
         return query.sql()
 
     def __persist_weight(self, portfolio, ticker_name, value):
@@ -90,16 +98,15 @@ class Weights(BaseCommand):
             TickerReturn.datetime.asc()
         ).join(Ticker)
 
-    def __portfolio(self):
-        return Portfolio.get_by_id(1)
-
     @staticmethod
     def __start_period():
         return pendulum.naive(2020, 1, 15)
 
-    @staticmethod
-    def __tickers():
-        return Configuration().scrape().tickers
+    def __tickers(self):
+        return PortfoliosRepository().get_tickers(self.__portfolio(self._portfolio_id))
+
+    def __portfolio(self, portfolio_id: int):
+        return PortfoliosRepository().get_by_id(portfolio_id)
 
     @staticmethod
     def __total_portfolio_value():
@@ -108,9 +115,7 @@ class Weights(BaseCommand):
 
 if __name__ == "__main__":
     try:
-        fire.Fire({
-            "calculate": Weights().calculate
-        })
+        fire.Fire(Weights)
     except Exception as e:
         chime.error()
         raise e

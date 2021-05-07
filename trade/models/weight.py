@@ -10,7 +10,7 @@ class Weight(Base):
     """
     TODO: add version column to remember the history of changes of the ticker weight in portfolio
     """
-    ticker = peewee.ForeignKeyField(Ticker)
+    ticker = peewee.ForeignKeyField(Ticker, backref="weights")
     portfolio_version = peewee.ForeignKeyField(PortfolioVersion, backref="weights")
     position = peewee.IntegerField()
     planned_position = peewee.IntegerField()

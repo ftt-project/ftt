@@ -1,6 +1,7 @@
 from datetime import datetime
+from typing import List, Optional
 
-from trade.models import Base, Portfolio, PortfolioVersion
+from trade.models import Base, Portfolio, PortfolioVersion, Ticker, Weight
 from trade.repositories.portfolio_versions_repository import PortfolioVersionsRepository
 from trade.repositories.repository_interface import RepositoryInterface
 
@@ -29,3 +30,13 @@ class PortfoliosRepository(RepositoryInterface):
             "created_at": data["created_at"]
         })
         return portfolio
+
+    @staticmethod
+    def get_tickers(portfolio: Portfolio) -> List[Ticker]:
+        portfolio_version = PortfolioVersionsRepository().get_latest_version(portfolio.id)
+        result = (Ticker
+                  .select()
+                  .join(Weight)
+                  .join(PortfolioVersion)
+                  .where(PortfolioVersion.id == portfolio_version.id))
+        return list(result)
