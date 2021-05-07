@@ -130,4 +130,5 @@ May 3
 
 May 6
 ^^^^^
-- [ ] Create TickerReturnsRepository
+- [ ] *Run MdMACDStrategy together with Portfolio repository like in tutorial runner to buy and sell
+- [ ] Persist orders
