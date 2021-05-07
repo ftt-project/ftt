@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pandas as pd
 from pytest import fixture
 
@@ -44,6 +46,12 @@ class TestWeightsRepository:
             "position": 10
         }
 
+    @fixture
+    def weight(self, data):
+        data['updated_at'] = datetime.now()
+        data['created_at'] = datetime.now()
+        return Weight.create(**data)
+
     @fixture(autouse=True)
     def cleanup(self):
         yield
@@ -57,3 +65,8 @@ class TestWeightsRepository:
 
         assert type(result) == Weight
         assert result.id is not None
+
+    def test_upsert(self, subject, data, weight):
+        result = subject.upsert(data)
+
+        assert result == weight
