@@ -127,3 +127,7 @@ May 3
 ^^^^^
 - [ ] mypy
 - [ ] use tickers returns repository in history runner
+
+May 6
+^^^^^
+- [ ] Create TickerReturnsRepository

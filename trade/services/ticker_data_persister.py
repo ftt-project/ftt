@@ -29,13 +29,13 @@ class TickerDataPersister:
         info = self.scraper.load(self.ticker)
 
         inst, created = Ticker.get_or_create(
-            ticker=self.ticker,
+            symbol=self.ticker,
             exchange=info["exchange"],
             defaults={
                 "company_name": info["longName"],
                 "exchange_name": ExchangeNameNormalizer(info["exchange"]).perform(),
                 "type": "?",
-                "type_display": info["quoteType"],
+                "type_display": info["type"],
                 "industry": info["industry"] if "industry" in info else None,
                 "currency": info["currency"],
                 "updated_at": datetime.now(),

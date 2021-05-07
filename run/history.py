@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import fire
 
 from trade.base_command import BaseCommand
@@ -73,12 +75,12 @@ class History(BaseCommand):
             ticker_data = ticker_data[ticker_data["Close"].notnull()]
             before = TickerReturn.select().count()
             for index, row in ticker_data.iterrows():
-                ticker = Ticker.get_or_none(ticker=ticker_name)
+                ticker = Ticker.get_or_none(symbol=ticker_name)
                 if not ticker:
                     TickerDataPersister(ticker_name).perform()
                 ins = (
                     TickerReturn.insert(
-                        ticker=Ticker.get(ticker=ticker_name),
+                        ticker=Ticker.get(symbol=ticker_name),
                         datetime=index,
                         interval=config.interval,
                         open=row["Open"],
@@ -90,6 +92,8 @@ class History(BaseCommand):
                         percent_change=round(
                             (row["Close"] - row["Open"]) / row["Close"] * 100, 5
                         ),
+                        updated_at=datetime.now(),
+                        created_at=datetime.now()
                     )
                     .on_conflict_ignore()
                     .execute()
