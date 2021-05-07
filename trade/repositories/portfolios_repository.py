@@ -25,7 +25,7 @@ class PortfoliosRepository(RepositoryInterface):
         PortfolioVersionsRepository().create({
             "version": 1,
             "portfolio": portfolio,
-            "updated_at": datetime.now(),
-            "created_at": datetime.now()
+            "updated_at": data["updated_at"],
+            "created_at": data["created_at"]
         })
         return portfolio
