@@ -1,4 +1,4 @@
-from trade.models import Weight
+from trade.models import Weight, PortfolioVersion, Ticker
 
 
 class TestWeight:
@@ -6,5 +6,5 @@ class TestWeight:
         assert Weight._meta.table_name == "weights"
 
     def test_relations(self):
-        assert "ticker" in Weight._meta.fields
-        assert "portfolio" in Weight._meta.fields
+        assert Weight.portfolio_version.rel_model == PortfolioVersion
+        assert Weight.ticker.rel_model == Ticker
