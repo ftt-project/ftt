@@ -15,6 +15,7 @@ from trade.configuration import Configuration
 from trade.models import Ticker, TickerReturn, DatabaseConnection, Portfolio, Weight
 from trade.repositories.portfolio_versions_repository import PortfolioVersionsRepository
 from trade.repositories.portfolios_repository import PortfoliosRepository
+from trade.repositories.weights_repository import WeightsRepository
 
 
 class Weights(BaseCommand):
@@ -74,19 +75,6 @@ class Weights(BaseCommand):
             where(TickerReturn.ticker == Ticker.get(Ticker.symbol == ticker.symbol))
         return query.sql()
 
-    def __persist_weight(self, portfolio, ticker_name, value):
-        (Weight.insert(
-            portfolio=portfolio,
-            ticker=Ticker.get(ticker=ticker_name),
-            position=0,
-            planned_position=value,
-        )
-         .on_conflict(
-            conflict_target=(Weight.ticker, Weight.portfolio),
-            update={Weight.planned_position: value}
-        )
-         .execute())
-
     def __base_query(self):
         return TickerReturn.select(
             TickerReturn.datetime,
@@ -98,6 +86,14 @@ class Weights(BaseCommand):
             TickerReturn.datetime.asc()
         ).join(Ticker)
 
+    def __persist_weight(self, portfolio, ticker_name, value) -> None:
+        WeightsRepository().upsert({
+            "portfolio_version": self.__portfolio_version(),
+            "ticker": Ticker.get(symbol=ticker_name),
+            "position": 0,
+            "planned_position": value
+        })
+
     @staticmethod
     def __start_period():
         return pendulum.naive(2020, 1, 15)
@@ -107,6 +103,9 @@ class Weights(BaseCommand):
 
     def __portfolio(self, portfolio_id: int):
         return PortfoliosRepository().get_by_id(portfolio_id)
+
+    def __portfolio_version(self):
+        return PortfolioVersionsRepository().get_latest_version(self._portfolio_id)
 
     @staticmethod
     def __total_portfolio_value():

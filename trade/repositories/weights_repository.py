@@ -1,11 +1,12 @@
 from datetime import datetime
+from typing import Optional
 
 from trade.models import Base, Weight
 from trade.repositories.repository_interface import RepositoryInterface
 
 
 class WeightsRepository(RepositoryInterface):
-    def __init__(self, model=Weight):
+    def __init__(self, model: Optional[Weight] = Weight):
         self.model = model
 
     def save(self, model: Base) -> Base:
