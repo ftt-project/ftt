@@ -5,9 +5,6 @@ import pytest
 import pandas as pd
 
 from trade.models import Weight, Ticker, Portfolio, PortfolioVersion
-from trade.repositories import TickersRepository
-from trade.repositories.portfolio_versions_repository import PortfolioVersionsRepository
-from trade.repositories.portfolios_repository import PortfoliosRepository
 
 
 @pytest.fixture

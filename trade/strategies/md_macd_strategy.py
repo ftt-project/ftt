@@ -5,7 +5,7 @@ from trade.logger import logger
 
 class MdMACDStrategy(bt.Strategy):
     params = (
-        ("portfolio_id", None),
+        ("portfolio_version_id", None),
         # Standard MACD Parameters
         ("macd1", 6),
         ("macd2", 13),
@@ -45,6 +45,7 @@ class MdMACDStrategy(bt.Strategy):
     def start(self):
         self.orders = {}
         self.pstop = {}
+        self.data_live = False
 
     def next(self):
         if not self.data_live:
@@ -109,6 +110,6 @@ class MdMACDStrategy(bt.Strategy):
         )
 
     def notify_data(self, data, status, *args, **kwargs):
-        print("*" * 5, "DATA NOTIF:", data._getstatusname(status), *args)
+        logger.info("*" * 5, "DATA NOTIF:", data._getstatusname(status), *args)
         if status == data.LIVE:
             self.data_live = True
