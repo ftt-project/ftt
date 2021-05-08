@@ -1,10 +1,10 @@
 from collections import OrderedDict
 from datetime import date
 
-from trade.db import Ticker
-from trade.db.setup import database_connection
+from trade.models import Ticker
+from trade.models import database_connection
 
-from trade.db.ticker_return import TickerReturn
+from trade.models.ticker_return import TickerReturn
 from trade.pandas_data import PandasData
 
 import pandas as pd

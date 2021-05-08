@@ -15,7 +15,6 @@ from trade.scraper import TickersScraper
 
 from trade.models import Ticker
 import trade.models as configuration
-from trade.services.ticker_data_persister import TickerDataPersister
 
 chime.theme("big-sur")
 

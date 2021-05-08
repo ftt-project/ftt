@@ -15,7 +15,7 @@ class ScrapeConfig:
 class Configuration:
     FILE = os.path.join(os.path.dirname(__file__), "../config/symbols.yml")
 
-    def etfs(self) -> list:
+    def etfs(self) -> set:
         tickers = set()
         configuration = self.__read_config()
         for symbol in configuration["ETFs"]:
@@ -23,7 +23,7 @@ class Configuration:
 
         return tickers
 
-    def tickers_to_track(self) -> list:
+    def tickers_to_track(self) -> set:
         """
         :returns: a list of tickers to track
         """

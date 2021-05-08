@@ -2,7 +2,6 @@ import fire
 import backtrader as bt
 import backtrader.analyzers as btanalyzers
 import pandas as pd
-import pandas_datareader
 
 from trade.models import TickerReturn, Ticker
 from trade.base_command import BaseCommand
@@ -13,6 +12,7 @@ class Analyze(BaseCommand):
     """
     Analyzer playground
     """
+
     class PandasData(bt.feeds.PandasData):
         linesoverride = False  # discard usual OHLC structure
         # datetime must be present and last
@@ -186,11 +186,11 @@ class Analyze(BaseCommand):
                 TickerReturn.close,
                 TickerReturn.volume,
             )
-            .where(
+                .where(
                 TickerReturn.ticker == Ticker.get(Ticker.symbol == "SHOP"),
                 TickerReturn.interval == "1d",
             )
-            .order_by(TickerReturn.datetime.asc())
+                .order_by(TickerReturn.datetime.asc())
         )
 
         # cur = database_connection().cursor()

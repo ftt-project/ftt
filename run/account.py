@@ -14,7 +14,7 @@ class AccountStatus(EClient, EWrapper):
         EClient.__init__(self, self)
 
     def accountSummary(
-        self, reqId: int, account: str, tag: str, value: str, currency: str
+            self, reqId: int, account: str, tag: str, value: str, currency: str
     ):
         super().accountSummary(reqId, account, tag, value, currency)
         print(
@@ -35,6 +35,7 @@ class Account(BaseCommand):
     """
     Returns account information from IB
     """
+
     def status(self):
         app = AccountStatus()
         # TODO move host option to configuration
