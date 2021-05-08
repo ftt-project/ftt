@@ -15,7 +15,3 @@ class RepositoryInterface(ABC):
     @abstractmethod
     def get_by_id(self, id: int) -> Base:
         pass
-
-    @abstractmethod
-    def get_by_name(self, name: str) -> Base:
-        pass

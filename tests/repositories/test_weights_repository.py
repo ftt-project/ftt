@@ -42,7 +42,7 @@ class TestWeightsRepository:
         return {
             "portfolio_version": portfolio_version,
             "ticker": ticker,
-            "planned_position": 0,
+            "planned_position": 2,
             "position": 10
         }
 
@@ -68,5 +68,13 @@ class TestWeightsRepository:
 
     def test_upsert(self, subject, data, weight):
         result = subject.upsert(data)
+
+        assert result == weight
+
+    def test_get_by_ticker_and_portfolio_version(self, subject, portfolio_version, ticker, weight):
+        result = subject.get_by_ticker_and_portfolio_version(
+            portfolio_version_id=portfolio_version.id,
+            ticker_id=ticker.id
+        )
 
         assert result == weight

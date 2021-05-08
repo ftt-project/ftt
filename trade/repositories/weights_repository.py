@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import Optional
 
-from trade.models import Base, Weight
+import peewee
+
+from trade.models import Base, Weight, Ticker, PortfolioVersion
 from trade.repositories.repository_interface import RepositoryInterface
 
 
@@ -21,11 +23,11 @@ class WeightsRepository(RepositoryInterface):
             created_at=datetime.now(),
             updated_at=datetime.now()
         )
-         .on_conflict(
+              .on_conflict(
             conflict_target=(Weight.ticker, Weight.portfolio_version),
             update={Weight.planned_position: data["planned_position"]}
         )
-         .execute())
+              .execute())
 
         return self.get_by_id(id)
 
@@ -44,5 +46,11 @@ class WeightsRepository(RepositoryInterface):
     def get_by_id(self, id: int) -> Base:
         return self.model.get(id)
 
-    def get_by_name(self, name: str) -> Base:
-        raise NotImplementedError()
+    def get_by_ticker_and_portfolio_version(self, ticker_id: int, portfolio_version_id: int) -> Base:
+        return (self.model.select()
+                .join(PortfolioVersion, peewee.JOIN.LEFT_OUTER)
+                .switch(self.model)
+                .join(Ticker, peewee.JOIN.LEFT_OUTER)
+                .where(PortfolioVersion.id == portfolio_version_id)
+                .where(Ticker.id == ticker_id)
+                .get())

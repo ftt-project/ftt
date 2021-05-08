@@ -1,5 +1,5 @@
 import pytest
-from test import testcommon
+from tests import testcommon
 import backtrader as bt
 
 from trade.strategies.sizers import WeightedPortfolioSizer
@@ -7,7 +7,7 @@ from trade.strategies.sizers import WeightedPortfolioSizer
 
 class TestWeightedPortfolioSizer:
     class DummyStrategy(bt.Strategy):
-        params = (("portfolio_id", None),)
+        params = (("portfolio_version_id", None),)
 
         def next(self):
             for i, d in enumerate(self.datas):
@@ -16,35 +16,29 @@ class TestWeightedPortfolioSizer:
                 size = self.getsizing(d, True)
                 self.buy()
 
+    @pytest.fixture
     def strategy(self):
         return TestWeightedPortfolioSizer.DummyStrategy
 
+    @pytest.fixture
     def data(self, did=0):
         return testcommon.getdata(did)
 
-    @pytest.mark.skip(reason="Broken")
-    def prepare_cerebro(self, ticker_name, data=None):
-        data = self.data() if data is None else data
-
+    @pytest.fixture
+    def cerebro(self, strategy, data, portfolio_version, ticker, weight):
         cerebro = bt.Cerebro()
-        cerebro.addstrategy(self.strategy(), portfolio_id=self.portfolio)
+        cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
         cerebro.addsizer(WeightedPortfolioSizer)
-        cerebro.adddata(data, name=self.ticker_name())
+        cerebro.adddata(data, name=ticker.symbol)
         return cerebro
 
-    @pytest.mark.skip(reason="Broken")
-    def test_properly_utilized_by_cerebro(self, weights_seed):
-        cerebro = self.prepare_cerebro(weights_seed.symbol.symbol)
+    def test_properly_utilized_by_cerebro(self, cerebro):
         strats = cerebro.run()
-
         strat = strats[0]
         assert type(strat.getsizer()) == WeightedPortfolioSizer
 
-    @pytest.mark.skip(reason="Broken")
-    def test_returns_on_buy_diff_from_portfolio(self, weights_seed):
-        cerebro = self.prepare_cerebro(weights_seed.symbol.symbol)
+    def test_returns_on_buy_diff_from_portfolio(self, cerebro):
         strats = cerebro.run()
-
         strat = strats[0]
         sizer = strat.getsizer()
         result = sizer.getsizing(strat.data, True)
