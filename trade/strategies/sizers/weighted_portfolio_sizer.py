@@ -2,7 +2,7 @@ import backtrader as bt
 import peewee
 
 # https://community.backtrader.com/topic/144/feature-request-allow-passing-of-data-object-to-sizer
-from trade.db import Portfolio, Ticker, Weight
+from trade.models import Portfolio, Ticker, Weight
 
 
 class WeightedPortfolioSizer(bt.Sizer):
