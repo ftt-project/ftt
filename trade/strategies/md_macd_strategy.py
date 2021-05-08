@@ -42,7 +42,6 @@ class MdMACDStrategy(bt.Strategy):
             smadir = sma - sma(-self.p.dirperiod)
             self.inds[d._name]["smadir"] = smadir
 
-
     def start(self):
         self.orders = {}
         self.pstop = {}

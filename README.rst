@@ -132,3 +132,7 @@ May 6
 ^^^^^
 - [ ] *Run MdMACDStrategy together with Portfolio repository like in tutorial runner to buy and sell
 - [ ] Persist orders
+
+May 8
+^^^^^
+- [ ] CLI to execute commands like create new portfolio and add symbols to it with 0 weight

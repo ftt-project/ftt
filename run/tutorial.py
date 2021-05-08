@@ -155,7 +155,6 @@ def run(args=None):
 
     cerebro.addstrategy(St)
     cerebro.run()
-    # cerebro.plot()
 
 
 if __name__ == "__main__":
