@@ -1,1 +1,1 @@
-from .weighted_portfolio_sizer import WeightedPortfolioSizer
+from .weighted_sizer import WeightedSizer

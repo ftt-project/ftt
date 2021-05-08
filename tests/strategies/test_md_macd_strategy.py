@@ -1,5 +1,5 @@
 from test import testcommon
-from trade.strategies.sizers import WeightedPortfolioSizer
+from trade.strategies.sizers import WeightedSizer
 from trade.strategies import WeightsStrategy
 
 

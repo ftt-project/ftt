@@ -14,7 +14,7 @@ from trade.strategies.bollinger_strategy import BollingerStrategy
 from trade.strategies.macd_strategy import MACDStrategy
 from trade.strategies.md_macd_strategy import MdMACDStrategy
 from trade.strategies.md_strategy import MDStrategy
-from trade.strategies.sizers import WeightedPortfolioSizer
+from trade.strategies.sizers import WeightedSizer
 from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
 from trade.strategies.sma_strategy import SMAStrategy
 
@@ -56,7 +56,7 @@ def run(portfolio_id: int) -> None:
     # [cerebro.adddata(datas[key], symbol=key) for key in OrderedDict(sorted(datas.items()))]
 
     # cerebro.addsizer(bt.sizers.FixedSize, stake=1)
-    cerebro.addsizer(WeightedPortfolioSizer)
+    cerebro.addsizer(WeightedSizer)
     cerebro.broker.setcash(10000.0)
 
     cerebro.addanalyzer(btanalyzers.SharpeRatio, _name="sharpe")

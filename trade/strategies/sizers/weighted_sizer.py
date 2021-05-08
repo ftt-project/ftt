@@ -1,12 +1,10 @@
 import backtrader as bt
-import peewee
 
 # https://community.backtrader.com/topic/144/feature-request-allow-passing-of-data-object-to-sizer
-from trade.repositories import TickersRepository
-from trade.repositories.weights_repository import WeightsRepository
+from trade.repositories import TickersRepository, WeightsRepository
 
 
-class WeightedPortfolioSizer(bt.Sizer):
+class WeightedSizer(bt.Sizer):
     """
     TODO: Rename to WeightedSizer
     """

@@ -2,7 +2,7 @@ import pytest
 from tests import testcommon
 import backtrader as bt
 
-from trade.strategies.sizers import WeightedPortfolioSizer
+from trade.strategies.sizers import WeightedSizer
 
 
 class TestWeightedPortfolioSizer:
@@ -28,14 +28,14 @@ class TestWeightedPortfolioSizer:
     def cerebro(self, strategy, data, portfolio_version, ticker, weight):
         cerebro = bt.Cerebro()
         cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
-        cerebro.addsizer(WeightedPortfolioSizer)
+        cerebro.addsizer(WeightedSizer)
         cerebro.adddata(data, name=ticker.symbol)
         return cerebro
 
     def test_properly_utilized_by_cerebro(self, cerebro):
         strats = cerebro.run()
         strat = strats[0]
-        assert type(strat.getsizer()) == WeightedPortfolioSizer
+        assert type(strat.getsizer()) == WeightedSizer
 
     def test_returns_on_buy_diff_from_portfolio(self, cerebro):
         strats = cerebro.run()
