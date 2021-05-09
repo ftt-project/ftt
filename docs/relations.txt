@@ -9,7 +9,7 @@ package "trade.models" {
         + id
         + name
     }
-    abstract class PortfolioVersion #aliceblue {
+    class PortfolioVersion {
         + id
         + portfolio_id
         + version
@@ -28,7 +28,7 @@ package "trade.models" {
     }
     class Weights {
         + ticker_id
-        + portfolio_id
+        + portfolio_version_id
         + position
         + planned_position
         + {abstract} _version
@@ -43,7 +43,7 @@ package "trade.models" {
         + industry
         + currency
     }
-    abstract class Order #aliceblue {
+    class Order {
         + id
         + portfolio_id
         + ticker_id
