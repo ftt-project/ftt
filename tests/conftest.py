@@ -2,9 +2,7 @@ from datetime import datetime
 
 import pytest
 
-import pandas as pd
-
-from trade.models import Weight, Ticker, Portfolio, PortfolioVersion
+from trade.models import Weight, Ticker, Portfolio, PortfolioVersion, Order
 
 
 @pytest.fixture
@@ -49,7 +47,7 @@ def portfolio_version(portfolio):
 
 
 @pytest.fixture
-def weight(data, portfolio_version, ticker):
+def weight(portfolio_version, ticker):
     weight = Weight.create(
         portfolio_version=portfolio_version,
         ticker=ticker,
@@ -60,3 +58,17 @@ def weight(data, portfolio_version, ticker):
     )
     yield weight
     weight.delete_instance()
+
+
+@pytest.fixture
+def order(ticker, portfolio_version):
+    order = Order.create(
+        ticker=ticker,
+        portfolio_version=portfolio_version,
+        status="created",
+        desired_price=100,
+        updated_at=datetime.now(),
+        created_at=datetime.now()
+    )
+    yield order
+    order.delete_instance()

@@ -45,7 +45,7 @@ class MdMACDStrategy(bt.Strategy):
     def start(self):
         self.orders = {}
         self.pstop = {}
-        self.data_live = False
+        self.data_live = self.env.params.live
 
     def next(self):
         if not self.data_live:
@@ -111,5 +111,5 @@ class MdMACDStrategy(bt.Strategy):
 
     def notify_data(self, data, status, *args, **kwargs):
         logger.info("*" * 5, "DATA NOTIF:", data._getstatusname(status), *args)
-        if status == data.LIVE:
+        if status == data.LIVE or self.env.params.live:
             self.data_live = True
