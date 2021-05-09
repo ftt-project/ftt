@@ -9,8 +9,8 @@ class TestOrdersRepository:
     def subject(self):
         return OrdersRepository()
 
-    def test_create(self, ticker, portfolio_version):
-        result = OrdersRepository().create({
+    def test_create(self, subject, ticker, portfolio_version):
+        result = subject.create({
             "ticker": ticker,
             "portfolio_version": portfolio_version,
             "status": "created",
@@ -19,6 +19,17 @@ class TestOrdersRepository:
 
         assert type(result) == Order
         assert result.id is not None
+        result.delete_instance()
+
+    def test_build_and_create(self, subject, ticker, portfolio_version):
+        result = subject.build_and_create(
+            symbol_name=ticker.symbol,
+            portfolio_version_id=portfolio_version.id,
+            desired_price=1
+        )
+        assert type(result) == Order
+        assert result.id is not None
+
         result.delete_instance()
 
     @pytest.mark.skip(reason="Not implemented")

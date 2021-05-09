@@ -17,7 +17,7 @@ class PortfolioVersionsRepository(RepositoryInterface):
         return self.model.create(**data)
 
     def get_by_id(self, id: int) -> Base:
-        raise NotImplementedError()
+        return self.model.get(id)
 
     def get_by_name(self, name: str) -> Base:
         raise NotImplementedError()

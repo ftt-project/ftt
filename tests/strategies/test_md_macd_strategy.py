@@ -1,7 +1,7 @@
 import pytest
 import backtrader as bt
 from tests import testcommon
-from trade.models import Portfolio
+from trade.models import Order
 from trade.repositories import OrdersRepository
 from trade.strategies.md_macd_strategy import MdMACDStrategy
 from trade.strategies.sizers import WeightedSizer
@@ -34,6 +34,7 @@ class TestMdMACDStrategy:
         assert 428.15999999999985 == cerebro.broker.cash
         assert type(result[0]) == subject
         assert type(result[0]._orders) == list
+        Order.delete().execute()
 
     @pytest.mark.skip(reason="Not implemented")
     def test_uses_the_total_cash_value(self):
@@ -44,10 +45,12 @@ class TestMdMACDStrategy:
         pass
 
     def test_creates_orders_for_each_position_in_portfolio(self, cerebro, portfolio):
-        orders = OrdersRepository().get_orders_by_portfolio(Portfolio)
-        assert len(orders) == 0
-        result = cerebro.run()
-        assert len(orders) == 1
+        orders_before = OrdersRepository().get_orders_by_portfolio(portfolio)
+        assert len(orders_before) == 0
+        _ = cerebro.run()
+        orders_after = OrdersRepository().get_orders_by_portfolio(portfolio)
+        assert len(orders_after) == 1
+        Order.delete().execute()
 
 
     @pytest.mark.skip(reason="Not implemented")

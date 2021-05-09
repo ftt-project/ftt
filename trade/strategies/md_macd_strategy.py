@@ -1,6 +1,7 @@
 import backtrader as bt
 
 from trade.logger import logger
+from trade.repositories import OrdersRepository
 
 
 class MdMACDStrategy(bt.Strategy):
@@ -60,8 +61,13 @@ class MdMACDStrategy(bt.Strategy):
 
             if not position:  # not in the market
                 if self.inds[d._name]["cross_over"][0] > 0.0 and self.inds[d._name]["smadir"] < 0.0:
+                    order = OrdersRepository().build_and_create(
+                        symbol_name=d._name,
+                        portfolio_version_id=self.p.portfolio_version_id,
+                        desired_price=0
+                    )
                     self.orders[d._name] = self.buy(data=d)
-                    self.orders[d._name].addinfo(d_name=d._name)
+                    self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
                     pdist = self.inds[d._name]["atr"][0] * self.p.atrdist
                     self.pstop[d._name] = d.close[0] - pdist
 

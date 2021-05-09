@@ -29,6 +29,12 @@ Run tests
 
     docker-compose run -e ENV_FILE=.env.test trade pytest test
 
+Alternatively possible to run using Makefile
+
+.. code:: bash
+
+    make tests
+
 Connect to database
 
 .. code:: bash
