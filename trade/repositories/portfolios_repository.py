@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from trade.models import Base, Portfolio, PortfolioVersion, Ticker, Weight
 from trade.repositories.portfolio_versions_repository import PortfolioVersionsRepository

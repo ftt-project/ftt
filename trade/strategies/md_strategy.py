@@ -1,7 +1,5 @@
 import backtrader as bt
 
-from trade.logger import logger
-
 
 class MDStrategy(bt.Strategy):
     params = (

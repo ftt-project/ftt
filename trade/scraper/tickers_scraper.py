@@ -28,7 +28,7 @@ class TickersScraper:
                 success = True
                 info["type"] = info.pop("quoteType")
                 return pd.Series(info)
-            except urllib.error.HTTPError as e:
+            except urllib.error.HTTPError as _:
                 if retry_count < max_retries:
                     pause_interval = math.pow(2, retry_count)
                     logger.debug(
