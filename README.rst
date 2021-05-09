@@ -131,7 +131,7 @@ Apr 30
 
 May 3
 ^^^^^
-- [ ] mypy
+- [x] mypy
 - [ ] use tickers returns repository in history runner
 
 May 6
@@ -142,3 +142,6 @@ May 6
 May 8
 ^^^^^
 - [ ] CLI to execute commands like create new portfolio and add symbols to it with 0 weight
+- [ ] * Find statistic with sell and test that it is saved
+- [ ] Update order on complition
+- [ ] Eliminate mypy, flake8 complains
