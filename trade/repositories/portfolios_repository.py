@@ -23,20 +23,25 @@ class PortfoliosRepository(RepositoryInterface):
         data["created_at"] = datetime.now()
         data["updated_at"] = datetime.now()
         portfolio = self.model.create(**data)
-        PortfolioVersionsRepository().create({
-            "version": 1,
-            "portfolio": portfolio,
-            "updated_at": data["updated_at"],
-            "created_at": data["created_at"]
-        })
+        PortfolioVersionsRepository().create(
+            {
+                "version": 1,
+                "portfolio": portfolio,
+                "updated_at": data["updated_at"],
+                "created_at": data["created_at"],
+            }
+        )
         return portfolio
 
     @staticmethod
     def get_tickers(portfolio: Portfolio) -> List[Ticker]:
-        portfolio_version = PortfolioVersionsRepository().get_latest_version(portfolio.id)
-        result = (Ticker
-                  .select()
-                  .join(Weight)
-                  .join(PortfolioVersion)
-                  .where(PortfolioVersion.id == portfolio_version.id))
+        portfolio_version = PortfolioVersionsRepository().get_latest_version(
+            portfolio.id
+        )
+        result = (
+            Ticker.select()
+            .join(Weight)
+            .join(PortfolioVersion)
+            .where(PortfolioVersion.id == portfolio_version.id)
+        )
         return list(result)

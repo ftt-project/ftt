@@ -60,11 +60,14 @@ class MdMACDStrategy(bt.Strategy):
                 return
 
             if not position:  # not in the market
-                if self.inds[d._name]["cross_over"][0] > 0.0 and self.inds[d._name]["smadir"] < 0.0:
+                if (
+                    self.inds[d._name]["cross_over"][0] > 0.0
+                    and self.inds[d._name]["smadir"] < 0.0
+                ):
                     order = OrdersRepository().build_and_create(
                         symbol_name=d._name,
                         portfolio_version_id=self.p.portfolio_version_id,
-                        desired_price=0
+                        desired_price=0,
                     )
                     self.orders[d._name] = self.buy(data=d)
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
@@ -76,8 +79,15 @@ class MdMACDStrategy(bt.Strategy):
                 pstop = d._name in self.pstop
 
                 if pclose < pstop:
+                    # TODO: test sell
+                    # TODO: use real desired price
+                    order = OrdersRepository().build_and_create(
+                        symbol_name=d._name,
+                        portfolio_version_id=self.p.portfolio_version_id,
+                        desired_price=0,
+                    )
                     self.orders[d._name] = self.close(data=d)  # stop met - get out
-                    self.orders[d._name].addinfo(d_name=d._name)
+                    self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
                 else:
                     pdist = self.inds[d._name]["atr"][0] * self.p.atrdist
                     # Update only if greater than

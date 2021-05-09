@@ -26,7 +26,7 @@ class TickersScraper:
                 ticker_object = yf.Ticker(ticker)
                 info = ticker_object.info
                 success = True
-                info['type'] = info.pop("quoteType")
+                info["type"] = info.pop("quoteType")
                 return pd.Series(info)
             except urllib.error.HTTPError as e:
                 if retry_count < max_retries:

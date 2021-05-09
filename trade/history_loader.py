@@ -16,7 +16,9 @@ class HistoryLoader:
     """
 
     @staticmethod
-    def load(ticker: str, start_date: date, end_date: date,  interval: str = "1m") -> PandasData:
+    def load(
+        ticker: str, start_date: date, end_date: date, interval: str = "1m"
+    ) -> PandasData:
         query = (
             TickerReturn.select(
                 TickerReturn.datetime,
@@ -29,7 +31,10 @@ class HistoryLoader:
             .where(
                 TickerReturn.symbol == Ticker.get(Ticker.symbol == ticker),
                 TickerReturn.interval == interval,
-                ((TickerReturn.datetime >= start_date) | (TickerReturn.datetime <= end_date))
+                (
+                    (TickerReturn.datetime >= start_date)
+                    | (TickerReturn.datetime <= end_date)
+                ),
             )
             .order_by(TickerReturn.datetime.asc())
         )
@@ -47,8 +52,12 @@ class HistoryLoader:
         return PandasData(dataname=dataframe)
 
     @staticmethod
-    def load_multiple(tickers: dict, start_date: date, end_date: date, interval: str) -> dict:
+    def load_multiple(
+        tickers: dict, start_date: date, end_date: date, interval: str
+    ) -> dict:
         collection = {}
         for ticker in tickers:
-            collection[ticker] = HistoryLoader.load(ticker, start_date, end_date, interval)
+            collection[ticker] = HistoryLoader.load(
+                ticker, start_date, end_date, interval
+            )
         return OrderedDict(sorted(collection.items()))

@@ -23,7 +23,9 @@ class PortfolioVersionsRepository(RepositoryInterface):
         raise NotImplementedError()
 
     def get_latest_version(self, portfolio_id: int) -> Base:
-        return (self.model.select()
-                .where(self.model.portfolio_id == portfolio_id)
-                .order_by(self.model.version.desc())
-                .get())
+        return (
+            self.model.select()
+            .where(self.model.portfolio_id == portfolio_id)
+            .order_by(self.model.version.desc())
+            .get()
+        )

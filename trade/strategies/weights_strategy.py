@@ -6,6 +6,7 @@ class WeightsStrategy(bt.Strategy):
     TODO: Rename to WeightedStrategy
     TODO: Use it with SMA(?) or/and MD to buy stocks at the best time using Weighted Sizer
     """
+
     params = (("portfolio_id", None),)
 
     def __init__(self):

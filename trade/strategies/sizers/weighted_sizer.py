@@ -8,6 +8,7 @@ class WeightedSizer(bt.Sizer):
     """
     TODO: Rename to WeightedSizer
     """
+
     params = (("dataname", None), ("portfolio_version_id", None))
 
     def _getsizing(self, comminfo, cash, data, isbuy):
@@ -18,8 +19,7 @@ class WeightedSizer(bt.Sizer):
         portfolio_version_id = self.strategy.params.portfolio_version_id
 
         weights = WeightsRepository().get_by_ticker_and_portfolio_version(
-            portfolio_version_id=portfolio_version_id,
-            ticker_id=ticker.id
+            portfolio_version_id=portfolio_version_id, ticker_id=ticker.id
         )
 
         self._data = self.strategy.getdatabyname(ticker_name)

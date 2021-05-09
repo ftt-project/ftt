@@ -25,9 +25,7 @@ class TickersRepository(RepositoryInterface):
         data["updated_at"] = datetime.now()
         data["created_at"] = datetime.now()
         result = self.model.get_or_create(
-            symbol=data["symbol"],
-            exchange=data["exchange"],
-            defaults=data.to_dict()
+            symbol=data["symbol"], exchange=data["exchange"], defaults=data.to_dict()
         )
         return result
 

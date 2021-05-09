@@ -18,22 +18,30 @@ class OrdersRepository(RepositoryInterface):
         data["updated_at"] = datetime.now()
         return Order.create(**data)
 
-    def build_and_create(self, symbol_name: str, portfolio_version_id: int, desired_price: float) -> Order:
-        order = self.create({
-            "ticker": TickersRepository().get_by_name(symbol_name),
-            "portfolio_version": PortfolioVersionsRepository().get_by_id(portfolio_version_id),
-            "desired_price": desired_price,
-            "status": "created"  # TODO: move to constants
-        })
+    def build_and_create(
+        self, symbol_name: str, portfolio_version_id: int, desired_price: float
+    ) -> Order:
+        order = self.create(
+            {
+                "ticker": TickersRepository().get_by_name(symbol_name),
+                "portfolio_version": PortfolioVersionsRepository().get_by_id(
+                    portfolio_version_id
+                ),
+                "desired_price": desired_price,
+                "status": "created",  # TODO: move to constants
+            }
+        )
         return order
 
     def get_by_id(self, id: int) -> Order:
         pass
 
     def get_orders_by_portfolio(self, portfolio: Portfolio) -> List[Order]:
-        result = (self.model.select()
-                  .join(PortfolioVersion)
-                  .join(Portfolio)
-                  .where(Portfolio.id == portfolio.id)
-                  .execute())
+        result = (
+            self.model.select()
+            .join(PortfolioVersion)
+            .join(Portfolio)
+            .where(Portfolio.id == portfolio.id)
+            .execute()
+        )
         return list(result)

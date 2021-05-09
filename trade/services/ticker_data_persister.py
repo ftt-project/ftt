@@ -10,6 +10,7 @@ class TickerDataPersister:
     """
     Receives tickers data to persist
     """
+
     def __init__(self, ticker, scraper=TickersScraper):
         """
         # TODO: refactor, do not accept scraper, accept data to persist
