@@ -5,6 +5,7 @@ from trade.models import Base, Ticker, PortfolioVersion
 
 class Order(Base):
     ticker = peewee.ForeignKeyField(Ticker, backref="orders")
+    type = peewee.CharField()
     portfolio_version = peewee.ForeignKeyField(PortfolioVersion, backref="orders")
     status = peewee.CharField()
     executed_at = peewee.DateTimeField(null=True)

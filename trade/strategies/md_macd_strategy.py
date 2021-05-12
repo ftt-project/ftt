@@ -55,7 +55,6 @@ class MdMACDStrategy(bt.Strategy):
         for i, d in enumerate(self.datas):
             dt, dn = self.datetime.date(), d._name
             position = self.getposition(d).size
-
             if d._name in self.orders and self.orders[d._name]:
                 return
 
@@ -68,6 +67,7 @@ class MdMACDStrategy(bt.Strategy):
                         symbol_name=d._name,
                         portfolio_version_id=self.p.portfolio_version_id,
                         desired_price=0,
+                        type="buy"
                     )
                     self.orders[d._name] = self.buy(data=d)
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
@@ -76,15 +76,15 @@ class MdMACDStrategy(bt.Strategy):
 
             else:  # in the market
                 pclose = d.close[0]
-                pstop = d._name in self.pstop
+                pstop = self.pstop[d._name]
 
                 if pclose < pstop:
-                    # TODO: test sell
                     # TODO: use real desired price
                     order = OrdersRepository().build_and_create(
                         symbol_name=d._name,
                         portfolio_version_id=self.p.portfolio_version_id,
                         desired_price=0,
+                        type="sell"
                     )
                     self.orders[d._name] = self.close(data=d)  # stop met - get out
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)

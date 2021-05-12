@@ -19,7 +19,7 @@ class OrdersRepository(RepositoryInterface):
         return Order.create(**data)
 
     def build_and_create(
-        self, symbol_name: str, portfolio_version_id: int, desired_price: float
+        self, symbol_name: str, portfolio_version_id: int, desired_price: float, type: str
     ) -> Order:
         order = self.create(
             {
@@ -29,6 +29,7 @@ class OrdersRepository(RepositoryInterface):
                 ),
                 "desired_price": desired_price,
                 "status": "created",  # TODO: move to constants
+                "type": type
             }
         )
         return order

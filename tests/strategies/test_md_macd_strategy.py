@@ -1,3 +1,6 @@
+from collections import Counter
+from datetime import datetime
+
 import pytest
 import backtrader as bt
 from tests import testcommon
@@ -19,19 +22,23 @@ class TestMdMACDStrategy:
 
     @pytest.fixture
     def cerebro(self, subject, portfolio_version, ticker, weight):
-        cerebro = bt.Cerebro(live=True)
-        cerebro.addstrategy(subject, portfolio_version_id=portfolio_version.id)
-        cerebro.addsizer(WeightedSizer)
+        def _cerebro(data):
+            cerebro = bt.Cerebro(live=True)
+            cerebro.addstrategy(subject, portfolio_version_id=portfolio_version.id)
+            cerebro.addsizer(WeightedSizer)
 
-        data = testcommon.getdata(0)
-        cerebro.adddata(data, name=ticker.symbol)
+            cerebro.adddata(data, name=ticker.symbol)
 
-        cerebro.broker.setcash(30000.0)
-        return cerebro
+            cerebro.broker.setcash(30000.0)
+            return cerebro
+
+        return _cerebro
 
     def test_buys_with_given_cash_allocation_and_one_ticker(self, subject, cerebro):
-        result = cerebro.run()
-        assert 428.15999999999985 == cerebro.broker.cash
+        data = testcommon.getdata(0)
+        c = cerebro(data)
+        result = c.run()
+        assert 28365.76 == c.broker.cash
         assert type(result[0]) == subject
         assert type(result[0]._orders) == list
         Order.delete().execute()
@@ -44,14 +51,32 @@ class TestMdMACDStrategy:
     def test_set_the_final_cash_value(self):
         pass
 
-    def test_creates_orders_for_each_position_in_portfolio(self, cerebro, portfolio):
+    def test_orders_against_data0(self, cerebro, portfolio):
+        data = testcommon.getdata(0)
         orders_before = OrdersRepository().get_orders_by_portfolio(portfolio)
         assert len(orders_before) == 0
-        _ = cerebro.run()
+        _ = cerebro(data).run()
         orders_after = OrdersRepository().get_orders_by_portfolio(portfolio)
-        assert len(orders_after) == 1
+        assert len(orders_after) == 5
         Order.delete().execute()
 
+    def test_orders_against_data1(self, cerebro, portfolio):
+        data = testcommon.getdata(1, fromdate=datetime(2020, 5, 12), todate=datetime(2021, 5, 11))
+
+        orders_before = OrdersRepository().get_orders_by_portfolio(portfolio)
+        assert len(orders_before) == 0
+        results = cerebro(data).run()
+        orders_after = OrdersRepository().get_orders_by_portfolio(portfolio)
+        assert len(orders_after) == 9
+        types = Counter([o.type for o in orders_after])
+        assert types["buy"] == 5
+        assert types["sell"] == 4
+
+        strat = results[0]
+        assert strat.getposition().size == 8
+        assert strat.getposition().price == 25.870001
+
+        Order.delete().execute()
 
     @pytest.mark.skip(reason="Not implemented")
     def test_updates_position_value_in_weights(self):
