@@ -131,6 +131,6 @@ class MdMACDStrategy(bt.Strategy):
         )
 
     def notify_data(self, data, status, *args, **kwargs):
-        logger.info("*" * 5, "DATA NOTIF:", data._getstatusname(status), *args)
+        logger.info(f"****** DATA NOTIF: {data._name} {data._getstatusname(status)}, {args}")
         if status == data.LIVE or self.env.params.live:
             self.data_live = True
