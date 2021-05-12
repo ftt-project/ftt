@@ -67,7 +67,7 @@ class MdMACDStrategy(bt.Strategy):
                         symbol_name=d._name,
                         portfolio_version_id=self.p.portfolio_version_id,
                         desired_price=0,
-                        type="buy"
+                        type="buy",
                     )
                     self.orders[d._name] = self.buy(data=d)
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
@@ -84,7 +84,7 @@ class MdMACDStrategy(bt.Strategy):
                         symbol_name=d._name,
                         portfolio_version_id=self.p.portfolio_version_id,
                         desired_price=0,
-                        type="sell"
+                        type="sell",
                     )
                     self.orders[d._name] = self.close(data=d)  # stop met - get out
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
@@ -94,6 +94,11 @@ class MdMACDStrategy(bt.Strategy):
                     self.pstop[d._name] = max(pstop, pclose - pdist)
 
     def notify_order(self, order):
+        order_id = order.info["order_id"]
+        OrdersRepository().update_status(
+            order_id=order_id, status=order.getstatusname()
+        )
+
         if order.status in [order.Submitted, order.Accepted]:
             return
 

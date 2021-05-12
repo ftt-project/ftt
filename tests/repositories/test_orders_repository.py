@@ -14,6 +14,7 @@ class TestOrdersRepository:
             "ticker": ticker,
             "portfolio_version": portfolio_version,
             "status": "created",
+            "type": "buy",
             "desired_price": 100
         })
 
@@ -25,7 +26,8 @@ class TestOrdersRepository:
         result = subject.build_and_create(
             symbol_name=ticker.symbol,
             portfolio_version_id=portfolio_version.id,
-            desired_price=1
+            desired_price=1,
+            type="buy"
         )
         assert type(result) == Order
         assert result.id is not None
@@ -46,3 +48,9 @@ class TestOrdersRepository:
         assert type(result) == list
         assert len(result) == 1
         assert result[0] == order
+
+    def test_update_status(self, subject, order):
+        result = subject.update_status(status="submitted", order_id=order.id)
+
+        assert result.id == order.id
+        assert "submitted" == subject.get_by_id(order.id).status

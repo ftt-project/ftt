@@ -18,8 +18,19 @@ class OrdersRepository(RepositoryInterface):
         data["updated_at"] = datetime.now()
         return Order.create(**data)
 
+    def update_status(self, order_id: int, status: str) -> Order:
+        order = self.get_by_id(order_id)
+        order.status = status
+        order.updated_at = datetime.now()
+        order.save()
+        return self.get_by_id(order_id)
+
     def build_and_create(
-        self, symbol_name: str, portfolio_version_id: int, desired_price: float, type: str
+        self,
+        symbol_name: str,
+        portfolio_version_id: int,
+        desired_price: float,
+        type: str,
     ) -> Order:
         order = self.create(
             {
@@ -29,13 +40,13 @@ class OrdersRepository(RepositoryInterface):
                 ),
                 "desired_price": desired_price,
                 "status": "created",  # TODO: move to constants
-                "type": type
+                "type": type,
             }
         )
         return order
 
     def get_by_id(self, id: int) -> Order:
-        pass
+        return self.model.get(id)
 
     def get_orders_by_portfolio(self, portfolio: Portfolio) -> List[Order]:
         result = (

@@ -66,6 +66,7 @@ def order(ticker, portfolio_version):
         ticker=ticker,
         portfolio_version=portfolio_version,
         status="created",
+        type="buy",
         desired_price=100,
         updated_at=datetime.now(),
         created_at=datetime.now()
