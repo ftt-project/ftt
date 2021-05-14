@@ -35,8 +35,9 @@ modpath = os.path.dirname(os.path.abspath(__file__))
 dataspath = 'fixtures'
 datafiles = [
     '2006-day-001.txt',
-    'AC.TO.csv',
-    'SHOP.csv'
+    'AC.TO.day.csv',
+    'SHOP.day.csv',
+    'AAPL.1m.csv',
 ]
 
 DATAFEED = bt.feeds.BacktraderCSVData
