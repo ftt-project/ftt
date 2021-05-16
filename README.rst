@@ -1,6 +1,11 @@
 Trade
 =====
 
+Collaborators
+^^^^^^^^^^^^^
+- Artem M
+- Ihor M
+
 Why?
 ----
 I want to have a passive income based on investing.
