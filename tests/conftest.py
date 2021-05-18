@@ -2,8 +2,15 @@ from datetime import datetime
 
 import pytest
 
-from trade.models import Weight, Ticker, Portfolio, PortfolioVersion, Order
+from trade.models import Weight, Ticker, Portfolio, PortfolioVersion, Order, Base, database_connection
 
+
+@pytest.fixture(autouse=True)
+def transactional():
+    connection = database_connection()
+    with connection.atomic() as transaction:
+        yield
+        transaction.rollback()
 
 @pytest.fixture
 def ticker():

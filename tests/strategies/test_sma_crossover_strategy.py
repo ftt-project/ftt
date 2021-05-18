@@ -4,7 +4,7 @@ import pytest
 import backtrader as bt
 
 from tests import testcommon
-from trade.models import Order, Ticker
+from trade.models import Order
 from trade.repositories import OrdersRepository
 from trade.strategies.sizers import WeightedSizer
 from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
@@ -45,6 +45,5 @@ class TestSMACrossoverStrategy:
         assert len(orders_before) == 0
         _ = cerebro(data).run()
         orders_after = OrdersRepository().get_orders_by_portfolio(portfolio)
-        assert len(orders_after) == 2
+        assert (len(orders_after) - len(orders_before)) == 19
         Order.delete().execute()
-

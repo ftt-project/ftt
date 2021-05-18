@@ -1,10 +1,9 @@
 import backtrader as bt
 
-from trade.logger import logger
-from trade.repositories import OrdersRepository
+from trade.strategies.base_strategy import BaseStrategy
 
 
-class MdMACDStrategy(bt.Strategy):
+class MdMACDStrategy(BaseStrategy):
     params = (
         ("portfolio_version_id", None),
         # Standard MACD Parameters
@@ -19,6 +18,9 @@ class MdMACDStrategy(bt.Strategy):
 
     def __init__(self):
         self.inds = {}
+        self.pstop = {}
+        self.data_live = self.env.params.live
+
         for i, d in enumerate(self.datas):
             self.inds[d._name] = {}
 
@@ -43,96 +45,24 @@ class MdMACDStrategy(bt.Strategy):
             smadir = sma - sma(-self.p.dirperiod)
             self.inds[d._name]["smadir"] = smadir
 
-    def start(self):
-        self.orders = {}
-        self.pstop = {}
-        self.data_live = self.env.params.live
-
-    def next(self):
-        if not self.data_live:
-            return
-
-        for i, d in enumerate(self.datas):
-            dt, dn = self.datetime.date(), d._name
-            position = self.getposition(d).size
-            if d._name in self.orders and self.orders[d._name]:
-                return
-
-            if not position:  # not in the market
-                if (
-                    self.inds[d._name]["cross_over"][0] > 0.0
-                    and self.inds[d._name]["smadir"] < 0.0
-                ):
-                    order = OrdersRepository().build_and_create(
-                        symbol_name=d._name,
-                        portfolio_version_id=self.p.portfolio_version_id,
-                        desired_price=0,
-                        type="buy",
-                    )
-                    self.orders[d._name] = self.buy(data=d)
-                    self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
-                    pdist = self.inds[d._name]["atr"][0] * self.p.atrdist
-                    self.pstop[d._name] = d.close[0] - pdist
-
-            else:  # in the market
-                pclose = d.close[0]
-                pstop = self.pstop[d._name]
-
-                if pclose < pstop:
-                    # TODO: use real desired price
-                    order = OrdersRepository().build_and_create(
-                        symbol_name=d._name,
-                        portfolio_version_id=self.p.portfolio_version_id,
-                        desired_price=0,
-                        type="sell",
-                    )
-                    self.orders[d._name] = self.close(data=d)  # stop met - get out
-                    self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
-                else:
-                    pdist = self.inds[d._name]["atr"][0] * self.p.atrdist
-                    # Update only if greater than
-                    self.pstop[d._name] = max(pstop, pclose - pdist)
-
-    def notify_order(self, order):
-        order_id = order.info["order_id"]
-        OrdersRepository().update_status(
-            order_id=order_id, status=order.getstatusname()
+    def buy_signal(self, data) -> bool:
+        return (
+            self.inds[data._name]["cross_over"][0] > 0.0
+            and self.inds[data._name]["smadir"] < 0.0
         )
 
-        if order.status in [order.Submitted, order.Accepted]:
-            return
+    def sell_signal(self, data) -> bool:
+        pclose = data.close[0]
+        pstop = self.pstop[data._name]
+        return pclose < pstop
 
-        if order.status in [order.Completed]:
-            if order.isbuy():
-                logger.info(
-                    "BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f"
-                    % (order.executed.price, order.executed.value, order.executed.comm)
-                )
+    def after_buy(self, order, data) -> None:
+        pdist = self.inds[data._name]["atr"][0] * self.p.atrdist
+        self.pstop[data._name] = data.close[0] - pdist
 
-            else:
-                logger.info(
-                    "SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f"
-                    % (order.executed.price, order.executed.value, order.executed.comm)
-                )
-            self.bar_executed = len(self)
-
-        elif order.status in [order.Canceled, order.Margin, order.Rejected]:
-            logger.info("Order Canceled/Margin/Rejected")
-
-        if not order.alive():
-            d_name = order.info["d_name"]
-            self.orders[d_name] = None
-
-    def notify_trade(self, trade):
-        if not trade.isclosed:
-            return
-        logger.info(
-            "OPERATION PROFIT, GROSS %.2f, NET %.2f" % (trade.pnl, trade.pnlcomm)
-        )
-
-    def notify_data(self, data, status, *args, **kwargs):
-        logger.info(
-            f"****** DATA NOTIF: {data._name} {data._getstatusname(status)}, {args}"
-        )
-        if status == data.LIVE or self.env.params.live:
-            self.data_live = True
+    def after_next(self, data):
+        pclose = data.close[0]
+        pstop = self.pstop[data._name]
+        pdist = self.inds[data._name]["atr"][0] * self.p.atrdist
+        # Update only if greater than
+        self.pstop[data._name] = max(pstop, pclose - pdist)

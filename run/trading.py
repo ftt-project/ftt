@@ -6,6 +6,7 @@ import backtrader as bt
 from trade.repositories import PortfoliosRepository
 from trade.strategies.md_macd_strategy import MdMACDStrategy
 from trade.strategies.sizers import WeightedSizer
+from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
 
 
 def run():
@@ -28,7 +29,7 @@ def run():
 
     cerebro.broker = store.getbroker()
 
-    cerebro.addstrategy(MdMACDStrategy, portfolio_version_id=1)
+    cerebro.addstrategy(SMACrossoverStrategy, portfolio_version_id=1)
     cerebro.addsizer(WeightedSizer)
     result = cerebro.run()
 
