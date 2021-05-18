@@ -23,7 +23,10 @@ class TickerDataPersister:
         logger.debug(f"Request: {db_request}")
         if db_request.count() > 0:
             logger.warning(
-                f"Possible duplication of <{self.ticker}> in <{db_request[0]} {db_request[0].ticker}:{db_request[0].exchange}>"
+                (
+                    f"Possible duplication of <{self.ticker}> in "
+                    "<{db_request[0]} {db_request[0].ticker}:{db_request[0].exchange}>"
+                )
             )
             return db_request[0]
 

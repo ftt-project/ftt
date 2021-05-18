@@ -1,3 +1,4 @@
-from .weights_strategy import WeightsStrategy
+from .md_macd_strategy import MdMACDStrategy
+from .sma_crossover_strategy import SMACrossoverStrategy
 
-__all__ = ["WeightsStrategy"]
+__all__ = ["MdMACDStrategy", "SMACrossoverStrategy"]

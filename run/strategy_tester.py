@@ -13,7 +13,6 @@ from trade.logger import logger
 from trade.strategies.bollinger_strategy import BollingerStrategy
 from trade.strategies.macd_strategy import MACDStrategy
 from trade.strategies.md_macd_strategy import MdMACDStrategy
-from trade.strategies.md_strategy import MDStrategy
 from trade.strategies.sizers import WeightedSizer
 from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
 from trade.strategies.sma_strategy import SMAStrategy
