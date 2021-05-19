@@ -1,9 +1,12 @@
 import os
+import peewee
 from dotenv import dotenv_values
 from playhouse.postgres_ext import PostgresqlExtDatabase  # type: ignore
 
 import psycopg2  # type: ignore
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT  # type: ignore
+
+from trade.logger import logger
 
 
 def read_configuration():
@@ -60,7 +63,23 @@ def create_database():
     conn.close()
 
 
-def create_tables(models):
-    establish_connection()
+def create_tables(models) -> None:
+    try:
+        establish_connection()
+    except peewee.OperationalError as e:
+        logger.error(f"{e}")
+
     connection = database_connection()
     connection.create_tables(models)
+    logger.info(f"Tables {models} were created")
+
+
+def drop_tables(models) -> None:
+    try:
+        establish_connection()
+    except peewee.OperationalError as e:
+        logger.error(f"{e}")
+
+    connection = database_connection()
+    connection.drop_tables(models)
+    logger.info(f"Tables {models} were dropped")
