@@ -73,7 +73,6 @@ class History(BaseCommand):
             self.log_info(f"Loading <{ticker_name}> ...")
             ticker_data = grouped_by_ticker[ticker_name]
             ticker_data = ticker_data[ticker_data["Close"].notnull()]
-            breakpoint()
             before = TickerReturn.select().count()
             for index, row in ticker_data.iterrows():
                 ticker = Ticker.get_or_none(symbol=ticker_name)

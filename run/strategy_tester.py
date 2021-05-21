@@ -10,12 +10,54 @@ from trade.configuration import Configuration
 from trade.models import Portfolio
 from trade.history_loader import HistoryLoader
 from trade.logger import logger
+from trade.repositories import PortfolioVersionsRepository, PortfoliosRepository
+from trade.strategies import ValueProtectingStrategy
 from trade.strategies.bollinger_strategy import BollingerStrategy
 from trade.strategies.macd_strategy import MACDStrategy
 from trade.strategies.md_macd_strategy import MdMACDStrategy
 from trade.strategies.sizers import WeightedSizer
 from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
 from trade.strategies.sma_strategy import SMAStrategy
+
+class IBCommision(bt.CommInfoBase):
+
+    """A :class:`IBCommision` charges the way interactive brokers does.
+    https://community.backtrader.com/topic/1008/how-to-build-a-commission-model-for-interactive-brokers-ib
+    """
+
+    params = (
+        #('stocklike', True),
+        #('commtype', bt.CommInfoBase.COMM_PERC),
+        #('percabs', True),
+
+        # Float. The amount charged per share. Ex: 0.005 means $0.005
+        ('per_share', 0.005),
+
+        # Float. The minimum amount that will be charged. Ex: 1.0 means $1.00
+        ('min_per_order', 1.0),
+
+        # Float. The maximum that can be charged as a percent of the trade value. Ex: 0.005 means 0.5%
+        ('max_per_order_abs_pct', 0.005),
+    )
+
+    def _getcommission(self, size, price, pseudoexec):
+
+        """
+        :param size: current position size. > 0 for long positions and < 0 for short positions (this parameter will not be 0)
+        :param price: current position price
+        :param pseudoexec:
+        :return: the commission of an operation at a given price
+        """
+
+        commission = size * self.p.per_share
+        order_price = price * size
+        commission_as_percentage_of_order_price = commission / order_price
+
+        if commission < self.p.min_per_order:
+            commission = self.p.min_per_order
+        elif commission_as_percentage_of_order_price > self.p.max_per_order_abs_pct:
+            commission = order_price * self.p.max_per_order_abs_pct
+        return commission
 
 
 def run(portfolio_id: int) -> None:
@@ -30,33 +72,39 @@ def run(portfolio_id: int) -> None:
     MdMACDStrategy                          14910.82
     MdMACDStrategy[WeightedPortfolioSizer]  17834.67
     """
-    portfolio = Portfolio.get_by_id(portfolio_id)
+    portfolio = PortfoliosRepository().get_by_id(portfolio_id)
+    portfolio_version = PortfolioVersionsRepository().get_latest_version(portfolio.id)
+    tickers = PortfoliosRepository.get_tickers(portfolio)
 
     config = Configuration().scrape()
 
     # datas = HistoryLoader.load_multiple(config.tickers, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
 
-    cerebro = bt.Cerebro()
+    cerebro = bt.Cerebro(live=True, cheat_on_open=True)
     # cerebro.addstrategy(SMACrossoverStrategy, fast=5, slow=50)
     # cerebro.addstrategy(SMAStrategy)
     # cerebro.addstrategy(BollingerStrategy)
     # cerebro.addstrategy(MACDStrategy, atrdist=3.0)
     # cerebro.addstrategy(MDStrategy)
-    cerebro.addstrategy(MdMACDStrategy, portfolio_id=portfolio.id)
+    cerebro.addstrategy(BollingerStrategy, portfolio_version_id=portfolio_version.id)
+    cerebro.addstrategy(ValueProtectingStrategy, portfolio_version_id=portfolio_version.id)
 
-    tickers = [weight.symbol.symbol for weight in portfolio.weights]
-    datas = HistoryLoader.load_multiple(tickers, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
-    [cerebro.adddata(datas[key], name=key) for key in OrderedDict(sorted(datas.items()))]
+    # tickers = [weight.symbol for ticker in tickers]
+    # datas = HistoryLoader.load_multiple(tickers, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
+    # [cerebro.adddata(datas[key], name=key) for key in OrderedDict(sorted(datas.items()))]
 
-    # for weight in portfolio.weights:
-    #     data = HistoryLoader.load(weight.symbol.symbol, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
-    #     cerebro.adddata(data, symbol=weight.symbol.symbol)
+    for ticker in tickers:
+        data = HistoryLoader.load(ticker, date(2021, 5, 1), date(2021, 5, 21), interval="5m")
+        cerebro.adddata(data, name=ticker.symbol)
 
     # [cerebro.adddata(datas[key], symbol=key) for key in OrderedDict(sorted(datas.items()))]
 
     # cerebro.addsizer(bt.sizers.FixedSize, stake=1)
     cerebro.addsizer(WeightedSizer)
-    cerebro.broker.setcash(10000.0)
+    cerebro.broker.setcash(float(portfolio.size))
+
+    comminfo = IBCommision()
+    cerebro.broker.addcommissioninfo(comminfo)
 
     cerebro.addanalyzer(btanalyzers.SharpeRatio, _name="sharpe")
     cerebro.addanalyzer(bt.analyzers.PyFolio)
@@ -101,6 +149,7 @@ def run(portfolio_id: int) -> None:
     logger.info(positions)
     logger.info("Pyfolio transactions:")
     logger.info(transactions)
+    cerebro.plot()
 
 
 if __name__ == "__main__":

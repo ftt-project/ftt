@@ -7,8 +7,11 @@ from trade.strategies.base_strategy import BaseStrategy
 class ValueProtectingStrategy(BaseStrategy):
     params = (
         ("portfolio_version_id", -1),
-        ("dipmult", 0.96),
+        ("dipmult", 1.0),
     )
+
+    def __str__(self):
+        return f"<ValueProtectingStrategy>"
 
     def buy_signal(self, data):
         """

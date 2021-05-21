@@ -153,6 +153,11 @@ May 8
 
 May 19
 ^^^^^^
-- [ ] Add value field to Portfolio model
-- [ ] Test ValueProtectingStrategy
-- [ ] Update ValueProtectingStrategy to detect buy
+- [x] Add value field to Portfolio model
+- [x] Test ValueProtectingStrategy
+- [x] Update ValueProtectingStrategy to detect buy
+
+May 21
+^^^^^^
+- [ ] Use Order model to track ongoing strategy orders
+- [ ] Ability to disable strategy for portfolio

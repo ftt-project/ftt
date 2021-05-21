@@ -29,7 +29,7 @@ class HistoryLoader:
                 TickerReturn.volume,
             )
             .where(
-                TickerReturn.symbol == Ticker.get(Ticker.symbol == ticker),
+                TickerReturn.ticker == ticker,
                 TickerReturn.interval == interval,
                 (
                     (TickerReturn.datetime >= start_date)

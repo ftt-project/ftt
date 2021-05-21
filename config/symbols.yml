@@ -81,9 +81,9 @@ scrape:
     - USO
     - UNG
     - UGA
-  interval_start: 2020-01-15
-  interval_end: 2021-04-19
-  interval: 1d
+  interval_start: 2021-05-01
+  interval_end: 2021-05-21
+  interval: 5m
 
 portfolio:
   ZQQ.TO:

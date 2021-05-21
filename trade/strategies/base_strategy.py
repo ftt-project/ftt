@@ -28,6 +28,7 @@ class BaseStrategy(bt.Strategy):
 
     def start(self):
         self.orders = {}
+        # last open order that belongs to this portfolio version
         self.data_live = self.env.params.live
 
     def next(self):
@@ -80,19 +81,19 @@ class BaseStrategy(bt.Strategy):
         if order.status in [order.Completed]:
             if order.isbuy():
                 logger.info(
-                    "BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f"
-                    % (order.executed.price, order.executed.value, order.executed.comm)
+                    (f"BUY EXECUTED {order.info['d_name']} by {self}, Price: {order.executed.price}, "
+                        f"Cost: {order.executed.value}, Comm {order.executed.comm}")
                 )
 
             else:
                 logger.info(
-                    "SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f"
-                    % (order.executed.price, order.executed.value, order.executed.comm)
+                    (f"SELL EXECUTED {order.info['d_name']} by {self}, Price: {order.executed.price}, "
+                        f"Cost: {order.executed.value}, Comm {order.executed.comm}")
                 )
             self.bar_executed = len(self)
 
         elif order.status in [order.Canceled, order.Margin, order.Rejected]:
-            logger.info("Order Canceled/Margin/Rejected")
+            logger.info(f"Order {order.getstatusname()}")
 
         if not order.alive():
             d_name = order.info["d_name"]
@@ -102,7 +103,7 @@ class BaseStrategy(bt.Strategy):
         if not trade.isclosed:
             return
         logger.info(
-            "OPERATION PROFIT, GROSS %.2f, NET %.2f" % (trade.pnl, trade.pnlcomm)
+            f"OPERATION PROFIT by {self}, GROSS {trade.pnl}, NET {trade.pnlcomm}"
         )
 
     def notify_data(self, data, status, *args, **kwargs):

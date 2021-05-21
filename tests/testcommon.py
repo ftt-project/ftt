@@ -38,6 +38,7 @@ datafiles = [
     'AC.TO.day.csv',
     'SHOP.day.csv',
     'AAPL.1m.csv',
+    'AAPL.5m.csv',
 ]
 
 DATAFEED = bt.feeds.BacktraderCSVData

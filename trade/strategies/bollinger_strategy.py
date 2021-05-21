@@ -17,12 +17,6 @@ class BollingerStrategy(BaseStrategy):
         for i, data in enumerate(self.datas):
             self.inds[data._name] = {}
 
-            sma_fast = self.p._movav(data.close, period=self.p.fast)
-            sma_slow = self.p._movav(data.close, period=self.p.slow)
-            self.inds[data._name]["crossover"] = bt.indicators.CrossOver(
-                sma_fast, sma_slow
-            )
-
             self.inds[data._name]["boll"] = bt.indicators.BollingerBands(
                 data.close, period=self.p.period, devfactor=self.p.devfactor
             )
@@ -30,26 +24,29 @@ class BollingerStrategy(BaseStrategy):
             self.inds[data._name]["redline"] = None
             self.inds[data._name]["blueline"] = None
 
+    def __str__(self):
+        return f"<BollingerStrategy>"
+
     def buy_signal(self, data):
-        redline = self.dataclose < self.boll.lines.bot
+        redline = data.close[0] < self.inds[data._name]["boll"].lines.bot
         return (
-            self.data[0].close > self.inds[data._name]["boll"].lines.mid and redline
-        ) or (self.data[0].close > self.inds[data._name]["boll"].lines.top)
+            data.close[0] > self.inds[data._name]["boll"].lines.mid and redline
+        ) or (data.close[0] > self.inds[data._name]["boll"].lines.top)
 
     def sell_signal(self, data):
-        blueline = self.dataclose > self.boll.lines.top
+        blueline = data.close[0] > self.inds[data._name]["boll"].lines.top
         return (
-            data[0].close < self.inds[data._name]["boll"].lines.mid
-            and self.inds[data._name]["blueline"]
-            and blueline
+            data.close[0] < self.inds[data._name]["boll"].lines.mid
+            # and self.inds[data._name]["blueline"]
+            # and blueline
         )
 
     def after_sell(self, order, data):
         self.inds[data._name]["blueline"] = False
         self.inds[data._name]["redline"] = False
 
-    def next(self):
-        if self.order:
+    def next_old(self):
+        if self.orders:
             return
 
         if self.dataclose < self.boll.lines.bot and not self.position:
