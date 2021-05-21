@@ -116,7 +116,7 @@ Apr 13
 - [x] Check run/history
 - [ ] Use HistoryDataLoader service
 - [x] Calculate weights and save in DB
-- [ ] Use calculated weights buy
+- [x] Use calculated weights buy
 
 Apr 25
 ^^^^^^
@@ -124,15 +124,15 @@ Apr 25
 - [x] Strategy that uses multiple data sources (advance version)
 - [ ] Check for margins
 - [ ] Use order_target_percent instead of buy
-- [ ] Version weights by adding version to the model
-- [ ] Track latest portfolio version (Portfolio Version model) and associate weights with each version
-- [ ] Why it doesn't sell?
+- [x] Version weights by adding version to the model
+- [x] Track latest portfolio version (Portfolio Version model) and associate weights with each version
+- [x] Why it doesn't sell?
 
 Apr 30
 ^^^^^^
-- [ ] Try out strategy on 5 minutes tickers
+- [x] Try out strategy on 5 minutes tickers
 - [ ] Save executed and attempted orders in DB
-- [ ] Repository to handle data creation like created_at and updated_at
+- [x] Repository to handle data creation like created_at and updated_at
 
 May 3
 ^^^^^
@@ -141,12 +141,18 @@ May 3
 
 May 6
 ^^^^^
-- [ ] *Run MdMACDStrategy together with Portfolio repository like in tutorial runner to buy and sell
-- [ ] Persist orders
+- [x] Run MdMACDStrategy together with Portfolio repository like in tutorial runner to buy and sell
+- [x] Persist orders
 
 May 8
 ^^^^^
 - [ ] CLI to execute commands like create new portfolio and add symbols to it with 0 weight
 - [x] Find statistic with sell and test that it is saved
-- [ ] Update order on complition
-- [ ] Eliminate mypy, flake8 complains
+- [x] Update order on complition
+- [x] Eliminate mypy, flake8 complains
+
+May 19
+^^^^^^
+- [ ] Add value field to Portfolio model
+- [ ] Test ValueProtectingStrategy
+- [ ] Update ValueProtectingStrategy to detect buy
