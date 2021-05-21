@@ -25,9 +25,9 @@ class PortfolioVersionsRepository(RepositoryInterface):
     def get_latest_version(self, portfolio_id: int) -> PortfolioVersion:
         return (
             self.model.select()
-                .where(self.model.portfolio_id == portfolio_id)
-                .order_by(self.model.version.desc())
-                .get()
+            .where(self.model.portfolio_id == portfolio_id)
+            .order_by(self.model.version.desc())
+            .get()
         )
 
     def get_portfolio(self, portfolio_version_id) -> Portfolio:

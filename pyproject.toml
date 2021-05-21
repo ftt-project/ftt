@@ -40,6 +40,7 @@ python-dotenv = "^0.17.0"
 pytest-mock = "^3.5.1"
 pytest = "^6.2.3"
 mypy = "^0.812"
+six = "^1.16.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.3"

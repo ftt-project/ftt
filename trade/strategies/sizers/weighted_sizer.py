@@ -9,7 +9,7 @@ class WeightedSizer(bt.Sizer):
     TODO: Rename to WeightedSizer
     """
 
-    params = (("dataname", None), ("portfolio_version_id", None))
+    params = (("dataname", None),)
 
     def _getsizing(self, comminfo, cash, data, isbuy):
         # portfolio = Portfolio.get_weights(self.p.dataname)

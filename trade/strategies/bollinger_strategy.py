@@ -1,56 +1,52 @@
 import backtrader as bt
 from trade.logger import logger
+from trade.strategies.base_strategy import BaseStrategy
 
 
-class BollingerStrategy(bt.Strategy):
-    params = (("period", 20), ("devfactor", 2.0), ("size", 20), ("debug", False))
+class BollingerStrategy(BaseStrategy):
+    params = (
+        ("portfolio_version_id", None),
+        ("period", 20),
+        ("fast", 10),
+        ("slow", 20),
+        ("devfactor", 2.0),
+    )
 
     def __init__(self):
-        self.dataclose = self.datas[0].close
-        self.order = None
-        self.boll = bt.indicators.BollingerBands(
-            self.dataclose, period=self.p.period, devfactor=self.p.devfactor
+        self.inds = {}
+        for i, data in enumerate(self.datas):
+            self.inds[data._name] = {}
+
+            sma_fast = self.p._movav(data.close, period=self.p.fast)
+            sma_slow = self.p._movav(data.close, period=self.p.slow)
+            self.inds[data._name]["crossover"] = bt.indicators.CrossOver(
+                sma_fast, sma_slow
+            )
+
+            self.inds[data._name]["boll"] = bt.indicators.BollingerBands(
+                data.close, period=self.p.period, devfactor=self.p.devfactor
+            )
+
+            self.inds[data._name]["redline"] = None
+            self.inds[data._name]["blueline"] = None
+
+    def buy_signal(self, data):
+        redline = self.dataclose < self.boll.lines.bot
+        return (
+            self.data[0].close > self.inds[data._name]["boll"].lines.mid and redline
+        ) or (self.data[0].close > self.inds[data._name]["boll"].lines.top)
+
+    def sell_signal(self, data):
+        blueline = self.dataclose > self.boll.lines.top
+        return (
+            data[0].close < self.inds[data._name]["boll"].lines.mid
+            and self.inds[data._name]["blueline"]
+            and blueline
         )
 
-        self.redline = None
-        self.blueline = None
-
-    def buy_sig(self):
-        pass
-
-    def sell_sig(self):
-        pass
-
-    def notify_order(self, order):
-        if order.status in [order.Submitted, order.Accepted]:
-            return
-
-        if order.status in [order.Completed]:
-            if order.isbuy():
-                logger.info(
-                    "BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f"
-                    % (order.executed.price, order.executed.value, order.executed.comm)
-                )
-
-            else:
-                logger.info(
-                    "SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f"
-                    % (order.executed.price, order.executed.value, order.executed.comm)
-                )
-            self.bar_executed = len(self)
-
-        elif order.status in [order.Canceled, order.Margin, order.Rejected]:
-            logger.info(f"Order Canceled/Margin/Rejected {order.status}")
-
-        self.order = None
-
-    def notify_trade(self, trade):
-        if not trade.isclosed:
-            return
-
-        logger.info(
-            "OPERATION PROFIT, GROSS %.2f, NET %.2f" % (trade.pnl, trade.pnlcomm)
-        )
+    def after_sell(self, order, data):
+        self.inds[data._name]["blueline"] = False
+        self.inds[data._name]["redline"] = False
 
     def next(self):
         if self.order:

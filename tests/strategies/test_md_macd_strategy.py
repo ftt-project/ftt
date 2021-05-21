@@ -20,23 +20,9 @@ class TestMdMACDStrategy:
     def subject(self):
         return MdMACDStrategy
 
-    @pytest.fixture
-    def cerebro(self, subject, portfolio_version, ticker, weight):
-        def _cerebro(data):
-            cerebro = bt.Cerebro(live=True)
-            cerebro.addstrategy(subject, portfolio_version_id=portfolio_version.id)
-            cerebro.addsizer(WeightedSizer)
-
-            cerebro.adddata(data, name=ticker.symbol)
-
-            cerebro.broker.setcash(30000.0)
-            return cerebro
-
-        return _cerebro
-
     def test_buys_with_given_cash_allocation_and_one_ticker(self, subject, cerebro):
         data = testcommon.getdata(0)
-        c = cerebro(data)
+        c = cerebro([subject], data)
         result = c.run()
         assert 28365.76 == c.broker.cash
         assert type(result[0]) == subject
@@ -51,21 +37,21 @@ class TestMdMACDStrategy:
     def test_set_the_final_cash_value(self):
         pass
 
-    def test_orders_against_data0(self, cerebro, portfolio):
+    def test_orders_against_data0(self, subject, cerebro, portfolio):
         data = testcommon.getdata(0)
         orders_before = OrdersRepository().get_orders_by_portfolio(portfolio)
         assert len(orders_before) == 0
-        _ = cerebro(data).run()
+        _ = cerebro([subject], data).run()
         orders_after = OrdersRepository().get_orders_by_portfolio(portfolio)
         assert len(orders_after) == 5
         Order.delete().execute()
 
-    def test_orders_against_data1(self, cerebro, portfolio):
+    def test_orders_against_data1(self, subject, cerebro, portfolio):
         data = testcommon.getdata(1, fromdate=datetime(2020, 5, 12), todate=datetime(2021, 5, 11))
 
         orders_before = OrdersRepository().get_orders_by_portfolio(portfolio)
         assert len(orders_before) == 0
-        results = cerebro(data).run()
+        results = cerebro([subject], data).run()
         orders_after = OrdersRepository().get_orders_by_portfolio(portfolio)
         assert len(orders_after) == 9
         types = Counter([o.type for o in orders_after])
