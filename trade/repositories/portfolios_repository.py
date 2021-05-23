@@ -7,22 +7,23 @@ from trade.repositories.repository_interface import RepositoryInterface
 
 
 class PortfoliosRepository(RepositoryInterface):
-    def __init__(self, model=Portfolio):
-        self.model = model
-
-    def save(self, model: Base):
+    @classmethod
+    def save(cls, model: Base):
         raise NotImplementedError()
 
-    def get_by_id(self, id: int):
-        return self.model.get(id)
+    @classmethod
+    def get_by_id(cls, id: int):
+        return Portfolio.get(id)
 
-    def get_by_name(self, name: str) -> Base:
-        return self.model.get(self.model.name == name)
+    @classmethod
+    def get_by_name(cls, name: str) -> Base:
+        return Portfolio.get(Portfolio.name == name)
 
-    def create(self, data: dict) -> Base:
+    @classmethod
+    def create(cls, data: dict) -> Base:
         data["created_at"] = datetime.now()
         data["updated_at"] = datetime.now()
-        portfolio = self.model.create(**data)
+        portfolio = Portfolio.create(**data)
         PortfolioVersionsRepository().create(
             {
                 "version": 1,
@@ -33,8 +34,8 @@ class PortfoliosRepository(RepositoryInterface):
         )
         return portfolio
 
-    @staticmethod
-    def get_tickers(portfolio: Portfolio) -> List[Ticker]:
+    @classmethod
+    def get_tickers(cls, portfolio: Portfolio) -> List[Ticker]:
         portfolio_version = PortfolioVersionsRepository().get_latest_version(
             portfolio.id
         )

@@ -13,7 +13,7 @@ def run():
     cerebro = bt.Cerebro()
     store = bt.stores.IBStore(port=7497, clientId=1, host='127.0.0.1')
 
-    portfolio = PortfoliosRepository().get_by_id(2)
+    portfolio = PortfoliosRepository.get_by_id(2)
     tickers = PortfoliosRepository.get_tickers(portfolio)
     for ticker in tickers:
         data = store.getdata(

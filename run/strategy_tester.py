@@ -72,7 +72,7 @@ def run(portfolio_id: int) -> None:
     MdMACDStrategy                          14910.82
     MdMACDStrategy[WeightedPortfolioSizer]  17834.67
     """
-    portfolio = PortfoliosRepository().get_by_id(portfolio_id)
+    portfolio = PortfoliosRepository.get_by_id(portfolio_id)
     portfolio_version = PortfolioVersionsRepository().get_latest_version(portfolio.id)
     tickers = PortfoliosRepository.get_tickers(portfolio)
 
