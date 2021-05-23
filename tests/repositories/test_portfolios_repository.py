@@ -9,7 +9,7 @@ from pytest import fixture
 class TestPortfoliosRepository:
     @fixture
     def subject(self):
-        return PortfoliosRepository()
+        return PortfoliosRepository
 
     @fixture
     def data(self):

@@ -102,7 +102,7 @@ class Weights(BaseCommand):
         return PortfoliosRepository().get_tickers(self.__portfolio(self._portfolio_id))
 
     def __portfolio(self, portfolio_id: int):
-        return PortfoliosRepository().get_by_id(portfolio_id)
+        return PortfoliosRepository.get_by_id(portfolio_id)
 
     def __portfolio_version(self):
         return PortfolioVersionsRepository().get_latest_version(self._portfolio_id)
