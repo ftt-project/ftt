@@ -1,13 +1,14 @@
 from decimal import Decimal
 
-from trade.repositories import PortfolioVersionsRepository
+from trade.logger import logger
+from trade.repositories import WeightsRepository, TickersRepository
 from trade.strategies.base_strategy import BaseStrategy
 
 
 class ValueProtectingStrategy(BaseStrategy):
     params = (
         ("portfolio_version_id", -1),
-        ("dipmult", 1.0),
+        ("dipmult", 0.97),
     )
 
     def __str__(self):
@@ -25,9 +26,10 @@ class ValueProtectingStrategy(BaseStrategy):
         """
         To protect from dip it sells when the portfolio price becomes lower than VALUE * MULT
         """
-        portfolio = PortfolioVersionsRepository().get_portfolio(
-            self.p.portfolio_version_id
-        )
         broker = self.env.getbroker()
-        value = broker.get_value()
-        return value <= (portfolio.size * Decimal(self.p.dipmult))
+        value = broker.get_value(datas=[data])
+        ticker = TickersRepository().get_by_name(data._name)
+        weight = WeightsRepository.find_by_ticker_and_portfolio(
+            ticker=ticker, portfolio_version_id=self.p.portfolio_version_id
+        )
+        return value <= (weight.amount * Decimal(self.p.dipmult))

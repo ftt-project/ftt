@@ -9,6 +9,7 @@ class Weight(Base):
     portfolio_version = peewee.ForeignKeyField(PortfolioVersion, backref="weights")
     position = peewee.IntegerField()
     planned_position = peewee.IntegerField()
+    amount = peewee.DecimalField(constraints=[peewee.Check("amount >= 0")], default=0)
 
     class Meta:
         indexes = ((("ticker", "portfolio_version"), True),)

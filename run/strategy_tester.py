@@ -76,7 +76,7 @@ def run(portfolio_id: int) -> None:
     portfolio_version = PortfolioVersionsRepository().get_latest_version(portfolio.id)
     tickers = PortfoliosRepository.get_tickers(portfolio)
 
-    config = Configuration().scrape()
+    # config = Configuration().scrape()
 
     # datas = HistoryLoader.load_multiple(config.tickers, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
 
@@ -87,7 +87,7 @@ def run(portfolio_id: int) -> None:
     # cerebro.addstrategy(MACDStrategy, atrdist=3.0)
     # cerebro.addstrategy(MDStrategy)
     cerebro.addstrategy(BollingerStrategy, portfolio_version_id=portfolio_version.id)
-    cerebro.addstrategy(ValueProtectingStrategy, portfolio_version_id=portfolio_version.id)
+    cerebro.addstrategy(ValueProtectingStrategy, portfolio_version_id=portfolio_version.id, dipmult=0.99)
 
     # tickers = [weight.symbol for ticker in tickers]
     # datas = HistoryLoader.load_multiple(tickers, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
@@ -101,7 +101,7 @@ def run(portfolio_id: int) -> None:
 
     # cerebro.addsizer(bt.sizers.FixedSize, stake=1)
     cerebro.addsizer(WeightedSizer)
-    cerebro.broker.setcash(float(portfolio.size))
+    cerebro.broker.setcash(float(portfolio.amount))
 
     comminfo = IBCommision()
     cerebro.broker.addcommissioninfo(comminfo)

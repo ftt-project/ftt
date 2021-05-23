@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from tests import testcommon
 from trade.models import Order
-from trade.strategies.bollinger_strategy import BollingerStrategy
+from trade.strategies import BollingerStrategy
 
 
 class TestBollingerStrategy:
@@ -15,8 +15,8 @@ class TestBollingerStrategy:
         data = testcommon.getdata(3, fromdate=datetime(2020, 5, 12), todate=datetime(2021, 5, 13))
         c = cerebro([subject], data)
         result = c.run()
-        assert 29996.47918701172 == c.broker.cash
-        assert 29996.47918701172 == c.broker.getvalue()
+        assert 29999.826416015625 == c.broker.cash
+        assert 29999.826416015625 == c.broker.getvalue()
         assert type(result[0]) == subject
         assert type(result[0]._orders) == list
         Order.delete().execute()

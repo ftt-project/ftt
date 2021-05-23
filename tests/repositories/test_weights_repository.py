@@ -3,11 +3,11 @@ from datetime import datetime
 import pandas as pd
 from pytest import fixture
 
-from trade.models import Weight, Portfolio, PortfolioVersion, Ticker
+from trade.models import Weight
 from trade.repositories import TickersRepository
-from trade.repositories.portfolio_versions_repository import PortfolioVersionsRepository
-from trade.repositories.portfolios_repository import PortfoliosRepository
-from trade.repositories.weights_repository import WeightsRepository
+from trade.repositories import PortfolioVersionsRepository
+from trade.repositories import PortfoliosRepository
+from trade.repositories import WeightsRepository
 
 
 class TestWeightsRepository:
@@ -70,3 +70,11 @@ class TestWeightsRepository:
         )
 
         assert result == weight
+
+    def test_find_by_ticker_and_portfolio(self, subject, ticker, portfolio_version, weight):
+        result = subject.find_by_ticker_and_portfolio(ticker=ticker, portfolio_version_id=portfolio_version.id)
+        assert result == weight
+
+    def test_update_amount(self, weight, subject):
+        subject.update_amount(weight, 101)
+        assert Weight.get(weight.id).amount == 101

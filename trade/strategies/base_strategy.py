@@ -8,7 +8,9 @@ from trade.models import Order
 from trade.repositories import (
     OrdersRepository,
     PortfolioVersionsRepository,
-    TickersRepository, PortfoliosRepository,
+    TickersRepository,
+    PortfoliosRepository,
+    WeightsRepository,
 )
 
 
@@ -32,29 +34,30 @@ class BaseStrategy(bt.Strategy):
 
     def start(self):
         self.orders = {}
-        # portfolio = PortfolioVersionsRepository.get_portfolio(self.p.portfolio_version_id)
-        # for i, d in enumerate(self.datas):
-        #     self.orders[d._name] = OrdersRepository.last_not_close_order(portfolio)
-
+        self._portfolio = PortfolioVersionsRepository.get_portfolio(
+            self.p.portfolio_version_id
+        )
         self.data_live = self.env.params.live
 
         tickers = PortfoliosRepository.get_tickers(self.portfolio)
         self._tickers = {}
         for ticker in tickers:
-            self._tickers[ticker.symbol] = TickersRepository().get_by_name(ticker.symbol)
+            self._tickers[ticker.symbol] = TickersRepository().get_by_name(
+                ticker.symbol
+            )
 
     @property
     def portfolio(self):
-        return PortfolioVersionsRepository.get_portfolio(
-            self.p.portfolio_version_id
-        )
+        return self._portfolio
 
     @property
     def tickers(self):
         return self._tickers
 
     def _open_order(self, symbol):
-        return OrdersRepository.last_not_closed_order(self.portfolio, self.tickers[symbol])
+        return OrdersRepository.last_not_closed_order(
+            self.portfolio, self.tickers[symbol]
+        )
 
     def _open_order_exist(self, symbol):
         return self._open_order(symbol) is not None
@@ -69,9 +72,6 @@ class BaseStrategy(bt.Strategy):
             if self._open_order_exist(d._name):
                 return
 
-            # if d._name in self.orders and self.orders[d._name]:
-            #     return
-
             if not position:
                 if self.buy_signal(d):
                     order = OrdersRepository.build_and_create(
@@ -81,7 +81,7 @@ class BaseStrategy(bt.Strategy):
                         type="buy",
                     )
                     btorder = self.buy(data=d)
-                    logger.info("BUY CREATE, %.2f" % d.close[0])
+                    logger.info(f"BUY CREATE {d._name} by {self}, %.2f" % d.close[0])
                     self.orders[d._name] = btorder
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
                     self.after_buy(order=order, data=d)
@@ -94,6 +94,7 @@ class BaseStrategy(bt.Strategy):
                         type="sell",
                     )
                     btorder = self.close(data=d)
+                    logger.info(f"SELL CREATE {d._name} by {self}, %.2f" % d.close[0])
                     self.orders[d._name] = btorder
                     self.after_sell(order=order, data=d)
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
@@ -102,6 +103,7 @@ class BaseStrategy(bt.Strategy):
 
     def notify_order(self, order):
         order_id = order.info["order_id"]
+        symbol = order.info["d_name"]
         OrdersRepository.update_status(order_id=order_id, status=order.getstatusname())
 
         if order.status in [order.Submitted, order.Accepted]:
@@ -109,6 +111,11 @@ class BaseStrategy(bt.Strategy):
 
         if order.status in [order.Completed]:
             if order.isbuy():
+                weight = WeightsRepository.find_by_ticker_and_portfolio(
+                    ticker=TickersRepository().get_by_name(symbol),
+                    portfolio_version_id=self.p.portfolio_version_id,
+                )
+                WeightsRepository.update_amount(weight, order.executed.value)
                 logger.info(
                     (
                         f"BUY EXECUTED {order.info['d_name']} by {self}, Price: {order.executed.price}, "
@@ -117,6 +124,11 @@ class BaseStrategy(bt.Strategy):
                 )
 
             else:
+                weight = WeightsRepository.find_by_ticker_and_portfolio(
+                    ticker=TickersRepository().get_by_name(symbol),
+                    portfolio_version_id=self.p.portfolio_version_id,
+                )
+                WeightsRepository.update_amount(weight, 0)
                 logger.info(
                     (
                         f"SELL EXECUTED {order.info['d_name']} by {self}, Price: {order.executed.price}, "

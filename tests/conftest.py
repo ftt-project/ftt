@@ -9,8 +9,10 @@ from trade.models import Weight, Ticker, Portfolio, PortfolioVersion, Order, Bas
 def transactional():
     connection = database_connection()
     with connection.atomic() as transaction:
-        yield
-        transaction.rollback()
+        try:
+            yield
+        finally:
+            transaction.rollback()
 
 @pytest.fixture
 def ticker():

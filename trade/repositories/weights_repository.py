@@ -1,8 +1,10 @@
+import decimal
 from datetime import datetime
 from typing import Optional
 
 import peewee
 
+from trade.logger import logger
 from trade.models import Base, Weight, Ticker, PortfolioVersion
 from trade.repositories.repository_interface import RepositoryInterface
 
@@ -32,6 +34,25 @@ class WeightsRepository(RepositoryInterface):
         )
 
         return self.get_by_id(id)
+
+    @classmethod
+    def find_by_ticker_and_portfolio(
+        cls, ticker: Ticker, portfolio_version_id: int
+    ) -> Weight:
+        return (
+            Weight.select()
+            .join(PortfolioVersion)
+            .switch(Weight)
+            .join(Ticker)
+            .where(PortfolioVersion.id == portfolio_version_id)
+            .where(Ticker.id == ticker.id)
+            .get()
+        )
+
+    @classmethod
+    def update_amount(cls, weight: Weight, amount: float) -> None:
+        weight.amount = amount
+        weight.save()
 
     def create(self, data: dict) -> Base:
         data["updated_at"] = datetime.now()

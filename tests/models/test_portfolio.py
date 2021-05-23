@@ -14,14 +14,14 @@ class TestPortfolio:
 
     def test_size_constraints(self):
         with pytest.raises(peewee.IntegrityError) as e:
-            Portfolio.create(name='test', size=-1, updated_at=datetime.now(), created_at=datetime.now())
+            Portfolio.create(name='test', amount=-1, updated_at=datetime.now(), created_at=datetime.now())
 
-        assert 'new row for relation "portfolios" violates check constraint "portfolios_size_check' in str(e.value)
+        assert 'new row for relation "portfolios" violates check constraint "portfolios_amount_check' in str(e.value)
 
     def test_size_default_value(self):
-        portfolio = Portfolio.create(name='test', size=1, updated_at=datetime.now(), created_at=datetime.now())
-        portfolio.size = -1
+        portfolio = Portfolio.create(name='test', amount=1, updated_at=datetime.now(), created_at=datetime.now())
+        portfolio.amount = -1
         with pytest.raises(peewee.IntegrityError) as e:
             portfolio.save()
 
-        assert 'new row for relation "portfolios" violates check constraint "portfolios_size_check' in str(e.value)
+        assert 'new row for relation "portfolios" violates check constraint "portfolios_amount_check' in str(e.value)

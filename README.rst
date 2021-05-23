@@ -159,5 +159,6 @@ May 19
 
 May 21
 ^^^^^^
-- [ ] Use Order model to track ongoing strategy orders
+- [x] Use Order model to track ongoing strategy orders
 - [ ] Ability to disable strategy for portfolio
+- [ ] Seeds

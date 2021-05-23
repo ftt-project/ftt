@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 import backtrader as bt
 from backtrader import DataBase
@@ -33,7 +35,7 @@ class TestValueProtectingStrategy:
         return ValueProtectingStrategy
 
     def test_runs(self, subject, cerebro, portfolio):
-        data = testcommon.getdata(0)
+        data = testcommon.getdata(1, fromdate=datetime(2020, 5, 12), todate=datetime(2021, 5, 11))
 
         orders_before = OrdersRepository().get_orders_by_portfolio(portfolio)
         c = cerebro([self.__class__.DummyBuyOnceStrategy, subject], data)
@@ -41,5 +43,5 @@ class TestValueProtectingStrategy:
         c.run()
         orders_after = OrdersRepository().get_orders_by_portfolio(portfolio)
         assert (len(orders_after) - len(orders_before)) == 2
-        assert 29744.88 == broker.get_value()
+        assert 29987.44 == broker.get_value()
         Order.delete().execute()
