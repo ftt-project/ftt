@@ -5,7 +5,11 @@ from backtrader.feeds import DataBase
 
 from trade.logger import logger
 from trade.models import Order
-from trade.repositories import OrdersRepository
+from trade.repositories import (
+    OrdersRepository,
+    PortfolioVersionsRepository,
+    TickersRepository, PortfoliosRepository,
+)
 
 
 class BaseStrategy(bt.Strategy):
@@ -28,8 +32,32 @@ class BaseStrategy(bt.Strategy):
 
     def start(self):
         self.orders = {}
-        # last open order that belongs to this portfolio version
+        # portfolio = PortfolioVersionsRepository.get_portfolio(self.p.portfolio_version_id)
+        # for i, d in enumerate(self.datas):
+        #     self.orders[d._name] = OrdersRepository.last_not_close_order(portfolio)
+
         self.data_live = self.env.params.live
+
+        tickers = PortfoliosRepository.get_tickers(self.portfolio)
+        self._tickers = {}
+        for ticker in tickers:
+            self._tickers[ticker.symbol] = TickersRepository().get_by_name(ticker.symbol)
+
+    @property
+    def portfolio(self):
+        return PortfolioVersionsRepository.get_portfolio(
+            self.p.portfolio_version_id
+        )
+
+    @property
+    def tickers(self):
+        return self._tickers
+
+    def _open_order(self, symbol):
+        return OrdersRepository.last_not_closed_order(self.portfolio, self.tickers[symbol])
+
+    def _open_order_exist(self, symbol):
+        return self._open_order(symbol) is not None
 
     def next(self):
         if not self.data_live:
@@ -38,12 +66,15 @@ class BaseStrategy(bt.Strategy):
         for i, d in enumerate(self.datas):
             position = self.getposition(d).size
 
-            if d._name in self.orders and self.orders[d._name]:
+            if self._open_order_exist(d._name):
                 return
+
+            # if d._name in self.orders and self.orders[d._name]:
+            #     return
 
             if not position:
                 if self.buy_signal(d):
-                    order = OrdersRepository().build_and_create(
+                    order = OrdersRepository.build_and_create(
                         symbol_name=d._name,
                         portfolio_version_id=self.p.portfolio_version_id,
                         desired_price=0,
@@ -56,7 +87,7 @@ class BaseStrategy(bt.Strategy):
                     self.after_buy(order=order, data=d)
             else:
                 if self.sell_signal(d):
-                    order = OrdersRepository().build_and_create(
+                    order = OrdersRepository.build_and_create(
                         symbol_name=d._name,
                         portfolio_version_id=self.p.portfolio_version_id,
                         desired_price=0,
@@ -71,9 +102,7 @@ class BaseStrategy(bt.Strategy):
 
     def notify_order(self, order):
         order_id = order.info["order_id"]
-        OrdersRepository().update_status(
-            order_id=order_id, status=order.getstatusname()
-        )
+        OrdersRepository.update_status(order_id=order_id, status=order.getstatusname())
 
         if order.status in [order.Submitted, order.Accepted]:
             return
@@ -81,14 +110,18 @@ class BaseStrategy(bt.Strategy):
         if order.status in [order.Completed]:
             if order.isbuy():
                 logger.info(
-                    (f"BUY EXECUTED {order.info['d_name']} by {self}, Price: {order.executed.price}, "
-                        f"Cost: {order.executed.value}, Comm {order.executed.comm}")
+                    (
+                        f"BUY EXECUTED {order.info['d_name']} by {self}, Price: {order.executed.price}, "
+                        f"Cost: {order.executed.value}, Comm {order.executed.comm}"
+                    )
                 )
 
             else:
                 logger.info(
-                    (f"SELL EXECUTED {order.info['d_name']} by {self}, Price: {order.executed.price}, "
-                        f"Cost: {order.executed.value}, Comm {order.executed.comm}")
+                    (
+                        f"SELL EXECUTED {order.info['d_name']} by {self}, Price: {order.executed.price}, "
+                        f"Cost: {order.executed.value}, Comm {order.executed.comm}"
+                    )
                 )
             self.bar_executed = len(self)
 
@@ -97,6 +130,7 @@ class BaseStrategy(bt.Strategy):
 
         if not order.alive():
             d_name = order.info["d_name"]
+            # TODO: Update order's status
             self.orders[d_name] = None
 
     def notify_trade(self, trade):

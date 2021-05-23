@@ -5,7 +5,7 @@ import pytest
 from trade.models import Weight, Ticker, Portfolio, PortfolioVersion, Order, Base, database_connection
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="function")
 def transactional():
     connection = database_connection()
     with connection.atomic() as transaction:
@@ -73,7 +73,7 @@ def order(ticker, portfolio_version):
     order = Order.create(
         ticker=ticker,
         portfolio_version=portfolio_version,
-        status="created",
+        status="Created",
         type="buy",
         desired_price=100,
         updated_at=datetime.now(),

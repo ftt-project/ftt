@@ -45,6 +45,9 @@ class MdMACDStrategy(BaseStrategy):
             smadir = sma - sma(-self.p.dirperiod)
             self.inds[d._name]["smadir"] = smadir
 
+    def __str__(self):
+        return f"<MdMACDStrategy>"
+
     def buy_signal(self, data) -> bool:
         return (
             self.inds[data._name]["cross_over"][0] > 0.0

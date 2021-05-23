@@ -56,6 +56,9 @@ class MACDStrategy(bt.Strategy):
         self.sma = bt.indicators.SMA(self.data.close, period=self.p.smaperiod)
         self.smadir = self.sma - self.sma(-self.p.dirperiod)
 
+    def __str__(self):
+        return f"<MACDStrategy>"
+
     def start(self):
         self.order = None
 

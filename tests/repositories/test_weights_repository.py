@@ -52,14 +52,6 @@ class TestWeightsRepository:
         data['created_at'] = datetime.now()
         return Weight.create(**data)
 
-    @fixture(autouse=True)
-    def cleanup(self):
-        yield
-        Weight.delete().execute()
-        Portfolio.delete().execute()
-        PortfolioVersion.delete().execute()
-        Ticker.delete().execute()
-
     def test_create(self, subject, data):
         result = subject.create(data)
 

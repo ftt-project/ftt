@@ -14,6 +14,9 @@ class SMAStrategy(bt.Strategy):
             self.dataclose, period=self.params.period
         )
 
+    def __str__(self):
+        return f"<SMAStrategy>"
+
     def buy_sig(self):
         return (
             self.dataclose[0] > self.sma[0] and self.dataclose[-1] < self.dataclose[-2]

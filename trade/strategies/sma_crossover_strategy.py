@@ -21,6 +21,9 @@ class SMACrossoverStrategy(BaseStrategy):
                 sma_fast, sma_slow
             )
 
+    def __str__(self):
+        return f"<SMACrossoverStrategy>"
+
     def buy_signal(self, data):
         return self.inds[data._name]["crossover"] < 0
 

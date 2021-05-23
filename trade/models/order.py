@@ -12,5 +12,33 @@ class Order(Base):
     desired_price = peewee.DecimalField()
     execution_price = peewee.DecimalField(null=True)
 
+    Created = "Created"
+    Submitted = "Submitted"
+    Accepted = "Accepted"
+    Partial = "Partial"
+    Completed = "Completed"
+    Canceled = "Canceled"
+    Expired = "Expired"
+    Margin = "Margin"
+    Rejected = "Rejected"
+
+    STATUSES = [
+        "Created",
+        "Submitted",
+        "Accepted",
+        "Partial",
+        "Completed",
+        "Canceled",
+        "Expired",
+        "Margin",
+        "Rejected",
+    ]
+
+    NOT_CLOSED_STATUSES = [
+        "Created",
+        "Submitted",
+        "Accepted",
+    ]
+
     class Meta:
         table_name = "orders"

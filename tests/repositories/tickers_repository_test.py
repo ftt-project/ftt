@@ -34,11 +34,6 @@ class TestTickersRepository:
         ticker.delete_instance()
         return ticker
 
-    @fixture(autouse=True)
-    def cleanup(self):
-        yield
-        Ticker.delete().execute()
-
     def test_get_by_name(self, ticker, subject):
         found = subject.get_by_name(ticker.symbol)
         assert ticker.id == found.id

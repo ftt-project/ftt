@@ -36,7 +36,8 @@ class BollingerStrategy(BaseStrategy):
     def sell_signal(self, data):
         blueline = data.close[0] > self.inds[data._name]["boll"].lines.top
         return (
-            data.close[0] < self.inds[data._name]["boll"].lines.mid
+            data.close[0]
+            < self.inds[data._name]["boll"].lines.mid
             # and self.inds[data._name]["blueline"]
             # and blueline
         )

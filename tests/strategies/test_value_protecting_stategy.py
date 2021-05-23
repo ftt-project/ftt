@@ -41,5 +41,5 @@ class TestValueProtectingStrategy:
         c.run()
         orders_after = OrdersRepository().get_orders_by_portfolio(portfolio)
         assert (len(orders_after) - len(orders_before)) == 2
-        assert 28453.68 == broker.get_value()
+        assert 29744.88 == broker.get_value()
         Order.delete().execute()

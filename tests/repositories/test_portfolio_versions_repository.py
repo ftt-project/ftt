@@ -8,7 +8,7 @@ from trade.repositories.portfolios_repository import PortfoliosRepository
 class TestPortfolioVersionsRepository:
     @fixture
     def subject(self):
-        return PortfolioVersionsRepository()
+        return PortfolioVersionsRepository
 
     def test_get_latest_version(self, subject, portfolio, portfolio_version):
         found = subject.get_latest_version(portfolio_id=portfolio.id)
