@@ -21,6 +21,8 @@ Quick start
 .. code:: bash
 
    docker-compose up
+   docker-compose run -e ENV_FILE=.env.test trade python ./bin/db.py create_database
+   docker-compose run -e ENV_FILE=.env.dev trade python ./bin/db.py create_database
    docker-compose run -e ENV_FILE=.env.test trade python ./bin/db.py create_tables
    docker-compose run -e ENV_FILE=.env.dev trade python ./bin/db.py create_tables
    docker-compose run -e ENV_FILE=.env.test trade pytest tests/
@@ -105,6 +107,7 @@ Basic development process
    git add -p
    git status
    git commit -m "Update ..."
+   git log
    git push origin feature-<NAME>
 
 Download all tickers
