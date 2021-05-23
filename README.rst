@@ -15,12 +15,26 @@ Installation
 
 Docker version
 
+Quick start
+^^^^^
+
+.. code:: bash
+
+   docker-compose up
+   docker-compose run -e ENV_FILE=.env.test trade python ./bin/db.py create_tables
+   docker-compose run -e ENV_FILE=.env.dev trade python ./bin/db.py create_tables
+   docker-compose run -e ENV_FILE=.env.test trade pytest tests/
+
+Run in host network
+^^^^^^^^^^^^^^^^^^^
+
 .. code:: bash
 
    docker build --tag trade:v[x] .
    docker run --rm -it --network host -v "$PWD:/usr/src/app" trade:v[x] run/account.py status
 
 Create database & tables
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: bash
 
@@ -29,30 +43,35 @@ Create database & tables
     docker-compose run -e ENV_FILE=.env.${ENV} trade python ./bin/db.py create_tables
 
 Run tests
+^^^^^^^^^
 
 .. code:: bash
 
-    docker-compose run -e ENV_FILE=.env.test trade pytest test
+    docker-compose run -e ENV_FILE=.env.test trade pytest tests/
 
 Alternatively possible to run using Makefile
+^^^^^^^^^^^^^^
 
 .. code:: bash
 
     make tests
 
 Connect to database
+^^^^^^^^^^^^^^^^^^^
 
 .. code:: bash
 
     docker-compose exec db psql -U <USER> <DATABASE>
 
 Run Jupyter
+^^^^^^^^^^^
 
 .. code:: bash
 
     docker-compose run -e ENV_FILE=.env.dev -p 8888:8888 trade jupyter-lab --allow-root --ip=0.0.0.0
 
 Plain code version
+^^^^^^^^^^^^^^^^^^
 
 .. code:: bash
 
@@ -62,6 +81,7 @@ Plain code version
     poetry install
 
 Troubleshoots
+^^^^^^^^^^^^^
 
 .. code:: bash
     pip install --upgrade pip
@@ -71,6 +91,21 @@ Troubleshoots
     pip install cvxpy
     pip install cvxopt
     poetry install
+
+Basic development process
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: bash
+
+   git checkout master
+   git pull origin master
+   git checkout -b feature-<NAME>
+   git branch
+   # make changes
+   git add -p
+   git status
+   git commit -m "Update ..."
+   git push origin feature-<NAME>
 
 Download all tickers
 --------------------
@@ -131,7 +166,7 @@ Apr 25
 Apr 30
 ^^^^^^
 - [x] Try out strategy on 5 minutes tickers
-- [ ] Save executed and attempted orders in DB
+- [x] Save executed and attempted orders in DB
 - [x] Repository to handle data creation like created_at and updated_at
 
 May 3
@@ -161,4 +196,5 @@ May 21
 ^^^^^^
 - [x] Use Order model to track ongoing strategy orders
 - [ ] Ability to disable strategy for portfolio
+- [ ] * ValueProtectingStrategy must disable buy for other strategies
 - [ ] Seeds
