@@ -9,7 +9,7 @@ from trade.repositories import OrdersRepository
 class TestOrdersRepository:
     @pytest.fixture
     def subject(self):
-        return OrdersRepository()
+        return OrdersRepository
 
     def test_create(self, subject, ticker, portfolio_version):
         result = subject.create({
