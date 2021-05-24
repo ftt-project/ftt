@@ -80,3 +80,20 @@ class OrdersRepository(RepositoryInterface):
             logger.warning(f"Found multiple unclosed orders for {portfolio}")
 
         return found[0] if len(found) > 0 else None
+
+    @classmethod
+    def set_execution_params(
+        cls,
+        order: Order,
+        execution_size: int,
+        execution_price: float,
+        execution_value: float,
+        execution_commission: float,
+    ) -> Order:
+        order.execution_size = execution_size
+        order.execution_price = execution_price
+        order.execution_value = execution_value
+        order.execution_commission = execution_commission
+        order.executed_at = datetime.now()
+        order.save()
+        return cls.get_by_id(order.id)

@@ -72,12 +72,21 @@ class BaseStrategy(bt.Strategy):
             if self._open_order_exist(d._name):
                 return
 
+            weight = WeightsRepository.find_by_ticker_and_portfolio(
+                ticker=TickersRepository().get_by_name(d._name),
+                portfolio_version_id=self.p.portfolio_version_id,
+            )
+
             if not position:
                 if self.buy_signal(d):
+                    if weight.locked_at is not None:
+                        logger.debug(f"IS LOCKED {d._name} by {self}")
+                        return
+
                     order = OrdersRepository.build_and_create(
                         symbol_name=d._name,
                         portfolio_version_id=self.p.portfolio_version_id,
-                        desired_price=0,
+                        desired_price=d.close[0],
                         type="buy",
                     )
                     btorder = self.buy(data=d)
@@ -90,7 +99,7 @@ class BaseStrategy(bt.Strategy):
                     order = OrdersRepository.build_and_create(
                         symbol_name=d._name,
                         portfolio_version_id=self.p.portfolio_version_id,
-                        desired_price=0,
+                        desired_price=d.close[0],
                         type="sell",
                     )
                     btorder = self.close(data=d)
@@ -110,6 +119,13 @@ class BaseStrategy(bt.Strategy):
             return
 
         if order.status in [order.Completed]:
+            OrdersRepository.set_execution_params(
+                order=OrdersRepository.get_by_id(order_id),
+                execution_size=order.executed.size,
+                execution_price=order.executed.price,
+                execution_value=order.executed.value,
+                execution_commission=order.executed.comm,
+            )
             if order.isbuy():
                 weight = WeightsRepository.find_by_ticker_and_portfolio(
                     ticker=TickersRepository().get_by_name(symbol),

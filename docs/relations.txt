@@ -8,6 +8,7 @@ package "trade.models" {
     class Portfolio {
         + id
         + name
+        + amount
     }
     class PortfolioVersion {
         + id
@@ -26,12 +27,12 @@ package "trade.models" {
         + change
         + percent_change
     }
-    class Weights {
+    class Weight {
         + ticker_id
         + portfolio_version_id
         + position
         + planned_position
-        + {abstract} _version
+        + amount
     }
     class Ticker {
         + name
@@ -83,14 +84,14 @@ Cerebro --o WeightedPortfolioSizer
 ' Strategy -> Portfolio :  As ID to pass over to Sizer
 Strategy -* WeightedPortfolioSizer : Uses Portfolio ID to and ticker name to return the weight
 
-PortfolioVersion --{ Weights
-Ticker --{ Weights
-Ticker --{ TickerReturns
+PortfolioVersion --{ Weight
+Ticker --{ Weight
+Ticker --{ TickerReturn
 
 Ticker --{ Order
 Order }-- PortfolioVersion
 
 WeightedPortfolioSizer -> Portfolio
-WeightedPortfolioSizer -> Weights : fetch positions (ticker_name, portfolio_id)
+WeightedPortfolioSizer -> Weight : fetch positions (ticker_name, portfolio_id)
 
 @enduml
