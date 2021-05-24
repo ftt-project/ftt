@@ -74,11 +74,6 @@ def run(portfolio_id: int) -> None:
     """
     portfolio = PortfoliosRepository.get_by_id(portfolio_id)
     portfolio_version = PortfolioVersionsRepository().get_latest_version(portfolio.id)
-    tickers = PortfoliosRepository.get_tickers(portfolio)
-
-    # config = Configuration().scrape()
-
-    # datas = HistoryLoader.load_multiple(config.tickers, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
 
     cerebro = bt.Cerebro(live=True, cheat_on_open=True)
     # cerebro.addstrategy(SMACrossoverStrategy, fast=5, slow=50)
@@ -87,14 +82,11 @@ def run(portfolio_id: int) -> None:
     # cerebro.addstrategy(MACDStrategy, atrdist=3.0)
     # cerebro.addstrategy(MDStrategy)
     cerebro.addstrategy(BollingerStrategy, portfolio_version_id=portfolio_version.id)
-    cerebro.addstrategy(ValueProtectingStrategy, portfolio_version_id=portfolio_version.id, dipmult=0.99)
+    cerebro.addstrategy(ValueProtectingStrategy, portfolio_version_id=portfolio_version.id, dipmult=1.0)
 
-    # tickers = [weight.symbol for ticker in tickers]
-    # datas = HistoryLoader.load_multiple(tickers, date(2020, 1, 1), date(2021, 4, 1), interval="1d")
-    # [cerebro.adddata(datas[key], name=key) for key in OrderedDict(sorted(datas.items()))]
-
+    tickers = PortfoliosRepository.get_tickers(portfolio)
     for ticker in tickers:
-        data = HistoryLoader.load(ticker, date(2021, 5, 1), date(2021, 5, 21), interval="5m")
+        data = HistoryLoader.load(ticker, date(2021, 5, 10), date(2021, 5, 13), interval="5m")
         cerebro.adddata(data, name=ticker.symbol)
 
     # [cerebro.adddata(datas[key], symbol=key) for key in OrderedDict(sorted(datas.items()))]

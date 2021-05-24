@@ -70,18 +70,17 @@ class BaseStrategy(bt.Strategy):
             position = self.getposition(d).size
 
             if self._open_order_exist(d._name):
-                return
-
-            weight = WeightsRepository.find_by_ticker_and_portfolio(
-                ticker=TickersRepository().get_by_name(d._name),
-                portfolio_version_id=self.p.portfolio_version_id,
-            )
+                continue
 
             if not position:
                 if self.buy_signal(d):
+                    weight = WeightsRepository.find_by_ticker_and_portfolio(
+                        ticker=TickersRepository().get_by_name(d._name),
+                        portfolio_version_id=self.p.portfolio_version_id,
+                    )
                     if weight.locked_at is not None:
-                        logger.debug(f"IS LOCKED {d._name} by {self}")
-                        return
+                        logger.info(f"IS LOCKED <{d._name}> by {self}")
+                        continue
 
                     order = OrdersRepository.build_and_create(
                         symbol_name=d._name,
@@ -90,7 +89,7 @@ class BaseStrategy(bt.Strategy):
                         type="buy",
                     )
                     btorder = self.buy(data=d)
-                    logger.info(f"BUY CREATE {d._name} by {self}, %.2f" % d.close[0])
+                    logger.info(f"BUY CREATE <{d._name}> by {self}, %.2f" % d.close[0])
                     self.orders[d._name] = btorder
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
                     self.after_buy(order=order, data=d)
@@ -103,7 +102,7 @@ class BaseStrategy(bt.Strategy):
                         type="sell",
                     )
                     btorder = self.close(data=d)
-                    logger.info(f"SELL CREATE {d._name} by {self}, %.2f" % d.close[0])
+                    logger.info(f"SELL CREATE <{d._name}> by {self}, %.2f" % d.close[0])
                     self.orders[d._name] = btorder
                     self.after_sell(order=order, data=d)
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
@@ -134,7 +133,7 @@ class BaseStrategy(bt.Strategy):
                 WeightsRepository.update_amount(weight, order.executed.value)
                 logger.info(
                     (
-                        f"BUY EXECUTED {order.info['d_name']} by {self}, Price: {order.executed.price}, "
+                        f"BUY EXECUTED <{order.info['d_name']}> by {self}, Price: {order.executed.price}, "
                         f"Cost: {order.executed.value}, Comm {order.executed.comm}"
                     )
                 )
@@ -147,7 +146,7 @@ class BaseStrategy(bt.Strategy):
                 WeightsRepository.update_amount(weight, 0)
                 logger.info(
                     (
-                        f"SELL EXECUTED {order.info['d_name']} by {self}, Price: {order.executed.price}, "
+                        f"SELL EXECUTED <{order.info['d_name']}> by {self}, Price: {order.executed.price}, "
                         f"Cost: {order.executed.value}, Comm {order.executed.comm}"
                     )
                 )
