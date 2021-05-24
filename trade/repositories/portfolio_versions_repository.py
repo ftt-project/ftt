@@ -33,6 +33,6 @@ class PortfolioVersionsRepository(RepositoryInterface):
         )
 
     @classmethod
-    def get_portfolio(self, portfolio_version_id) -> Portfolio:
-        portfolio_versions = self.get_by_id(portfolio_version_id)
+    def get_portfolio(cls, portfolio_version_id) -> Portfolio:
+        portfolio_versions = PortfolioVersion.get_by_id(portfolio_version_id)
         return portfolio_versions.portfolio
