@@ -99,16 +99,26 @@ Basic development process
 
 .. code:: bash
 
-   git checkout master
-   git pull origin master
-   git checkout -b feature-<NAME>
-   git branch
-   # make changes
-   git add -p
-   git status
-   git commit -m "Update ..."
-   git log
-   git push origin feature-<NAME>
+    git checkout master
+    git pull origin master
+    git checkout -b feature-<NAME>
+    git branch
+    # make changes
+    git add -p
+    git status
+    git commit -m "Update ..."
+    git log
+    git push origin feature-<NAME>
+
+What to in case of local changes that prevents to checkout branch
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: bash
+
+    git stash
+    git checkout branch
+    git stash pop
+
 
 Download all tickers
 --------------------
