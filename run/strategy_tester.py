@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from collections import OrderedDict
-from datetime import date
+from datetime import date, datetime
 
 import fire
 import backtrader as bt
@@ -13,6 +13,7 @@ from trade.logger import logger
 from trade.repositories import PortfolioVersionsRepository, PortfoliosRepository
 from trade.strategies import ValueProtectingStrategy
 from trade.strategies.bollinger_strategy import BollingerStrategy
+from trade.strategies.dummy_buy_once_strategy import DummyBuyOnceStrategy
 from trade.strategies.macd_strategy import MACDStrategy
 from trade.strategies.md_macd_strategy import MdMACDStrategy
 from trade.strategies.sizers import WeightedSizer
@@ -82,11 +83,12 @@ def run(portfolio_id: int) -> None:
     # cerebro.addstrategy(MACDStrategy, atrdist=3.0)
     # cerebro.addstrategy(MDStrategy)
     cerebro.addstrategy(BollingerStrategy, portfolio_version_id=portfolio_version.id)
-    cerebro.addstrategy(ValueProtectingStrategy, portfolio_version_id=portfolio_version.id, dipmult=1.0)
+    # cerebro.addstrategy(DummyBuyOnceStrategy, portfolio_version_id=portfolio_version.id)
+    cerebro.addstrategy(ValueProtectingStrategy, portfolio_version_id=portfolio_version.id, dipmult=1.0, buy_enabled=False)
 
     tickers = PortfoliosRepository.get_tickers(portfolio)
     for ticker in tickers:
-        data = HistoryLoader.load(ticker, date(2021, 5, 10), date(2021, 5, 13), interval="5m")
+        data = HistoryLoader.load(ticker, datetime(2021, 5, 10, 0, 0, 0), datetime(2021, 5, 13, 23, 59, 59), interval="5m")
         cerebro.adddata(data, name=ticker.symbol)
 
     # [cerebro.adddata(datas[key], symbol=key) for key in OrderedDict(sorted(datas.items()))]

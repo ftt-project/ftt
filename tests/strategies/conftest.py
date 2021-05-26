@@ -9,7 +9,11 @@ def cerebro(portfolio_version, ticker, weight):
     def _cerebro(strategies, data):
         cerebro = bt.Cerebro(live=True, cheat_on_open=True)
         for strategy in strategies:
-            cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
+            if type(strategy) == tuple:
+                strategy, opts = strategy
+                cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id, **opts)
+            else:
+                cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
         cerebro.addsizer(WeightedSizer)
 
         cerebro.adddata(data, name=ticker.symbol)

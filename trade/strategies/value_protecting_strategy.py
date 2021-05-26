@@ -8,6 +8,7 @@ from trade.strategies.base_strategy import BaseStrategy
 class ValueProtectingStrategy(BaseStrategy):
     params = (
         ("portfolio_version_id", -1),
+        ("buy_enabled", False),
         ("dipmult", 0.97),
     )
 
@@ -26,6 +27,9 @@ class ValueProtectingStrategy(BaseStrategy):
         )
         if weight.locked_at_amount and data.close[0] >= weight.locked_at_amount:
             WeightsRepository.unlock_weight(weight=weight)
+            if self.p.buy_enabled:
+                return True
+
         return False
 
     def sell_signal(self, data):
