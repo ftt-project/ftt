@@ -77,3 +77,17 @@ class TestOrdersRepository:
     def test_last_not_closed_order_when_no_orders(self, subject, portfolio, ticker):
         found = subject.last_not_closed_order(portfolio, ticker)
         assert found is None
+
+    def test_set_execution_params(self, subject, order):
+        result = subject.set_execution_params(
+            order=order,
+            execution_size=1,
+            execution_price=100,
+            execution_value=200,
+            execution_commission=1
+        )
+        assert result.execution_size == 1
+        assert result.execution_price == 100
+        assert result.execution_value == 200
+        assert result.execution_commission == 1
+        assert result.executed_at is not None

@@ -33,7 +33,7 @@ class HistoryLoader:
                 TickerReturn.interval == interval,
                 (
                     (TickerReturn.datetime >= start_date)
-                    | (TickerReturn.datetime <= end_date)
+                    & (TickerReturn.datetime <= end_date)
                 ),
             )
             .order_by(TickerReturn.datetime.asc())

@@ -66,8 +66,9 @@ class WeightsRepository(RepositoryInterface):
             created_at=data["created_at"],
         )
 
-    def get_by_id(self, id: int) -> Base:
-        return self.model.get(id)
+    @classmethod
+    def get_by_id(cls, id: int) -> Base:
+        return Weight.get(id)
 
     def get_by_ticker_and_portfolio_version(
         self, ticker_id: int, portfolio_version_id: int
@@ -81,3 +82,17 @@ class WeightsRepository(RepositoryInterface):
             .where(Ticker.id == ticker_id)
             .get()
         )
+
+    @classmethod
+    def lock_weight(cls, weight: Weight, locked_at_amount: float) -> Weight:
+        weight.locked_at = datetime.now()
+        weight.locked_at_amount = locked_at_amount
+        weight.save()
+        return cls.get_by_id(weight.id)
+
+    @classmethod
+    def unlock_weight(cls, weight: Weight) -> Weight:
+        weight.locked_at = None
+        weight.locked_at_amount = None
+        weight.save()
+        return cls.get_by_id(weight.id)

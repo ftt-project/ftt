@@ -9,8 +9,11 @@ class Order(Base):
     portfolio_version = peewee.ForeignKeyField(PortfolioVersion, backref="orders")
     status = peewee.CharField()
     executed_at = peewee.DateTimeField(null=True)
-    desired_price = peewee.DecimalField()
+    desired_price = peewee.DecimalField(null=True)
+    execution_size = peewee.IntegerField(null=True)
     execution_price = peewee.DecimalField(null=True)
+    execution_value = peewee.DecimalField(null=True)
+    execution_commission = peewee.DecimalField(null=True)
 
     Created = "Created"
     Submitted = "Submitted"

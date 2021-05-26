@@ -78,3 +78,13 @@ class TestWeightsRepository:
     def test_update_amount(self, weight, subject):
         subject.update_amount(weight, 101)
         assert Weight.get(weight.id).amount == 101
+
+    def test_lock_weight(self, subject, weight):
+        result = subject.lock_weight(weight, 101)
+        assert result.locked_at_amount == 101
+        assert result.locked_at is not None
+
+    def test_unlock_weight(self, subject, weight):
+        result = subject.unlock_weight(weight)
+        assert result.locked_at_amount is None
+        assert result.locked_at is None
