@@ -10,7 +10,7 @@ from trade.repositories import TickersRepository
 class TestTickersRepository:
     @fixture
     def subject(self):
-        return TickersRepository()
+        return TickersRepository
 
     @fixture
     def data(self):
