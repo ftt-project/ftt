@@ -10,13 +10,12 @@ from trade.repositories.repository_interface import RepositoryInterface
 
 
 class WeightsRepository(RepositoryInterface):
-    def __init__(self, model: Optional[Weight] = Weight):
-        self.model = model
-
-    def save(self, model: Base) -> Base:
+    @classmethod
+    def save(cls, model: Base) -> Base:
         raise NotImplementedError()
 
-    def upsert(self, data: dict) -> Base:
+    @classmethod
+    def upsert(cls, data: dict) -> Base:
         id = (
             Weight.insert(
                 portfolio_version=data["portfolio_version"],
@@ -33,7 +32,7 @@ class WeightsRepository(RepositoryInterface):
             .execute()
         )
 
-        return self.get_by_id(id)
+        return cls.get_by_id(id)
 
     @classmethod
     def find_by_ticker_and_portfolio(
@@ -54,10 +53,11 @@ class WeightsRepository(RepositoryInterface):
         weight.amount = amount
         weight.save()
 
-    def create(self, data: dict) -> Base:
+    @classmethod
+    def create(cls, data: dict) -> Base:
         data["updated_at"] = datetime.now()
         data["created_at"] = datetime.now()
-        return self.model.create(
+        return Weight.create(
             portfolio_version=data["portfolio_version"],
             ticker=data["ticker"],
             position=data["position"],
@@ -70,13 +70,14 @@ class WeightsRepository(RepositoryInterface):
     def get_by_id(cls, id: int) -> Base:
         return Weight.get(id)
 
+    @classmethod
     def get_by_ticker_and_portfolio_version(
-        self, ticker_id: int, portfolio_version_id: int
+        cls, ticker_id: int, portfolio_version_id: int
     ) -> Base:
         return (
-            self.model.select()
+            Weight.select()
             .join(PortfolioVersion, peewee.JOIN.LEFT_OUTER)
-            .switch(self.model)
+            .switch(Weight)
             .join(Ticker, peewee.JOIN.LEFT_OUTER)
             .where(PortfolioVersion.id == portfolio_version_id)
             .where(Ticker.id == ticker_id)
