@@ -54,36 +54,43 @@ exchanges_to_scrape:
 
 scrape:
   tickers:
-    - AMZN
-    - ATD-B.TO
-    - MTL.TO
-    - T.TO
-    - DIS
-    - ASML
-    - TSM
+#    P2
+    - MEOH
     - AAPL
-    - BRK-B
-    - KMI
-    - BAM-A.TO
-    - BIP-UN.TO
-    - CNI
-    - CSU.TO
-    - X.TO
-    - MA
-    - MELI
-    - NVDA
-    - PYPL
-    - MTY.TO
-    - CPER
-    - SIVR
-    - BDRY
-    - PDBC
-    - USO
-    - UNG
-    - UGA
-  interval_start: 2021-05-01
-  interval_end: 2021-05-21
-  interval: 5m
+    - TWTR
+    - GIB
+    - ASML
+#    P1
+#    - AMZN
+#    - ATD-B.TO
+#    - MTL.TO
+#    - T.TO
+#    - DIS
+#    - ASML
+#    - TSM
+#    - AAPL
+#    - BRK-B
+#    - KMI
+#    - BAM-A.TO
+#    - BIP-UN.TO
+#    - CNI
+#    - CSU.TO
+#    - X.TO
+#    - MA
+#    - MELI
+#    - NVDA
+#    - PYPL
+#    - MTY.TO
+#    - CPER
+#    - SIVR
+#    - BDRY
+#    - PDBC
+#    - USO
+#    - UNG
+#    - UGA
+  interval_start: 2021-01-01
+  interval_end: 2021-05-25
+  interval: 1d
 
 portfolio:
   ZQQ.TO:

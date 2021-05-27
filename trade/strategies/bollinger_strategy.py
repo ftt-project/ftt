@@ -1,5 +1,4 @@
 import backtrader as bt
-from trade.logger import logger
 from trade.strategies.base_strategy import BaseStrategy
 
 

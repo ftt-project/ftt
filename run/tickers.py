@@ -82,9 +82,6 @@ class Tickers(BaseCommand):
         """
         ticker = ticker.strip()
         result = TickersScraper.load(ticker)
-        if not result:
-            logger.warning(f"No ticker found '{ticker}'")
-            return
         repository = TickersRepository()
         repository.upsert(result)
 

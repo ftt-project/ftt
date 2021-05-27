@@ -96,10 +96,10 @@ class Weights(BaseCommand):
 
     @staticmethod
     def __start_period():
-        return pendulum.naive(2020, 1, 15)
+        return pendulum.naive(2021, 1, 15)
 
     def __tickers(self):
-        return PortfoliosRepository().get_tickers(self.__portfolio(self._portfolio_id))
+        return PortfoliosRepository.get_tickers(self.__portfolio(self._portfolio_id))
 
     def __portfolio(self, portfolio_id: int):
         return PortfoliosRepository.get_by_id(portfolio_id)
@@ -109,7 +109,7 @@ class Weights(BaseCommand):
 
     @staticmethod
     def __total_portfolio_value():
-        return 17000
+        return 5000
 
 
 if __name__ == "__main__":

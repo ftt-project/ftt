@@ -1,19 +1,16 @@
-from datetime import datetime
-
 import fire
 import backtrader as bt
 
 from trade.repositories import PortfoliosRepository
-from trade.strategies.md_macd_strategy import MdMACDStrategy
+from trade.strategies import ValueProtectingStrategy, BollingerStrategy
 from trade.strategies.sizers import WeightedSizer
-from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
 
 
-def run():
+def run(portfolio_id: int):
     cerebro = bt.Cerebro()
     store = bt.stores.IBStore(port=7497, clientId=1, host='127.0.0.1')
 
-    portfolio = PortfoliosRepository.get_by_id(2)
+    portfolio = PortfoliosRepository.get_by_id(portfolio_id)
     tickers = PortfoliosRepository.get_tickers(portfolio)
     for ticker in tickers:
         data = store.getdata(
@@ -29,7 +26,8 @@ def run():
 
     cerebro.broker = store.getbroker()
 
-    cerebro.addstrategy(SMACrossoverStrategy, portfolio_version_id=1)
+    cerebro.addstrategy(ValueProtectingStrategy, portfolio_version_id=portfolio.id)
+    cerebro.addstrategy(BollingerStrategy, portfolio_version_id=portfolio.id)
     cerebro.addsizer(WeightedSizer)
     result = cerebro.run()
 
