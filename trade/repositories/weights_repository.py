@@ -4,7 +4,6 @@ from typing import Optional
 
 import peewee
 
-from trade.logger import logger
 from trade.models import Base, Weight, Ticker, PortfolioVersion
 from trade.repositories.repository_interface import RepositoryInterface
 
