@@ -23,16 +23,13 @@ class Weights(BaseCommand):
     Calculates weights of given in configuration tickers
     """
 
-    def __init__(self, portfolio_id: int, portfolio_version_id: Optional[int] = None):
-        self._portfolio_id = portfolio_id
-        self.portfolio_version_id = portfolio_version_id
-
-    def calculate(self, persist: bool = False) -> None:
+    def calculate(self, portfolio_id: int, persist: bool = False) -> None:
         """
         Returns recommended weights of a given portfolio
 
         TODO: take portfolio id/name as an argument where all weights are 0
         """
+        self._portfolio_id = portfolio_id
         dataframes = self.__build_dataframes()
 
         ticker_returns = dataframes.pct_change().dropna()
@@ -80,7 +77,7 @@ class Weights(BaseCommand):
             TickerReturn.datetime,
             TickerReturn.close,
         ).where(
-            TickerReturn.interval == '1d',
+            TickerReturn.interval == '5m',
             TickerReturn.datetime > self.__start_period()
         ).order_by(
             TickerReturn.datetime.asc()
@@ -96,7 +93,7 @@ class Weights(BaseCommand):
 
     @staticmethod
     def __start_period():
-        return pendulum.naive(2021, 1, 15)
+        return pendulum.naive(2021, 5, 20)
 
     def __tickers(self):
         return PortfoliosRepository.get_tickers(self.__portfolio(self._portfolio_id))

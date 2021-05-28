@@ -90,6 +90,7 @@ def run(portfolio_id: int) -> None:
     for ticker in tickers:
         data = HistoryLoader.load(ticker, datetime(2021, 5, 10, 0, 0, 0), datetime(2021, 5, 13, 23, 59, 59), interval="5m")
         cerebro.adddata(data, name=ticker.symbol)
+        # cerebro.resampledata(data, timeframe=bt.TimeFrame.Minutes, compression=5)
 
     # [cerebro.adddata(datas[key], symbol=key) for key in OrderedDict(sorted(datas.items()))]
 

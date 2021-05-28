@@ -37,7 +37,7 @@ class ValueProtectingStrategy(BaseStrategy):
         To protect from dip it sells when the portfolio price becomes lower than VALUE * MULT
         """
         broker = self.env.getbroker()
-        value = broker.get_value(datas=[data])
+        value = broker.getvalue(datas=[data])
         ticker = TickersRepository().get_by_name(data._name)
         weight = WeightsRepository.find_by_ticker_and_portfolio(
             ticker=ticker, portfolio_version_id=self.p.portfolio_version_id

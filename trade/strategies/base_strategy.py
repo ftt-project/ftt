@@ -66,6 +66,8 @@ class BaseStrategy(bt.Strategy):
         if not self.data_live:
             return
 
+        logger.info(f"Next tick")
+
         for i, d in enumerate(self.datas):
             position = self.getposition(d).size
 
