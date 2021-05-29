@@ -16,6 +16,10 @@ services:
   trade:
     build: .
     network_mode: "host"
+    expose:
+      - "5000"
+    ports:
+      - "5000:5000"
     volumes:
       - .:/usr/src/app
     depends_on:
