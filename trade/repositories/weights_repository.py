@@ -11,11 +11,11 @@ from trade.repositories.repository_interface import RepositoryInterface
 
 class WeightsRepository(RepositoryInterface):
     @classmethod
-    def save(cls, model: Base) -> Base:
+    def save(cls, model: Weight) -> Weight:
         raise NotImplementedError()
 
     @classmethod
-    def upsert(cls, data: dict) -> Base:
+    def upsert(cls, data: dict) -> Weight:
         id = (
             Weight.insert(
                 portfolio_version=data["portfolio_version"],
@@ -54,7 +54,7 @@ class WeightsRepository(RepositoryInterface):
         weight.save()
 
     @classmethod
-    def create(cls, data: dict) -> Base:
+    def create(cls, data: dict) -> Weight:
         data["updated_at"] = datetime.now()
         data["created_at"] = datetime.now()
         return Weight.create(
@@ -67,7 +67,7 @@ class WeightsRepository(RepositoryInterface):
         )
 
     @classmethod
-    def get_by_id(cls, id: int) -> Base:
+    def get_by_id(cls, id: int) -> Weight:
         return Weight.get(id)
 
     @classmethod
