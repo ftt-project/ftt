@@ -1,13 +1,4 @@
 ---
-Equities:
-  - SHOP
-  - AAPL
-  - AC.TO
-  - ZQQ.TO
-  - SHOP.TO
-  - TMD.TO
-  - KEY.TO
-
 # https://etfdb.com/etfs/investment-style/dividend-etfs/#etfs__dividends&sort_name=dividend_yield&sort_order=desc&page=1
 # https://www.etf.com/etfanalytics/etf-finder/
 ETFs:
@@ -54,40 +45,19 @@ exchanges_to_scrape:
 
 scrape:
   tickers:
-#    P2
-    - MEOH
-    - AAPL
-    - TWTR
-    - GIB
     - ASML
-#    P1
-#    - AMZN
-#    - ATD-B.TO
-#    - MTL.TO
-#    - T.TO
-#    - DIS
-#    - ASML
-#    - TSM
-#    - AAPL
-#    - BRK-B
-#    - KMI
-#    - BAM-A.TO
-#    - BIP-UN.TO
-#    - CNI
-#    - CSU.TO
-#    - X.TO
-#    - MA
-#    - MELI
-#    - NVDA
-#    - PYPL
-#    - MTY.TO
-#    - CPER
-#    - SIVR
-#    - BDRY
-#    - PDBC
-#    - USO
-#    - UNG
-#    - UGA
+    - UGA
+    - KMI
+    - PDBC
+    - DIS
+    - MA
+    - CNI
+    - TSM
+    - UNG
+    - NVDA
+    - PYPL
+    - BRK B
+
   interval_start: 2021-05-01
   interval_end: 2021-05-25
   interval: 5m
