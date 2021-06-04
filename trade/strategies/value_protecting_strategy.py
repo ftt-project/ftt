@@ -9,6 +9,7 @@ class ValueProtectingStrategy(BaseStrategy):
     params = (
         ("portfolio_version_id", -1),
         ("buy_enabled", False),
+        ("sell_enabled", True),
         ("dipmult", 0.97),
     )
 
@@ -42,6 +43,11 @@ class ValueProtectingStrategy(BaseStrategy):
         weight = WeightsRepository.find_by_ticker_and_portfolio(
             ticker=ticker, portfolio_version_id=self.p.portfolio_version_id
         )
+        if not self.p.sell_enabled:
+            logger.info("Real sell operation is disabled.")
+            logger.info(f"{value} <= {(weight.amount * Decimal(self.p.dipmult))}")
+            return False
+
         return value <= (weight.amount * Decimal(self.p.dipmult))
 
     def after_sell(self, order, data):

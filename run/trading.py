@@ -20,18 +20,13 @@ def run(portfolio_id: int):
             sectype='STK',
             exchange='SMART',
             currency='USD',
-            # timeframe=bt.TimeFrame.Minutes,
-            # compression=5,
             rtbar=True,
-            # fromdate=datetime.strptime("2021-05-26T00:00:00", "%Y-%m-%d" + "T%H:%M:%S"),
         )
         cerebro.resampledata(data, name=ticker.symbol, timeframe=bt.TimeFrame.Minutes, compression=5)
-        # cerebro.replaydata(data, name=ticker.symbol, timeframe=bt.TimeFrame.Minutes, compression=5)
 
     cerebro.broker = store.getbroker()
 
-    cerebro.addstrategy(ValueProtectingStrategy, portfolio_version_id=portfolio.id)
-    # cerebro.addstrategy(BollingerStrategy, portfolio_version_id=portfolio.id)
+    cerebro.addstrategy(ValueProtectingStrategy, portfolio_version_id=portfolio.id, sell_enabled=False)
     cerebro.addsizer(WeightedSizer)
     result = cerebro.run()
 
