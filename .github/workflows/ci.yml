@@ -32,15 +32,9 @@ jobs:
         with:
           # A list of all paths to test
           python-root-list: trade
-          # Use Pylint
-          use-pylint: true
-          # Use pycodestyle
+          use-pylint: false
           use-pycodestyle: false
-          # Use Flake8
           use-flake8: true
-          # Use Black
           use-black: true
-          # Use mypy
           use-mypy: false
-          # Use isort
           use-isort: false
