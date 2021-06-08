@@ -18,3 +18,6 @@ class DummyBuyOnceStrategy(BaseStrategy):
 
     def sell_signal(self, data):
         return False
+
+    def __str__(self):
+        return f"<DummyBuyOnceStrategy>"

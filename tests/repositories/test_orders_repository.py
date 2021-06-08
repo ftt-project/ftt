@@ -91,3 +91,12 @@ class TestOrdersRepository:
         assert result.execution_value == 200
         assert result.execution_commission == 1
         assert result.executed_at is not None
+
+    def test_last_successful_order(self, subject, order, portfolio, ticker):
+        order.status = Order.Completed
+        order.save()
+        buy_result = subject.last_successful_order(portfolio=portfolio, ticker=ticker, type="buy")
+        assert order == buy_result
+
+        sell_result = subject.last_successful_order(portfolio=portfolio, ticker=ticker, type="sell")
+        assert sell_result is None

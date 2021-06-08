@@ -10,6 +10,7 @@ from trade.configuration import Configuration
 from trade.models import Portfolio
 from trade.history_loader import HistoryLoader
 from trade.logger import logger
+from trade.observers import PeakObserver
 from trade.repositories import PortfolioVersionsRepository, PortfoliosRepository
 from trade.strategies import ValueProtectingStrategy
 from trade.strategies.bollinger_strategy import BollingerStrategy
@@ -84,17 +85,14 @@ def run(portfolio_id: int) -> None:
     # cerebro.addstrategy(MDStrategy)
     cerebro.addstrategy(BollingerStrategy, portfolio_version_id=portfolio_version.id)
     # cerebro.addstrategy(DummyBuyOnceStrategy, portfolio_version_id=portfolio_version.id)
-    cerebro.addstrategy(ValueProtectingStrategy, portfolio_version_id=portfolio_version.id, dipmult=1.0, buy_enabled=False)
+    # cerebro.addstrategy(ValueProtectingStrategy, portfolio_version_id=portfolio_version.id, dipmult=1.0, buy_enabled=False)
 
     tickers = PortfoliosRepository.get_tickers(portfolio)
     for ticker in tickers:
-        data = HistoryLoader.load(ticker, datetime(2021, 5, 10, 0, 0, 0), datetime(2021, 5, 13, 23, 59, 59), interval="5m")
+        data = HistoryLoader.load(ticker, datetime(2021, 5, 1, 0, 0, 0), datetime(2021, 5, 13, 23, 59, 59), interval="5m")
         cerebro.adddata(data, name=ticker.symbol)
         # cerebro.resampledata(data, timeframe=bt.TimeFrame.Minutes, compression=5)
 
-    # [cerebro.adddata(datas[key], symbol=key) for key in OrderedDict(sorted(datas.items()))]
-
-    # cerebro.addsizer(bt.sizers.FixedSize, stake=1)
     cerebro.addsizer(WeightedSizer)
     cerebro.broker.setcash(float(portfolio.amount))
 
@@ -120,7 +118,7 @@ def run(portfolio_id: int) -> None:
     # Add SQN to qualify the trades
     cerebro.addanalyzer(bt.analyzers.SQN)
     cerebro.addobserver(bt.observers.DrawDown)  # visualize the drawdown evol
-
+    cerebro.addobserver(PeakObserver)
 
     logger.info("Starting Portfolio Value: %.2f" % cerebro.broker.getvalue())
     thestrats = cerebro.run()

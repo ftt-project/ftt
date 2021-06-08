@@ -7,6 +7,7 @@ from backtrader import DataBase
 
 from tests import testcommon
 from trade.models import Order
+from trade.observers.peak_observer import PeakObserver
 from trade.repositories import OrdersRepository, WeightsRepository
 from trade.strategies import ValueProtectingStrategy
 from trade.strategies.dummy_buy_once_strategy import DummyBuyOnceStrategy
@@ -21,7 +22,8 @@ class TestValueProtectingStrategy:
         data = testcommon.getdata(1, fromdate=datetime(2020, 5, 12), todate=datetime(2021, 5, 11))
 
         orders_before = OrdersRepository().get_orders_by_portfolio(portfolio)
-        c = cerebro([DummyBuyOnceStrategy, subject], data)
+        c = cerebro([DummyBuyOnceStrategy, (subject, {"dipmult": 1.0})], data)
+        c.addobserver(PeakObserver)
         broker = c.getbroker()
         c.run()
         orders_after = OrdersRepository().get_orders_by_portfolio(portfolio)
@@ -31,7 +33,8 @@ class TestValueProtectingStrategy:
 
     def test_after_sell_weight_is_locked(self, subject, cerebro, weight):
         data = testcommon.getdata(1, fromdate=datetime(2020, 5, 12), todate=datetime(2020, 5, 14, 23, 59, 59))
-        c = cerebro([DummyBuyOnceStrategy, subject], data)
+        c = cerebro([DummyBuyOnceStrategy, (subject, {"dipmult": 1.0})], data)
+        c.addobserver(PeakObserver)
         c.run()
         weight = WeightsRepository.get_by_id(weight.id)
         assert weight.locked_at is not None
@@ -41,6 +44,7 @@ class TestValueProtectingStrategy:
     def test_after_buy_is_unlocked(self, subject, cerebro, weight):
         data = testcommon.getdata(1, fromdate=datetime(2020, 5, 12), todate=datetime(2021, 5, 30))
         c = cerebro([DummyBuyOnceStrategy, subject], data)
+        c.addobserver(PeakObserver)
         c.run()
         weight = WeightsRepository.get_by_id(weight.id)
         assert weight.locked_at is None
@@ -51,9 +55,10 @@ class TestValueProtectingStrategy:
         data = testcommon.getdata(1, fromdate=datetime(2020, 5, 12), todate=datetime(2020, 7, 1))
         orders_before = OrdersRepository().get_orders_by_portfolio(portfolio)
         c = cerebro([DummyBuyOnceStrategy, (subject, {"buy_enabled": True})], data)
+        c.addobserver(PeakObserver)
         broker = c.getbroker()
         c.run()
         orders_after = OrdersRepository().get_orders_by_portfolio(portfolio)
-        assert (len(orders_after) - len(orders_before)) == 7
-        assert 29990.640016 == broker.get_value()
+        assert (len(orders_after) - len(orders_before)) == 8
+        assert 30019.040008 == broker.get_value()
         Order.delete().execute()

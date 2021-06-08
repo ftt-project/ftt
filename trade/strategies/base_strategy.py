@@ -2,6 +2,7 @@ from abc import abstractmethod
 
 import backtrader as bt
 from backtrader.feeds import DataBase
+from backtrader.utils import num2date
 
 from trade.logger import logger
 from trade.models import Order
@@ -66,8 +67,6 @@ class BaseStrategy(bt.Strategy):
         if not self.data_live:
             return
 
-        logger.info(f"Next tick")
-
         for i, d in enumerate(self.datas):
             position = self.getposition(d).size
 
@@ -91,7 +90,7 @@ class BaseStrategy(bt.Strategy):
                         type="buy",
                     )
                     btorder = self.buy(data=d)
-                    logger.info(f"BUY CREATE <{d._name}> by {self}, %.2f" % d.close[0])
+                    logger.info(f"BUY CREATE ({num2date(d.datetime[0])}) <{d._name}> by {self}, %.2f" % d.close[0])
                     self.orders[d._name] = btorder
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
                     self.after_buy(order=order, data=d)
@@ -104,7 +103,7 @@ class BaseStrategy(bt.Strategy):
                         type="sell",
                     )
                     btorder = self.close(data=d)
-                    logger.info(f"SELL CREATE <{d._name}> by {self}, %.2f" % d.close[0])
+                    logger.info(f"SELL CREATE ({num2date(d.datetime[0])}) <{d._name}> by {self}, %.2f" % d.close[0])
                     self.orders[d._name] = btorder
                     self.after_sell(order=order, data=d)
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
@@ -132,7 +131,7 @@ class BaseStrategy(bt.Strategy):
                     ticker=TickersRepository().get_by_name(symbol),
                     portfolio_version_id=self.p.portfolio_version_id,
                 )
-                WeightsRepository.update_amount(weight, order.executed.value)
+                WeightsRepository.update_on_buy(weight, order.executed.value)
                 logger.info(
                     (
                         f"BUY EXECUTED <{order.info['d_name']}> by {self}, Price: {order.executed.price}, "
@@ -145,7 +144,7 @@ class BaseStrategy(bt.Strategy):
                     ticker=TickersRepository().get_by_name(symbol),
                     portfolio_version_id=self.p.portfolio_version_id,
                 )
-                WeightsRepository.update_amount(weight, 0)
+                WeightsRepository.update_on_sell(weight)
                 logger.info(
                     (
                         f"SELL EXECUTED <{order.info['d_name']}> by {self}, Price: {order.executed.price}, "
