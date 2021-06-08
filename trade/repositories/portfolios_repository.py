@@ -35,6 +35,10 @@ class PortfoliosRepository(RepositoryInterface):
         return portfolio
 
     @classmethod
+    def list(cls) -> List[Portfolio]:
+        return Portfolio.select().execute()
+
+    @classmethod
     def get_tickers(cls, portfolio: Portfolio) -> List[Ticker]:
         portfolio_version = PortfolioVersionsRepository().get_latest_version(
             portfolio.id
