@@ -15,7 +15,7 @@ class SMAStrategy(bt.Strategy):
         )
 
     def __str__(self):
-        return f"<SMAStrategy>"
+        return "<SMAStrategy>"
 
     def buy_sig(self):
         return (

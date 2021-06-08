@@ -1,8 +1,10 @@
 from datetime import datetime
 
 import pytest
+import backtrader as bt
 
-from trade.models import Weight, Ticker, Portfolio, PortfolioVersion, Order, Base, database_connection
+from trade.models import Weight, Ticker, Portfolio, PortfolioVersion, Order, database_connection
+from trade.strategies.sizers import WeightedSizer
 
 
 @pytest.fixture(autouse=True, scope="function")
@@ -13,6 +15,27 @@ def transactional():
             yield
         finally:
             transaction.rollback()
+
+
+@pytest.fixture
+def cerebro(portfolio_version, ticker, weight):
+    def _cerebro(strategies, data):
+        cerebro = bt.Cerebro(live=True, cheat_on_open=True)
+        for strategy in strategies:
+            if type(strategy) == tuple:
+                strategy, opts = strategy
+                cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id, **opts)
+            else:
+                cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
+        cerebro.addsizer(WeightedSizer)
+
+        cerebro.adddata(data, name=ticker.symbol)
+
+        cerebro.broker.setcash(30000.0)
+        return cerebro
+
+    return _cerebro
+
 
 @pytest.fixture
 def ticker():
@@ -28,8 +51,10 @@ def ticker():
         updated_at=datetime.now(),
         created_at=datetime.now()
     )
-    yield ticker
-    ticker.delete_instance()
+    try:
+        yield ticker
+    finally:
+        ticker.delete_instance()
 
 
 @pytest.fixture
@@ -40,8 +65,10 @@ def portfolio():
         updated_at=datetime.now(),
         created_at=datetime.now()
     )
-    yield portfolio
-    portfolio.delete_instance()
+    try:
+        yield portfolio
+    finally:
+        portfolio.delete_instance()
 
 
 @pytest.fixture
@@ -52,8 +79,10 @@ def portfolio_version(portfolio):
         updated_at=datetime.now(),
         created_at=datetime.now()
     )
-    yield portfolio_version
-    portfolio_version.delete_instance()
+    try:
+        yield portfolio_version
+    finally:
+        portfolio_version.delete_instance()
 
 
 @pytest.fixture
@@ -66,8 +95,10 @@ def weight(portfolio_version, ticker):
         updated_at=datetime.now(),
         created_at=datetime.now()
     )
-    yield weight
-    weight.delete_instance()
+    try:
+        yield weight
+    finally:
+        weight.delete_instance()
 
 
 @pytest.fixture
@@ -81,5 +112,7 @@ def order(ticker, portfolio_version):
         updated_at=datetime.now(),
         created_at=datetime.now()
     )
-    yield order
-    order.delete_instance()
+    try:
+        yield order
+    finally:
+        order.delete_instance()

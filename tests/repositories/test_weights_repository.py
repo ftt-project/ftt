@@ -88,3 +88,16 @@ class TestWeightsRepository:
         result = subject.unlock_weight(weight)
         assert result.locked_at_amount is None
         assert result.locked_at is None
+
+    def test_update_on_sell(self, subject, weight):
+        weight.peaked_value = 101
+        weight.amount = 1000
+        weight.save()
+
+        result = subject.update_on_sell(weight)
+        assert 0 == result.amount
+        assert 0 == result.peaked_value
+
+    def test_update_on_buy(self, subject, weight):
+        result = subject.update_on_buy(weight, 89)
+        assert 89 == result.amount

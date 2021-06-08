@@ -1,6 +1,5 @@
 from decimal import Decimal
 
-from trade.logger import logger
 from trade.repositories import WeightsRepository, TickersRepository
 from trade.strategies.base_strategy import BaseStrategy
 
@@ -13,7 +12,7 @@ class ValueProtectingStrategy(BaseStrategy):
     )
 
     def __str__(self):
-        return f"<ValueProtectingStrategy>"
+        return "<ValueProtectingStrategy>"
 
     def buy_signal(self, data):
         """
@@ -36,13 +35,12 @@ class ValueProtectingStrategy(BaseStrategy):
         """
         To protect from dip it sells when the portfolio price becomes lower than VALUE * MULT
         """
-        broker = self.env.getbroker()
-        value = broker.getvalue(datas=[data])
+        value = data.close[0]
         ticker = TickersRepository().get_by_name(data._name)
         weight = WeightsRepository.find_by_ticker_and_portfolio(
             ticker=ticker, portfolio_version_id=self.p.portfolio_version_id
         )
-        return value <= (weight.amount * Decimal(self.p.dipmult))
+        return value <= (weight.peaked_value * Decimal(self.p.dipmult))
 
     def after_sell(self, order, data):
         """

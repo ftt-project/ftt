@@ -33,6 +33,9 @@ package "trade.models" {
         + position
         + planned_position
         + amount
+        + locked_at
+        + locked_at_amount
+        + peacked_value
     }
     class Ticker {
         + name
@@ -51,7 +54,10 @@ package "trade.models" {
         + executed_at
         + created_at
         + price
-        + exeution_price
+        + execution_size
+        + execution_price
+        + execution_value
+        + execution_commission
     }
 }
 
