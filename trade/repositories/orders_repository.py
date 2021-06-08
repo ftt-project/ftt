@@ -82,20 +82,22 @@ class OrdersRepository(RepositoryInterface):
         return found[0] if len(found) > 0 else None
 
     @classmethod
-    def last_successful_order(cls, portfolio: Portfolio, ticker: Ticker, type: str) -> Order:
+    def last_successful_order(
+        cls, portfolio: Portfolio, ticker: Ticker, type: str
+    ) -> Order:
         found = (
             Order.select()
-                .join(PortfolioVersion)
-                .join(Portfolio)
-                .switch(Order)
-                .join(Ticker)
-                .where(Portfolio.id == portfolio.id)
-                .where(Order.status.in_(Order.SUCCEED_STATUSES))
-                .where(Ticker.id == ticker.id)
-                .where(Order.type == type)
-                .order_by(Order.created_at.desc())
-                .limit(1)
-                .execute()
+            .join(PortfolioVersion)
+            .join(Portfolio)
+            .switch(Order)
+            .join(Ticker)
+            .where(Portfolio.id == portfolio.id)
+            .where(Order.status.in_(Order.SUCCEED_STATUSES))
+            .where(Ticker.id == ticker.id)
+            .where(Order.type == type)
+            .order_by(Order.created_at.desc())
+            .limit(1)
+            .execute()
         )
 
         return found[0] if len(found) > 0 else None

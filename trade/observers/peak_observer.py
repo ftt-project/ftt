@@ -1,17 +1,19 @@
 import backtrader as bt
 
-from trade.repositories import WeightsRepository, TickersRepository, PortfolioVersionsRepository, \
-    OrdersRepository
+from trade.repositories import (
+    WeightsRepository,
+    TickersRepository,
+    PortfolioVersionsRepository,
+    OrdersRepository,
+)
 
 
 class PeakObserver(bt.Observer):
-    lines = ('peak',)
+    lines = ("peak",)
 
     plotinfo = dict(plot=True, subplot=True, plotlinelabels=True)
 
-    plotlines = dict(
-        peak=dict(markersize=1.0, color='lime', fillstyle='full'),
-    )
+    plotlines = dict(peak=dict(markersize=1.0, color="lime", fillstyle="full"),)
 
     def next(self):
         portfolio_version_id = self._owner.p.portfolio_version_id
@@ -21,13 +23,10 @@ class PeakObserver(bt.Observer):
             close = data.close[0]
             ticker = TickersRepository.get_by_name(name)
             order = OrdersRepository.last_successful_order(
-                ticker=ticker,
-                portfolio=portfolio,
-                type='buy'
+                ticker=ticker, portfolio=portfolio, type="buy"
             )
             weight = WeightsRepository.find_by_ticker_and_portfolio(
-                ticker=ticker,
-                portfolio_version_id=portfolio_version_id
+                ticker=ticker, portfolio_version_id=portfolio_version_id
             )
             execution_price = order.execution_price if order else 0
             max_value = max(weight.peaked_value, close, execution_price)

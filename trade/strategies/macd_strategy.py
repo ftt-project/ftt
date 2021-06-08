@@ -57,7 +57,7 @@ class MACDStrategy(bt.Strategy):
         self.smadir = self.sma - self.sma(-self.p.dirperiod)
 
     def __str__(self):
-        return f"<MACDStrategy>"
+        return "<MACDStrategy>"
 
     def start(self):
         self.order = None

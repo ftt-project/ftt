@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pandas as pd
 
-from trade.models import Base, Ticker
+from trade.models import Ticker
 from trade.repositories.repository_interface import RepositoryInterface
 
 

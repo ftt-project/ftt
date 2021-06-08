@@ -90,7 +90,10 @@ class BaseStrategy(bt.Strategy):
                         type="buy",
                     )
                     btorder = self.buy(data=d)
-                    logger.info(f"BUY CREATE ({num2date(d.datetime[0])}) <{d._name}> by {self}, %.2f" % d.close[0])
+                    logger.info(
+                        f"BUY CREATE ({num2date(d.datetime[0])}) <{d._name}> by {self}, %.2f"
+                        % d.close[0]
+                    )
                     self.orders[d._name] = btorder
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)
                     self.after_buy(order=order, data=d)
@@ -103,7 +106,10 @@ class BaseStrategy(bt.Strategy):
                         type="sell",
                     )
                     btorder = self.close(data=d)
-                    logger.info(f"SELL CREATE ({num2date(d.datetime[0])}) <{d._name}> by {self}, %.2f" % d.close[0])
+                    logger.info(
+                        f"SELL CREATE ({num2date(d.datetime[0])}) <{d._name}> by {self}, %.2f"
+                        % d.close[0]
+                    )
                     self.orders[d._name] = btorder
                     self.after_sell(order=order, data=d)
                     self.orders[d._name].addinfo(d_name=d._name, order_id=order.id)

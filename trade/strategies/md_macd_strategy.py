@@ -46,7 +46,7 @@ class MdMACDStrategy(BaseStrategy):
             self.inds[d._name]["smadir"] = smadir
 
     def __str__(self):
-        return f"<MdMACDStrategy>"
+        return "<MdMACDStrategy>"
 
     def buy_signal(self, data) -> bool:
         return (

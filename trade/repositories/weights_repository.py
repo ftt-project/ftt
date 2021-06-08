@@ -1,6 +1,4 @@
-import decimal
 from datetime import datetime
-from typing import Optional
 
 import peewee
 
@@ -49,8 +47,24 @@ class WeightsRepository(RepositoryInterface):
 
     @classmethod
     def update_amount(cls, weight: Weight, amount: float) -> None:
+        weight.updated_at = datetime.now()
         weight.amount = amount
         weight.save()
+
+    @classmethod
+    def update_on_sell(cls, weight: Weight) -> Weight:
+        weight.updated_at = datetime.now()
+        weight.amount = 0
+        weight.peaked_value = 0
+        weight.save()
+        return cls.get_by_id(weight.id)
+
+    @classmethod
+    def update_on_buy(cls, weight: Weight, amount: float) -> Weight:
+        weight.updated_at = datetime.now()
+        weight.amount = amount
+        weight.save()
+        return cls.get_by_id(weight.id)
 
     @classmethod
     def create(cls, data: dict) -> Weight:
@@ -85,6 +99,7 @@ class WeightsRepository(RepositoryInterface):
 
     @classmethod
     def lock_weight(cls, weight: Weight, locked_at_amount: float) -> Weight:
+        weight.updated_at = datetime.now()
         weight.locked_at = datetime.now()
         weight.locked_at_amount = locked_at_amount
         weight.save()
@@ -92,7 +107,15 @@ class WeightsRepository(RepositoryInterface):
 
     @classmethod
     def unlock_weight(cls, weight: Weight) -> Weight:
+        weight.updated_at = datetime.now()
         weight.locked_at = None
         weight.locked_at_amount = None
+        weight.save()
+        return cls.get_by_id(weight.id)
+
+    @classmethod
+    def update_peaked_value(cls, weight, value):
+        weight.updated_at = datetime.now()
+        weight.peaked_value = value
         weight.save()
         return cls.get_by_id(weight.id)

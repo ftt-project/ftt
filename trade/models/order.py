@@ -43,9 +43,7 @@ class Order(Base):
         "Accepted",
     ]
 
-    SUCCEED_STATUSES = [
-        "Completed"
-    ]
+    SUCCEED_STATUSES = ["Completed"]
 
     class Meta:
         table_name = "orders"

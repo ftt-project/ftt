@@ -2,9 +2,7 @@ from trade.strategies.base_strategy import BaseStrategy
 
 
 class DummyBuyOnceStrategy(BaseStrategy):
-    params = (
-        ("portfolio_version_id", None),
-    )
+    params = (("portfolio_version_id", None),)
 
     def __init__(self):
         self.bought = False
@@ -20,4 +18,4 @@ class DummyBuyOnceStrategy(BaseStrategy):
         return False
 
     def __str__(self):
-        return f"<DummyBuyOnceStrategy>"
+        return "<DummyBuyOnceStrategy>"

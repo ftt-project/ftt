@@ -1,6 +1,5 @@
 from decimal import Decimal
 
-from trade.logger import logger
 from trade.repositories import WeightsRepository, TickersRepository
 from trade.strategies.base_strategy import BaseStrategy
 
@@ -13,7 +12,7 @@ class ValueProtectingStrategy(BaseStrategy):
     )
 
     def __str__(self):
-        return f"<ValueProtectingStrategy>"
+        return "<ValueProtectingStrategy>"
 
     def buy_signal(self, data):
         """

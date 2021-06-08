@@ -24,7 +24,7 @@ class BollingerStrategy(BaseStrategy):
             # self.inds[data._name]["blueline"] = None
 
     def __str__(self):
-        return f"<BollingerStrategy>"
+        return "<BollingerStrategy>"
 
     def buy_signal(self, data):
         redline = data.close[0] < self.inds[data._name]["boll"].lines.bot

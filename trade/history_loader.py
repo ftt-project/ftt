@@ -1,7 +1,6 @@
 from collections import OrderedDict
 from datetime import date
 
-from trade.models import Ticker
 from trade.models import database_connection
 
 from trade.models.ticker_return import TickerReturn

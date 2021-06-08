@@ -26,9 +26,6 @@ logging.basicConfig(
     level="DEBUG",
     format="%(message)s",
     # datefmt="[%X]",
-    handlers=[
-        _setup_app_logger(),
-        _setup_sql_logger()
-    ]
+    handlers=[_setup_app_logger(), _setup_sql_logger()],
 )
 logger = logging.getLogger("app")

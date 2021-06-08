@@ -22,7 +22,7 @@ class SMACrossoverStrategy(BaseStrategy):
             )
 
     def __str__(self):
-        return f"<SMACrossoverStrategy>"
+        return "<SMACrossoverStrategy>"
 
     def buy_signal(self, data):
         return self.inds[data._name]["crossover"] < 0
