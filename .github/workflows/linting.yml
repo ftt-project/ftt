@@ -39,4 +39,4 @@ jobs:
           poetry install
       - name: Testing
         run: |
-          ENV_FILE=.env.test pytest -s tests
+          ENV_FILE=.env.test poetry run pytest -s tests
