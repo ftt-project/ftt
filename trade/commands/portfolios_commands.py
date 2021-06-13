@@ -4,8 +4,7 @@ from nubia import command, argument
 from rich.console import Console
 from rich.table import Table
 
-from trade import PortfoliosRepository
-from trade.logger import logger
+from trade.repositories import PortfoliosRepository
 
 
 @command
