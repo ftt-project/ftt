@@ -11,6 +11,5 @@ Usage:
 
 
 """
-__version__ = '0.1'
-__copyright__ = '2021'
-
+__version__ = "0.1"
+__copyright__ = "2021"

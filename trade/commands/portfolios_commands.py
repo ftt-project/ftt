@@ -1,5 +1,3 @@
-from typing import List
-
 from nubia import command, argument
 from rich.console import Console
 from rich.table import Table
@@ -37,6 +35,7 @@ class Portfolio:
         Import from yml file
         """
         from rich.console import Console
+
         console = Console()
         console.log("Successfully imported")
 
