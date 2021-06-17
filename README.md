@@ -17,8 +17,8 @@
 * CLI interface
 
 ## Collaborators
-- `Artem M <https://github.com/ignar>`_
-- `Ihor M <https://github.com/IhorMok>`_
+- [Artem M](https://github.com/ignar>)
+- [Ihor M](https://github.com/IhorMok)
 
 
 ## Quickstart
