@@ -1,33 +1,3 @@
-######
-Trade
-######
-
-[NAME] - is trading and asset management system.
-
-Why?
-====
-I want to have a passive income based on investing.
-
-Main features
-=============
-
-Not all of them are supported at the moment
-
-- portfolio building
-- managing multiple portfolios
-- portfolio rebalancing
-- CPPI
-- automated trading
-
-  - building and using multiple stategies that works together
-  - integration with IB
-  - Web and CLI interfaces
-
-Collaborators
-=============
-- `Artem M <https://github.com/ignar>`_
-- `Ihor M <https://github.com/IhorMok>`_
-
 Installation
 ############
 
