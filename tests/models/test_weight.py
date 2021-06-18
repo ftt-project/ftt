@@ -1,4 +1,4 @@
-from trade.models import Weight, PortfolioVersion, Ticker
+from trade.storage.models import Weight, PortfolioVersion, Ticker
 
 
 class TestWeight:

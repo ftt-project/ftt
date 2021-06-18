@@ -3,8 +3,8 @@ from datetime import datetime
 import pytest
 import backtrader as bt
 
-from trade.models import Weight, Ticker, Portfolio, PortfolioVersion, Order, database_connection
-from trade.strategies.sizers import WeightedSizer
+from trade.storage.models import Weight, Ticker, Portfolio, PortfolioVersion, Order, database_connection
+from trade.piloting.strategies.sizers import WeightedSizer
 
 
 @pytest.fixture(autouse=True, scope="function")

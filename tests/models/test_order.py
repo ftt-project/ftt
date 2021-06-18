@@ -1,4 +1,4 @@
-from trade.models import Ticker, PortfolioVersion, Order
+from trade.storage.models import Ticker, PortfolioVersion, Order
 
 
 class TestOrder:

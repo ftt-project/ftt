@@ -3,8 +3,8 @@ from datetime import datetime
 import pandas as pd
 from pytest import fixture
 
-from trade.models import Ticker
-from trade.repositories import TickersRepository
+from trade.storage.models import Ticker
+from trade.storage.repositories import TickersRepository
 
 
 class TestTickersRepository:

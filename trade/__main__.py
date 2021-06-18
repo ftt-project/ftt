@@ -1,6 +1,6 @@
 import sys
 
-import trade.commands
+import trade.cli.commands
 from nubia import context, PluginInterface, Nubia, Options
 
 

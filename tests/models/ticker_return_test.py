@@ -1,4 +1,4 @@
-from trade.models import TickerReturn
+from trade.storage.models import TickerReturn
 
 
 class TestTickerReturn:

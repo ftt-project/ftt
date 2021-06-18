@@ -1,13 +1,12 @@
 from datetime import datetime
 from decimal import Decimal
 
-from trade.models import Order
-from trade.observers.peak_observer import PeakObserver
+from trade.storage.models import Order
+from trade.piloting.observers.peak_observer import PeakObserver
 import pytest
 from tests import testcommon
-from trade.repositories import WeightsRepository
-from trade.strategies import BollingerStrategy
-from trade.strategies.dummy_buy_once_strategy import DummyBuyOnceStrategy
+from trade.storage.repositories import WeightsRepository
+from trade.piloting.strategies import BollingerStrategy
 
 
 class TestPeakObserver:

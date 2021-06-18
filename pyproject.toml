@@ -35,7 +35,7 @@ cvxopt = "1.2.5"
 pyportfolioopt = "^1.2.7"
 ibpythonic = "^0.1.6"
 IbPy2 = "^0.8.0"
-ibapi = {path = "pythonclient"}
+ibapi = {path = "vendors/pythonclient"}
 python-dotenv = "^0.17.0"
 pytest-mock = "^3.5.1"
 pytest = "^6.2.3"

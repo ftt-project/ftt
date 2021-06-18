@@ -2,15 +2,13 @@ from datetime import datetime
 from decimal import Decimal
 
 import pytest
-import backtrader as bt
-from backtrader import DataBase
 
 from tests import testcommon
-from trade.models import Order
-from trade.observers.peak_observer import PeakObserver
-from trade.repositories import OrdersRepository, WeightsRepository
-from trade.strategies import ValueProtectingStrategy
-from trade.strategies.dummy_buy_once_strategy import DummyBuyOnceStrategy
+from trade.storage.models import Order
+from trade.piloting.observers.peak_observer import PeakObserver
+from trade.storage.repositories import OrdersRepository, WeightsRepository
+from trade.piloting.strategies import ValueProtectingStrategy
+from trade.piloting.strategies.dummy_buy_once_strategy import DummyBuyOnceStrategy
 
 
 class TestValueProtectingStrategy:

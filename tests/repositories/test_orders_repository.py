@@ -2,8 +2,8 @@ from datetime import datetime
 
 import pytest
 
-from trade.models import Order
-from trade.repositories import OrdersRepository
+from trade.storage.models import Order
+from trade.storage.repositories import OrdersRepository
 
 
 class TestOrdersRepository:

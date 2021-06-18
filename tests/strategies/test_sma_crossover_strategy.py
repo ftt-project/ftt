@@ -3,9 +3,9 @@ from datetime import datetime
 import pytest
 
 from tests import testcommon
-from trade.models import Order
-from trade.repositories import OrdersRepository
-from trade.strategies.sma_crossover_strategy import SMACrossoverStrategy
+from trade.storage.models import Order
+from trade.storage.repositories import OrdersRepository
+from trade.piloting.strategies.sma_crossover_strategy import SMACrossoverStrategy
 
 
 class TestSMACrossoverStrategy:

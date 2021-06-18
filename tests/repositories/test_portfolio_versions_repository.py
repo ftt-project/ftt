@@ -1,8 +1,6 @@
-from trade.models import PortfolioVersion
-from trade.repositories.portfolio_versions_repository import PortfolioVersionsRepository
+from trade.storage.models import PortfolioVersion
+from trade.storage.repositories.portfolio_versions_repository import PortfolioVersionsRepository
 from pytest import fixture
-
-from trade.repositories.portfolios_repository import PortfoliosRepository
 
 
 class TestPortfolioVersionsRepository:

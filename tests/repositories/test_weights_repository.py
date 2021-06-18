@@ -3,11 +3,11 @@ from datetime import datetime
 import pandas as pd
 from pytest import fixture
 
-from trade.models import Weight
-from trade.repositories import TickersRepository
-from trade.repositories import PortfolioVersionsRepository
-from trade.repositories import PortfoliosRepository
-from trade.repositories import WeightsRepository
+from trade.storage.models import Weight
+from trade.storage.repositories import TickersRepository
+from trade.storage.repositories import PortfolioVersionsRepository
+from trade.storage.repositories import PortfoliosRepository
+from trade.storage.repositories import WeightsRepository
 
 
 class TestWeightsRepository:

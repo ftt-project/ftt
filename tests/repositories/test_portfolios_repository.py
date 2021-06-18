@@ -1,7 +1,5 @@
-from datetime import datetime
-
-from trade.models import Portfolio, PortfolioVersion, Ticker, Weight
-from trade.repositories.portfolios_repository import PortfoliosRepository
+from trade.storage.models import Portfolio, PortfolioVersion
+from trade.storage.repositories.portfolios_repository import PortfoliosRepository
 
 from pytest import fixture
 

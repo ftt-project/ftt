@@ -3,7 +3,7 @@ from datetime import datetime
 
 import pytest
 
-from trade.models import Weight, Ticker, Portfolio
+from trade.storage.models import Weight, Ticker, Portfolio
 
 
 @pytest.fixture

@@ -2,12 +2,10 @@ from collections import Counter
 from datetime import datetime
 
 import pytest
-import backtrader as bt
 from tests import testcommon
-from trade.models import Order
-from trade.repositories import OrdersRepository
-from trade.strategies.md_macd_strategy import MdMACDStrategy
-from trade.strategies.sizers import WeightedSizer
+from trade.storage.models import Order
+from trade.storage.repositories import OrdersRepository
+from trade.piloting.strategies.md_macd_strategy import MdMACDStrategy
 
 
 class TestMdMACDStrategy:
