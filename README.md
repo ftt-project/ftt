@@ -30,7 +30,9 @@ pip install < NAME >
 ```
 
 
-### Portfolio import file
+### Portfolio creation
+
+*Import portfolio configuration from file*
 
 ```yaml
 name: S&P companies
@@ -39,6 +41,18 @@ symbols:
   - AAPL
   - MSFT
   - SHOP
+period_start: 2020-01-01
+period_end: 2021-01-01
+interval: 5m
 ```
 
+```
+< NAME > > portfolio import sp_companies.yml
+```
+
+*Create weights for portfolio*
+
+```
+< NAME > > portfolio 
+```
 
