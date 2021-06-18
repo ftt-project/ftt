@@ -53,6 +53,6 @@ interval: 5m
 *Create weights for portfolio*
 
 ```
-< NAME > > portfolio 
+< NAME > > portfolio build <ID>
 ```
 
