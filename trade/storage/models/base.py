@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from peewee import Model, DateTimeField
-from trade.storage.models import DatabaseConnection
+from peewee import Model, DateTimeField, DatabaseProxy
+
+database_proxy = DatabaseProxy()
 
 
 class Base(Model):
@@ -9,4 +10,4 @@ class Base(Model):
     created_at = DateTimeField(default=datetime.now)
 
     class Meta:
-        database = DatabaseConnection()
+        database = database_proxy

@@ -25,7 +25,7 @@
 
 ```
 pip install < NAME > 
-< NAME > init
+< NAME > bootstrap production
 < NAME > example
 ```
 
