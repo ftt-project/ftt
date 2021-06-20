@@ -26,5 +26,9 @@ class StorageManager:
     def drop(self):
         raise NotImplemented
 
+    def drop_tables(self, tables: List[Base]) -> None:
+        for table in tables:
+            table.drop_table()
+
     def seed_data(self):
         raise NotImplemented

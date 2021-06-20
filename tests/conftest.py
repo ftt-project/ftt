@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 import backtrader as bt
 #
-# from trade.storage.models import Weight, Ticker, Portfolio, PortfolioVersion, Order, database_connection
+from trade.storage.models import Portfolio
 # from trade.piloting.strategies.sizers import WeightedSizer
 #
 #
@@ -57,19 +57,19 @@ import backtrader as bt
 #         ticker.delete_instance()
 #
 #
-# @pytest.fixture
-# def portfolio():
-#     portfolio = Portfolio.create(
-#         name="Portfolio TEST 1",
-#         size=30000.0,
-#         updated_at=datetime.now(),
-#         created_at=datetime.now()
-#     )
-#     try:
-#         yield portfolio
-#     finally:
-#         portfolio.delete_instance()
-#
+@pytest.fixture
+def portfolio():
+    portfolio = Portfolio.create(
+        name="Portfolio TEST 1",
+        size=30000.0,
+        updated_at=datetime.now(),
+        created_at=datetime.now()
+    )
+    try:
+        yield portfolio
+    finally:
+        portfolio.delete_instance()
+
 #
 # @pytest.fixture
 # def portfolio_version(portfolio):

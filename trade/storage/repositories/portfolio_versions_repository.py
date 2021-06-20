@@ -10,7 +10,7 @@ class PortfolioVersionsRepository(RepositoryInterface):
         raise NotImplementedError()
 
     @classmethod
-    def create(cls, data: dict) -> PortfolioVersion:
+    def create(cls, **data: str) -> PortfolioVersion:
         data["created_at"] = datetime.now()
         data["updated_at"] = datetime.now()
         return PortfolioVersion.create(**data)

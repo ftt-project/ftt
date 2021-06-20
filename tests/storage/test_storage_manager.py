@@ -1,5 +1,4 @@
 import pytest
-from peewee import SqliteDatabase
 from trade.storage.storage_manager import StorageManager
 from trade.storage.models import Ticker
 
@@ -28,3 +27,10 @@ class TestStorageManager:
         subject.initialize_database(mock)
         subject.create_tables([Ticker])
         context.assert_has_calls([mocker.call(), mocker.call.create_tables([Ticker]), mocker.call(None, None, None)])
+
+    def test_drop_tables(self, subject, mocker):
+        model = mocker.Mock()
+
+        subject.drop_tables([model])
+        model.drop_table.assert_called_once()
+

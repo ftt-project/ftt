@@ -20,13 +20,9 @@ class TestPortfoliosRepository:
         assert found.id == portfolio.id
 
     def test_creates_portfolio_and_version(self, data, subject):
-        result = subject.create(data)
+        result = subject.create(**data)
 
         assert type(result) == Portfolio
-        assert len(result.versions) == 1
-        assert type(result.versions[0]) == PortfolioVersion
-
-        PortfolioVersion.delete().execute()
         Portfolio.delete().execute()
 
     def test_get_tickers_for_latest_version(self, subject, portfolio, weight, ticker):

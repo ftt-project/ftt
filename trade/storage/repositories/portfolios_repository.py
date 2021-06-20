@@ -20,18 +20,11 @@ class PortfoliosRepository(RepositoryInterface):
         return Portfolio.get(Portfolio.name == name)
 
     @classmethod
-    def create(cls, data: dict) -> Base:
+    def create(cls, **data: str) -> Base:
         data["created_at"] = datetime.now()
         data["updated_at"] = datetime.now()
         portfolio = Portfolio.create(**data)
-        PortfolioVersionsRepository().create(
-            {
-                "version": 1,
-                "portfolio": portfolio,
-                "updated_at": data["updated_at"],
-                "created_at": data["created_at"],
-            }
-        )
+
         return portfolio
 
     @classmethod
