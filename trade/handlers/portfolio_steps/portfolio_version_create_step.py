@@ -7,15 +7,12 @@ class PortfolioVersionCreateStep:
     key = "portfolio_version"
 
     @classmethod
-    def process(cls, **input):
-        params = input[cls.key]
-        portfolio = input["portfolio"]["result"]
+    def process(cls, version, portfolio):
         result = PortfolioVersionsRepository.create(
-            version=params["version"],
+            version=version,
             portfolio_id=portfolio.id
         )
         if result.id is not None:
-            input[cls.key]["result"] = result
-            return Ok(input)
+            return Ok(result)
         else:
-            return Err(input)
+            return Err(result)

@@ -2,10 +2,20 @@ from nubia import context
 from nubia import exceptions
 from nubia import eventbus
 
+from rich.console import Console
+
+from trade.storage import Storage
+
 
 class Context(context.Context):
     def on_connected(self, *args, **kwargs):
-        pass
+        environment = "development"
+        storage = Storage(application_name="fams", environment=environment)
+        manager = storage.get_manager()
+        manager.initialize_database()
+
+        self.console = Console()
+
 
     def on_cli(self, cmd, args):
         # dispatch the on connected message

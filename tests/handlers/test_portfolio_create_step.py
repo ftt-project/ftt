@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.portfolio_create_step import PortfolioCreateStep
+from trade.handlers.portfolio_steps.portfolio_create_step import PortfolioCreateStep
 from trade.storage.models import Portfolio
 
 

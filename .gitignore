@@ -134,3 +134,4 @@ dmypy.json
 progress.pickle
 
 data/db/
+*.db
