@@ -1,6 +1,6 @@
 import pytest
 from trade.storage.storage_manager import StorageManager
-from trade.storage.models import Ticker
+from trade.storage.models import Security
 
 
 class TestStorageManager:
@@ -25,8 +25,8 @@ class TestStorageManager:
         mock.return_value = context
 
         subject.initialize_database(mock)
-        subject.create_tables([Ticker])
-        context.assert_has_calls([mocker.call(), mocker.call.create_tables([Ticker]), mocker.call(None, None, None)])
+        subject.create_tables([Security])
+        context.assert_has_calls([mocker.call(), mocker.call.create_tables([Security]), mocker.call(None, None, None)])
 
     def test_drop_tables(self, subject, mocker):
         model = mocker.Mock()

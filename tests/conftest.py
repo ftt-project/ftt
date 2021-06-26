@@ -3,7 +3,9 @@ from datetime import datetime
 import pytest
 import backtrader as bt
 #
-from trade.storage.models import Portfolio
+from trade.storage.models import Portfolio, Security
+
+
 # from trade.piloting.strategies.sizers import WeightedSizer
 #
 #
@@ -37,26 +39,30 @@ from trade.storage.models import Portfolio
 #     return _cerebro
 #
 #
-# @pytest.fixture
-# def ticker():
-#     ticker = Ticker.create(
-#         symbol="AA.XX",
-#         exchange="SYD",
-#         company_name="Company AAXX",
-#         exchange_name="SYD",
-#         type="Stock",
-#         type_display="Stock",
-#         industry="Technologies",
-#         currency="USD",
-#         updated_at=datetime.now(),
-#         created_at=datetime.now()
-#     )
-#     try:
-#         yield ticker
-#     finally:
-#         ticker.delete_instance()
-#
-#
+@pytest.fixture
+def security():
+    ticker = Security.create(
+        symbol="AA.XX",
+        exchange="SYD",
+        company_name="Company AAXX",
+        exchange_name="SYD",
+        quote_type="Stock",
+        type_display="Stock",
+        industry="Technologies",
+        sector="Technology",
+        country="US",
+        short_name="Short name",
+        long_name="Long name",
+        currency="USD",
+        updated_at=datetime.now(),
+        created_at=datetime.now()
+    )
+    try:
+        yield ticker
+    finally:
+        ticker.delete_instance()
+
+
 @pytest.fixture
 def portfolio():
     portfolio = Portfolio.create(

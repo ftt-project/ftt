@@ -3,7 +3,7 @@ from datetime import date
 
 from trade.storage.models import database_connection
 
-from trade.storage.models.ticker_return import TickerReturn
+from trade.storage.models.security_price import SecurityPrice
 from trade.piloting.pandas_data import PandasData
 
 import pandas as pd
@@ -19,23 +19,23 @@ class HistoryLoader:
         ticker: str, start_date: date, end_date: date, interval: str = "1m"
     ) -> PandasData:
         query = (
-            TickerReturn.select(
-                TickerReturn.datetime,
-                TickerReturn.open,
-                TickerReturn.high,
-                TickerReturn.low,
-                TickerReturn.close,
-                TickerReturn.volume,
+            SecurityPrice.select(
+                SecurityPrice.datetime,
+                SecurityPrice.open,
+                SecurityPrice.high,
+                SecurityPrice.low,
+                SecurityPrice.close,
+                SecurityPrice.volume,
             )
             .where(
-                TickerReturn.ticker == ticker,
-                TickerReturn.interval == interval,
+                SecurityPrice.ticker == ticker,
+                SecurityPrice.interval == interval,
                 (
-                    (TickerReturn.datetime >= start_date)
-                    & (TickerReturn.datetime <= end_date)
+                    (SecurityPrice.datetime >= start_date)
+                    & (SecurityPrice.datetime <= end_date)
                 ),
             )
-            .order_by(TickerReturn.datetime.asc())
+            .order_by(SecurityPrice.datetime.asc())
         )
 
         dataframe = pd.read_sql(

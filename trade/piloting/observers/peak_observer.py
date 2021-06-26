@@ -2,7 +2,7 @@ import backtrader as bt
 
 from trade.storage.repositories import (
     WeightsRepository,
-    TickersRepository,
+    SecuritiesRepository,
     PortfolioVersionsRepository,
     OrdersRepository,
 )
@@ -21,7 +21,7 @@ class PeakObserver(bt.Observer):
         for data in self.datas:
             name = data._name
             close = data.close[0]
-            ticker = TickersRepository.get_by_name(name)
+            ticker = SecuritiesRepository.get_by_name(name)
             order = OrdersRepository.last_successful_order(
                 ticker=ticker, portfolio=portfolio, type="buy"
             )

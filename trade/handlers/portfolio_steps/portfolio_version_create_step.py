@@ -1,13 +1,15 @@
-from result import Ok, Err
+from result import Ok, Err, OkErr
 
+from trade.handlers.handler.abstract_step import AbstractStep
+from trade.storage.models import Portfolio
 from trade.storage.repositories import PortfolioVersionsRepository
 
 
-class PortfolioVersionCreateStep:
+class PortfolioVersionCreateStep(AbstractStep):
     key = "portfolio_version"
 
     @classmethod
-    def process(cls, version, portfolio):
+    def process(cls, version: int, portfolio: Portfolio) -> OkErr:
         result = PortfolioVersionsRepository.create(
             version=version,
             portfolio_id=portfolio.id

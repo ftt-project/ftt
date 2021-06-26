@@ -3,16 +3,16 @@ from datetime import datetime
 
 import pytest
 
-from trade.storage.models import Weight, Ticker, Portfolio
+from trade.storage.models import Weight, Security, Portfolio
 
 
 @pytest.fixture
 def weights_seed(ticker_name="AA.BB", current_position=2, planned_position=10):
     Weight.delete().execute()
-    Ticker.delete().execute()
+    Security.delete().execute()
     Portfolio.delete().execute()
 
-    ticker = Ticker.create(
+    ticker = Security.create(
         ticker=ticker_name,
         exchange="TOR",
         exchange_name="TOR",

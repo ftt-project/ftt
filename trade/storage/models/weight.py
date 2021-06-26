@@ -1,11 +1,11 @@
 import peewee
 
-from trade.storage.models import Ticker, PortfolioVersion
+from trade.storage.models import Security, PortfolioVersion
 from trade.storage.models import Base
 
 
 class Weight(Base):
-    ticker = peewee.ForeignKeyField(Ticker, backref="weights")
+    ticker = peewee.ForeignKeyField(Security, backref="weights")
     portfolio_version = peewee.ForeignKeyField(PortfolioVersion, backref="weights")
     position = peewee.IntegerField()
     planned_position = peewee.IntegerField()

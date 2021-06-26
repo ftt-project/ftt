@@ -3,14 +3,14 @@ from datetime import datetime
 import pandas as pd
 from pytest import fixture
 
-from trade.storage.models import Ticker
-from trade.storage.repositories import TickersRepository
+from trade.storage.models import Security
+from trade.storage.repositories import SecuritiesRepository
 
 
-class TestTickersRepository:
+class TestSecuritiesRepository:
     @fixture
     def subject(self):
-        return TickersRepository
+        return SecuritiesRepository
 
     @fixture
     def data(self):
@@ -29,7 +29,7 @@ class TestTickersRepository:
     def ticker(self, data):
         data["updated_at"] = datetime.now()
         data["created_at"] = datetime.now()
-        ticker = Ticker.create(**data)
+        ticker = Security.create(**data)
         yield ticker
         ticker.delete_instance()
         return ticker
@@ -41,15 +41,15 @@ class TestTickersRepository:
     def test_save(self, ticker, subject):
         ticker.symbol = "BB.YY"
         result = subject.save(ticker)
-        found = Ticker.get_by_id(ticker.id)
+        found = Security.get_by_id(ticker.id)
 
-        assert type(result) is Ticker
+        assert type(result) is Security
         assert found.symbol == "BB.YY"
 
     def test_upsert_new_record(self, data, subject):
         result, created = subject.upsert(pd.Series(data))
 
-        assert type(result) == Ticker
+        assert type(result) == Security
         assert result.id is not None
         assert result.symbol == data["symbol"]
         assert result.exchange == data["exchange"]
@@ -60,7 +60,7 @@ class TestTickersRepository:
     def test_upsert_existing_record(self, data, subject, ticker):
         result, created = subject.upsert(pd.Series(data))
 
-        assert type(result) == Ticker
+        assert type(result) == Security
         assert result.id == ticker.id
         assert not created
 

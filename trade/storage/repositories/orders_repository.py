@@ -2,8 +2,8 @@ from datetime import datetime
 from typing import List
 
 from trade.logger import logger
-from trade.storage.models import Base, Order, Portfolio, PortfolioVersion, Ticker
-from trade.storage.repositories import TickersRepository, PortfolioVersionsRepository
+from trade.storage.models import Base, Order, Portfolio, PortfolioVersion, Security
+from trade.storage.repositories import SecuritiesRepository, PortfolioVersionsRepository
 from trade.storage.repositories.repository_interface import RepositoryInterface
 
 
@@ -36,7 +36,7 @@ class OrdersRepository(RepositoryInterface):
     ) -> Order:
         order = cls.create(
             {
-                "ticker": TickersRepository().get_by_name(symbol_name),
+                "ticker": SecuritiesRepository().get_by_name(symbol_name),
                 "portfolio_version": PortfolioVersionsRepository().get_by_id(
                     portfolio_version_id
                 ),
@@ -63,16 +63,16 @@ class OrdersRepository(RepositoryInterface):
         return list(result)
 
     @classmethod
-    def last_not_closed_order(cls, portfolio: Portfolio, ticker: Ticker) -> Order:
+    def last_not_closed_order(cls, portfolio: Portfolio, ticker: Security) -> Order:
         found = (
             Order.select()
             .join(PortfolioVersion)
             .join(Portfolio)
             .switch(Order)
-            .join(Ticker)
+            .join(Security)
             .where(Portfolio.id == portfolio.id)
             .where(Order.status.in_(Order.NOT_CLOSED_STATUSES))
-            .where(Ticker.id == ticker.id)
+            .where(Security.id == ticker.id)
             .order_by(Order.created_at.desc())
             .execute()
         )
@@ -83,17 +83,17 @@ class OrdersRepository(RepositoryInterface):
 
     @classmethod
     def last_successful_order(
-        cls, portfolio: Portfolio, ticker: Ticker, type: str
+        cls, portfolio: Portfolio, ticker: Security, type: str
     ) -> Order:
         found = (
             Order.select()
             .join(PortfolioVersion)
             .join(Portfolio)
             .switch(Order)
-            .join(Ticker)
+            .join(Security)
             .where(Portfolio.id == portfolio.id)
             .where(Order.status.in_(Order.SUCCEED_STATUSES))
-            .where(Ticker.id == ticker.id)
+            .where(Security.id == ticker.id)
             .where(Order.type == type)
             .order_by(Order.created_at.desc())
             .limit(1)

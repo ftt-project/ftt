@@ -1,19 +1,19 @@
 import peewee
-import datetime
 
 from trade.storage.models import Base
 
 
-class Ticker(Base):
+class Security(Base):
     symbol = peewee.CharField()
     exchange = peewee.CharField(index=True)
-    company_name = peewee.CharField(null=True)
-    type = peewee.CharField(index=True)
+    quote_type = peewee.CharField(index=True)
+    sector = peewee.CharField(index=True)
     industry = peewee.CharField(index=True, null=True)
+    country = peewee.CharField(index=True)
     currency = peewee.CharField(null=True)
-    created_at = peewee.DateTimeField(default=datetime.datetime.now)
-    updated_at = peewee.DateTimeField()
+    short_name = peewee.CharField()
+    long_name = peewee.CharField()
 
     class Meta:
         indexes = ((("symbol", "exchange"), True),)
-        table_name = "tickers"
+        table_name = "securities"

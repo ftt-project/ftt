@@ -9,7 +9,7 @@ from trade.storage.models import Order
 from trade.storage.repositories import (
     OrdersRepository,
     PortfolioVersionsRepository,
-    TickersRepository,
+    SecuritiesRepository,
     PortfoliosRepository,
     WeightsRepository,
 )
@@ -43,7 +43,7 @@ class BaseStrategy(bt.Strategy):
         tickers = PortfoliosRepository.get_tickers(self.portfolio)
         self._tickers = {}
         for ticker in tickers:
-            self._tickers[ticker.symbol] = TickersRepository().get_by_name(
+            self._tickers[ticker.symbol] = SecuritiesRepository().get_by_name(
                 ticker.symbol
             )
 
@@ -76,7 +76,7 @@ class BaseStrategy(bt.Strategy):
             if not position:
                 if self.buy_signal(d):
                     weight = WeightsRepository.find_by_ticker_and_portfolio(
-                        ticker=TickersRepository().get_by_name(d._name),
+                        ticker=SecuritiesRepository().get_by_name(d._name),
                         portfolio_version_id=self.p.portfolio_version_id,
                     )
                     if weight.locked_at is not None:
@@ -134,7 +134,7 @@ class BaseStrategy(bt.Strategy):
             )
             if order.isbuy():
                 weight = WeightsRepository.find_by_ticker_and_portfolio(
-                    ticker=TickersRepository().get_by_name(symbol),
+                    ticker=SecuritiesRepository().get_by_name(symbol),
                     portfolio_version_id=self.p.portfolio_version_id,
                 )
                 WeightsRepository.update_on_buy(weight, order.executed.value)
@@ -147,7 +147,7 @@ class BaseStrategy(bt.Strategy):
 
             else:
                 weight = WeightsRepository.find_by_ticker_and_portfolio(
-                    ticker=TickersRepository().get_by_name(symbol),
+                    ticker=SecuritiesRepository().get_by_name(symbol),
                     portfolio_version_id=self.p.portfolio_version_id,
                 )
                 WeightsRepository.update_on_sell(weight)

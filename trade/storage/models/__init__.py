@@ -1,7 +1,7 @@
 from .base import Base
 from .portfolio import Portfolio
-from .ticker import Ticker
-from .ticker_return import TickerReturn
+from .security import Security
+from .security_price import SecurityPrice
 from .portfolio_version import PortfolioVersion
 from .weight import Weight
 from .order import Order
@@ -9,8 +9,8 @@ from .order import Order
 __all__ = [
     "Base",
     "Portfolio",
-    "Ticker",
-    "TickerReturn",
+    "Security",
+    "SecurityPrice",
     "PortfolioVersion",
     "Weight",
     "Order",

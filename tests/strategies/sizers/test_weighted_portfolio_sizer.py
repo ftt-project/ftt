@@ -25,7 +25,7 @@ class TestWeightedPortfolioSizer:
         return testcommon.getdata(did)
 
     @pytest.fixture
-    def cerebro(self, strategy, data, portfolio_version, ticker, weight):
+    def cerebro(self, strategy, data, portfolio_version, security, weight):
         cerebro = bt.Cerebro()
         cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
         cerebro.addsizer(WeightedSizer)

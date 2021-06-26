@@ -2,7 +2,7 @@ from datetime import datetime
 
 import peewee
 
-from trade.storage.models import Base, Weight, Ticker, PortfolioVersion
+from trade.storage.models import Base, Weight, Security, PortfolioVersion
 from trade.storage.repositories.repository_interface import RepositoryInterface
 
 
@@ -33,15 +33,15 @@ class WeightsRepository(RepositoryInterface):
 
     @classmethod
     def find_by_ticker_and_portfolio(
-        cls, ticker: Ticker, portfolio_version_id: int
+        cls, ticker: Security, portfolio_version_id: int
     ) -> Weight:
         return (
             Weight.select()
             .join(PortfolioVersion)
             .switch(Weight)
-            .join(Ticker)
+            .join(Security)
             .where(PortfolioVersion.id == portfolio_version_id)
-            .where(Ticker.id == ticker.id)
+            .where(Security.id == ticker.id)
             .get()
         )
 
@@ -91,9 +91,9 @@ class WeightsRepository(RepositoryInterface):
             Weight.select()
             .join(PortfolioVersion, peewee.JOIN.LEFT_OUTER)
             .switch(Weight)
-            .join(Ticker, peewee.JOIN.LEFT_OUTER)
+            .join(Security, peewee.JOIN.LEFT_OUTER)
             .where(PortfolioVersion.id == portfolio_version_id)
-            .where(Ticker.id == ticker_id)
+            .where(Security.id == ticker_id)
             .get()
         )
 

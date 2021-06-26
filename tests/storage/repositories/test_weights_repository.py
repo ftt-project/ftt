@@ -4,7 +4,7 @@ import pandas as pd
 from pytest import fixture
 
 from trade.storage.models import Weight
-from trade.storage.repositories import TickersRepository
+from trade.storage.repositories import SecuritiesRepository
 from trade.storage.repositories import PortfolioVersionsRepository
 from trade.storage.repositories import PortfoliosRepository
 from trade.storage.repositories import WeightsRepository
@@ -17,7 +17,7 @@ class TestWeightsRepository:
 
     @fixture
     def ticker(self):
-        ticker, _ = TickersRepository().upsert(pd.Series({
+        ticker, _ = SecuritiesRepository().upsert(pd.Series({
             "symbol": "AA.XX",
             "exchange": "SYD",
             "company_name": "Company AAXX",

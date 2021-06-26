@@ -1,7 +1,7 @@
 import backtrader as bt
 
 # https://community.backtrader.com/topic/144/feature-request-allow-passing-of-data-object-to-sizer
-from trade.storage.repositories import TickersRepository, WeightsRepository
+from trade.storage.repositories import SecuritiesRepository, WeightsRepository
 
 
 class WeightedSizer(bt.Sizer):
@@ -15,7 +15,7 @@ class WeightedSizer(bt.Sizer):
         # portfolio = Portfolio.get_weights(self.p.dataname)
         # TODO: handle sell event
         ticker_name = data._name
-        ticker = TickersRepository().get_by_name(ticker_name)
+        ticker = SecuritiesRepository().get_by_name(ticker_name)
         portfolio_version_id = self.strategy.params.portfolio_version_id
 
         weights = WeightsRepository().get_by_ticker_and_portfolio_version(

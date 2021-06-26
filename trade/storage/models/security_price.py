@@ -1,11 +1,11 @@
 import peewee
 
 from trade.storage.models import Base
-from trade.storage.models import Ticker
+from trade.storage.models import Security
 
 
-class TickerReturn(Base):
-    ticker = peewee.ForeignKeyField(Ticker, backref="returns")
+class SecurityPrice(Base):
+    security = peewee.ForeignKeyField(Security, backref="prices")
     datetime = peewee.DateTimeField()
     open = peewee.DecimalField(max_digits=12)
     high = peewee.DecimalField(max_digits=12)
@@ -17,5 +17,5 @@ class TickerReturn(Base):
     percent_change = peewee.FloatField()
 
     class Meta:
-        indexes = ((("ticker", "datetime", "interval"), True),)
-        table_name = "ticker_returns"
+        indexes = ((("security", "datetime", "interval"), True),)
+        table_name = "security_prices"

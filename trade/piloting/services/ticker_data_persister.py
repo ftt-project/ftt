@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from trade.piloting.scraper import TickersScraper
-from trade.storage.models import Ticker
+from trade.storage.models import Security
 from trade.logger import logger
 from trade.piloting.services.exchange_name_normalizer import ExchangeNameNormalizer
 
@@ -19,7 +19,7 @@ class TickerDataPersister:
         self.scraper = scraper
 
     def perform(self):
-        db_request = Ticker.select().where(Ticker.symbol == self.ticker)
+        db_request = Security.select().where(Security.symbol == self.ticker)
         logger.debug(f"Request: {db_request}")
         if db_request.count() > 0:
             logger.warning(
@@ -32,7 +32,7 @@ class TickerDataPersister:
 
         info = self.scraper.load(self.ticker)
 
-        inst, created = Ticker.get_or_create(
+        inst, created = Security.get_or_create(
             symbol=self.ticker,
             exchange=info["exchange"],
             defaults={

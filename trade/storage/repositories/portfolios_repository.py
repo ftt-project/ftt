@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from trade.storage.models import Base, Portfolio, PortfolioVersion, Ticker, Weight
+from trade.storage.models import Base, Portfolio, PortfolioVersion, Security, Weight
 from trade.storage.repositories.portfolio_versions_repository import PortfolioVersionsRepository
 from trade.storage.repositories.repository_interface import RepositoryInterface
 
@@ -32,12 +32,12 @@ class PortfoliosRepository(RepositoryInterface):
         return Portfolio.select().execute()
 
     @classmethod
-    def get_tickers(cls, portfolio: Portfolio) -> List[Ticker]:
+    def get_tickers(cls, portfolio: Portfolio) -> List[Security]:
         portfolio_version = PortfolioVersionsRepository().get_latest_version(
             portfolio.id
         )
         result = (
-            Ticker.select()
+            Security.select()
             .join(Weight)
             .join(PortfolioVersion)
             .where(PortfolioVersion.id == portfolio_version.id)
