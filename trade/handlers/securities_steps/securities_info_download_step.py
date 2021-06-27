@@ -8,7 +8,7 @@ import yfinance as yf
 from trade.handlers.handler.abstract_step import AbstractStep
 
 
-class SecuritiesLoadInfoStep(AbstractStep):
+class SecuritiesInfoDownloadStep(AbstractStep):
     key = "securities_info"
 
     @classmethod

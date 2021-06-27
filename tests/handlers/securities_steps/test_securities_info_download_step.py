@@ -3,13 +3,13 @@ import urllib
 import pytest
 from result import Ok, Err
 
-from trade.handlers.securities_steps.securities_load_info_step import SecuritiesLoadInfoStep
+from trade.handlers.securities_steps.securities_info_download_step import SecuritiesInfoDownloadStep
 
 
-class TestSecuritiesLoadInfoStep:
+class TestSecuritiesInfoDownloadStep:
     @pytest.fixture
     def subject(self):
-        return SecuritiesLoadInfoStep
+        return SecuritiesInfoDownloadStep
 
     def test_returns_collection(self, subject, mocker):
         mock = mocker.patch('yfinance.Ticker')

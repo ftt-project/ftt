@@ -8,7 +8,7 @@ from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage.models import Security
 
 
-class SecuritiesLoadPricesStep(AbstractStep):
+class SecurityPricesDownloadStep(AbstractStep):
     key = "security_prices_data"
 
     @classmethod

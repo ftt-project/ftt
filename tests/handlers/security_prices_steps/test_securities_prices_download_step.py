@@ -2,13 +2,13 @@ from datetime import datetime
 
 import pytest
 
-from trade.handlers.securities_steps.securities_load_prices_step import SecuritiesLoadPricesStep
+from trade.handlers.security_prices_steps.securities_prices_download_step import SecurityPricesDownloadStep
 
 
-class TestSecuritiesLoadPriceStep:
+class TestSecurityPricesDownloadStep:
     @pytest.fixture
     def subject(self):
-        return SecuritiesLoadPricesStep
+        return SecurityPricesDownloadStep
 
     def test_load_securities_historical_prices(self, subject, mocker, security):
         mocker.patch("yfinance.pdr_override")
