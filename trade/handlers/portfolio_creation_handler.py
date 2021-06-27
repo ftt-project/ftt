@@ -10,5 +10,6 @@ class PortfolioCreationHandler(Handler):
         (PortfolioCreateStep, "name", "amount"),
         Context(assign=1, to="version"),
         (PortfolioVersionCreateStep, "version", "portfolio"),
+        # (PortfolioWeightsCreateStep),
         ReturnResult(PortfolioCreateStep.key)
     ]

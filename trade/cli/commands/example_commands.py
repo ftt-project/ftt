@@ -6,6 +6,7 @@ from rich.table import Table
 
 from trade.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from trade.handlers.securities_loading_handler import SecuritiesLoadingHandler
+from trade.handlers.weights_calculation_handler import WeightsCalculationHandler
 
 
 @command
@@ -14,7 +15,7 @@ def example():
     Create example portfolio with weights
     1. [x] create portfolio
     2. [x] portfolio version
-    3. [ ] load securities
+    3. [x] load securities
     4. [ ] create weights
     5. [ ] calculate weights
     6. [ ] show portfolio stats
@@ -52,4 +53,12 @@ def example():
         interval='1d'
     )
     securities = result.value
+
+    # print loaded securities and stats
+
+    result = WeightsCalculationHandler().handle(
+        portfolio=portfolio,
+        persist=True
+    )
+    weights = result.value
 

@@ -33,6 +33,9 @@ class PortfoliosRepository(RepositoryInterface):
 
     @classmethod
     def get_tickers(cls, portfolio: Portfolio) -> List[Security]:
+        """
+        Deprecate
+        """
         portfolio_version = PortfolioVersionsRepository().get_latest_version(
             portfolio.id
         )

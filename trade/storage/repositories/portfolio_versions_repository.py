@@ -25,6 +25,9 @@ class PortfolioVersionsRepository(RepositoryInterface):
 
     @classmethod
     def get_latest_version(cls, portfolio_id: int) -> PortfolioVersion:
+        """
+        TODO: use model instead of ID
+        """
         return (
             PortfolioVersion.select()
             .where(PortfolioVersion.portfolio_id == portfolio_id)

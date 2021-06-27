@@ -19,35 +19,39 @@ class TestSecuritiesRepository:
             "exchange": "SYD",
             "company_name": "Company AAXX",
             "exchange_name": "SYD",
-            "type": "Stock",
+            "quote_type": "Stock",
             "type_display": "Stock",
-            "industry": "Technologie",
+            "industry": "Technology",
+            "sector": "Technology",
+            "country": "US",
+            "short_name": "Short name",
+            "long_name": "Long name",
             "currency": "USD"
         }
 
-    @fixture
-    def ticker(self, data):
-        data["updated_at"] = datetime.now()
-        data["created_at"] = datetime.now()
-        ticker = Security.create(**data)
-        yield ticker
-        ticker.delete_instance()
-        return ticker
+    # @fixture
+    # def security(self, data):
+    #     data["updated_at"] = datetime.now()
+    #     data["created_at"] = datetime.now()
+    #     security = Security.create(**data)
+    #     yield security
+    #     security.delete_instance()
+    #     return security
 
-    def test_get_by_name(self, ticker, subject):
-        found = subject.get_by_name(ticker.symbol)
-        assert ticker.id == found.id
+    def test_get_by_name(self, security, subject):
+        found = subject.get_by_name(security.symbol)
+        assert security.id == found.id
 
-    def test_save(self, ticker, subject):
-        ticker.symbol = "BB.YY"
-        result = subject.save(ticker)
-        found = Security.get_by_id(ticker.id)
+    def test_save(self, security, subject):
+        security.symbol = "BB.YY"
+        result = subject.save(security)
+        found = Security.get_by_id(security.id)
 
         assert type(result) is Security
         assert found.symbol == "BB.YY"
 
     def test_upsert_new_record(self, data, subject):
-        result, created = subject.upsert(pd.Series(data))
+        result, created = subject.upsert(data)
 
         assert type(result) == Security
         assert result.id is not None
@@ -57,16 +61,22 @@ class TestSecuritiesRepository:
         assert result.created_at is not None
         assert created
 
-    def test_upsert_existing_record(self, data, subject, ticker):
-        result, created = subject.upsert(pd.Series(data))
+    def test_upsert_existing_record(self, data, subject, security):
+        result, created = subject.upsert(data)
 
         assert type(result) == Security
-        assert result.id == ticker.id
+        assert result.id == security.id
         assert not created
 
-    def test_exist(self, subject, ticker):
-        result = subject.exist(ticker.symbol)
+    def test_exist(self, subject, security):
+        result = subject.exist(security.symbol)
         assert result
 
         result = subject.exist('random-symbol')
         assert not result
+
+    def test_find_securities(self, subject, portfolio_version, security):
+        result = subject.find_securities(portfolio_version)
+
+        assert type(result) == list
+        assert result[0] == security

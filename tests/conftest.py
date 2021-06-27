@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 import backtrader as bt
 #
-from trade.storage.models import Portfolio, Security
+from trade.storage.models import Portfolio, Security, PortfolioVersion, Weight
 
 
 # from trade.piloting.strategies.sizers import WeightedSizer
@@ -76,37 +76,37 @@ def portfolio():
     finally:
         portfolio.delete_instance()
 
-#
-# @pytest.fixture
-# def portfolio_version(portfolio):
-#     portfolio_version = PortfolioVersion.create(
-#         portfolio=portfolio,
-#         version=1,
-#         updated_at=datetime.now(),
-#         created_at=datetime.now()
-#     )
-#     try:
-#         yield portfolio_version
-#     finally:
-#         portfolio_version.delete_instance()
-#
-#
-# @pytest.fixture
-# def weight(portfolio_version, ticker):
-#     weight = Weight.create(
-#         portfolio_version=portfolio_version,
-#         ticker=ticker,
-#         planned_position=10,
-#         position=2,
-#         updated_at=datetime.now(),
-#         created_at=datetime.now()
-#     )
-#     try:
-#         yield weight
-#     finally:
-#         weight.delete_instance()
-#
-#
+
+@pytest.fixture
+def portfolio_version(portfolio):
+    portfolio_version = PortfolioVersion.create(
+        portfolio=portfolio,
+        version=1,
+        updated_at=datetime.now(),
+        created_at=datetime.now()
+    )
+    try:
+        yield portfolio_version
+    finally:
+        portfolio_version.delete_instance()
+
+
+@pytest.fixture
+def weight(portfolio_version, security):
+    weight = Weight.create(
+        portfolio_version=portfolio_version,
+        ticker=security,
+        planned_position=10,
+        position=2,
+        updated_at=datetime.now(),
+        created_at=datetime.now()
+    )
+    try:
+        yield weight
+    finally:
+        weight.delete_instance()
+
+
 # @pytest.fixture
 # def order(ticker, portfolio_version):
 #     order = Order.create(

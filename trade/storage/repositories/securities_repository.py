@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import pandas as pd
 
-from trade.storage.models import Security
+from trade.storage.models import Security, Portfolio, PortfolioVersion, Weight
 from trade.storage.repositories.repository_interface import RepositoryInterface
 
 
@@ -39,3 +39,13 @@ class SecuritiesRepository(RepositoryInterface):
     @classmethod
     def create(cls, data: dict) -> Security:
         raise NotImplementedError()
+
+    @classmethod
+    def find_securities(cls, portfolio_version: PortfolioVersion) -> List[Security]:
+        result = (
+            Security.select()
+            .join(Weight)
+            .join(PortfolioVersion)
+            .where(PortfolioVersion.id == portfolio_version.id)
+        )
+        return list(result)
