@@ -15,4 +15,7 @@ class PortfolioSecuritiesLoadStep(AbstractStep):
             version = PortfolioVersionsRepository.get_latest_version(portfolio_id=portfolio.id)
         securities = SecuritiesRepository.find_securities(version)
 
+        if len(securities) == 0:
+            return Err(f"No securities in portfolio {portfolio}")
+
         return Ok(securities)

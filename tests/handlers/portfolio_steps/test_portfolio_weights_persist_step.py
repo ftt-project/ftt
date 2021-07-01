@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.portfolio_steps.test_portfolio_weights_persist_step import PortfolioWeightsPersistStep
+from trade.handlers.portfolio_steps.portfolio_weights_persist_step import PortfolioWeightsPersistStep
 from trade.storage.models import Weight
 
 

@@ -117,7 +117,7 @@ def portfolio_version(portfolio):
 def weight(portfolio_version, security):
     weight = Weight.create(
         portfolio_version=portfolio_version,
-        ticker=security,
+        security=security,
         planned_position=10,
         position=2,
         updated_at=datetime.now(),

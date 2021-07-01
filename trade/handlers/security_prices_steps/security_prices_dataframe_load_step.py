@@ -31,6 +31,7 @@ class SecurityPricesDataframeLoadStep(AbstractStep):
                                     params=params,
                                     index_col='datetime'
                                     )
+
             df = pd.DataFrame({security.symbol: dataframe.close}, index=dataframe.index)
             dataframes.append(df)
 

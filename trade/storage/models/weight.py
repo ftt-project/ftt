@@ -5,7 +5,7 @@ from trade.storage.models import Base
 
 
 class Weight(Base):
-    ticker = peewee.ForeignKeyField(Security, backref="weights")
+    security = peewee.ForeignKeyField(Security, backref="weights")
     portfolio_version = peewee.ForeignKeyField(PortfolioVersion, backref="weights")
     position = peewee.IntegerField()
     planned_position = peewee.IntegerField()
@@ -15,5 +15,5 @@ class Weight(Base):
     peaked_value = peewee.DecimalField(null=True, decimal_places=2, default=0)
 
     class Meta:
-        indexes = ((("ticker", "portfolio_version"), True),)
+        indexes = ((("security", "portfolio_version"), True),)
         table_name = "weights"
