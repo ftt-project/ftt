@@ -3,7 +3,7 @@ from datetime import datetime
 from nubia import command, context
 from rich.table import Table
 
-
+from trade.handlers.portfolio_associate_securities_step import PortfolioAssociateWeightsHandler
 from trade.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from trade.handlers.securities_loading_handler import SecuritiesLoadingHandler
 from trade.handlers.weights_calculation_handler import WeightsCalculationHandler
@@ -53,6 +53,11 @@ def example():
         interval='1d'
     )
     securities = result.value
+
+    result = PortfolioAssociateWeightsHandler().handle(
+        securities=["AAPL", "SHOP", "MSFT"],
+        portfolio_version=portfolio.versions[0]
+    )
 
     # print loaded securities and stats
 

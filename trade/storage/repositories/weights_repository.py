@@ -16,14 +16,14 @@ class WeightsRepository(RepositoryInterface):
         id = (
             Weight.insert(
                 portfolio_version=data["portfolio_version"],
-                ticker=data["ticker"],
+                security=data["security"],
                 position=data["position"],
                 planned_position=data["planned_position"],
                 created_at=datetime.now(),
                 updated_at=datetime.now(),
             )
             .on_conflict(
-                conflict_target=(Weight.ticker, Weight.portfolio_version),
+                conflict_target=(Weight.security, Weight.portfolio_version),
                 update={Weight.planned_position: data["planned_position"]},
             )
             .execute()

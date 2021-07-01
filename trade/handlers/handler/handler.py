@@ -1,7 +1,25 @@
+from abc import ABCMeta
+
 from result import Ok, Err
 
 
-class Handler:
+class MetaHandler(ABCMeta):
+    class HandlersAreMissing(Exception):
+        pass
+
+    def __new__(cls, name, bases, dct):
+        x = super().__new__(cls, name, bases, dct)
+
+        if x.__name__ != "Handler" and not hasattr(x, 'handlers'):
+            raise MetaHandler.HandlersAreMissing(f"{x} must define `handlers`")
+
+        if x.__name__ != "Handler" and type(x.handlers) != list:
+            raise ValueError(f"`{x}.handlers` must be type of list")
+
+        return x
+
+
+class Handler(metaclass=MetaHandler):
     def __init__(self):
         self.context = {}
 

@@ -9,7 +9,7 @@ from trade.handlers.handler.abstract_step import AbstractStep
 
 
 class WeightsCalculateStep(AbstractStep):
-    key = "calculated_weights"
+    key = "weights"
 
     @classmethod
     def process(cls, security_prices: DataFrame, portfolio_budget: float) -> OkErr:

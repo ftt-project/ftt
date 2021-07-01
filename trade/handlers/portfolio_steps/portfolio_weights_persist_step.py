@@ -9,20 +9,20 @@ class PortfolioWeightsPersistStep(AbstractStep):
     key = "weights"
 
     @classmethod
-    def process(cls, portfolio_version: PortfolioVersion, calculated_weights: Tuple[dict, float], persist: bool) -> Ok:
-        weights = []
+    def process(cls, portfolio_version: PortfolioVersion, weights: Tuple[dict, float], persist: bool) -> Ok:
+        result = []
         if not persist:
-            return Ok(weights)
+            return Ok(result)
 
-        quantities, _ = calculated_weights
+        quantities, _ = weights
         for symbol, qty in quantities.items():
             security = SecuritiesRepository.get_by_name(symbol)
             weight = WeightsRepository.upsert({
                 "portfolio_version": portfolio_version,
-                "ticker": security,
+                "security": security,
                 "position": 0,
                 "planned_position": qty
             })
-            weights.append(weight)
+            result.append(weight)
 
-        return Ok(weights)
+        return Ok(result)
