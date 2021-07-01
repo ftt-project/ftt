@@ -10,9 +10,7 @@ from trade.storage import Storage
 class Context(context.Context):
     def on_connected(self, *args, **kwargs):
         environment = "development"
-        storage = Storage(application_name="fams", environment=environment)
-        manager = storage.get_manager()
-        manager.initialize_database()
+        Storage.initialize_database(application_name="fams", environment=environment)
 
         self.console = Console()
 

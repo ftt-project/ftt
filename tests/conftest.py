@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 import backtrader as bt
 #
-from trade.storage.models import Portfolio, Security, PortfolioVersion, Weight
+from trade.storage.models import Portfolio, Security, PortfolioVersion, Weight, SecurityPrice
 
 
 # from trade.piloting.strategies.sizers import WeightedSizer
@@ -41,7 +41,7 @@ from trade.storage.models import Portfolio, Security, PortfolioVersion, Weight
 #
 @pytest.fixture
 def security():
-    ticker = Security.create(
+    security = Security.create(
         symbol="AA.XX",
         exchange="SYD",
         company_name="Company AAXX",
@@ -58,9 +58,31 @@ def security():
         created_at=datetime.now()
     )
     try:
-        yield ticker
+        yield security
     finally:
-        ticker.delete_instance()
+        security.delete_instance()
+
+
+@pytest.fixture
+def security_price(security):
+    price = SecurityPrice.create(
+        security=security,
+        datetime=datetime.today(),
+        open=100,
+        high=110,
+        low=90,
+        close=101,
+        volume=1000000,
+        interval='5m',
+        change=1,
+        percent_change=1,
+        updated_at=datetime.now(),
+        created_at=datetime.now()
+    )
+    try:
+        yield price
+    finally:
+        price.delete_instance()
 
 
 @pytest.fixture
@@ -105,7 +127,6 @@ def weight(portfolio_version, security):
         yield weight
     finally:
         weight.delete_instance()
-
 
 # @pytest.fixture
 # def order(ticker, portfolio_version):

@@ -1,20 +1,38 @@
 from typing import Optional, List
 
-from peewee import SqliteDatabase
+from peewee import SqliteDatabase, Database
 
 from trade.storage.models import Base
 from trade.storage.storage_manager import StorageManager
 
 
+class DatabaseNotInitialized(Exception):
+    pass
+
+
 class Storage:
-    database: Optional[SqliteDatabase] = None
+    __storage_manager: StorageManager = None
 
-    def __init__(self, application_name, environment):
-        self.application_name = application_name
-        self.environment = environment
+    @classmethod
+    def storage_manager(cls) -> StorageManager:
+        if not Storage.__storage_manager or not cls.__storage_manager.database:
+            raise DatabaseNotInitialized()
 
-    def get_manager(self) -> StorageManager:
-        return StorageManager(self.application_name, self.environment)
+        return cls.__storage_manager
 
-    def get_tables(self) -> List[Base]:
+    @staticmethod
+    def get_models() -> List[Base]:
         return Base.__subclasses__()
+
+    @classmethod
+    def initialize_database(cls, application_name, environment) -> None:
+        if Storage.__storage_manager is not None:
+            return
+
+        storage_manager = StorageManager(application_name, environment)
+        storage_manager.initialize_database()
+        Storage.__storage_manager = storage_manager
+
+    @classmethod
+    def get_database(cls) -> Database:
+        return cls.storage_manager().database
