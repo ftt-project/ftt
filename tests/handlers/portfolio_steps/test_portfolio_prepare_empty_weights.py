@@ -14,6 +14,7 @@ class TestPortfolioPrepareEmptyWeightsStep:
         )
 
         assert result.is_ok()
-        assert type(result.value) == dict
-        assert result.value["AAPL"] == 0
-        assert result.value["MSFT"] == 0
+        assert type(result.value) == tuple
+        assert result.value[0]["AAPL"] == 0
+        assert result.value[0]["MSFT"] == 0
+        assert result.value[1] == 0

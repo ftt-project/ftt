@@ -19,7 +19,7 @@ class SecurityPricesUpsertStep(AbstractStep):
             for symbol, dataframe in security_prices_data.items()
         ]
 
-        results = []
+        results = {}
         for symbol, price_changes in mapped_data:
             security = SecuritiesRepository.get_by_name(symbol)
             new_rows = 0
@@ -30,6 +30,6 @@ class SecurityPricesUpsertStep(AbstractStep):
                 if flag:
                     new_rows += 1
                 # TODO: handle upsert errors
-            results.append({symbol: new_rows})
+            results[symbol] = new_rows
 
         return Ok(results)

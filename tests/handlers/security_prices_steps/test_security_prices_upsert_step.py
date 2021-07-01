@@ -10,9 +10,9 @@ class TestSecurityPricesUpsertStep:
         return SecurityPricesUpsertStep
 
     @pytest.fixture
-    def data(self):
+    def data(self, security):
         return {
-            "AAAA": pd.DataFrame(
+            security.symbol: pd.DataFrame(
                 data={
                     "Adj Close": [124.279999, 125.059998, 123.540001],
                     "Close": [124.279999, 125.059998, 123.540001],
@@ -25,14 +25,14 @@ class TestSecurityPricesUpsertStep:
             ).rename_axis("Date")
         }
 
-    def test_persists_historical_prices(self, subject, data):
-        result = subject.process(data)
+    def test_persists_historical_prices(self, subject, data, security, security_price):
+        result = subject.process(data, "5m")
 
         assert result.is_ok()
         assert type(result.value) == dict
-        assert result.value["AAAA"] == 3
+        assert result.value[security.symbol] == 3
 
-    def test_upserts_historical_prices(self, subject, data):
-        subject.process(data)
-        result = subject.process(data)
-        assert result.value["AAAA"] == 0
+    def test_upserts_historical_prices(self, subject, data, security, security_price):
+        subject.process(data, "5m")
+        result = subject.process(data, "5m")
+        assert result.value[security.symbol] == 0
