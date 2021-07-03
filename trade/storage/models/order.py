@@ -4,7 +4,7 @@ from trade.storage.models import Base, Security, PortfolioVersion
 
 
 class Order(Base):
-    ticker = peewee.ForeignKeyField(Security, backref="orders")
+    security = peewee.ForeignKeyField(Security, backref="orders")
     type = peewee.CharField()
     portfolio_version = peewee.ForeignKeyField(PortfolioVersion, backref="orders")
     status = peewee.CharField()

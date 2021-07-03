@@ -11,9 +11,9 @@ class TestOrdersRepository:
     def subject(self):
         return OrdersRepository
 
-    def test_create(self, subject, ticker, portfolio_version):
+    def test_create(self, subject, security, portfolio_version):
         result = subject.create({
-            "ticker": ticker,
+            "security": security,
             "portfolio_version": portfolio_version,
             "status": "created",
             "type": "buy",
@@ -24,9 +24,9 @@ class TestOrdersRepository:
         assert result.id is not None
         result.delete_instance()
 
-    def test_build_and_create(self, subject, ticker, portfolio_version):
+    def test_build_and_create(self, subject, security, portfolio_version):
         result = subject.build_and_create(
-            symbol_name=ticker.symbol,
+            symbol_name=security.symbol,
             portfolio_version_id=portfolio_version.id,
             desired_price=1,
             type="buy"
@@ -57,9 +57,9 @@ class TestOrdersRepository:
         assert result.id == order.id
         assert "submitted" == subject.get_by_id(order.id).status
 
-    def test_last_not_closed_order_when_order_exist(self, subject, order, portfolio, portfolio_version, ticker):
+    def test_last_not_closed_order_when_order_exist(self, subject, order, portfolio, portfolio_version, security):
         order_closed = Order.create(
-            ticker=ticker,
+            security=security,
             type="buy",
             portfolio_version=portfolio_version,
             status=Order.Completed,
@@ -69,13 +69,13 @@ class TestOrdersRepository:
             updated_at=datetime.now(),
             created_at=datetime.now()
         )
-        found = subject.last_not_closed_order(portfolio, ticker)
+        found = subject.last_not_closed_order(portfolio, security)
         assert found == order
 
         order_closed.delete_instance()
 
-    def test_last_not_closed_order_when_no_orders(self, subject, portfolio, ticker):
-        found = subject.last_not_closed_order(portfolio, ticker)
+    def test_last_not_closed_order_when_no_orders(self, subject, portfolio, security):
+        found = subject.last_not_closed_order(portfolio, security)
         assert found is None
 
     def test_set_execution_params(self, subject, order):
@@ -92,11 +92,11 @@ class TestOrdersRepository:
         assert result.execution_commission == 1
         assert result.executed_at is not None
 
-    def test_last_successful_order(self, subject, order, portfolio, ticker):
+    def test_last_successful_order(self, subject, order, portfolio, security):
         order.status = Order.Completed
         order.save()
-        buy_result = subject.last_successful_order(portfolio=portfolio, ticker=ticker, type="buy")
+        buy_result = subject.last_successful_order(portfolio=portfolio, security=security, type="buy")
         assert order == buy_result
 
-        sell_result = subject.last_successful_order(portfolio=portfolio, ticker=ticker, type="sell")
+        sell_result = subject.last_successful_order(portfolio=portfolio, security=security, type="sell")
         assert sell_result is None

@@ -20,8 +20,8 @@ class ValueProtectingStrategy(BaseStrategy):
         - price is more or equal to the last sell price
         - uptrend of the stock
         """
-        weight = WeightsRepository.find_by_ticker_and_portfolio(
-            ticker=SecuritiesRepository().get_by_name(data._name),
+        weight = WeightsRepository.find_by_security_and_portfolio(
+            security=SecuritiesRepository().get_by_name(data._name),
             portfolio_version_id=self.p.portfolio_version_id,
         )
         if weight.locked_at_amount and data.close[0] >= weight.locked_at_amount:
@@ -36,9 +36,9 @@ class ValueProtectingStrategy(BaseStrategy):
         To protect from dip it sells when the portfolio price becomes lower than VALUE * MULT
         """
         value = data.close[0]
-        ticker = SecuritiesRepository().get_by_name(data._name)
-        weight = WeightsRepository.find_by_ticker_and_portfolio(
-            ticker=ticker, portfolio_version_id=self.p.portfolio_version_id
+        security = SecuritiesRepository().get_by_name(data._name)
+        weight = WeightsRepository.find_by_security_and_portfolio(
+            security=security, portfolio_version_id=self.p.portfolio_version_id
         )
         return value <= (weight.peaked_value * Decimal(self.p.dipmult))
 
@@ -46,8 +46,8 @@ class ValueProtectingStrategy(BaseStrategy):
         """
         TODO: Should it be after order is executed?
         """
-        weight = WeightsRepository.find_by_ticker_and_portfolio(
-            ticker=SecuritiesRepository().get_by_name(data._name),
+        weight = WeightsRepository.find_by_security_and_portfolio(
+            security=SecuritiesRepository().get_by_name(data._name),
             portfolio_version_id=self.p.portfolio_version_id,
         )
         WeightsRepository.lock_weight(weight=weight, locked_at_amount=data.close[0])

@@ -40,11 +40,11 @@ class BaseStrategy(bt.Strategy):
         )
         self.data_live = self.env.params.live
 
-        tickers = PortfoliosRepository.get_tickers(self.portfolio)
-        self._tickers = {}
-        for ticker in tickers:
-            self._tickers[ticker.symbol] = SecuritiesRepository().get_by_name(
-                ticker.symbol
+        securities = PortfoliosRepository.get_securities(self.portfolio)
+        self._securities = {}
+        for security in securities:
+            self._securities[security.symbol] = SecuritiesRepository().get_by_name(
+                security.symbol
             )
 
     @property
@@ -52,12 +52,12 @@ class BaseStrategy(bt.Strategy):
         return self._portfolio
 
     @property
-    def tickers(self):
-        return self._tickers
+    def securities(self):
+        return self._securities
 
     def _open_order(self, symbol):
         return OrdersRepository.last_not_closed_order(
-            self.portfolio, self.tickers[symbol]
+            self.portfolio, self.securities[symbol]
         )
 
     def _open_order_exist(self, symbol):
@@ -75,8 +75,8 @@ class BaseStrategy(bt.Strategy):
 
             if not position:
                 if self.buy_signal(d):
-                    weight = WeightsRepository.find_by_ticker_and_portfolio(
-                        ticker=SecuritiesRepository().get_by_name(d._name),
+                    weight = WeightsRepository.find_by_security_and_portfolio(
+                        security=SecuritiesRepository().get_by_name(d._name),
                         portfolio_version_id=self.p.portfolio_version_id,
                     )
                     if weight.locked_at is not None:
@@ -133,8 +133,8 @@ class BaseStrategy(bt.Strategy):
                 execution_commission=order.executed.comm,
             )
             if order.isbuy():
-                weight = WeightsRepository.find_by_ticker_and_portfolio(
-                    ticker=SecuritiesRepository().get_by_name(symbol),
+                weight = WeightsRepository.find_by_security_and_portfolio(
+                    security=SecuritiesRepository().get_by_name(symbol),
                     portfolio_version_id=self.p.portfolio_version_id,
                 )
                 WeightsRepository.update_on_buy(weight, order.executed.value)
@@ -146,8 +146,8 @@ class BaseStrategy(bt.Strategy):
                 )
 
             else:
-                weight = WeightsRepository.find_by_ticker_and_portfolio(
-                    ticker=SecuritiesRepository().get_by_name(symbol),
+                weight = WeightsRepository.find_by_security_and_portfolio(
+                    security=SecuritiesRepository().get_by_name(symbol),
                     portfolio_version_id=self.p.portfolio_version_id,
                 )
                 WeightsRepository.update_on_sell(weight)

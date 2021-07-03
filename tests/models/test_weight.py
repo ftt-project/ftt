@@ -7,4 +7,4 @@ class TestWeight:
 
     def test_relations(self):
         assert Weight.portfolio_version.rel_model == PortfolioVersion
-        assert Weight.ticker.rel_model == Security
+        assert Weight.security.rel_model == Security

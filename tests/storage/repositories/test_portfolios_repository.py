@@ -25,8 +25,8 @@ class TestPortfoliosRepository:
         assert type(result) == Portfolio
         Portfolio.delete().execute()
 
-    def test_get_tickers_for_latest_version(self, subject, portfolio, weight, ticker):
-        result = subject.get_tickers(portfolio)
+    def test_get_securities_for_latest_version(self, subject, portfolio, weight, security):
+        result = subject.get_securities(portfolio)
 
         assert type(result) == list
-        assert result[0] == ticker
+        assert result[0] == security

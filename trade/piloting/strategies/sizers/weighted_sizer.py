@@ -18,8 +18,8 @@ class WeightedSizer(bt.Sizer):
         ticker = SecuritiesRepository().get_by_name(ticker_name)
         portfolio_version_id = self.strategy.params.portfolio_version_id
 
-        weights = WeightsRepository().get_by_ticker_and_portfolio_version(
-            portfolio_version_id=portfolio_version_id, ticker_id=ticker.id
+        weights = WeightsRepository().get_by_security_and_portfolio_version(
+            portfolio_version_id=portfolio_version_id, security_id=ticker.id
         )
 
         self._data = self.strategy.getdatabyname(ticker_name)

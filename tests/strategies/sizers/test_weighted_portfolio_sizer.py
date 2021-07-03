@@ -29,7 +29,7 @@ class TestWeightedPortfolioSizer:
         cerebro = bt.Cerebro()
         cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
         cerebro.addsizer(WeightedSizer)
-        cerebro.adddata(data, name=ticker.symbol)
+        cerebro.adddata(data, name=security.symbol)
         return cerebro
 
     def test_properly_utilized_by_cerebro(self, cerebro):

@@ -75,7 +75,7 @@ class TestSecuritiesRepository:
         result = subject.exist('random-symbol')
         assert not result
 
-    def test_find_securities(self, subject, portfolio_version, security):
+    def test_find_securities(self, subject, portfolio_version, security, weight):
         result = subject.find_securities(portfolio_version)
 
         assert type(result) == list

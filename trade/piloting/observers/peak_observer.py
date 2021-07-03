@@ -21,12 +21,12 @@ class PeakObserver(bt.Observer):
         for data in self.datas:
             name = data._name
             close = data.close[0]
-            ticker = SecuritiesRepository.get_by_name(name)
+            security = SecuritiesRepository.get_by_name(name)
             order = OrdersRepository.last_successful_order(
-                ticker=ticker, portfolio=portfolio, type="buy"
+                security=security, portfolio=portfolio, type="buy"
             )
-            weight = WeightsRepository.find_by_ticker_and_portfolio(
-                ticker=ticker, portfolio_version_id=portfolio_version_id
+            weight = WeightsRepository.find_by_security_and_portfolio(
+                security=security, portfolio_version_id=portfolio_version_id
             )
             execution_price = order.execution_price if order else 0
             max_value = max(weight.peaked_value, close, execution_price)

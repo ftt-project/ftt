@@ -2,43 +2,42 @@ from datetime import datetime
 
 import pytest
 import backtrader as bt
-#
-from trade.storage.models import Portfolio, Security, PortfolioVersion, Weight, SecurityPrice
+
+from trade.piloting.strategies.sizers import WeightedSizer
+from trade.storage import Storage
+from trade.storage.models import Portfolio, Security, PortfolioVersion, Weight, SecurityPrice, Order
 
 
-# from trade.piloting.strategies.sizers import WeightedSizer
-#
-#
-# @pytest.fixture(autouse=True, scope="function")
-# def transactional():
-#     connection = database_connection()
-#     with connection.atomic() as transaction:
-#         try:
-#             yield
-#         finally:
-#             transaction.rollback()
-#
-#
-# @pytest.fixture
-# def cerebro(portfolio_version, ticker, weight):
-#     def _cerebro(strategies, data):
-#         cerebro = bt.Cerebro(live=True, cheat_on_open=True)
-#         for strategy in strategies:
-#             if type(strategy) == tuple:
-#                 strategy, opts = strategy
-#                 cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id, **opts)
-#             else:
-#                 cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
-#         cerebro.addsizer(WeightedSizer)
-#
-#         cerebro.adddata(data, name=ticker.symbol)
-#
-#         cerebro.broker.setcash(30000.0)
-#         return cerebro
-#
-#     return _cerebro
-#
-#
+@pytest.fixture(autouse=True, scope="function")
+def transactional():
+    connection = Storage.get_database()
+    with connection.atomic() as transaction:
+        try:
+            yield
+        finally:
+            transaction.rollback()
+
+
+@pytest.fixture
+def cerebro(portfolio_version, security, weight):
+    def _cerebro(strategies, data):
+        cerebro = bt.Cerebro(live=True, cheat_on_open=True)
+        for strategy in strategies:
+            if type(strategy) == tuple:
+                strategy, opts = strategy
+                cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id, **opts)
+            else:
+                cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
+        cerebro.addsizer(WeightedSizer)
+
+        cerebro.adddata(data, name=security.symbol)
+
+        cerebro.broker.setcash(30000.0)
+        return cerebro
+
+    return _cerebro
+
+
 @pytest.fixture
 def security():
     security = Security.create(
@@ -128,18 +127,18 @@ def weight(portfolio_version, security):
     finally:
         weight.delete_instance()
 
-# @pytest.fixture
-# def order(ticker, portfolio_version):
-#     order = Order.create(
-#         ticker=ticker,
-#         portfolio_version=portfolio_version,
-#         status="Created",
-#         type="buy",
-#         desired_price=100,
-#         updated_at=datetime.now(),
-#         created_at=datetime.now()
-#     )
-#     try:
-#         yield order
-#     finally:
-#         order.delete_instance()
+@pytest.fixture
+def order(security, portfolio_version):
+    order = Order.create(
+        security=security,
+        portfolio_version=portfolio_version,
+        status="Created",
+        type="buy",
+        desired_price=100,
+        updated_at=datetime.now(),
+        created_at=datetime.now()
+    )
+    try:
+        yield order
+    finally:
+        order.delete_instance()

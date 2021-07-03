@@ -16,32 +16,10 @@ class TestWeightsRepository:
         return WeightsRepository()
 
     @fixture
-    def ticker(self):
-        ticker, _ = SecuritiesRepository().upsert(pd.Series({
-            "symbol": "AA.XX",
-            "exchange": "SYD",
-            "company_name": "Company AAXX",
-            "exchange_name": "SYD",
-            "type": "Stock",
-            "type_display": "Stock",
-            "industry": "Technologie",
-            "currency": "USD"
-        }))
-        return ticker
-
-    @fixture
-    def portfolio(self):
-        return PortfoliosRepository().create({"name": "P1"})
-
-    @fixture
-    def portfolio_version(self, portfolio):
-        return PortfolioVersionsRepository().get_latest_version(portfolio_id=portfolio.id)
-
-    @fixture
-    def data(self, ticker, portfolio_version):
+    def data(self, security, portfolio_version):
         return {
             "portfolio_version": portfolio_version,
-            "ticker": ticker,
+            "security": security,
             "planned_position": 2,
             "position": 10
         }
@@ -63,16 +41,16 @@ class TestWeightsRepository:
 
         assert result == weight
 
-    def test_get_by_ticker_and_portfolio_version(self, subject, portfolio_version, ticker, weight):
-        result = subject.get_by_ticker_and_portfolio_version(
+    def test_get_by_security_and_portfolio_version(self, subject, portfolio_version, security, weight):
+        result = subject.get_by_security_and_portfolio_version(
             portfolio_version_id=portfolio_version.id,
-            ticker_id=ticker.id
+            security_id=security.id
         )
 
         assert result == weight
 
-    def test_find_by_ticker_and_portfolio(self, subject, ticker, portfolio_version, weight):
-        result = subject.find_by_ticker_and_portfolio(ticker=ticker, portfolio_version_id=portfolio_version.id)
+    def test_find_by_security_and_portfolio(self, subject, security, portfolio_version, weight):
+        result = subject.find_by_security_and_portfolio(security=security, portfolio_version_id=portfolio_version.id)
         assert result == weight
 
     def test_update_amount(self, weight, subject):

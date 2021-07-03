@@ -19,5 +19,5 @@ class TestPeakObserver:
         c = cerebro([BollingerStrategy], data)
         c.addobserver(subject)
         result = c.run()
-        assert Decimal("23.39") == WeightsRepository.get_by_id(weight.id).peaked_value
+        assert Decimal("23.389999") == WeightsRepository.get_by_id(weight.id).peaked_value
         Order.delete().execute()

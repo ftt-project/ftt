@@ -23,7 +23,7 @@ class SecuritiesRepository(RepositoryInterface):
         return record
 
     @classmethod
-    def upsert(cls, data: List[dict]) -> Tuple[Security, bool]:
+    def upsert(cls, data: dict) -> Tuple[Security, bool]:
         data["updated_at"] = datetime.now()
         data["created_at"] = datetime.now()
         result = Security.get_or_create(

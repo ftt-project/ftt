@@ -27,7 +27,7 @@ class TestSecurityPriceMapper:
         collection = subject.from_dataframe(dataframe)
         assert len(collection) == 3
 
-        result = collection.to_dict()
+        result = collection.to_dicts()
 
         assert type(result) == list
         assert len(result) == 3

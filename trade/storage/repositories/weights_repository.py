@@ -32,8 +32,8 @@ class WeightsRepository(RepositoryInterface):
         return cls.get_by_id(id)
 
     @classmethod
-    def find_by_ticker_and_portfolio(
-        cls, ticker: Security, portfolio_version_id: int
+    def find_by_security_and_portfolio(
+        cls, security: Security, portfolio_version_id: int
     ) -> Weight:
         return (
             Weight.select()
@@ -41,7 +41,7 @@ class WeightsRepository(RepositoryInterface):
             .switch(Weight)
             .join(Security)
             .where(PortfolioVersion.id == portfolio_version_id)
-            .where(Security.id == ticker.id)
+            .where(Security.id == security.id)
             .get()
         )
 
@@ -72,7 +72,7 @@ class WeightsRepository(RepositoryInterface):
         data["created_at"] = datetime.now()
         return Weight.create(
             portfolio_version=data["portfolio_version"],
-            ticker=data["ticker"],
+            security=data["security"],
             position=data["position"],
             planned_position=data["planned_position"],
             updated_at=data["updated_at"],
@@ -84,8 +84,8 @@ class WeightsRepository(RepositoryInterface):
         return Weight.get(id)
 
     @classmethod
-    def get_by_ticker_and_portfolio_version(
-        cls, ticker_id: int, portfolio_version_id: int
+    def get_by_security_and_portfolio_version(
+        cls, security_id: int, portfolio_version_id: int
     ) -> Base:
         return (
             Weight.select()
@@ -93,7 +93,7 @@ class WeightsRepository(RepositoryInterface):
             .switch(Weight)
             .join(Security, peewee.JOIN.LEFT_OUTER)
             .where(PortfolioVersion.id == portfolio_version_id)
-            .where(Security.id == ticker_id)
+            .where(Security.id == security_id)
             .get()
         )
 

@@ -32,7 +32,7 @@ class PortfoliosRepository(RepositoryInterface):
         return Portfolio.select().execute()
 
     @classmethod
-    def get_tickers(cls, portfolio: Portfolio) -> List[Security]:
+    def get_securities(cls, portfolio: Portfolio) -> List[Security]:
         """
         Deprecate
         """

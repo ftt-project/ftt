@@ -36,7 +36,7 @@ class OrdersRepository(RepositoryInterface):
     ) -> Order:
         order = cls.create(
             {
-                "ticker": SecuritiesRepository().get_by_name(symbol_name),
+                "security": SecuritiesRepository().get_by_name(symbol_name),
                 "portfolio_version": PortfolioVersionsRepository().get_by_id(
                     portfolio_version_id
                 ),
@@ -63,7 +63,7 @@ class OrdersRepository(RepositoryInterface):
         return list(result)
 
     @classmethod
-    def last_not_closed_order(cls, portfolio: Portfolio, ticker: Security) -> Order:
+    def last_not_closed_order(cls, portfolio: Portfolio, security: Security) -> Order:
         found = (
             Order.select()
             .join(PortfolioVersion)
@@ -72,7 +72,7 @@ class OrdersRepository(RepositoryInterface):
             .join(Security)
             .where(Portfolio.id == portfolio.id)
             .where(Order.status.in_(Order.NOT_CLOSED_STATUSES))
-            .where(Security.id == ticker.id)
+            .where(Security.id == security.id)
             .order_by(Order.created_at.desc())
             .execute()
         )
@@ -83,7 +83,7 @@ class OrdersRepository(RepositoryInterface):
 
     @classmethod
     def last_successful_order(
-        cls, portfolio: Portfolio, ticker: Security, type: str
+        cls, portfolio: Portfolio, security: Security, type: str
     ) -> Order:
         found = (
             Order.select()
@@ -93,7 +93,7 @@ class OrdersRepository(RepositoryInterface):
             .join(Security)
             .where(Portfolio.id == portfolio.id)
             .where(Order.status.in_(Order.SUCCEED_STATUSES))
-            .where(Security.id == ticker.id)
+            .where(Security.id == security.id)
             .where(Order.type == type)
             .order_by(Order.created_at.desc())
             .limit(1)
