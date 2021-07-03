@@ -7,6 +7,7 @@ from trade.handlers.portfolio_associate_securities_step import (
     PortfolioAssociateWeightsHandler,
 )
 from trade.handlers.portfolio_creation_handler import PortfolioCreationHandler
+from trade.handlers.portfolio_stats_handler import PortfoliosStatsHandler
 from trade.handlers.securities_loading_handler import SecuritiesLoadingHandler
 from trade.handlers.weights_calculation_handler import WeightsCalculationHandler
 
@@ -51,16 +52,16 @@ def example():
         period_to=datetime(today.year, today.month, today.day),
         interval="1d",
     )
-    securities = result.value
+    _ = result.value
 
-    result = PortfolioAssociateWeightsHandler().handle(
+    _ = PortfolioAssociateWeightsHandler().handle(
         securities=["AAPL", "SHOP", "MSFT"], portfolio_version=portfolio.versions[0]
     )
 
     # print loaded securities and stats
 
     result = WeightsCalculationHandler().handle(portfolio=portfolio, persist=True)
-    weights = result.value
+    _ = result.value
 
     result = PortfoliosStatsHandler().handle(portfolio_version=portfolio.versions[0])
-    stats = result.value
+    _ = result.value

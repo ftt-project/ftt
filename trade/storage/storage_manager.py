@@ -21,14 +21,14 @@ class StorageManager:
             self.database.create_tables(tables)
 
     def check_and_run_migration(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def drop(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def drop_tables(self, tables: List[Base]) -> None:
         for table in tables:
             table.drop_table()
 
     def seed_data(self):
-        raise NotImplemented
+        raise NotImplementedError

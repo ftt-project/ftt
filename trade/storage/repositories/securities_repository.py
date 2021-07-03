@@ -1,9 +1,7 @@
 from datetime import datetime
 from typing import List, Tuple
 
-import pandas as pd
-
-from trade.storage.models import Portfolio, PortfolioVersion, Security, Weight
+from trade.storage.models import PortfolioVersion, Security, Weight
 from trade.storage.repositories.repository_interface import RepositoryInterface
 
 

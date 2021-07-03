@@ -17,7 +17,7 @@ class WeightsCalculateStep(AbstractStep):
 
         ef = EfficientFrontier(mu, S)
 
-        raw_weights = ef.max_sharpe()
+        _ = ef.max_sharpe()
         cleaned_weights = ef.clean_weights()
 
         ef.portfolio_performance(verbose=True)

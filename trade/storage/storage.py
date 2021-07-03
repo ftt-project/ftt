@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import List
 
-from peewee import Database, SqliteDatabase
+from peewee import Database
 
 from trade.storage.models import Base
 from trade.storage.storage_manager import StorageManager

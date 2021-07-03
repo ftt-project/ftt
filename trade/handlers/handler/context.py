@@ -24,4 +24,4 @@ class Context:
         elif "rename" in kwargs:
             return Context.Renamer(**kwargs)
         else:
-            raise NotImplemented
+            raise NotImplementedError
