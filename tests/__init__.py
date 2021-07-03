@@ -1,5 +1,5 @@
 from trade.storage import Storage
-from trade.storage.models import Base
+from trade.storage.models.base import Base
 
 Storage.initialize_database(application_name="ftt", environment="test")
 manager = Storage.storage_manager()

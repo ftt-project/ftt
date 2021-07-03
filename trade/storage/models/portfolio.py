@@ -2,7 +2,7 @@ from datetime import datetime
 
 import peewee
 
-from trade.storage.models import Base
+from trade.storage.models.base import Base
 
 
 class Portfolio(Base):

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Tuple
 
-from trade.storage.models import SecurityPrice
+from trade.storage.models.security_price import SecurityPrice
 from trade.storage.repositories.repository_interface import RepositoryInterface
 
 

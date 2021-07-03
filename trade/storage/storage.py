@@ -2,7 +2,7 @@ from typing import List
 
 from peewee import Database
 
-from trade.storage.models import Base
+from trade.storage.models.base import Base
 from trade.storage.storage_manager import StorageManager
 
 

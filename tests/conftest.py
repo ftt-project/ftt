@@ -5,7 +5,12 @@ import backtrader as bt
 
 from trade.piloting.strategies.sizers import WeightedSizer
 from trade.storage import Storage
-from trade.storage.models import Portfolio, Security, PortfolioVersion, Weight, SecurityPrice, Order
+from trade.storage.models.order import Order
+from trade.storage.models.portfolio import Portfolio
+from trade.storage.models.portfolio_version import PortfolioVersion
+from trade.storage.models.security import Security
+from trade.storage.models.security_price import SecurityPrice
+from trade.storage.models.weight import Weight
 
 
 @pytest.fixture(autouse=True, scope="function")

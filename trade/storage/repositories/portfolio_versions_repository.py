@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from trade.storage.models import Base, Portfolio, PortfolioVersion
+from trade.storage.models.base import Base
+from trade.storage.models.portfolio import Portfolio
+from trade.storage.models.portfolio_version import PortfolioVersion
 from trade.storage.repositories.repository_interface import RepositoryInterface
 
 

@@ -1,6 +1,7 @@
 import peewee
 
-from trade.storage.models import Base, Portfolio
+from trade.storage.models.base import Base
+from trade.storage.models.portfolio import Portfolio
 
 
 class PortfolioVersion(Base):

@@ -1,7 +1,11 @@
 from datetime import datetime
 from typing import List
 
-from trade.storage.models import Base, Portfolio, PortfolioVersion, Security, Weight
+from trade.storage.models.base import Base
+from trade.storage.models.portfolio import Portfolio
+from trade.storage.models.portfolio_version import PortfolioVersion
+from trade.storage.models.security import Security
+from trade.storage.models.weight import Weight
 from trade.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )

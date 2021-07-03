@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import List, Tuple
 
-from trade.storage.models import PortfolioVersion, Security, Weight
+from trade.storage.models.portfolio_version import PortfolioVersion
+from trade.storage.models.security import Security
+from trade.storage.models.weight import Weight
 from trade.storage.repositories.repository_interface import RepositoryInterface
 
 

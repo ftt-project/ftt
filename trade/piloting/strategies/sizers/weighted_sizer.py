@@ -1,7 +1,8 @@
 import backtrader as bt
 
 # https://community.backtrader.com/topic/144/feature-request-allow-passing-of-data-object-to-sizer
-from trade.storage.repositories import SecuritiesRepository, WeightsRepository
+from trade.storage.repositories.securities_repository import SecuritiesRepository
+from trade.storage.repositories.weights_repository import WeightsRepository
 
 
 class WeightedSizer(bt.Sizer):

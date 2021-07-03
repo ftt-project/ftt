@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from trade.storage.models import Base
+from trade.storage.models.base import Base
 
 
 class RepositoryInterface(ABC):
