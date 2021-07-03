@@ -18,8 +18,8 @@ def example():
     1. [x] create portfolio
     2. [x] portfolio version
     3. [x] load securities
-    4. [ ] create weights
-    5. [ ] calculate weights
+    4. [x] create weights
+    5. [x] calculate weights
     6. [ ] show portfolio stats
 
     TODO: load from yaml file
@@ -61,3 +61,6 @@ def example():
 
     result = WeightsCalculationHandler().handle(portfolio=portfolio, persist=True)
     weights = result.value
+
+    result = PortfoliosStatsHandler().handle(portfolio_version=portfolio.versions[0])
+    stats = result.value

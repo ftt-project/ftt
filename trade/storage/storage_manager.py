@@ -1,8 +1,8 @@
-from typing import Optional, List
+from typing import List, Optional
 
 from peewee import SqliteDatabase
 
-from trade.storage.models.base import database_proxy, Base
+from trade.storage.models.base import Base, database_proxy
 
 
 class StorageManager:

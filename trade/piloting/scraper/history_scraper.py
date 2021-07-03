@@ -1,6 +1,6 @@
-from pandas_datareader import data as pdr
-import yfinance as yf
 import pandas as pd
+import yfinance as yf
+from pandas_datareader import data as pdr
 
 
 class HistoryScraper:

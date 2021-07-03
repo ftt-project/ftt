@@ -1,12 +1,11 @@
 from collections import OrderedDict
 from datetime import date
 
-from trade.storage.models import database_connection
-
-from trade.storage.models.security_price import SecurityPrice
-from trade.piloting.pandas_data import PandasData
-
 import pandas as pd
+
+from trade.piloting.pandas_data import PandasData
+from trade.storage.models import database_connection
+from trade.storage.models.security_price import SecurityPrice
 
 
 class HistoryLoader:

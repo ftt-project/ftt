@@ -1,8 +1,8 @@
 import sys
 
-from trade.cli import commands
 from nubia import Nubia, Options
 
+from trade.cli import commands
 from trade.cli.plugin import Plugin
 
 

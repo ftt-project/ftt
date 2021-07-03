@@ -1,6 +1,7 @@
+import logging
+
 from nubia import PluginInterface
 from rich.logging import RichHandler
-import logging
 
 from trade.cli import commands
 from trade.cli.context import Context

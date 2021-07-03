@@ -1,7 +1,6 @@
 import peewee
 
-from trade.storage.models import Base
-from trade.storage.models import Security
+from trade.storage.models import Base, Security
 
 
 class SecurityPrice(Base):

@@ -1,10 +1,10 @@
 from .base import Base
+from .order import Order
 from .portfolio import Portfolio
+from .portfolio_version import PortfolioVersion
 from .security import Security
 from .security_price import SecurityPrice
-from .portfolio_version import PortfolioVersion
 from .weight import Weight
-from .order import Order
 
 __all__ = [
     "Base",

@@ -1,7 +1,7 @@
 from decimal import Decimal
 
-from trade.storage.repositories import WeightsRepository, SecuritiesRepository
 from trade.piloting.strategies.base_strategy import BaseStrategy
+from trade.storage.repositories import SecuritiesRepository, WeightsRepository
 
 
 class ValueProtectingStrategy(BaseStrategy):

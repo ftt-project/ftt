@@ -2,7 +2,7 @@ from datetime import datetime
 
 import peewee
 
-from trade.storage.models import Base, Weight, Security, PortfolioVersion
+from trade.storage.models import Base, PortfolioVersion, Security, Weight
 from trade.storage.repositories.repository_interface import RepositoryInterface
 
 

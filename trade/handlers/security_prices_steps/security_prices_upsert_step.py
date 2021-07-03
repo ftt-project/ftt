@@ -1,7 +1,7 @@
 from typing import Dict
-from result import Ok, OkErr
 
 import pandas as pd
+from result import Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage.mappers.security_price_mapper import SecurityPriceMapper

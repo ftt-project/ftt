@@ -1,5 +1,7 @@
 from typing import Tuple
+
 from result import Ok
+
 from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage.models import PortfolioVersion
 from trade.storage.repositories import SecuritiesRepository, WeightsRepository

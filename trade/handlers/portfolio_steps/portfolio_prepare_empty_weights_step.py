@@ -1,4 +1,5 @@
 from typing import List
+
 from result import Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep

@@ -8,9 +8,9 @@ from trade.logger import logger
 from trade.storage.models import Order
 from trade.storage.repositories import (
     OrdersRepository,
+    PortfoliosRepository,
     PortfolioVersionsRepository,
     SecuritiesRepository,
-    PortfoliosRepository,
     WeightsRepository,
 )
 

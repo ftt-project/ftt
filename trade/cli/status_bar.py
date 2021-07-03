@@ -1,4 +1,4 @@
-from nubia import statusbar, context
+from nubia import context, statusbar
 from pygments.token import Token
 
 

@@ -1,8 +1,8 @@
-from .securities_repository import SecuritiesRepository
-from .portfolios_repository import PortfoliosRepository
-from .weights_repository import WeightsRepository
-from .portfolio_versions_repository import PortfolioVersionsRepository
 from .orders_repository import OrdersRepository
+from .portfolio_versions_repository import PortfolioVersionsRepository
+from .portfolios_repository import PortfoliosRepository
+from .securities_repository import SecuritiesRepository
+from .weights_repository import WeightsRepository
 
 __all__ = [
     "SecuritiesRepository",

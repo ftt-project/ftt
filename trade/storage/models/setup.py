@@ -1,9 +1,9 @@
 import os
+
 import peewee
+import psycopg2  # type: ignore
 from dotenv import dotenv_values
 from playhouse.postgres_ext import PostgresqlExtDatabase  # type: ignore
-
-import psycopg2  # type: ignore
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT  # type: ignore
 
 from trade.logger import logger

@@ -1,6 +1,6 @@
 import peewee
 
-from trade.storage.models import Base, Security, PortfolioVersion
+from trade.storage.models import Base, PortfolioVersion, Security
 
 
 class Order(Base):

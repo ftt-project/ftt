@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import peewee
+
 from trade.storage.models import Base
 
 

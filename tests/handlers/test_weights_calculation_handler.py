@@ -27,4 +27,3 @@ class TestWeightsCalculationHandler:
         assert isinstance(result.value[0], Weight)
         assert result.value[0].portfolio_version == portfolio_version
         assert result.value[0].planned_position == 80
-#

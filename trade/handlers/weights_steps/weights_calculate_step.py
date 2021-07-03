@@ -1,8 +1,5 @@
 from pandas import DataFrame
-from pypfopt import EfficientFrontier
-from pypfopt import risk_models
-from pypfopt import expected_returns
-from pypfopt import DiscreteAllocation
+from pypfopt import DiscreteAllocation, EfficientFrontier, expected_returns, risk_models
 from result import Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep

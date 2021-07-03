@@ -1,5 +1,4 @@
-from nubia import command, argument
-
+from nubia import argument, command
 
 # @command
 # def portfolios() -> None:

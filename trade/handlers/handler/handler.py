@@ -1,6 +1,6 @@
 from abc import ABCMeta
 
-from result import Ok, Err
+from result import Err, Ok
 
 
 class MetaHandler(ABCMeta):

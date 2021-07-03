@@ -1,7 +1,6 @@
 import peewee
 
-from trade.storage.models import Security, PortfolioVersion
-from trade.storage.models import Base
+from trade.storage.models import Base, PortfolioVersion, Security
 
 
 class Weight(Base):

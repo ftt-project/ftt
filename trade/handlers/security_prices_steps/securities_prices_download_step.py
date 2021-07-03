@@ -1,8 +1,9 @@
 from datetime import datetime
-from pandas_datareader import data as pdr
 from typing import List
+
 import yfinance as yf
-from result import OkErr, Ok, Err
+from pandas_datareader import data as pdr
+from result import Err, Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage.models import Security

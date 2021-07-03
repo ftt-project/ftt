@@ -1,7 +1,4 @@
-from nubia import context
-from nubia import exceptions
-from nubia import eventbus
-
+from nubia import context, eventbus, exceptions
 from rich.console import Console
 
 from trade.storage import Storage

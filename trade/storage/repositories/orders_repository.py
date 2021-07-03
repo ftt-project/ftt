@@ -3,7 +3,7 @@ from typing import List
 
 from trade.logger import logger
 from trade.storage.models import Base, Order, Portfolio, PortfolioVersion, Security
-from trade.storage.repositories import SecuritiesRepository, PortfolioVersionsRepository
+from trade.storage.repositories import PortfolioVersionsRepository, SecuritiesRepository
 from trade.storage.repositories.repository_interface import RepositoryInterface
 
 

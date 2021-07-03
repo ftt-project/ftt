@@ -1,4 +1,5 @@
 import backtrader as bt
+
 from trade.piloting.strategies.base_strategy import BaseStrategy
 
 

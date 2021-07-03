@@ -1,4 +1,4 @@
-from nubia import command, argument
+from nubia import argument, command
 
 from trade.storage import Storage
 

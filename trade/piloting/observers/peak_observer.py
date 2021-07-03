@@ -1,10 +1,10 @@
 import backtrader as bt
 
 from trade.storage.repositories import (
-    WeightsRepository,
-    SecuritiesRepository,
-    PortfolioVersionsRepository,
     OrdersRepository,
+    PortfolioVersionsRepository,
+    SecuritiesRepository,
+    WeightsRepository,
 )
 
 

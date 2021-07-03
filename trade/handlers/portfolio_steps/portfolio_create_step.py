@@ -1,4 +1,4 @@
-from result import Ok, Err, OkErr
+from result import Err, Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage.repositories import PortfoliosRepository

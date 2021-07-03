@@ -2,8 +2,9 @@ import math
 import urllib
 from time import sleep
 from typing import List
-from result import Ok, Err, OkErr
+
 import yfinance as yf
+from result import Err, Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep
 
