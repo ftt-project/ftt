@@ -3,7 +3,9 @@ from datetime import datetime
 from nubia import command, context
 from rich.table import Table
 
-from trade.handlers.portfolio_associate_securities_step import PortfolioAssociateWeightsHandler
+from trade.handlers.portfolio_associate_securities_step import (
+    PortfolioAssociateWeightsHandler,
+)
 from trade.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from trade.handlers.securities_loading_handler import SecuritiesLoadingHandler
 from trade.handlers.weights_calculation_handler import WeightsCalculationHandler
@@ -24,10 +26,7 @@ def example():
     """
     ctx = context.get_context()
 
-    result = PortfolioCreationHandler().handle(
-        name='S&P companies',
-        amount=10000
-    )
+    result = PortfolioCreationHandler().handle(name="S&P companies", amount=10000)
     portfolio = result.value
 
     ctx.console.print("Portfolio successfully created", style="bold green")
@@ -39,7 +38,7 @@ def example():
         str(portfolio.id),
         portfolio.name,
         str(portfolio.amount),
-        str(portfolio.created_at)
+        str(portfolio.created_at),
     )
     ctx.console.print(table)
 
@@ -50,20 +49,15 @@ def example():
         securities=["AAPL", "SHOP", "MSFT"],
         period_from=datetime(today.year, 1, 1),
         period_to=datetime(today.year, today.month, today.day),
-        interval='1d'
+        interval="1d",
     )
     securities = result.value
 
     result = PortfolioAssociateWeightsHandler().handle(
-        securities=["AAPL", "SHOP", "MSFT"],
-        portfolio_version=portfolio.versions[0]
+        securities=["AAPL", "SHOP", "MSFT"], portfolio_version=portfolio.versions[0]
     )
 
     # print loaded securities and stats
 
-    result = WeightsCalculationHandler().handle(
-        portfolio=portfolio,
-        persist=True
-    )
+    result = WeightsCalculationHandler().handle(portfolio=portfolio, persist=True)
     weights = result.value
-

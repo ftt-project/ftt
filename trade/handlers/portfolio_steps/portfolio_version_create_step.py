@@ -11,8 +11,7 @@ class PortfolioVersionCreateStep(AbstractStep):
     @classmethod
     def process(cls, version: int, portfolio: Portfolio) -> OkErr:
         result = PortfolioVersionsRepository.create(
-            version=version,
-            portfolio_id=portfolio.id
+            version=version, portfolio_id=portfolio.id
         )
         if result.id is not None:
             return Ok(result)

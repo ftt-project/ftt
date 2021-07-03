@@ -10,7 +10,7 @@ class MetaHandler(ABCMeta):
     def __new__(cls, name, bases, dct):
         x = super().__new__(cls, name, bases, dct)
 
-        if x.__name__ != "Handler" and not hasattr(x, 'handlers'):
+        if x.__name__ != "Handler" and not hasattr(x, "handlers"):
             raise MetaHandler.HandlersAreMissing(f"{x} must define `handlers`")
 
         if x.__name__ != "Handler" and type(x.handlers) != list:

@@ -14,7 +14,6 @@ class Context(context.Context):
 
         self.console = Console()
 
-
     def on_cli(self, cmd, args):
         # dispatch the on connected message
         self.verbose = args.verbose

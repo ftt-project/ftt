@@ -18,7 +18,7 @@ class SecurityPricesRepository(RepositoryInterface):
             security=data["security"],
             datetime=data["datetime"],
             interval=data["interval"],
-            defaults=data
+            defaults=data,
         )
         return result
 
@@ -33,4 +33,3 @@ class SecurityPricesRepository(RepositoryInterface):
     @staticmethod
     def get_by_id(self, id: int) -> SecurityPrice:
         pass
-

@@ -10,9 +10,13 @@ class PortfolioSecuritiesLoadStep(AbstractStep):
     key = "securities"
 
     @classmethod
-    def process(cls, portfolio: Portfolio, version: Optional[PortfolioVersion] = None) -> OkErr:
+    def process(
+        cls, portfolio: Portfolio, version: Optional[PortfolioVersion] = None
+    ) -> OkErr:
         if version is None:
-            version = PortfolioVersionsRepository.get_latest_version(portfolio_id=portfolio.id)
+            version = PortfolioVersionsRepository.get_latest_version(
+                portfolio_id=portfolio.id
+            )
         securities = SecuritiesRepository.find_securities(version)
 
         if len(securities) == 0:

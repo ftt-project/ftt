@@ -9,7 +9,9 @@ class MapSteps:
         class MapStepProcess:
             @classmethod
             def process(cls, **input):
-                input[next_step_key][next_step_param] = input[from_step_key][from_step_param]
+                input[next_step_key][next_step_param] = input[from_step_key][
+                    from_step_param
+                ]
                 return Ok(input)
 
         return MapStepProcess

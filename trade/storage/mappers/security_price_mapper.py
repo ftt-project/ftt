@@ -30,7 +30,7 @@ class SecurityPriceMapper:
                 "high": row["High"],
                 "low": row["Low"],
                 "open": row["Open"],
-                "volume": row["Volume"]
+                "volume": row["Volume"],
             }
             datas.append(cls(data))
         return cls.Collection(datas)

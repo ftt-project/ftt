@@ -6,14 +6,18 @@ import pandas as pd
 from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage.mappers.security_price_mapper import SecurityPriceMapper
 from trade.storage.repositories import SecuritiesRepository
-from trade.storage.repositories.security_prices_repository import SecurityPricesRepository
+from trade.storage.repositories.security_prices_repository import (
+    SecurityPricesRepository,
+)
 
 
 class SecurityPricesUpsertStep(AbstractStep):
     key = "security_prices"
 
     @classmethod
-    def process(cls, security_prices_data: Dict[str, pd.DataFrame], interval: str) -> OkErr:
+    def process(
+        cls, security_prices_data: Dict[str, pd.DataFrame], interval: str
+    ) -> OkErr:
         mapped_data = [
             (symbol, SecurityPriceMapper.from_dataframe(dataframe).to_dicts())
             for symbol, dataframe in security_prices_data.items()

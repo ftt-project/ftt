@@ -2,7 +2,9 @@ from datetime import datetime
 from typing import List
 
 from trade.storage.models import Base, Portfolio, PortfolioVersion, Security, Weight
-from trade.storage.repositories.portfolio_versions_repository import PortfolioVersionsRepository
+from trade.storage.repositories.portfolio_versions_repository import (
+    PortfolioVersionsRepository,
+)
 from trade.storage.repositories.repository_interface import RepositoryInterface
 
 

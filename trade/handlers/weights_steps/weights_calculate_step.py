@@ -25,9 +25,11 @@ class WeightsCalculateStep(AbstractStep):
 
         ef.portfolio_performance(verbose=True)
 
-        da = DiscreteAllocation(cleaned_weights, security_prices.iloc[-1],
-                                total_portfolio_value=portfolio_budget)
+        da = DiscreteAllocation(
+            cleaned_weights,
+            security_prices.iloc[-1],
+            total_portfolio_value=portfolio_budget,
+        )
         alloc, leftover = da.lp_portfolio()
 
         return Ok((alloc, leftover,))
-

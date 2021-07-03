@@ -9,10 +9,7 @@ class PortfolioCreateStep(AbstractStep):
 
     @classmethod
     def process(cls, name: str, amount: float) -> OkErr:
-        result = PortfoliosRepository.create(
-            name=name,
-            amount=amount
-        )
+        result = PortfoliosRepository.create(name=name, amount=amount)
 
         if result.id is not None:
             return Ok(result)

@@ -8,7 +8,7 @@ class MetaStep(ABCMeta):
 
     def __new__(cls, name, bases, dct):
         x = super().__new__(cls, name, bases, dct)
-        if x.__name__ != "AbstractStep" and not hasattr(x, 'key'):
+        if x.__name__ != "AbstractStep" and not hasattr(x, "key"):
             raise MetaStep.KeyIsMissing(f"{x} must define `key`")
         return x
 

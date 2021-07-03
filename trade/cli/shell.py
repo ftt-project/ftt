@@ -13,6 +13,8 @@ class Shell:
             name="fam",
             command_pkgs=[commands],
             plugin=Plugin(),
-            options=Options(persistent_history=False, auto_execute_single_suggestions=False),
+            options=Options(
+                persistent_history=False, auto_execute_single_suggestions=False
+            ),
         )
         sys.exit(shell.run())

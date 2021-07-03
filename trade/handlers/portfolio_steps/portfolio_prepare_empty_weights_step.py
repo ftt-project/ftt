@@ -9,8 +9,5 @@ class PortfolioPrepareEmptyWeightsStep(AbstractStep):
 
     @classmethod
     def process(cls, securities: List[str]) -> OkErr:
-        result = dict(zip(
-            securities,
-            [0 for _ in securities]
-        ))
+        result = dict(zip(securities, [0 for _ in securities]))
         return Ok((result, 0,))
