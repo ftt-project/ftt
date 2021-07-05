@@ -3,7 +3,7 @@ from typing import List
 from result import Ok
 
 from trade.handlers.handler.abstract_step import AbstractStep
-from trade.storage.repositories import SecuritiesRepository
+from trade.storage.repositories.securities_repository import SecuritiesRepository
 
 
 class SecuritiesUpsertStep(AbstractStep):

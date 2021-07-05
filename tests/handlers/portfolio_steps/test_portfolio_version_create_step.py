@@ -1,7 +1,7 @@
 import pytest
 
 from trade.handlers.portfolio_steps.portfolio_version_create_step import PortfolioVersionCreateStep
-from trade.storage.models import PortfolioVersion
+from trade.storage.models.portfolio_version import PortfolioVersion
 
 
 class TestPortfolioVersionCreateStep:

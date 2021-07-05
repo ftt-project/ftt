@@ -3,7 +3,7 @@ import datetime
 import pytest
 
 from trade.handlers.weights_calculation_handler import WeightsCalculationHandler
-from trade.storage.models import Weight
+from trade.storage.models.weight import Weight
 
 
 class TestWeightsCalculationHandler:

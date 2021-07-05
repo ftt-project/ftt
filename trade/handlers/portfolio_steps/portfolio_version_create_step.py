@@ -1,8 +1,8 @@
 from result import Err, Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep
-from trade.storage.models import Portfolio
-from trade.storage.repositories import PortfolioVersionsRepository
+from trade.storage.models.portfolio import Portfolio
+from trade.storage.repositories.portfolio_versions_repository import PortfolioVersionsRepository
 
 
 class PortfolioVersionCreateStep(AbstractStep):

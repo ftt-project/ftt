@@ -6,7 +6,8 @@ from result import Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage import Storage
-from trade.storage.models import Security, SecurityPrice
+from trade.storage.models.security import Security
+from trade.storage.models.security_price import SecurityPrice
 
 
 class SecurityPricesDataframeLoadStep(AbstractStep):

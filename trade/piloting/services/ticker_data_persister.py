@@ -3,7 +3,7 @@ from datetime import datetime
 from trade.logger import logger
 from trade.piloting.scraper import TickersScraper
 from trade.piloting.services.exchange_name_normalizer import ExchangeNameNormalizer
-from trade.storage.models import Security
+from trade.storage.models.security import Security
 
 
 class TickerDataPersister:

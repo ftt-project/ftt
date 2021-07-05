@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 
 from trade.handlers.securities_steps.securities_upsert_step import SecuritiesUpsertStep
-from trade.storage.models import Security
+from trade.storage.models.security import Security
 
 
 class TestSecuritiesUpsertStep:

@@ -1,7 +1,8 @@
 import pytest
 
 from trade.handlers.portfolio_creation_handler import PortfolioCreationHandler
-from trade.storage.models import Portfolio, PortfolioVersion
+from trade.storage.models.portfolio import Portfolio
+from trade.storage.models.portfolio_version import PortfolioVersion
 
 
 class TestPortfolioCreationHandler:

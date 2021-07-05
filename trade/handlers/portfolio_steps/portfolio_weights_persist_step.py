@@ -3,8 +3,9 @@ from typing import Tuple
 from result import Ok
 
 from trade.handlers.handler.abstract_step import AbstractStep
-from trade.storage.models import PortfolioVersion
-from trade.storage.repositories import SecuritiesRepository, WeightsRepository
+from trade.storage.models.portfolio_version import PortfolioVersion
+from trade.storage.repositories.securities_repository import SecuritiesRepository
+from trade.storage.repositories.weights_repository import WeightsRepository
 
 
 class PortfolioWeightsPersistStep(AbstractStep):

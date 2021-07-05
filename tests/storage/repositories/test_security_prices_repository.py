@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from trade.storage.models import SecurityPrice
+from trade.storage.models.security_price import SecurityPrice
 from trade.storage.repositories.security_prices_repository import SecurityPricesRepository
 
 

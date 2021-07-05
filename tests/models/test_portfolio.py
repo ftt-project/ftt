@@ -2,7 +2,8 @@ from datetime import datetime
 import peewee
 import pytest
 
-from trade.storage.models import Portfolio, PortfolioVersion
+from trade.storage.models.portfolio import Portfolio
+from trade.storage.models.portfolio_version import PortfolioVersion
 
 
 class TestPortfolio:

@@ -1,7 +1,6 @@
 import pytest
-from peewee import DatabaseProxy
 from trade.storage.storage_manager import StorageManager
-from trade.storage.models import Security
+from trade.storage.models.security import Security
 
 
 class TestStorageManager:

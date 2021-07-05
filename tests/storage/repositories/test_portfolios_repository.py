@@ -1,4 +1,4 @@
-from trade.storage.models import Portfolio, PortfolioVersion
+from trade.storage.models.portfolio import Portfolio
 from trade.storage.repositories.portfolios_repository import PortfoliosRepository
 
 from pytest import fixture

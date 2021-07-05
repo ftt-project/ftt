@@ -1,7 +1,7 @@
 from result import Err, Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep
-from trade.storage.repositories import PortfoliosRepository
+from trade.storage.repositories.portfolios_repository import PortfoliosRepository
 
 
 class PortfolioCreateStep(AbstractStep):

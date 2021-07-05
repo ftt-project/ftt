@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 
 from trade.handlers.securities_loading_handler import SecuritiesLoadingHandler
-from trade.storage.models import Security
+from trade.storage.models.security import Security
 
 
 class TestSecuritiesLoadingHandler:

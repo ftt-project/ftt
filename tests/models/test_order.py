@@ -1,4 +1,6 @@
-from trade.storage.models import Security, PortfolioVersion, Order
+from trade.storage.models.order import Order
+from trade.storage.models.portfolio_version import PortfolioVersion
+from trade.storage.models.security import Security
 
 
 class TestOrder:

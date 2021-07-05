@@ -1,4 +1,6 @@
-from trade.storage.models import Weight, PortfolioVersion, Security
+from trade.storage.models.portfolio_version import PortfolioVersion
+from trade.storage.models.security import Security
+from trade.storage.models.weight import Weight
 
 
 class TestWeight:

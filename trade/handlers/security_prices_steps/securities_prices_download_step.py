@@ -6,7 +6,7 @@ from pandas_datareader import data as pdr
 from result import Err, Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep
-from trade.storage.models import Security
+from trade.storage.models.security import Security
 
 
 class SecurityPricesDownloadStep(AbstractStep):

@@ -1,5 +1,3 @@
-import urllib
-
 import pytest
 from result import Ok, Err
 

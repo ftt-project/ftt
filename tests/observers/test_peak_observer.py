@@ -1,11 +1,11 @@
 from datetime import datetime
 from decimal import Decimal
 
-from trade.storage.models import Order
+from trade.storage.models.order import Order
 from trade.piloting.observers.peak_observer import PeakObserver
 import pytest
 from tests import testcommon
-from trade.storage.repositories import WeightsRepository
+from trade.storage.repositories.weights_repository import WeightsRepository
 from trade.piloting.strategies import BollingerStrategy
 
 

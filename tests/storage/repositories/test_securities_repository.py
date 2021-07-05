@@ -3,8 +3,8 @@ from datetime import datetime
 import pandas as pd
 from pytest import fixture
 
-from trade.storage.models import Security
-from trade.storage.repositories import SecuritiesRepository
+from trade.storage.models.security import Security
+from trade.storage.repositories.securities_repository import SecuritiesRepository
 
 
 class TestSecuritiesRepository:
