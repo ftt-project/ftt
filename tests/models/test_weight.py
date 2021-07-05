@@ -1,4 +1,6 @@
-from trade.models import Weight, PortfolioVersion, Ticker
+from trade.storage.models.portfolio_version import PortfolioVersion
+from trade.storage.models.security import Security
+from trade.storage.models.weight import Weight
 
 
 class TestWeight:
@@ -7,4 +9,4 @@ class TestWeight:
 
     def test_relations(self):
         assert Weight.portfolio_version.rel_model == PortfolioVersion
-        assert Weight.ticker.rel_model == Ticker
+        assert Weight.security.rel_model == Security

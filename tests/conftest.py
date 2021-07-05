@@ -3,13 +3,19 @@ from datetime import datetime
 import pytest
 import backtrader as bt
 
-from trade.models import Weight, Ticker, Portfolio, PortfolioVersion, Order, database_connection
-from trade.strategies.sizers import WeightedSizer
+from trade.piloting.strategies.sizers import WeightedSizer
+from trade.storage import Storage
+from trade.storage.models.order import Order
+from trade.storage.models.portfolio import Portfolio
+from trade.storage.models.portfolio_version import PortfolioVersion
+from trade.storage.models.security import Security
+from trade.storage.models.security_price import SecurityPrice
+from trade.storage.models.weight import Weight
 
 
 @pytest.fixture(autouse=True, scope="function")
 def transactional():
-    connection = database_connection()
+    connection = Storage.get_database()
     with connection.atomic() as transaction:
         try:
             yield
@@ -18,7 +24,7 @@ def transactional():
 
 
 @pytest.fixture
-def cerebro(portfolio_version, ticker, weight):
+def cerebro(portfolio_version, security, weight):
     def _cerebro(strategies, data):
         cerebro = bt.Cerebro(live=True, cheat_on_open=True)
         for strategy in strategies:
@@ -29,7 +35,7 @@ def cerebro(portfolio_version, ticker, weight):
                 cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
         cerebro.addsizer(WeightedSizer)
 
-        cerebro.adddata(data, name=ticker.symbol)
+        cerebro.adddata(data, name=security.symbol)
 
         cerebro.broker.setcash(30000.0)
         return cerebro
@@ -38,23 +44,49 @@ def cerebro(portfolio_version, ticker, weight):
 
 
 @pytest.fixture
-def ticker():
-    ticker = Ticker.create(
+def security():
+    security = Security.create(
         symbol="AA.XX",
         exchange="SYD",
         company_name="Company AAXX",
         exchange_name="SYD",
-        type="Stock",
+        quote_type="Stock",
         type_display="Stock",
         industry="Technologies",
+        sector="Technology",
+        country="US",
+        short_name="Short name",
+        long_name="Long name",
         currency="USD",
         updated_at=datetime.now(),
         created_at=datetime.now()
     )
     try:
-        yield ticker
+        yield security
     finally:
-        ticker.delete_instance()
+        security.delete_instance()
+
+
+@pytest.fixture
+def security_price(security):
+    price = SecurityPrice.create(
+        security=security,
+        datetime=datetime.today(),
+        open=100,
+        high=110,
+        low=90,
+        close=101,
+        volume=1000000,
+        interval='5m',
+        change=1,
+        percent_change=1,
+        updated_at=datetime.now(),
+        created_at=datetime.now()
+    )
+    try:
+        yield price
+    finally:
+        price.delete_instance()
 
 
 @pytest.fixture
@@ -86,10 +118,10 @@ def portfolio_version(portfolio):
 
 
 @pytest.fixture
-def weight(portfolio_version, ticker):
+def weight(portfolio_version, security):
     weight = Weight.create(
         portfolio_version=portfolio_version,
-        ticker=ticker,
+        security=security,
         planned_position=10,
         position=2,
         updated_at=datetime.now(),
@@ -100,11 +132,10 @@ def weight(portfolio_version, ticker):
     finally:
         weight.delete_instance()
 
-
 @pytest.fixture
-def order(ticker, portfolio_version):
+def order(security, portfolio_version):
     order = Order.create(
-        ticker=ticker,
+        security=security,
         portfolio_version=portfolio_version,
         status="Created",
         type="buy",

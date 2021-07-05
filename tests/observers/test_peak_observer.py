@@ -1,13 +1,12 @@
 from datetime import datetime
 from decimal import Decimal
 
-from trade.models import Order
-from trade.observers.peak_observer import PeakObserver
+from trade.storage.models.order import Order
+from trade.piloting.observers.peak_observer import PeakObserver
 import pytest
 from tests import testcommon
-from trade.repositories import WeightsRepository
-from trade.strategies import BollingerStrategy
-from trade.strategies.dummy_buy_once_strategy import DummyBuyOnceStrategy
+from trade.storage.repositories.weights_repository import WeightsRepository
+from trade.piloting.strategies import BollingerStrategy
 
 
 class TestPeakObserver:
@@ -20,5 +19,5 @@ class TestPeakObserver:
         c = cerebro([BollingerStrategy], data)
         c.addobserver(subject)
         result = c.run()
-        assert Decimal("23.39") == WeightsRepository.get_by_id(weight.id).peaked_value
+        assert Decimal("23.389999") == WeightsRepository.get_by_id(weight.id).peaked_value
         Order.delete().execute()

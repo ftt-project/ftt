@@ -17,7 +17,7 @@
 * CLI interface
 
 ## Collaborators
-- [Artem M](https://github.com/ignar>)
+- [Artem M](https://github.com/ignar)
 - [Ihor M](https://github.com/IhorMok)
 
 
@@ -25,7 +25,7 @@
 
 ```
 pip install < NAME > 
-< NAME > init
+< NAME > bootstrap production
 < NAME > example
 ```
 

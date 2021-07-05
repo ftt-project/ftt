@@ -2,7 +2,7 @@ import pytest
 from tests import testcommon
 import backtrader as bt
 
-from trade.strategies.sizers import WeightedSizer
+from trade.piloting.strategies.sizers import WeightedSizer
 
 
 class TestWeightedPortfolioSizer:
@@ -25,11 +25,11 @@ class TestWeightedPortfolioSizer:
         return testcommon.getdata(did)
 
     @pytest.fixture
-    def cerebro(self, strategy, data, portfolio_version, ticker, weight):
+    def cerebro(self, strategy, data, portfolio_version, security, weight):
         cerebro = bt.Cerebro()
         cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
         cerebro.addsizer(WeightedSizer)
-        cerebro.adddata(data, name=ticker.symbol)
+        cerebro.adddata(data, name=security.symbol)
         return cerebro
 
     def test_properly_utilized_by_cerebro(self, cerebro):
