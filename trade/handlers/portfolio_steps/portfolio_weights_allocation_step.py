@@ -9,7 +9,8 @@ class PortfolioWeightsAllocationStep(AbstractStep):
 
     @classmethod
     def process(cls, portfolio_version: PortfolioVersion) -> OkErr:
-        allocations = {weight.security.symbol: weight.planned_position for weight in portfolio_version.weights}
-        return Ok({
-            "planned_weights": allocations
-        })
+        allocations = {
+            weight.security.symbol: weight.planned_position
+            for weight in portfolio_version.weights
+        }
+        return Ok({"planned_weights": allocations})

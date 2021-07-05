@@ -7,7 +7,9 @@ from backtrader.utils import num2date
 from trade.logger import logger
 from trade.storage.models.order import Order
 from trade.storage.repositories.orders_repository import OrdersRepository
-from trade.storage.repositories.portfolio_versions_repository import PortfolioVersionsRepository
+from trade.storage.repositories.portfolio_versions_repository import (
+    PortfolioVersionsRepository,
+)
 from trade.storage.repositories.portfolios_repository import PortfoliosRepository
 from trade.storage.repositories.securities_repository import SecuritiesRepository
 from trade.storage.repositories.weights_repository import WeightsRepository

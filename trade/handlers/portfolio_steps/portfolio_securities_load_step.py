@@ -5,7 +5,9 @@ from result import Err, Ok, OkErr
 from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage.models.portfolio import Portfolio
 from trade.storage.models.portfolio_version import PortfolioVersion
-from trade.storage.repositories.portfolio_versions_repository import PortfolioVersionsRepository
+from trade.storage.repositories.portfolio_versions_repository import (
+    PortfolioVersionsRepository,
+)
 from trade.storage.repositories.securities_repository import SecuritiesRepository
 
 

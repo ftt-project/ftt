@@ -1,6 +1,8 @@
 from trade.handlers.handler.handler import Handler
 from trade.handlers.handler.retrun_result import ReturnResult
-from trade.handlers.portfolio_steps.portfolio_weights_allocation_step import PortfolioWeightsAllocationStep
+from trade.handlers.portfolio_steps.portfolio_weights_allocation_step import (
+    PortfolioWeightsAllocationStep,
+)
 
 
 class PortfoliosStatsHandler(Handler):
@@ -10,5 +12,5 @@ class PortfoliosStatsHandler(Handler):
 
     handlers = [
         (PortfolioWeightsAllocationStep, "portfolio_version"),
-        ReturnResult("stats")
+        ReturnResult("stats"),
     ]

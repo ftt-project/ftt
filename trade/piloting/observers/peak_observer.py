@@ -1,7 +1,9 @@
 import backtrader as bt
 
 from trade.storage.repositories.orders_repository import OrdersRepository
-from trade.storage.repositories.portfolio_versions_repository import PortfolioVersionsRepository
+from trade.storage.repositories.portfolio_versions_repository import (
+    PortfolioVersionsRepository,
+)
 from trade.storage.repositories.securities_repository import SecuritiesRepository
 from trade.storage.repositories.weights_repository import WeightsRepository
 
