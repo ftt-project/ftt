@@ -10,6 +10,7 @@ from trade.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from trade.handlers.portfolio_stats_handler import PortfoliosStatsHandler
 from trade.handlers.securities_loading_handler import SecuritiesLoadingHandler
 from trade.handlers.weights_calculation_handler import WeightsCalculationHandler
+from trade.storage import Storage
 
 
 @command
@@ -21,11 +22,13 @@ def example():
     3. [x] load securities
     4. [x] create weights
     5. [x] calculate weights
-    6. [ ] show portfolio stats
+    6. [x] show portfolio stats
 
     TODO: load from yaml file
     """
     ctx = context.get_context()
+
+    Storage.initialize_database(application_name="ftt", environment="dev")
 
     result = PortfolioCreationHandler().handle(name="S&P companies", amount=10000)
     portfolio = result.value
@@ -58,9 +61,15 @@ def example():
         securities=["AAPL", "SHOP", "MSFT"], portfolio_version=portfolio.versions[0]
     )
 
-    # print loaded securities and stats
-
-    result = WeightsCalculationHandler().handle(portfolio=portfolio, persist=True)
+    result = WeightsCalculationHandler().handle(
+        portfolio=portfolio,
+        start_period=datetime(today.year, 1, 1),
+        end_period=datetime(today.year, today.month, today.day),
+        interval="1d",
+        portfolio_budget=portfolio.amount,
+        portfolio_version=portfolio.versions[0],
+        persist=True
+    )
     _ = result.value
 
     result = PortfoliosStatsHandler().handle(portfolio_version=portfolio.versions[0])

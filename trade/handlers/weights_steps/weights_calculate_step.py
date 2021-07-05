@@ -10,7 +10,7 @@ class WeightsCalculateStep(AbstractStep):
 
     @classmethod
     def process(cls, security_prices: DataFrame, portfolio_budget: float) -> OkErr:
-        # returns = security_prices.pct_change().dropna()
+        _ = security_prices.pct_change().dropna()
 
         mu = expected_returns.return_model(security_prices, method="capm_return")
         S = risk_models.risk_matrix(security_prices, method="oracle_approximating")
