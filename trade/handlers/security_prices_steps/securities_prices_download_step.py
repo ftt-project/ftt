@@ -16,15 +16,15 @@ class SecurityPricesDownloadStep(AbstractStep):
     def process(
         cls,
         securities: List[Security],
-        period_from: datetime,
-        period_to: datetime,
+        start_period: datetime,
+        end_period: datetime,
         interval: str,
     ) -> OkErr:
         yf.pdr_override()
         symbols = [security.symbol for security in securities]
         try:
             dataframes = pdr.get_data_yahoo(
-                symbols, start=period_from, end=period_to, interval=interval,
+                symbols, start=start_period, end=end_period, interval=interval,
             )
             if len(securities) == 1:
                 data = {securities[0].symbol: dataframes}

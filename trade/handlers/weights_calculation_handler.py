@@ -22,7 +22,12 @@ class WeightsCalculationHandler(Handler):
             "end_period",
             "interval",
         ),
-        (WeightsCalculateStep, SecurityPricesDataframeLoadStep.key, "portfolio_budget"),
-        (PortfolioWeightsPersistStep, WeightsCalculateStep.key, "portfolio", "persist"),
+        (WeightsCalculateStep, SecurityPricesDataframeLoadStep.key, "portfolio"),
+        (
+            PortfolioWeightsPersistStep,
+            WeightsCalculateStep.key,
+            "portfolio_version",
+            "persist",
+        ),
         ReturnResult(PortfolioWeightsPersistStep.key),
     ]

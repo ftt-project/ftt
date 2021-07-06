@@ -16,8 +16,8 @@ class TestSecurityPricesDownloadStep:
         mock.return_value = 'pandas result'
         result = subject.process(
             securities=[security],
-            period_from=datetime.today(),
-            period_to=datetime.today(),
+            start_period=datetime.today(),
+            end_period=datetime.today(),
             interval='1d'
         )
 

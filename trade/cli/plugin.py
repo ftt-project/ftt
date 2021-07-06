@@ -5,6 +5,7 @@ from rich.logging import RichHandler
 
 from trade.cli import commands
 from trade.cli.context import Context
+from trade.cli.prompt import Prompt
 from trade.cli.status_bar import StatusBar
 
 
@@ -19,6 +20,7 @@ class Plugin(PluginInterface):
         shell_formatter = logging.Formatter(fmt_shell)
         shell_handler.setFormatter(shell_formatter)
         return None
+        # TODO use canonical logger
         return shell_handler
 
     def get_status_bar(self, context):
@@ -26,3 +28,6 @@ class Plugin(PluginInterface):
 
     def get_commands(self):
         return commands.__all__
+
+    def get_prompt_tokens(self, context):
+        return Prompt()

@@ -47,8 +47,8 @@ class TestSecuritiesLoadingHandler:
     def test_persists_loaded_securities(self, subject):
         result = subject().handle(
             securities=["AAPL"],
-            period_from=datetime.date.today() - datetime.timedelta(days=2),
-            period_to=datetime.date.today(),
+            start_period=datetime.date.today() - datetime.timedelta(days=2),
+            end_period=datetime.date.today(),
             interval="1d"
         )
 
@@ -61,8 +61,8 @@ class TestSecuritiesLoadingHandler:
     def test_persist_historical_prices(self, subject):
         result = subject().handle(
             securities=["AAAA"],
-            period_from=datetime.date.today() - datetime.timedelta(days=2),
-            period_to=datetime.date.today(),
+            start_period=datetime.date.today() - datetime.timedelta(days=2),
+            end_period=datetime.date.today(),
             interval="1d"
         )
 

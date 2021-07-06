@@ -93,7 +93,7 @@ def security_price(security):
 def portfolio():
     portfolio = Portfolio.create(
         name="Portfolio TEST 1",
-        size=30000.0,
+        amount=30000.0,
         updated_at=datetime.now(),
         created_at=datetime.now()
     )

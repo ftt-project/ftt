@@ -10,7 +10,7 @@ class Shell:
     @staticmethod
     def initialize_and_run():
         shell = Nubia(
-            name="fam",
+            name="ftt",
             command_pkgs=[commands],
             plugin=Plugin(),
             options=Options(
