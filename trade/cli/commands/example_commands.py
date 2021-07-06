@@ -59,7 +59,9 @@ def example():
     )
     _ = result.value
 
-    ctx.console.print("Portfolio successfully associated with securities", style="bold green")
+    ctx.console.print(
+        "Portfolio successfully associated with securities", style="bold green"
+    )
     _ = PortfolioAssociateSecuritiesHandler().handle(
         securities=["AAPL", "SHOP", "MSFT"], portfolio_version=portfolio.versions[0]
     )
@@ -71,7 +73,7 @@ def example():
         start_period=datetime(today.year, 1, 1),
         end_period=datetime(today.year, today.month, today.day),
         interval="1d",
-        persist=True
+        persist=True,
     )
     _ = result.value
 
@@ -82,8 +84,7 @@ def example():
         table.add_column(name)
     for symbol, qty in portfolio_stats["planned_weights"].items():
         table.add_row(
-            str(symbol),
-            str(qty),
+            str(symbol), str(qty),
         )
     ctx.console.print(table)
     ctx.console.print("Weights are calculated and saved", style="bold green")

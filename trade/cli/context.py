@@ -1,8 +1,6 @@
 from nubia import context, eventbus, exceptions
 from rich.console import Console
 
-from trade.storage import Storage
-
 
 class Context(context.Context):
     def on_connected(self, *args, **kwargs):

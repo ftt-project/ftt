@@ -28,7 +28,7 @@ class WeightsCalculateStep(AbstractStep):
         da = DiscreteAllocation(
             cleaned_weights,
             security_prices.iloc[-1],
-            total_portfolio_value=portfolio.amount
+            total_portfolio_value=portfolio.amount,
         )
         alloc, leftover = da.lp_portfolio()
 
