@@ -21,8 +21,6 @@ class StatusBar(statusbar.StatusBar):
         else:
             is_verbose = (Token.Info, "OFF")
         return [
-            (Token.Toolbar, "Hello!"),
-            spacer,
             (Token.Toolbar, "Verbose "),
             spacer,
             is_verbose,

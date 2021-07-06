@@ -22,8 +22,8 @@ class SecuritiesLoadingHandler(Handler):
         (
             SecurityPricesDownloadStep,
             SecuritiesUpsertStep.key,
-            "period_from",
-            "period_to",
+            "start_period",
+            "end_period",
             "interval",
         ),
         (SecurityPricesUpsertStep, SecurityPricesDownloadStep.key, "interval"),

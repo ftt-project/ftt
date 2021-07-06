@@ -48,29 +48,42 @@ def example():
 
     ctx.console.print("Loading securities information", style="bold green")
 
+    for symbol in ["AAPL", "SHOP", "MSFT"]:
+        ctx.console.print(f"- {symbol}")
     today = datetime.today()
     result = SecuritiesLoadingHandler().handle(
         securities=["AAPL", "SHOP", "MSFT"],
-        period_from=datetime(today.year, 1, 1),
-        period_to=datetime(today.year, today.month, today.day),
+        start_period=datetime(today.year, 1, 1),
+        end_period=datetime(today.year, today.month, today.day),
         interval="1d",
     )
     _ = result.value
 
+    ctx.console.print("Portfolio successfully associated with securities", style="bold green")
     _ = PortfolioAssociateSecuritiesHandler().handle(
         securities=["AAPL", "SHOP", "MSFT"], portfolio_version=portfolio.versions[0]
     )
 
+    ctx.console.print("Calculating weights", style="bold green")
     result = WeightsCalculationHandler().handle(
         portfolio=portfolio,
+        portfolio_version=portfolio.versions[0],
         start_period=datetime(today.year, 1, 1),
         end_period=datetime(today.year, today.month, today.day),
         interval="1d",
-        portfolio_budget=portfolio.amount,
-        portfolio_version=portfolio.versions[0],
         persist=True
     )
     _ = result.value
 
     result = PortfoliosStatsHandler().handle(portfolio_version=portfolio.versions[0])
-    _ = result.value
+    portfolio_stats = result.value
+    table = Table(show_header=True)
+    for name in ["Symbol", "Quantity"]:
+        table.add_column(name)
+    for symbol, qty in portfolio_stats["planned_weights"].items():
+        table.add_row(
+            str(symbol),
+            str(qty),
+        )
+    ctx.console.print(table)
+    ctx.console.print("Weights are calculated and saved", style="bold green")
