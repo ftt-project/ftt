@@ -135,3 +135,5 @@ progress.pickle
 
 data/db/
 *.db
+
+pyvenv.cfg
