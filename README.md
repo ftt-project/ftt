@@ -1,8 +1,10 @@
-# < NAME >
+# FTT
+
+## Financial Trading Tools
 
 > Finance is hard. Programming is hard.
 
-< NAME > is a financial asset management application that helps to make right decision on time. 
+FTT is a financial asset management application that helps to make right decision on time. 
 
 ## Main features
 
@@ -24,9 +26,9 @@
 ## Quickstart
 
 ```
-pip install < NAME > 
-< NAME > bootstrap production
-< NAME > example
+pip install ftt
+ftt bootstrap
+ftt example
 ```
 
 
@@ -47,12 +49,12 @@ interval: 5m
 ```
 
 ```
-< NAME > > portfolio import sp_companies.yml
+fft> portfolio import sp_companies.yml
 ```
 
 *Create weights for portfolio*
 
 ```
-< NAME > > portfolio build <ID>
+ftt> portfolio build <ID>
 ```
 
