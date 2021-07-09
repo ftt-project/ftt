@@ -3,7 +3,7 @@ from datetime import datetime
 from nubia import command, context
 from rich.table import Table
 
-from trade.handlers.portfolio_associate_securities_step import (
+from trade.handlers.portfolio_associate_securities_hanlder import (
     PortfolioAssociateSecuritiesHandler,
 )
 from trade.handlers.portfolio_creation_handler import PortfolioCreationHandler
