@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from trade.handlers.weights_steps.weights_calculate_step import WeightsCalculateStep
+from trade.handlers.weights_steps.weights_calculate_step import WeightsCalculateStep, WeightsCalculateStepResult
 
 
 class TestWeightsCalculateStep:
@@ -23,6 +23,6 @@ class TestWeightsCalculateStep:
         result = subject.process(dataframes, portfolio)
 
         assert result.is_ok()
-        assert type(result.value) == tuple
-        assert result.value[0]["AA.YY"] == 240
-        assert result.value[1] == 76.79999999999927
+        assert type(result.value) == WeightsCalculateStepResult
+        assert result.value.allocation["AA.YY"] == 240
+        assert result.value.leftover == 76.79999999999927

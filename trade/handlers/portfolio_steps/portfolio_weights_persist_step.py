@@ -1,8 +1,9 @@
-from typing import Tuple
-
 from result import Ok
 
 from trade.handlers.handler.abstract_step import AbstractStep
+from trade.handlers.weights_steps.weights_calculate_step import (
+    WeightsCalculateStepResult,
+)
 from trade.storage.models.portfolio_version import PortfolioVersion
 from trade.storage.repositories.securities_repository import SecuritiesRepository
 from trade.storage.repositories.weights_repository import WeightsRepository
@@ -15,15 +16,14 @@ class PortfolioWeightsPersistStep(AbstractStep):
     def process(
         cls,
         portfolio_version: PortfolioVersion,
-        weights: Tuple[dict, float],
+        weights: WeightsCalculateStepResult,
         persist: bool,
     ) -> Ok:
         result = []
         if not persist:
             return Ok(result)
 
-        quantities, _ = weights
-        for symbol, qty in quantities.items():
+        for symbol, qty in weights.allocation.items():
             security = SecuritiesRepository.get_by_name(symbol)
             weight = WeightsRepository.upsert(
                 {
@@ -34,5 +34,10 @@ class PortfolioWeightsPersistStep(AbstractStep):
                 }
             )
             result.append(weight)
+
+        portfolio_version.expected_annual_return = weights.expected_annual_return
+        portfolio_version.annual_volatility = weights.annual_volatility
+        portfolio_version.sharpe_ratio = weights.sharpe_ratio
+        portfolio_version.save()
 
         return Ok(result)

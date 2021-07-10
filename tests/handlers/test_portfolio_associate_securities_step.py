@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.portfolio_associate_securities_step import PortfolioAssociateSecuritiesHandler
+from trade.handlers.portfolio_associate_securities_hanlder import PortfolioAssociateSecuritiesHandler
 
 
 class TestPortfolioAssociateSecuritiesHandler:

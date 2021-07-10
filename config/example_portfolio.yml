@@ -1,0 +1,10 @@
+name: S&P companies
+budget: 10000
+symbols:
+  - AAPL
+  - MSFT
+  - SHOP
+  - X
+period_start: 2021-03-01
+period_end: 2021-06-01
+interval: 1wk

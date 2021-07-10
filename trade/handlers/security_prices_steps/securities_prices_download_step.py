@@ -25,7 +25,7 @@ class SecurityPricesDownloadStep(AbstractStep):
         try:
             dataframes = pdr.get_data_yahoo(
                 symbols, start=start_period, end=end_period, interval=interval,
-            )
+            ).dropna()
             if len(securities) == 1:
                 data = {securities[0].symbol: dataframes}
             else:
