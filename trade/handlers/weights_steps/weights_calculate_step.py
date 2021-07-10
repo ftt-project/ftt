@@ -1,9 +1,20 @@
+from dataclasses import dataclass
+
 from pandas import DataFrame
 from pypfopt import DiscreteAllocation, EfficientFrontier, expected_returns, risk_models
 from result import Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage.models.portfolio import Portfolio
+
+
+@dataclass(frozen=True)
+class WeightsCalculateStepResult:
+    allocation: dict[str, int]
+    leftover: float
+    expected_annual_return: float
+    annual_volatility: float
+    sharpe_ratio: float
 
 
 class WeightsCalculateStep(AbstractStep):
@@ -21,9 +32,7 @@ class WeightsCalculateStep(AbstractStep):
         _ = ef.max_sharpe()
         cleaned_weights = ef.clean_weights()
 
-        # TODO: save performance into portfolio version
-        # mu, sigma, sharpe = ef.portfolio_performance()
-        _ = ef.portfolio_performance()
+        mu, sigma, sharpe = ef.portfolio_performance()
 
         da = DiscreteAllocation(
             cleaned_weights,
@@ -32,4 +41,6 @@ class WeightsCalculateStep(AbstractStep):
         )
         alloc, leftover = da.lp_portfolio()
 
-        return Ok((alloc, leftover,))
+        result = WeightsCalculateStepResult(alloc, leftover, mu, sigma, sharpe)
+
+        return Ok(result)
