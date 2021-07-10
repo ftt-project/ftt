@@ -1,7 +1,9 @@
 from result import Ok
 
 from trade.handlers.handler.abstract_step import AbstractStep
-from trade.handlers.weights_steps.weights_calculate_step import WeightsCalculateStepResult
+from trade.handlers.weights_steps.weights_calculate_step import (
+    WeightsCalculateStepResult,
+)
 from trade.storage.models.portfolio_version import PortfolioVersion
 from trade.storage.repositories.securities_repository import SecuritiesRepository
 from trade.storage.repositories.weights_repository import WeightsRepository
