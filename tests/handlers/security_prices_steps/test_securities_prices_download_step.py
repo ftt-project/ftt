@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pytest
+from pandas import DataFrame
 
 from trade.handlers.security_prices_steps.securities_prices_download_step import SecurityPricesDownloadStep
 
@@ -13,7 +14,7 @@ class TestSecurityPricesDownloadStep:
     def test_load_securities_historical_prices(self, subject, mocker, security):
         mocker.patch("yfinance.pdr_override")
         mock = mocker.patch('pandas_datareader.data.get_data_yahoo')
-        mock.return_value = 'pandas result'
+        mock.return_value = DataFrame()
         result = subject.process(
             securities=[security],
             start_period=datetime.today(),
@@ -23,4 +24,4 @@ class TestSecurityPricesDownloadStep:
 
         mock.assert_called_once()
         assert result.is_ok()
-        assert result.value == {security.symbol: "pandas result"}
+        assert result.value[security.symbol] is not None

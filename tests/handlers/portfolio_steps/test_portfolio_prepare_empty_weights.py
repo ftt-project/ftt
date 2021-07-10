@@ -1,6 +1,7 @@
 import pytest
 
 from trade.handlers.portfolio_steps.portfolio_prepare_empty_weights_step import PortfolioPrepareEmptyWeightsStep
+from trade.handlers.weights_steps.weights_calculate_step import WeightsCalculateStepResult
 
 
 class TestPortfolioPrepareEmptyWeightsStep:
@@ -14,7 +15,7 @@ class TestPortfolioPrepareEmptyWeightsStep:
         )
 
         assert result.is_ok()
-        assert type(result.value) == tuple
-        assert result.value[0]["AAPL"] == 0
-        assert result.value[0]["MSFT"] == 0
-        assert result.value[1] == 0
+        assert type(result.value) == WeightsCalculateStepResult
+        assert result.value.allocation["AAPL"] == 0
+        assert result.value.allocation["MSFT"] == 0
+        assert result.value.leftover == 0
