@@ -18,15 +18,7 @@ from trade.storage import Storage
 @command
 def example():
     """
-    Create example portfolio with weights
-    1. [x] create portfolio
-    2. [x] portfolio version
-    3. [x] load securities
-    4. [x] create weights
-    5. [x] calculate weights
-    6. [x] show portfolio stats
-
-    TODO: load from yaml file
+    Create example portfolio with weights from example config
     """
     ctx = context.get_context()
 
