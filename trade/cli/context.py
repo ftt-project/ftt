@@ -1,11 +1,14 @@
 from nubia import context, eventbus, exceptions
 from rich.console import Console
 
+from trade.storage import Storage
+
 
 class Context(context.Context):
     def on_connected(self, *args, **kwargs):
-        # environment = "development"
-        # Storage.initialize_database(application_name="fams", environment=environment)
+        # TODO take environment from outside
+        environment = "dev"
+        Storage.initialize_database(application_name="ftt", environment=environment)
 
         self.console = Console()
 
