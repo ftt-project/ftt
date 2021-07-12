@@ -1,5 +1,4 @@
 import pytest
-from rich.table import Table
 
 from trade.cli.renderers import PortfoliosList
 

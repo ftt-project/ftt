@@ -1,7 +1,12 @@
 from dataclasses import dataclass
 
 from pandas import DataFrame
-from pypfopt import DiscreteAllocation, EfficientFrontier, expected_returns, risk_models, CovarianceShrinkage
+from pypfopt import (
+    DiscreteAllocation,
+    EfficientFrontier,
+    expected_returns,
+    risk_models,
+)
 from result import Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep
