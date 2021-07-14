@@ -4,7 +4,4 @@ from trade.handlers.portfolio_steps.portfolios_list_step import PortfoliosListSt
 
 
 class PortfoliosListHandler(Handler):
-    handlers = [
-        (PortfoliosListStep, ),
-        ReturnResult(PortfoliosListStep.key)
-    ]
+    handlers = [(PortfoliosListStep,), ReturnResult(PortfoliosListStep.key)]
