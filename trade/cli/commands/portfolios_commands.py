@@ -1,31 +1,27 @@
-from nubia import argument, command
+from nubia import argument, command, context
 
-# @command
-# def portfolios() -> None:
-#     """
-#     List existing portfolios
-#     """
-#     portfolios = PortfoliosRepository.list()
-#     console = Console()
-#     table = Table(show_header=True, header_style="bold magenta")
-#     table.add_column("ID")
-#     table.add_column("Name")
-#     table.add_column("Amount")
-#     for portfolio in portfolios:
-#         table.add_row(f"{portfolio.id}", portfolio.name, f"{portfolio.amount}")
-#
-#     console.print(table)
+from trade.cli import renderers
+from trade.handlers.portfolios_list_handler import PortfoliosListHandler
 
 
-@command
-class Portfolio:
+@command("portfolios")
+class PortfoliosCommands:
     """
     Portfolio managing
     """
 
+    @command
+    def list(self) -> None:
+        """
+        List existing portfolios
+        """
+        ctx = context.get_context()
+        result = PortfoliosListHandler().handle()
+        renderers.PortfoliosList(ctx, result.value).render()
+
     @command("import")
     @argument("file", description="YAML file to import", positional=True)
-    def import_from_file(self, file: str):
+    def import_from_file(self, file: str) -> None:
         """
         Import from yml file
         """
@@ -35,7 +31,7 @@ class Portfolio:
         console.log("Successfully imported")
 
     @command
-    def versions(self):
+    def versions(self) -> None:
         """
         Print available versions of portfolio
         """
