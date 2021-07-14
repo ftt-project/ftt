@@ -1,7 +1,7 @@
 from nubia import argument, command, context
 
 from trade.cli import renderers
-from trade.storage.repositories.portfolios_repository import PortfoliosRepository
+from trade.handlers.portfolios_list_handler import PortfoliosListHandler
 
 
 @command("portfolios")
@@ -16,8 +16,8 @@ class PortfoliosCommands:
         List existing portfolios
         """
         ctx = context.get_context()
-        portfolios = PortfoliosRepository.list()
-        renderers.PortfoliosList(ctx, portfolios).render()
+        result = PortfoliosListHandler().handle()
+        renderers.PortfoliosList(ctx, result.value).render()
 
     @command("import")
     @argument("file", description="YAML file to import", positional=True)

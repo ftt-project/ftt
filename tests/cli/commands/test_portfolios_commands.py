@@ -1,5 +1,3 @@
-from unittest.mock import call
-
 import peewee
 import pytest
 
@@ -12,12 +10,13 @@ class TestPortfoliosCommands:
     def subject(self):
         return PortfoliosCommands()
 
-    def test_list(self, subject, mocker):
+    def test_list(self, subject, mocker, portfolio):
+        context = mocker.patch('trade.cli.commands.portfolios_commands.context')
+        context.return_value = mocker.Mock()
+
         mocker.patch('trade.cli.renderers.PortfoliosList')
-        obj = mocker.Mock()
-        renderers.PortfoliosList.return_value = obj
+        renderers.PortfoliosList.return_value.render.return_value
         subject.list()
 
-        assert type(renderers.PortfoliosList.call_args[0][1]) == peewee.ModelObjectCursorWrapper
-        obj.render.assert_called_once()
-
+        assert type(renderers.PortfoliosList.call_args[0][1]) == list
+        assert portfolio in renderers.PortfoliosList.call_args[0][1]
