@@ -19,6 +19,17 @@ class PortfoliosCommands:
         result = PortfoliosListHandler().handle()
         renderers.PortfoliosList(ctx, result.value).render()
 
+    @command
+    def details(self) -> None:
+        ctx = context.get_context()
+
+        # portfolio
+        # versions
+        # last version
+        # weights x securities
+        # securities list: matrix of all securities per version
+        pass
+
     @command("import")
     @argument("file", description="YAML file to import", positional=True)
     def import_from_file(self, file: str) -> None:

@@ -3,15 +3,16 @@ from typing import List
 from rich.table import Table
 
 from trade.cli.context import Context
+from trade.cli.renderers.abstract_renderer import AbstractRenderer
 from trade.storage.models import Portfolio
 
 
-class PortfoliosList:
+class PortfoliosList(AbstractRenderer):
     def __init__(self, context: Context, list: List[Portfolio]) -> None:
         self.context = context
         self.list = list
 
-    def render(self):
+    def render(self) -> None:
         table = Table(show_header=True, header_style="bold magenta")
         table.add_column("ID")
         table.add_column("Name")

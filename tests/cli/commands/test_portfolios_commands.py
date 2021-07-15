@@ -20,3 +20,10 @@ class TestPortfoliosCommands:
 
         assert type(renderers.PortfoliosList.call_args[0][1]) == list
         assert portfolio in renderers.PortfoliosList.call_args[0][1]
+
+    def test_details(self, subject, mocker, portfolio, portfolio_version):
+        mocker.patch('trade.cli.renderers.PortfolioDetails')
+        renderers.PortfolioDetails.return_value.render.return_value
+        subject.details()
+
+        renderers.PortfolioDetails.assert_called_once()
