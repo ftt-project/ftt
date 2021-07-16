@@ -75,3 +75,8 @@ class TestWeightsRepository:
     def test_update_on_buy(self, subject, weight):
         result = subject.update_on_buy(weight, 89)
         assert 89 == result.amount
+
+    def test_get_by_portfolio_version_returns_list_of_weights(self, subject, portfolio_version, weight):
+        result = subject.get_by_portfolio_version(portfolio_version)
+
+        assert result[0] == weight

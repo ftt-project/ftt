@@ -16,3 +16,9 @@ class TestPortfolioVersionsRepository:
     def test_get_portfolio(self, subject, portfolio_version, portfolio):
         result = subject.get_portfolio(portfolio_version.id)
         assert result == portfolio
+
+    def test_get_all_by_portfolio(self, subject, portfolio, portfolio_version):
+        result = subject.get_all_by_portfolio(portfolio)
+
+        assert type(result) == list
+        assert result[0] == portfolio_version

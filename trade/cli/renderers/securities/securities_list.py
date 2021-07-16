@@ -34,7 +34,7 @@ class SecuritiesList(AbstractRenderer):
                 security.industry,
                 security.country,
                 security.currency,
-                security.short_name
+                security.short_name,
             )
 
         self.context.console.print(table)

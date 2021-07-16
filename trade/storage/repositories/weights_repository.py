@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 import peewee
 
@@ -99,6 +100,12 @@ class WeightsRepository(RepositoryInterface):
             .where(Security.id == security_id)
             .get()
         )
+
+    @classmethod
+    def get_by_portfolio_version(
+        cls, portfolio_version: PortfolioVersion
+    ) -> List[Weight]:
+        return list(portfolio_version.weights)
 
     @classmethod
     def lock_weight(cls, weight: Weight, locked_at_amount: float) -> Weight:

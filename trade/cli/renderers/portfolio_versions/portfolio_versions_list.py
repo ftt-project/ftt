@@ -13,20 +13,20 @@ class PortfolioVersionsList(AbstractRenderer):
         self.portfolio_versions = portfolio_version
 
     def render(self) -> None:
-        table = Table(show_headers=True, header_style="bold magenta")
+        table = Table(show_header=True, header_style="bold magenta")
         table.add_column("ID")
         table.add_column("Version")
         table.add_column("Expected Annual Return")
         table.add_column("Annual Volatility")
         table.add_column("Sharpe Ratio")
 
-        for version in self.portfolio_version:
+        for version in self.portfolio_versions:
             table.add_row(
                 str(version.id),
-                version.version,
+                str(version.version),
                 str(version.expected_annual_return),
                 str(version.annual_volatility),
-                str(version.sharpe_ratio)
+                str(version.sharpe_ratio),
             )
 
         self.context.console.print(table)
