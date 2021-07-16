@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from trade.storage.models.base import Base
 from trade.storage.models.portfolio import Portfolio
@@ -36,6 +37,10 @@ class PortfolioVersionsRepository(RepositoryInterface):
             .order_by(PortfolioVersion.version.desc())
             .get()
         )
+
+    @classmethod
+    def get_all_by_portfolio(cls, portfolio: Portfolio) -> List[PortfolioVersion]:
+        return list(portfolio.versions)
 
     @classmethod
     def get_portfolio(cls, portfolio_version_id) -> Portfolio:

@@ -1,7 +1,5 @@
-import peewee
 import pytest
 
-from trade.cli import renderers
 from trade.cli.commands.portfolios_commands import PortfoliosCommands
 
 
@@ -10,13 +8,28 @@ class TestPortfoliosCommands:
     def subject(self):
         return PortfoliosCommands()
 
-    def test_list(self, subject, mocker, portfolio):
-        context = mocker.patch('trade.cli.commands.portfolios_commands.context')
-        context.return_value = mocker.Mock()
+    @pytest.fixture(autouse=True)
+    def mock_context(self, mocker, context):
+        mocker.patch("trade.cli.commands.portfolios_commands.context", new=context)
 
-        mocker.patch('trade.cli.renderers.PortfoliosList')
-        renderers.PortfoliosList.return_value.render.return_value
+    def test_list(self, subject, mocker, portfolio):
+        mocked = mocker.patch('trade.cli.commands.portfolios_commands.PortfoliosList')
+        mocked.return_value.render.return_value
         subject.list()
 
-        assert type(renderers.PortfoliosList.call_args[0][1]) == list
-        assert portfolio in renderers.PortfoliosList.call_args[0][1]
+        assert type(mocked.call_args[0][1]) == list
+        assert portfolio in mocked.call_args[0][1]
+
+    def test_details_renders_portfolio_details(self, subject, mocker, portfolio, portfolio_version):
+        mocked = mocker.patch('trade.cli.commands.portfolios_commands.PortfolioDetails',
+                              **{'return_value.render.return_value': True})
+        subject.details(portfolio.id)
+
+        assert portfolio == mocked.call_args[0][1]
+
+    def test_details_renders_portfolio_versions_list(self, subject, mocker, portfolio, portfolio_version):
+        mocked = mocker.patch('trade.cli.commands.portfolios_commands.PortfolioVersionsList',
+                              **{'return_value.render.return_value': True})
+        subject.details(portfolio.id)
+
+        assert portfolio_version in mocked.call_args[0][1]
