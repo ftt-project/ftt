@@ -8,12 +8,18 @@ from trade.storage.models import Weight
 
 
 class WeightsList(AbstractRenderer):
-    def __init__(self, context: Context, list: List[Weight]) -> None:
+    def __init__(self, context: Context, list: List[Weight], title: str = "") -> None:
         self.context = context
         self.list = list
+        self.title = title
 
     def render(self) -> None:
-        table = Table(show_header=True, header_style="bold magenta")
+        table = Table(
+            show_header=True,
+            header_style="bold magenta",
+            title=self.title,
+            min_width=120,
+        )
         table.add_column("ID")
         table.add_column("Symbol")
         table.add_column("Position")

@@ -13,7 +13,12 @@ class PortfolioVersionsList(AbstractRenderer):
         self.portfolio_versions = portfolio_version
 
     def render(self) -> None:
-        table = Table(show_header=True, header_style="bold magenta")
+        table = Table(
+            show_header=True,
+            header_style="bold magenta",
+            title="Portfolio Versions",
+            min_width=120,
+        )
         table.add_column("ID")
         table.add_column("Version")
         table.add_column("Expected Annual Return")

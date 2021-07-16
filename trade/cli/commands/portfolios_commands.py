@@ -41,17 +41,18 @@ class PortfoliosCommands:
         ctx = context.get_context()
 
         result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
-        ctx.console.print("Portfolio details")
         PortfolioDetails(ctx, result.value).render()
 
         result = PortfolioVersionsListHandler().handle(portfolio=result.value)
-        ctx.console.print("Portfolio Versions")
         PortfolioVersionsList(ctx, result.value).render()
 
         portfolio_version = result.value[0]
         result = WeightsListHandler().handle(portfolio_version=portfolio_version)
-        ctx.console.print(f"Portfolio Version {portfolio_version.id} weights")
-        WeightsList(ctx, result.value).render()
+        WeightsList(
+            ctx,
+            result.value,
+            f"Portfolio Version [bold cyan]{portfolio_version.id}[/bold cyan] weights",
+        ).render()
 
     @command("import")
     @argument("file", description="YAML file to import", positional=True)

@@ -11,7 +11,12 @@ class PortfolioDetails(AbstractRenderer):
         self.portfolio = portfolio
 
     def render(self) -> None:
-        table = Table(show_header=True, header_style="bold magenta")
+        table = Table(
+            show_header=True,
+            header_style="bold magenta",
+            title="Portfolio Details",
+            min_width=120,
+        )
         table.add_column("ID")
         table.add_column("Name")
         table.add_column("Amount")
