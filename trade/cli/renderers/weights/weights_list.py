@@ -24,6 +24,7 @@ class WeightsList(AbstractRenderer):
         table.add_column("Symbol")
         table.add_column("Position")
         table.add_column("Planned Position")
+        table.add_column("Currency")
         table.add_column("Amount")
         table.add_column("Quote Type")
         table.add_column("Short name")
@@ -32,9 +33,10 @@ class WeightsList(AbstractRenderer):
             table.add_row(
                 str(weight.id),
                 weight.security.symbol,
-                weight.position,
-                weight.planned_position,
-                weight.amount,
+                str(weight.position),
+                str(weight.planned_position),
+                weight.security.currency,
+                str(weight.amount),
                 weight.security.quote_type,
                 weight.security.short_name,
             )
