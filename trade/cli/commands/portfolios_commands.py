@@ -65,6 +65,11 @@ class PortfoliosCommands:
         """
         ctx = context.get_context()
         config_result = PortfolioConfigHandler().handle(path=path)
+        if config_result.is_err():
+            ctx.console.print("[bold red]Failed to read config file:")
+            ctx.console.print(config_result.value)
+            return
+
         result = PortfolioCreationHandler().handle(
             name=config_result.value.name, amount=config_result.value.budget
         )
