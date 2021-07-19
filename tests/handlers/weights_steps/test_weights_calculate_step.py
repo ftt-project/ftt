@@ -1,7 +1,10 @@
 import pandas as pd
 import pytest
 
-from trade.handlers.weights_steps.weights_calculate_step import WeightsCalculateStep, WeightsCalculateStepResult
+from trade.handlers.weights_steps.weights_calculate_step import (
+    WeightsCalculateStep,
+    WeightsCalculateStepResult,
+)
 
 
 class TestWeightsCalculateStep:
@@ -16,7 +19,9 @@ class TestWeightsCalculateStep:
                 "AA.XX": [124.279999, 125.059998, 123.540001],
                 "AA.YY": [125.080002, 124.279999, 124.680000],
             },
-            index=pd.DatetimeIndex(["2021-06-01 01:01:01", "2021-06-02 01:01:01", "2021-06-03 01:01:01"])
+            index=pd.DatetimeIndex(
+                ["2021-06-01 01:01:01", "2021-06-02 01:01:01", "2021-06-03 01:01:01"]
+            ),
         ).rename_axis("datetime")
 
     def test_calculates_weights(self, subject, dataframes, portfolio):

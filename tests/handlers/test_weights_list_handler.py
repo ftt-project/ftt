@@ -8,7 +8,9 @@ class TestWeightsLoadHandler:
     def subject(self):
         return WeightsListHandler()
 
-    def test_returns_list_of_weights_by_portfolio_version(self, subject, portfolio_version, weight):
+    def test_returns_list_of_weights_by_portfolio_version(
+        self, subject, portfolio_version, weight
+    ):
         result = subject.handle(portfolio_version=portfolio_version)
 
         assert result.is_ok()

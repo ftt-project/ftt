@@ -2,7 +2,9 @@ from datetime import datetime
 
 import pytest
 
-from trade.handlers.portfolio_steps.portfolio_config_parser_step import PortfolioConfigParserStep
+from trade.handlers.portfolio_steps.portfolio_config_parser_step import (
+    PortfolioConfigParserStep,
+)
 
 
 class TestPortfolioConfigParserStep:
@@ -18,7 +20,7 @@ class TestPortfolioConfigParserStep:
             "budget": 1000,
             "period_start": "2020-01-01",
             "period_end": "2020-01-01",
-            "interval": "1d"
+            "interval": "1d",
         }
 
     @pytest.fixture

@@ -3,7 +3,9 @@ from datetime import datetime
 import pytest
 
 from trade.storage.models.security_price import SecurityPrice
-from trade.storage.repositories.security_prices_repository import SecurityPricesRepository
+from trade.storage.repositories.security_prices_repository import (
+    SecurityPricesRepository,
+)
 
 
 class TestSecurityPricesRepository:
@@ -23,7 +25,7 @@ class TestSecurityPricesRepository:
             "volume": 9999999,
             "interval": "1d",
             "change": 0,
-            "percent_change": 1
+            "percent_change": 1,
         }
 
     def test_upsert_new_record(self, subject, data, security):

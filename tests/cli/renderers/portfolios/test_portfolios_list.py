@@ -9,7 +9,7 @@ class TestPortfoliosList:
         return PortfoliosList
 
     def test_renders_table(self, subject, context, portfolio, mocker):
-        mocked = mocker.patch('trade.cli.renderers.portfolios.portfolios_list.Table')
+        mocked = mocker.patch("trade.cli.renderers.portfolios.portfolios_list.Table")
         instance = mocked.return_value
 
         subject(context, [portfolio]).render()

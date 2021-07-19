@@ -26,7 +26,7 @@ class TestSecuritiesRepository:
             "country": "US",
             "short_name": "Short name",
             "long_name": "Long name",
-            "currency": "USD"
+            "currency": "USD",
         }
 
     # @fixture
@@ -72,7 +72,7 @@ class TestSecuritiesRepository:
         result = subject.exist(security.symbol)
         assert result
 
-        result = subject.exist('random-symbol')
+        result = subject.exist("random-symbol")
         assert not result
 
     def test_find_securities(self, subject, portfolio_version, security, weight):

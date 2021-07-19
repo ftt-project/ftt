@@ -1,6 +1,8 @@
 import pytest
 
-from trade.handlers.portfolio_steps.portfolio_version_create_step import PortfolioVersionCreateStep
+from trade.handlers.portfolio_steps.portfolio_version_create_step import (
+    PortfolioVersionCreateStep,
+)
 from trade.storage.models.portfolio_version import PortfolioVersion
 
 
@@ -11,10 +13,7 @@ class TestPortfolioVersionCreateStep:
 
     @pytest.fixture
     def data(self, portfolio):
-        return {
-            "portfolio": portfolio,
-            "version": 1
-        }
+        return {"portfolio": portfolio, "version": 1}
 
     def test_process_creates_portfolio_version(self, subject, data):
         result = subject.process(**data)

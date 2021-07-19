@@ -30,7 +30,9 @@ def cerebro(portfolio_version, security, weight):
         for strategy in strategies:
             if type(strategy) == tuple:
                 strategy, opts = strategy
-                cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id, **opts)
+                cerebro.addstrategy(
+                    strategy, portfolio_version_id=portfolio_version.id, **opts
+                )
             else:
                 cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
         cerebro.addsizer(WeightedSizer)
@@ -59,7 +61,7 @@ def security():
         long_name="Long name",
         currency="USD",
         updated_at=datetime.now(),
-        created_at=datetime.now()
+        created_at=datetime.now(),
     )
     try:
         yield security
@@ -77,11 +79,11 @@ def security_price(security):
         low=90,
         close=101,
         volume=1000000,
-        interval='5m',
+        interval="5m",
         change=1,
         percent_change=1,
         updated_at=datetime.now(),
-        created_at=datetime.now()
+        created_at=datetime.now(),
     )
     try:
         yield price
@@ -95,7 +97,7 @@ def portfolio():
         name="Portfolio TEST 1",
         amount=30000.0,
         updated_at=datetime.now(),
-        created_at=datetime.now()
+        created_at=datetime.now(),
     )
     try:
         yield portfolio
@@ -109,7 +111,7 @@ def portfolio_version(portfolio):
         portfolio=portfolio,
         version=1,
         updated_at=datetime.now(),
-        created_at=datetime.now()
+        created_at=datetime.now(),
     )
     try:
         yield portfolio_version
@@ -125,12 +127,13 @@ def weight(portfolio_version, security):
         planned_position=10,
         position=2,
         updated_at=datetime.now(),
-        created_at=datetime.now()
+        created_at=datetime.now(),
     )
     try:
         yield weight
     finally:
         weight.delete_instance()
+
 
 @pytest.fixture
 def order(security, portfolio_version):
@@ -141,7 +144,7 @@ def order(security, portfolio_version):
         type="buy",
         desired_price=100,
         updated_at=datetime.now(),
-        created_at=datetime.now()
+        created_at=datetime.now(),
     )
     try:
         yield order

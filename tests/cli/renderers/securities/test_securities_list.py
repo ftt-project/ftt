@@ -9,7 +9,7 @@ class TestSecuritiesList:
         return SecuritiesList
 
     def test_renders_list(self, subject, mocker, context, security):
-        mocked = mocker.patch('trade.cli.renderers.securities.securities_list.Table')
+        mocked = mocker.patch("trade.cli.renderers.securities.securities_list.Table")
         instance = mocked.return_value
 
         subject(context, [security]).render()

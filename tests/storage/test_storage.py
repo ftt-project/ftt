@@ -19,6 +19,6 @@ class TestStorage:
         assert type(result) == list
 
     def test_get_database(self, subject):
-        subject.initialize_database(application_name='ftt', environment='test')
+        subject.initialize_database(application_name="ftt", environment="test")
         result = subject.get_database()
         assert isinstance(result, Database)

@@ -12,13 +12,15 @@ class TestOrdersRepository:
         return OrdersRepository
 
     def test_create(self, subject, security, portfolio_version):
-        result = subject.create({
-            "security": security,
-            "portfolio_version": portfolio_version,
-            "status": "created",
-            "type": "buy",
-            "desired_price": 100
-        })
+        result = subject.create(
+            {
+                "security": security,
+                "portfolio_version": portfolio_version,
+                "status": "created",
+                "type": "buy",
+                "desired_price": 100,
+            }
+        )
 
         assert type(result) == Order
         assert result.id is not None
@@ -29,7 +31,7 @@ class TestOrdersRepository:
             symbol_name=security.symbol,
             portfolio_version_id=portfolio_version.id,
             desired_price=1,
-            type="buy"
+            type="buy",
         )
         assert type(result) == Order
         assert result.id is not None
@@ -57,7 +59,9 @@ class TestOrdersRepository:
         assert result.id == order.id
         assert "submitted" == subject.get_by_id(order.id).status
 
-    def test_last_not_closed_order_when_order_exist(self, subject, order, portfolio, portfolio_version, security):
+    def test_last_not_closed_order_when_order_exist(
+        self, subject, order, portfolio, portfolio_version, security
+    ):
         order_closed = Order.create(
             security=security,
             type="buy",
@@ -67,7 +71,7 @@ class TestOrdersRepository:
             desired_price=10,
             execution_price=10,
             updated_at=datetime.now(),
-            created_at=datetime.now()
+            created_at=datetime.now(),
         )
         found = subject.last_not_closed_order(portfolio, security)
         assert found == order
@@ -84,7 +88,7 @@ class TestOrdersRepository:
             execution_size=1,
             execution_price=100,
             execution_value=200,
-            execution_commission=1
+            execution_commission=1,
         )
         assert result.execution_size == 1
         assert result.execution_price == 100
@@ -95,8 +99,12 @@ class TestOrdersRepository:
     def test_last_successful_order(self, subject, order, portfolio, security):
         order.status = Order.Completed
         order.save()
-        buy_result = subject.last_successful_order(portfolio=portfolio, security=security, type="buy")
+        buy_result = subject.last_successful_order(
+            portfolio=portfolio, security=security, type="buy"
+        )
         assert order == buy_result
 
-        sell_result = subject.last_successful_order(portfolio=portfolio, security=security, type="sell")
+        sell_result = subject.last_successful_order(
+            portfolio=portfolio, security=security, type="sell"
+        )
         assert sell_result is None

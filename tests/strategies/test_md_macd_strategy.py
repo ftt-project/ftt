@@ -45,7 +45,9 @@ class TestMdMACDStrategy:
         Order.delete().execute()
 
     def test_orders_against_data1(self, subject, cerebro, portfolio):
-        data = testcommon.getdata(1, fromdate=datetime(2020, 5, 12), todate=datetime(2021, 5, 11))
+        data = testcommon.getdata(
+            1, fromdate=datetime(2020, 5, 12), todate=datetime(2021, 5, 11)
+        )
 
         orders_before = OrdersRepository().get_orders_by_portfolio(portfolio)
         assert len(orders_before) == 0

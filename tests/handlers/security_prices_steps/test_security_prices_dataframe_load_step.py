@@ -3,7 +3,9 @@ from pandas import DataFrame
 
 import pytest
 
-from trade.handlers.security_prices_steps.security_prices_dataframe_load_step import SecurityPricesDataframeLoadStep
+from trade.handlers.security_prices_steps.security_prices_dataframe_load_step import (
+    SecurityPricesDataframeLoadStep,
+)
 
 
 class TestSecurityPricesDataframeLoadStep:
@@ -16,11 +18,10 @@ class TestSecurityPricesDataframeLoadStep:
             securities=[security],
             start_period=datetime.date.today() - datetime.timedelta(days=1),
             end_period=datetime.datetime.now(),
-            interval='5m'
+            interval="5m",
         )
 
         assert result.is_ok()
         assert len(result.value) == 1
         assert type(result.value) == DataFrame
         assert security.symbol in result.value.columns
-
