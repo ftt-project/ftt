@@ -6,6 +6,7 @@ from trade.cli.renderers.portfolio_versions.portfolio_versions_list import (
 )
 from trade.cli.renderers.portfolios.portfolio_details import PortfolioDetails
 from trade.cli.renderers.weights.weights_list import WeightsList
+from trade.handlers.portfolio_associate_securities_hanlder import PortfolioAssociateSecuritiesHandler
 from trade.handlers.portfolio_config_handler import PortfolioConfigHandler
 from trade.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from trade.handlers.portfolio_load_handler import PortfolioLoadHandler
@@ -51,10 +52,11 @@ class PortfoliosCommands:
 
         portfolio_version = result.value[0]
         result = WeightsListHandler().handle(portfolio_version=portfolio_version)
+
         WeightsList(
             ctx,
             result.value,
-            f"Portfolio Version [bold cyan]{portfolio_version.id}[/bold cyan] weights",
+            f"Portfolio Version [bold cyan]#{portfolio_version.id}[/bold cyan] list of weights",
         ).render()
 
     @command("import")
@@ -70,14 +72,14 @@ class PortfoliosCommands:
             ctx.console.print(config_result.value)
             return
 
-        result = PortfolioCreationHandler().handle(
+        portfolio_result = PortfolioCreationHandler().handle(
             name=config_result.value.name, amount=config_result.value.budget
         )
-        if result.is_ok():
+        if portfolio_result.is_ok():
             ctx.console.print("[bold green]Portfolio successfully created")
         else:
             ctx.console.print("[bold red]Failed to create portfolio:")
-            ctx.console.print(result.value)
+            ctx.console.print(portfolio_result.value)
             return
 
         with ctx.console.status("[bold green]Loading securities information") as _:
@@ -95,11 +97,23 @@ class PortfoliosCommands:
                     "[bold green]Securities information successfully imported"
                 )
             else:
-                ctx.console.print("[bold red]Failed to import securities information")
+                ctx.console.print("[bold red]Failed to load securities information:")
+                ctx.console.print(securities_result.value)
+                return
 
-    @command
-    def versions(self) -> None:
-        """
-        Print available versions of portfolio
-        """
-        pass
+        association_result = PortfolioAssociateSecuritiesHandler().handle(
+            securities=config_result.value.symbols, portfolio_version=portfolio_result.value.versions[0]
+        )
+        if association_result.is_ok():
+            ctx.console.print("[bold green]Securities successfully associated with portfolio")
+        else:
+            ctx.console.print("[bold red]Failed to associate securities with portfolio:")
+            ctx.console.print(association_result.value)
+
+    # @command
+    # @argument()
+    # def build(self, id: str) -> None:
+    #     """
+    #     Print available versions of portfolio
+    #     """
+    #     pass
