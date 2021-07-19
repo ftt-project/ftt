@@ -15,9 +15,13 @@ class TestPeakObserver:
         return PeakObserver
 
     def test_stores_peak_value(self, subject, cerebro, weight):
-        data = testcommon.getdata(1, fromdate=datetime(2020, 6, 1), todate=datetime(2020, 8, 30))
+        data = testcommon.getdata(
+            1, fromdate=datetime(2020, 6, 1), todate=datetime(2020, 8, 30)
+        )
         c = cerebro([BollingerStrategy], data)
         c.addobserver(subject)
         result = c.run()
-        assert Decimal("23.389999") == WeightsRepository.get_by_id(weight.id).peaked_value
+        assert (
+            Decimal("23.389999") == WeightsRepository.get_by_id(weight.id).peaked_value
+        )
         Order.delete().execute()

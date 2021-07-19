@@ -12,7 +12,9 @@ class TestWeightsCalculationHandler:
         return WeightsCalculationHandler()
 
     @pytest.mark.skip(reason="Improve collection to make algorithm run properly")
-    def test_calculates_weights_and_persist(self, subject, portfolio, portfolio_version, security, security_price, weight):
+    def test_calculates_weights_and_persist(
+        self, subject, portfolio, portfolio_version, security, security_price, weight
+    ):
         result = subject.handle(
             securities=[security],
             start_period=datetime.date.today() - datetime.timedelta(days=1),
@@ -20,7 +22,7 @@ class TestWeightsCalculationHandler:
             interval="5m",
             portfolio=portfolio,
             portfolio_budget=10000,
-            persist=True
+            persist=True,
         )
 
         assert result.is_ok()

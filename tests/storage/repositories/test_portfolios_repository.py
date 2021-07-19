@@ -11,9 +11,7 @@ class TestPortfoliosRepository:
 
     @fixture
     def data(self):
-        return {
-            "name": "Repository 1"
-        }
+        return {"name": "Repository 1"}
 
     def test_get_by_name(self, portfolio, subject):
         found = subject.get_by_name(portfolio.name)
@@ -25,7 +23,9 @@ class TestPortfoliosRepository:
         assert type(result) == Portfolio
         Portfolio.delete().execute()
 
-    def test_get_securities_for_latest_version(self, subject, portfolio, weight, security):
+    def test_get_securities_for_latest_version(
+        self, subject, portfolio, weight, security
+    ):
         result = subject.get_securities(portfolio)
 
         assert type(result) == list

@@ -14,14 +14,14 @@ class TestSecuritiesUpsertStep:
     def input(self):
         return {
             "symbol": "AAPL",
-            'quote_type': 'EQUITY',
-            'sector': 'Technology',
-            'country': 'United States',
-            'industry': 'Consumer Electronics',
-            'currency': 'USD',
-            'exchange': 'NMS',
-            'short_name': 'Apple Inc.',
-            'long_name': 'Apple Inc.'
+            "quote_type": "EQUITY",
+            "sector": "Technology",
+            "country": "United States",
+            "industry": "Consumer Electronics",
+            "currency": "USD",
+            "exchange": "NMS",
+            "short_name": "Apple Inc.",
+            "long_name": "Apple Inc.",
         }
 
     def test_persists_new_ticker(self, subject, input):

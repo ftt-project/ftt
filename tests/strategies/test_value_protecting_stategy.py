@@ -18,7 +18,9 @@ class TestValueProtectingStrategy:
         return ValueProtectingStrategy
 
     def test_runs(self, subject, cerebro, portfolio):
-        data = testcommon.getdata(1, fromdate=datetime(2020, 5, 12), todate=datetime(2021, 5, 11))
+        data = testcommon.getdata(
+            1, fromdate=datetime(2020, 5, 12), todate=datetime(2021, 5, 11)
+        )
 
         orders_before = OrdersRepository().get_orders_by_portfolio(portfolio)
         c = cerebro([DummyBuyOnceStrategy, (subject, {"dipmult": 1.0})], data)
@@ -31,17 +33,21 @@ class TestValueProtectingStrategy:
         Order.delete().execute()
 
     def test_after_sell_weight_is_locked(self, subject, cerebro, weight):
-        data = testcommon.getdata(1, fromdate=datetime(2020, 5, 12), todate=datetime(2020, 5, 14, 23, 59, 59))
+        data = testcommon.getdata(
+            1, fromdate=datetime(2020, 5, 12), todate=datetime(2020, 5, 14, 23, 59, 59)
+        )
         c = cerebro([DummyBuyOnceStrategy, (subject, {"dipmult": 1.0})], data)
         c.addobserver(PeakObserver)
         c.run()
         weight = WeightsRepository.get_by_id(weight.id)
         assert weight.locked_at is not None
-        assert weight.locked_at_amount == Decimal('14.10')
+        assert weight.locked_at_amount == Decimal("14.10")
         Order.delete().execute()
 
     def test_after_buy_is_unlocked(self, subject, cerebro, weight):
-        data = testcommon.getdata(1, fromdate=datetime(2020, 5, 12), todate=datetime(2021, 5, 30))
+        data = testcommon.getdata(
+            1, fromdate=datetime(2020, 5, 12), todate=datetime(2021, 5, 30)
+        )
         c = cerebro([DummyBuyOnceStrategy, subject], data)
         c.addobserver(PeakObserver)
         c.run()
@@ -51,7 +57,9 @@ class TestValueProtectingStrategy:
         Order.delete().execute()
 
     def test_buys_when_buy_enabled_is_true(self, subject, cerebro, portfolio, weight):
-        data = testcommon.getdata(1, fromdate=datetime(2020, 5, 12), todate=datetime(2020, 7, 1))
+        data = testcommon.getdata(
+            1, fromdate=datetime(2020, 5, 12), todate=datetime(2020, 7, 1)
+        )
         orders_before = OrdersRepository().get_orders_by_portfolio(portfolio)
         c = cerebro([DummyBuyOnceStrategy, (subject, {"buy_enabled": True})], data)
         c.addobserver(PeakObserver)

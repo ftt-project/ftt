@@ -23,23 +23,31 @@ class TestPortfoliosCommands:
         return path
 
     def test_list(self, subject, mocker, portfolio):
-        mocked = mocker.patch('trade.cli.commands.portfolios_commands.PortfoliosList')
+        mocked = mocker.patch("trade.cli.commands.portfolios_commands.PortfoliosList")
         mocked.return_value.render.return_value
         subject.list()
 
         assert type(mocked.call_args[0][1]) == list
         assert portfolio in mocked.call_args[0][1]
 
-    def test_details_renders_portfolio_details(self, subject, mocker, portfolio, portfolio_version):
-        mocked = mocker.patch('trade.cli.commands.portfolios_commands.PortfolioDetails',
-                              **{'return_value.render.return_value': True})
+    def test_details_renders_portfolio_details(
+        self, subject, mocker, portfolio, portfolio_version
+    ):
+        mocked = mocker.patch(
+            "trade.cli.commands.portfolios_commands.PortfolioDetails",
+            **{"return_value.render.return_value": True}
+        )
         subject.details(portfolio.id)
 
         assert portfolio == mocked.call_args[0][1]
 
-    def test_details_renders_portfolio_versions_list(self, subject, mocker, portfolio, portfolio_version):
-        mocked = mocker.patch('trade.cli.commands.portfolios_commands.PortfolioVersionsList',
-                              **{'return_value.render.return_value': True})
+    def test_details_renders_portfolio_versions_list(
+        self, subject, mocker, portfolio, portfolio_version
+    ):
+        mocked = mocker.patch(
+            "trade.cli.commands.portfolios_commands.PortfolioVersionsList",
+            **{"return_value.render.return_value": True}
+        )
         subject.details(portfolio.id)
 
         assert portfolio_version in mocked.call_args[0][1]
@@ -55,8 +63,12 @@ class TestPortfoliosCommands:
     def test_fails_to_import_portfolio_and_assets_info_is_not_requested(self, subject):
         pass
 
-    def test_on_correct_config_request_assets_info(self, subject, mocker, path_to_config):
-        mocked = mocker.patch("trade.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
-                              **{"return_value.handle.return_value.value": True})
+    def test_on_correct_config_request_assets_info(
+        self, subject, mocker, path_to_config
+    ):
+        mocked = mocker.patch(
+            "trade.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
+            **{"return_value.handle.return_value.value": True}
+        )
         subject.import_from_file(path_to_config)
         mocked.return_value.handle.assert_called_once()

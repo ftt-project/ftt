@@ -32,13 +32,13 @@ from backtrader.metabase import ParamsBase
 
 
 modpath = os.path.dirname(os.path.abspath(__file__))
-dataspath = 'fixtures'
+dataspath = "fixtures"
 datafiles = [
-    '2006-day-001.txt',
-    'AC.TO.day.csv',
-    'SHOP.day.csv',
-    'AAPL.1m.csv',
-    'AAPL.5m.csv',
+    "2006-day-001.txt",
+    "AC.TO.day.csv",
+    "SHOP.day.csv",
+    "AAPL.1m.csv",
+    "AAPL.5m.csv",
 ]
 
 DATAFEED = bt.feeds.BacktraderCSVData
@@ -49,26 +49,25 @@ TODATE = datetime.datetime(2006, 12, 31)
 
 def getdata(index, fromdate=FROMDATE, todate=TODATE):
     datapath = os.path.join(modpath, dataspath, datafiles[index])
-    data = DATAFEED(
-        dataname=datapath,
-        fromdate=fromdate,
-        todate=todate)
+    data = DATAFEED(dataname=datapath, fromdate=fromdate, todate=todate)
 
     return data
 
 
-def runtest(datas,
-            strategy,
-            runonce=None,
-            preload=None,
-            exbar=None,
-            plot=False,
-            optimize=False,
-            maxcpus=1,
-            writer=None,
-            analyzer=None,
-            sizer=None,
-            **kwargs):
+def runtest(
+    datas,
+    strategy,
+    runonce=None,
+    preload=None,
+    exbar=None,
+    plot=False,
+    optimize=False,
+    maxcpus=1,
+    writer=None,
+    analyzer=None,
+    sizer=None,
+    **kwargs
+):
 
     runonces = [True, False] if runonce is None else [runonce]
     preloads = [True, False] if preload is None else [preload]
@@ -78,14 +77,12 @@ def runtest(datas,
     for prload in preloads:
         for ronce in runonces:
             for exbar in exbars:
-                cerebro = bt.Cerebro(runonce=ronce,
-                                     preload=prload,
-                                     maxcpus=maxcpus,
-                                     exactbars=exbar)
+                cerebro = bt.Cerebro(
+                    runonce=ronce, preload=prload, maxcpus=maxcpus, exactbars=exbar
+                )
 
-                if kwargs.get('main', False):
-                    print('prload {} / ronce {} exbar {}'.format(
-                        prload, ronce, exbar))
+                if kwargs.get("main", False):
+                    print("prload {} / ronce {} exbar {}".format(prload, ronce, exbar))
 
                 if isinstance(datas, bt.LineSeries):
                     datas = [datas]
@@ -126,13 +123,15 @@ def runtest(datas,
 
 
 class TestStrategy(bt.Strategy):
-    params = dict(main=False,
-                  chkind=[],
-                  inddata=[],
-                  chkmin=1,
-                  chknext=0,
-                  chkvals=None,
-                  chkargs=dict())
+    params = dict(
+        main=False,
+        chkind=[],
+        inddata=[],
+        chkmin=1,
+        chknext=0,
+        chkvals=None,
+        chkargs=dict(),
+    )
 
     def __init__(self):
         try:
@@ -167,12 +166,18 @@ class TestStrategy(bt.Strategy):
         self.nextcalls += 1
 
         if self.p.main:
-            dtstr = self.data.datetime.date(0).strftime('%Y-%m-%d')
-            print('%s - %d - %f' % (dtstr, len(self), self.ind[0]))
-            pstr = ', '.join(str(x) for x in
-                             [self.data.open[0], self.data.high[0],
-                              self.data.low[0], self.data.close[0]])
-            print('%s - %d, %s' % (dtstr, len(self), pstr))
+            dtstr = self.data.datetime.date(0).strftime("%Y-%m-%d")
+            print("%s - %d - %f" % (dtstr, len(self), self.ind[0]))
+            pstr = ", ".join(
+                str(x)
+                for x in [
+                    self.data.open[0],
+                    self.data.high[0],
+                    self.data.low[0],
+                    self.data.close[0],
+                ]
+            )
+            print("%s - %d, %s" % (dtstr, len(self), pstr))
 
     def start(self):
         self.nextcalls = 0
@@ -183,33 +188,32 @@ class TestStrategy(bt.Strategy):
         chkpts = [0, -l + mp, (-l + mp) // 2]
 
         if self.p.main:
-            print('----------------------------------------')
-            print('len ind %d == %d len self' % (l, len(self)))
-            print('minperiod %d' % self.chkmin)
-            print('self.p.chknext %d nextcalls %d'
-                  % (self.p.chknext, self.nextcalls))
+            print("----------------------------------------")
+            print("len ind %d == %d len self" % (l, len(self)))
+            print("minperiod %d" % self.chkmin)
+            print("self.p.chknext %d nextcalls %d" % (self.p.chknext, self.nextcalls))
 
-            print('chkpts are', chkpts)
+            print("chkpts are", chkpts)
             for chkpt in chkpts:
-                dtstr = self.data.datetime.date(chkpt).strftime('%Y-%m-%d')
-                print('chkpt %d -> %s' % (chkpt, dtstr))
+                dtstr = self.data.datetime.date(chkpt).strftime("%Y-%m-%d")
+                print("chkpt %d -> %s" % (chkpt, dtstr))
 
             for lidx in range(self.ind.size()):
                 chkvals = list()
-                outtxt = '    ['
+                outtxt = "    ["
                 for chkpt in chkpts:
                     valtxt = "'%f'" % self.ind.lines[lidx][chkpt]
                     outtxt += "'%s'," % valtxt
                     chkvals.append(valtxt)
 
-                    outtxt = '    [' + ', '.join(chkvals) + '],'
+                    outtxt = "    [" + ", ".join(chkvals) + "],"
 
                 if lidx == self.ind.size() - 1:
-                    outtxt = outtxt.rstrip(',')
+                    outtxt = outtxt.rstrip(",")
 
                 print(outtxt)
 
-            print('vs expected')
+            print("vs expected")
 
             for chkval in self.p.chkvals:
                 print(chkval)
@@ -221,7 +225,7 @@ class TestStrategy(bt.Strategy):
             assert mp == self.p.chkmin
             for lidx, linevals in enumerate(self.p.chkvals):
                 for i, chkpt in enumerate(chkpts):
-                    chkval = '%f' % self.ind.lines[lidx][chkpt]
+                    chkval = "%f" % self.ind.lines[lidx][chkpt]
                     if not isinstance(linevals[i], tuple):
                         assert chkval == linevals[i]
                     else:
@@ -237,9 +241,8 @@ class SampleParamsHolder(ParamsBase):
     handling of meta parameters like `frompackages`, `packages`, `params`, `lines`
     in inherited classes
     """
-    frompackages = (
-        ('math', ('factorial')),
-    )
+
+    frompackages = (("math", ("factorial")),)
 
     def __init__(self):
         self.range = factorial(10)

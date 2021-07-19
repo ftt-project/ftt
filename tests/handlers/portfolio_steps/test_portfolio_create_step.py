@@ -11,10 +11,7 @@ class TestPortfolioCreateStep:
 
     @pytest.fixture
     def data(self):
-        return {
-            "name": "Example",
-            "amount": 10000
-        }
+        return {"name": "Example", "amount": 10000}
 
     def test_process(self, subject, data):
         result = subject.process(**data)

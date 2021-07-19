@@ -3,7 +3,9 @@ import pathlib
 
 import pytest
 
-from trade.handlers.portfolio_steps.portfolio_config_file_reader import PortfolioConfigFileReaderStep
+from trade.handlers.portfolio_steps.portfolio_config_file_reader import (
+    PortfolioConfigFileReaderStep,
+)
 
 
 class TestPortfolioConfigFileReaderStep:
@@ -32,4 +34,4 @@ class TestPortfolioConfigFileReaderStep:
         result = subject.process(not_existing_path)
 
         assert result.is_err()
-        assert result.value.strerror == 'No such file or directory'
+        assert result.value.strerror == "No such file or directory"
