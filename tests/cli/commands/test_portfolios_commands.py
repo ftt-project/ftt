@@ -1,7 +1,9 @@
 import os
 import pathlib
+from unittest.mock import call
 
 import pytest
+from result import Err
 
 from trade.cli.commands.portfolios_commands import PortfoliosCommands
 from trade.storage.models import Portfolio
@@ -59,9 +61,39 @@ class TestPortfoliosCommands:
 
         assert (after - before) == 1
 
-    @pytest.mark.skip(reason="Not implemented test")
-    def test_fails_to_import_portfolio_and_assets_info_is_not_requested(self, subject):
-        pass
+    def test_writes_message_on_config_parsing_failure(
+        self, subject, mocker, path_to_config, context
+    ):
+        mocker.patch(
+            "trade.cli.commands.portfolios_commands.PortfolioConfigHandler",
+            **{"return_value.handle.return_value.is_ok.return_value": False}
+        )
+        portfolio_mocker = mocker.patch(
+            "trade.cli.commands.portfolios_commands.PortfolioCreationHandler",
+        )
+        subject.import_from_file(path_to_config)
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call("[bold red]Failed to read config file:")]
+        )
+
+        portfolio_mocker.assert_not_called()
+
+    def test_writes_message_on_portfolio_creation(
+        self, subject, mocker, path_to_config, context
+    ):
+        mocker.patch(
+            "trade.cli.commands.portfolios_commands.PortfolioCreationHandler",
+            **{"return_value.handle.return_value.is_ok.return_value": False}
+        )
+        securities_mocker = mocker.patch(
+            "trade.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
+        )
+        subject.import_from_file(path_to_config)
+
+        securities_mocker.assert_not_called()
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call("[bold red]Failed to create portfolio:")]
+        )
 
     def test_on_correct_config_request_assets_info(
         self, subject, mocker, path_to_config
