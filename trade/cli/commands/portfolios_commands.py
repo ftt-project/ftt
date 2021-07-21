@@ -82,7 +82,7 @@ class PortfoliosCommands:
             amount=config_result.value.budget,
             period_start=config_result.value.period_start,
             period_end=config_result.value.period_end,
-            interval=config_result.value.interval
+            interval=config_result.value.interval,
         )
         if portfolio_result.is_ok():
             ctx.console.print("[green]Portfolio successfully created")

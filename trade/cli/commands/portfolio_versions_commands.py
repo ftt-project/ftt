@@ -2,7 +2,7 @@ from typing import Optional
 
 from nubia import argument, command, context
 
-from trade.cli import renderers
+from trade.cli.renderers.weights.weights_list import WeightsList
 from trade.handlers.portfolio_load_handler import PortfolioLoadHandler
 from trade.handlers.portfolio_version_loading_handler import PortfolioVersionLoadHandler
 from trade.handlers.weights_calculation_handler import WeightsCalculationHandler
@@ -33,9 +33,9 @@ class PortfolioVersionsCommands:
     def balance(
         self,
         portfolio_version_id: int,
-        period_start: str,
-        period_end: str,
-        interval: str,
+        period_start: str = None,
+        period_end: str = None,
+        interval: str = None,
     ) -> None:
         """
         Balance portfolio version
@@ -56,6 +56,16 @@ class PortfolioVersionsCommands:
         if portfolio_result.is_err():
             ctx.console.print(f"[red]{portfolio_result.err().value}")
             return
+
+        period_start = (
+            period_start
+            if period_start is not None
+            else portfolio_result.value.period_start
+        )
+        period_end = (
+            period_end if period_end is not None else portfolio_result.value.period_end
+        )
+        interval = interval if interval is not None else portfolio_result.value.interval
 
         portfolio_version_result = PortfolioVersionLoadHandler().handle(
             portfolio_version_id=portfolio_version_id
@@ -83,7 +93,7 @@ class PortfolioVersionsCommands:
         result = WeightsListHandler().handle(
             portfolio_version=portfolio_version_result.value
         )
-        renderers.WeightsList(
+        WeightsList(
             ctx,
             result.value,
             f"Portfolio Version [bold cyan]#{portfolio_version_result.value.id}[/bold cyan] list of weights",
