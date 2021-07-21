@@ -27,7 +27,13 @@ def example():
 
     config = read_config()
 
-    result = PortfolioCreationHandler().handle(name=config.name, amount=config.budget)
+    result = PortfolioCreationHandler().handle(
+        name=config.name,
+        amount=config.budget,
+        period_start=config.period_start,
+        period_end=config.period_end,
+        interval=config.interval
+    )
     portfolio = result.value
 
     ctx.console.print("Portfolio successfully created", style="bold green")
@@ -56,7 +62,7 @@ def example():
         _ = result.value
 
     with ctx.console.status(
-        "[bold green]Portfolio successfully associated with securities"
+            "[bold green]Portfolio successfully associated with securities"
     ) as _:
         _ = PortfolioAssociateSecuritiesHandler().handle(
             securities=config.symbols, portfolio_version=portfolio.versions[0]
