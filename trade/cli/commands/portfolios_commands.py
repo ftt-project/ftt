@@ -6,7 +6,9 @@ from trade.cli.renderers.portfolio_versions.portfolio_versions_list import (
 )
 from trade.cli.renderers.portfolios.portfolio_details import PortfolioDetails
 from trade.cli.renderers.weights.weights_list import WeightsList
-from trade.handlers.portfolio_associate_securities_hanlder import PortfolioAssociateSecuritiesHandler
+from trade.handlers.portfolio_associate_securities_hanlder import (
+    PortfolioAssociateSecuritiesHandler,
+)
 from trade.handlers.portfolio_config_handler import PortfolioConfigHandler
 from trade.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from trade.handlers.portfolio_load_handler import PortfolioLoadHandler
@@ -96,19 +98,20 @@ class PortfoliosCommands:
                 interval=config_result.value.interval,
             )
             if securities_result.is_ok():
-                ctx.console.print(
-                    "[green]Securities information successfully imported"
-                )
+                ctx.console.print("[green]Securities information successfully imported")
             else:
                 ctx.console.print("[red]Failed to load securities information:")
                 ctx.console.print(securities_result.value)
                 return
 
         association_result = PortfolioAssociateSecuritiesHandler().handle(
-            securities=config_result.value.symbols, portfolio_version=portfolio_result.value.versions[0]
+            securities=config_result.value.symbols,
+            portfolio_version=portfolio_result.value.versions[0],
         )
         if association_result.is_ok():
-            ctx.console.print("[green]Securities successfully associated with portfolio")
+            ctx.console.print(
+                "[green]Securities successfully associated with portfolio"
+            )
         else:
             ctx.console.print("[red]Failed to associate securities with portfolio:")
             ctx.console.print(association_result.value)

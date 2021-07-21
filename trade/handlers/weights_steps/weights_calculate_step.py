@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import pypfopt
 from pandas import DataFrame
 from pypfopt import DiscreteAllocation, EfficientFrontier, expected_returns, risk_models
-from result import Ok, OkErr, Err
+from result import Err, Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage.models.portfolio import Portfolio
@@ -48,4 +48,4 @@ class WeightsCalculateStep(AbstractStep):
             return Ok(result)
 
         except pypfopt.exceptions.OptimizationError as e:
-            return Err(' '.join(e.args))
+            return Err(" ".join(e.args))
