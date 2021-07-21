@@ -3,7 +3,6 @@ import pathlib
 from unittest.mock import call
 
 import pytest
-from result import Err
 
 from trade.cli.commands.portfolios_commands import PortfoliosCommands
 from trade.storage.models import Portfolio

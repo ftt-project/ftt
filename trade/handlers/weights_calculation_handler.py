@@ -14,7 +14,7 @@ from trade.handlers.weights_steps.weights_calculate_step import WeightsCalculate
 
 class WeightsCalculationHandler(Handler):
     handlers = [
-        (PortfolioSecuritiesLoadStep, "portfolio"),
+        (PortfolioSecuritiesLoadStep, "portfolio", "portfolio_version"),
         (
             SecurityPricesDataframeLoadStep,
             PortfolioSecuritiesLoadStep.key,

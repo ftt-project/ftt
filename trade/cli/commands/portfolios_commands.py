@@ -20,6 +20,9 @@ from trade.handlers.weights_list_handler import WeightsListHandler
 class PortfoliosCommands:
     """
     Portfolio managing
+    TODO:
+    - [ ] new-version
+    - [ ] delete-version
     """
 
     @command
@@ -76,13 +79,13 @@ class PortfoliosCommands:
             name=config_result.value.name, amount=config_result.value.budget
         )
         if portfolio_result.is_ok():
-            ctx.console.print("[bold green]Portfolio successfully created")
+            ctx.console.print("[green]Portfolio successfully created")
         else:
-            ctx.console.print("[bold red]Failed to create portfolio:")
+            ctx.console.print("[red]Failed to create portfolio:")
             ctx.console.print(portfolio_result.value)
             return
 
-        with ctx.console.status("[bold green]Loading securities information") as _:
+        with ctx.console.status("[green]Loading securities information") as _:
             for symbol in config_result.value.symbols:
                 ctx.console.print(f"- {symbol}")
 
@@ -94,10 +97,10 @@ class PortfoliosCommands:
             )
             if securities_result.is_ok():
                 ctx.console.print(
-                    "[bold green]Securities information successfully imported"
+                    "[green]Securities information successfully imported"
                 )
             else:
-                ctx.console.print("[bold red]Failed to load securities information:")
+                ctx.console.print("[red]Failed to load securities information:")
                 ctx.console.print(securities_result.value)
                 return
 
@@ -105,15 +108,17 @@ class PortfoliosCommands:
             securities=config_result.value.symbols, portfolio_version=portfolio_result.value.versions[0]
         )
         if association_result.is_ok():
-            ctx.console.print("[bold green]Securities successfully associated with portfolio")
+            ctx.console.print("[green]Securities successfully associated with portfolio")
         else:
-            ctx.console.print("[bold red]Failed to associate securities with portfolio:")
+            ctx.console.print("[red]Failed to associate securities with portfolio:")
             ctx.console.print(association_result.value)
 
-    # @command
-    # @argument()
-    # def build(self, id: str) -> None:
-    #     """
-    #     Print available versions of portfolio
-    #     """
-    #     pass
+    @command("use")
+    @argument("portfolio_id", description="Portfolio ID", positional=True)
+    def use(self, portfolio_id: int) -> None:
+        """
+        Assign active portfolio
+        """
+        ctx = context.get_context()
+        ctx.portfolio_in_use = portfolio_id
+        ctx.console.print(f"[green]Active portfolio #{portfolio_id}")
