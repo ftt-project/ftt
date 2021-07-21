@@ -19,7 +19,7 @@ class TestPortfolioCreationHandler:
             "amount": 10000,
             "period_start": datetime(2021, 1, 1),
             "period_end": datetime(2021, 4, 25),
-            "interval": "1wk"
+            "interval": "1wk",
         }
 
     def test_creates_portfolio(self, subject, arguments):

@@ -32,7 +32,7 @@ class TestPortfoliosCommands:
         assert portfolio in mocked.call_args[0][1]
 
     def test_details_renders_portfolio_details(
-            self, subject, mocker, portfolio, portfolio_version
+        self, subject, mocker, portfolio, portfolio_version
     ):
         mocked = mocker.patch(
             "trade.cli.commands.portfolios_commands.PortfolioDetails",
@@ -43,7 +43,7 @@ class TestPortfoliosCommands:
         assert portfolio == mocked.call_args[0][1]
 
     def test_details_renders_portfolio_versions_list(
-            self, subject, mocker, portfolio, portfolio_version
+        self, subject, mocker, portfolio, portfolio_version
     ):
         mocked = mocker.patch(
             "trade.cli.commands.portfolios_commands.PortfolioVersionsList",
@@ -61,7 +61,7 @@ class TestPortfoliosCommands:
         assert (after - before) == 1
 
     def test_writes_message_on_config_parsing_failure(
-            self, subject, mocker, path_to_config, context
+        self, subject, mocker, path_to_config, context
     ):
         mocker.patch(
             "trade.cli.commands.portfolios_commands.PortfolioConfigHandler",
@@ -78,7 +78,7 @@ class TestPortfoliosCommands:
         portfolio_mocker.assert_not_called()
 
     def test_writes_message_on_portfolio_creation_failure(
-            self, subject, mocker, path_to_config, context
+        self, subject, mocker, path_to_config, context
     ):
         mocker.patch(
             "trade.cli.commands.portfolios_commands.PortfolioCreationHandler",
@@ -95,7 +95,7 @@ class TestPortfoliosCommands:
         )
 
     def test_on_correct_config_request_assets_info(
-            self, subject, mocker, path_to_config
+        self, subject, mocker, path_to_config
     ):
         securities_mocker = mocker.patch(
             "trade.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
@@ -110,7 +110,9 @@ class TestPortfoliosCommands:
         securities_mocker.return_value.handle.assert_called_once()
         association_mocker.return_value.handle.assert_called_once()
 
-    def test_writes_message_on_securities_loading_failure(self, subject, mocker, path_to_config, context):
+    def test_writes_message_on_securities_loading_failure(
+        self, subject, mocker, path_to_config, context
+    ):
         mocker.patch(
             "trade.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
             **{"return_value.handle.return_value.is_ok.return_value": False}
