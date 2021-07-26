@@ -32,7 +32,16 @@ class WeightsRepository(RepositoryInterface):
             )
             .execute()
         )
-
+        if id == 0:
+            id = (
+                Weight.select()
+                .where(
+                    Weight.portfolio_version == data["portfolio_version"],
+                    Weight.security == data["security"],
+                )
+                .get()
+                .id
+            )
         return cls.get_by_id(id)
 
     @classmethod

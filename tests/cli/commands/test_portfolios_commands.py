@@ -3,7 +3,6 @@ import pathlib
 from unittest.mock import call
 
 import pytest
-from result import Err
 
 from trade.cli.commands.portfolios_commands import PortfoliosCommands
 from trade.storage.models import Portfolio
@@ -78,7 +77,7 @@ class TestPortfoliosCommands:
 
         portfolio_mocker.assert_not_called()
 
-    def test_writes_message_on_portfolio_creation(
+    def test_writes_message_on_portfolio_creation_failure(
         self, subject, mocker, path_to_config, context
     ):
         mocker.patch(
@@ -92,15 +91,39 @@ class TestPortfoliosCommands:
 
         securities_mocker.assert_not_called()
         context.get_context.return_value.console.print.assert_has_calls(
-            [call("[bold red]Failed to create portfolio:")]
+            [call("[red]Failed to create portfolio:")]
         )
 
     def test_on_correct_config_request_assets_info(
         self, subject, mocker, path_to_config
     ):
-        mocked = mocker.patch(
+        securities_mocker = mocker.patch(
             "trade.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
             **{"return_value.handle.return_value.value": True}
         )
+        association_mocker = mocker.patch(
+            "trade.cli.commands.portfolios_commands.PortfolioAssociateSecuritiesHandler",
+            **{"return_value.handle.return_value.value": True}
+        )
         subject.import_from_file(path_to_config)
-        mocked.return_value.handle.assert_called_once()
+
+        securities_mocker.return_value.handle.assert_called_once()
+        association_mocker.return_value.handle.assert_called_once()
+
+    def test_writes_message_on_securities_loading_failure(
+        self, subject, mocker, path_to_config, context
+    ):
+        mocker.patch(
+            "trade.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
+            **{"return_value.handle.return_value.is_ok.return_value": False}
+        )
+        association_mocker = mocker.patch(
+            "trade.cli.commands.portfolios_commands.PortfolioAssociateSecuritiesHandler",
+        )
+
+        subject.import_from_file(path_to_config)
+
+        association_mocker.assert_not_called()
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call("[red]Failed to load securities information:")]
+        )

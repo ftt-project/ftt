@@ -37,6 +37,13 @@ class TestWeightsRepository:
 
         assert result == weight
 
+    def test_upsert_returns_weight_always(self, subject, data, weight):
+        result1 = subject.upsert(data)
+        result2 = subject.upsert(data)
+
+        assert result1 == weight
+        assert result2 == weight
+
     def test_get_by_security_and_portfolio_version(
         self, subject, portfolio_version, security, weight
     ):

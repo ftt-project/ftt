@@ -9,7 +9,14 @@ from trade.handlers.portfolio_steps.portfolio_version_create_step import (
 
 class PortfolioCreationHandler(Handler):
     handlers = [
-        (PortfolioCreateStep, "name", "amount"),
+        (
+            PortfolioCreateStep,
+            "name",
+            "amount",
+            "period_start",
+            "period_end",
+            "interval",
+        ),
         Context(assign=1, to="version"),
         (PortfolioVersionCreateStep, "version", "portfolio"),
         # (PortfolioAssociateWeightsStep, PortfolioVersionCreateStep.key, "securities"),

@@ -16,13 +16,13 @@ class PortfolioSecuritiesLoadStep(AbstractStep):
 
     @classmethod
     def process(
-        cls, portfolio: Portfolio, version: Optional[PortfolioVersion] = None
+        cls, portfolio: Portfolio, portfolio_version: Optional[PortfolioVersion] = None
     ) -> OkErr:
-        if version is None:
-            version = PortfolioVersionsRepository.get_latest_version(
+        if portfolio_version is None:
+            portfolio_version = PortfolioVersionsRepository.get_latest_version(
                 portfolio_id=portfolio.id
             )
-        securities = SecuritiesRepository.find_securities(version)
+        securities = SecuritiesRepository.find_securities(portfolio_version)
 
         if len(securities) == 0:
             return Err(f"No securities in portfolio {portfolio}")

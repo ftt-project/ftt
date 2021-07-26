@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
+import pypfopt
 from pandas import DataFrame
 from pypfopt import DiscreteAllocation, EfficientFrontier, expected_returns, risk_models
-from result import Ok, OkErr
+from result import Err, Ok, OkErr
 
 from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage.models.portfolio import Portfolio
@@ -22,25 +23,29 @@ class WeightsCalculateStep(AbstractStep):
 
     @classmethod
     def process(cls, security_prices: DataFrame, portfolio: Portfolio) -> OkErr:
-        _ = security_prices.pct_change().dropna()
+        try:
+            _ = security_prices.pct_change().dropna()
 
-        mu = expected_returns.return_model(security_prices, method="capm_return")
-        S = risk_models.risk_matrix(security_prices, method="oracle_approximating")
+            mu = expected_returns.return_model(security_prices, method="capm_return")
+            S = risk_models.risk_matrix(security_prices, method="oracle_approximating")
 
-        ef = EfficientFrontier(mu, S)
+            ef = EfficientFrontier(mu, S)
 
-        _ = ef.max_sharpe()
-        cleaned_weights = ef.clean_weights()
+            _ = ef.max_sharpe()
+            cleaned_weights = ef.clean_weights()
 
-        mu, sigma, sharpe = ef.portfolio_performance()
+            mu, sigma, sharpe = ef.portfolio_performance()
 
-        da = DiscreteAllocation(
-            cleaned_weights,
-            security_prices.iloc[-1],
-            total_portfolio_value=portfolio.amount,
-        )
-        alloc, leftover = da.lp_portfolio()
+            da = DiscreteAllocation(
+                cleaned_weights,
+                security_prices.iloc[-1],
+                total_portfolio_value=float(portfolio.amount),
+            )
+            alloc, leftover = da.lp_portfolio()
 
-        result = WeightsCalculateStepResult(alloc, leftover, mu, sigma, sharpe)
+            result = WeightsCalculateStepResult(alloc, leftover, mu, sigma, sharpe)
 
-        return Ok(result)
+            return Ok(result)
+
+        except pypfopt.exceptions.OptimizationError as e:
+            return Err(" ".join(e.args))

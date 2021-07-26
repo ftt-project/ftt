@@ -11,6 +11,7 @@ class Context(context.Context):
         Storage.initialize_database(application_name="ftt", environment=environment)
 
         self.console = Console()
+        self.portfolio_in_use = None
 
     def on_cli(self, cmd, args):
         # dispatch the on connected message
