@@ -21,6 +21,7 @@ class PortfolioVersionsList(AbstractRenderer):
         )
         table.add_column("ID")
         table.add_column("Version")
+        table.add_column("Active")
         table.add_column("Expected Annual Return")
         table.add_column("Annual Volatility")
         table.add_column("Sharpe Ratio")
@@ -29,6 +30,7 @@ class PortfolioVersionsList(AbstractRenderer):
             table.add_row(
                 str(version.id),
                 str(version.version),
+                "[bold cyan]Yes" if version.active else "No",
                 str(version.expected_annual_return),
                 str(version.annual_volatility),
                 str(version.sharpe_ratio),

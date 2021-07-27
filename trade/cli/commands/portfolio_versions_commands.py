@@ -4,6 +4,7 @@ from nubia import argument, command, context
 
 from trade.cli.renderers.weights.weights_list import WeightsList
 from trade.handlers.portfolio_load_handler import PortfolioLoadHandler
+from trade.handlers.portfolio_version_activation_handler import PortfolioVersionActivationHandler
 from trade.handlers.portfolio_version_loading_handler import PortfolioVersionLoadHandler
 from trade.handlers.weights_calculation_handler import WeightsCalculationHandler
 from trade.handlers.weights_list_handler import WeightsListHandler
@@ -31,11 +32,11 @@ class PortfolioVersionsCommands:
         choices=["1m", "5m", "15m", "1d", "1wk", "1mo"],
     )
     def balance(
-        self,
-        portfolio_version_id: int,
-        period_start: str = None,
-        period_end: str = None,
-        interval: str = None,
+            self,
+            portfolio_version_id: int,
+            period_start: str = None,
+            period_end: str = None,
+            interval: str = None,
     ) -> None:
         """
         Balance portfolio version
@@ -98,3 +99,25 @@ class PortfolioVersionsCommands:
             result.value,
             f"Portfolio Version [bold cyan]#{portfolio_version_result.value.id}[/bold cyan] list of weights",
         ).render()
+
+    @command
+    @argument(
+        "portfolio_version_id", description="Portfolio Version ID", positional=True
+    )
+    def activate(self, portfolio_version_id):
+        """
+        Activate the indicated version of portfolio
+        """
+        ctx = context.get_context()
+        #
+        # PortfolioVersionActivationHandler().handle(
+        #     portfolio_version_id=portfolio_version_id,
+        #     portfolio=portfolio
+        # )
+
+    @command
+    @argument(
+        "portfolio_version_id", description="Portfolio Version ID", positional=True
+    )
+    def deactivate(self, portfolio_version_id):
+        pass

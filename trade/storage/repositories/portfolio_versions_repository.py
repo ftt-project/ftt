@@ -1,5 +1,7 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
+
+import peewee
 
 from trade.storage.models.base import Base
 from trade.storage.models.portfolio import Portfolio
@@ -9,8 +11,11 @@ from trade.storage.repositories.repository_interface import RepositoryInterface
 
 class PortfolioVersionsRepository(RepositoryInterface):
     @classmethod
-    def save(cls, model: Base) -> PortfolioVersion:
-        raise NotImplementedError()
+    def save(cls, model: PortfolioVersion) -> PortfolioVersion:
+        model.updated_at = datetime.now()
+        model.save()
+
+        return model
 
     @classmethod
     def create(cls, **data: str) -> PortfolioVersion:
@@ -33,10 +38,23 @@ class PortfolioVersionsRepository(RepositoryInterface):
         """
         return (
             PortfolioVersion.select()
-            .where(PortfolioVersion.portfolio_id == portfolio_id)
-            .order_by(PortfolioVersion.version.desc())
-            .get()
+                .where(PortfolioVersion.portfolio_id == portfolio_id)
+                .order_by(PortfolioVersion.version.desc())
+                .get()
         )
+
+    @classmethod
+    def get_active_version(cls, portfolio: Portfolio) -> Optional[PortfolioVersion]:
+        try:
+            return (
+                PortfolioVersion.select()
+                    .join(Portfolio)
+                    .where(Portfolio.id == portfolio)
+                    .where(PortfolioVersion.active == True)
+                    .get()
+            )
+        except peewee.DoesNotExist:
+            return None
 
     @classmethod
     def get_all_by_portfolio(cls, portfolio: Portfolio) -> List[PortfolioVersion]:
