@@ -16,4 +16,3 @@ class PortfolioVersionActivationValidateStep(AbstractStep):
             return Ok(portfolio_version)
         else:
             return Err(f"Portfolio Version #{portfolio_version.id} is already active")
-tests/cli/commands/test_portfolio_versions_commands.py

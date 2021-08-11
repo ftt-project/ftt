@@ -121,3 +121,9 @@ class PortfolioVersionsCommands:
     )
     def deactivate(self, portfolio_version_id):
         pass
+
+    def statistic(self):
+        """
+        Distribution of weighs/$
+        """
+        pass
