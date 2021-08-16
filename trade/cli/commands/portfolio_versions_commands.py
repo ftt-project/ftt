@@ -106,14 +106,39 @@ class PortfolioVersionsCommands:
     )
     def activate(self, portfolio_version_id):
         """
-        Activate the indicated version of portfolio
+        Activate the indicated version of the portfolio and deactivates the rest
         """
         ctx = context.get_context()
-        #
-        # PortfolioVersionActivationHandler().handle(
-        #     portfolio_version_id=portfolio_version_id,
-        #     portfolio=portfolio
-        # )
+
+        # TODO refactor, duplicated in `balance` method
+        if self.portfolio_in_use is None:
+            ctx.console.print(
+                "[yellow]Select portfolio using `portfolio use ID` command"
+            )
+            return
+
+        portfolio_version_result = PortfolioVersionLoadHandler().handle(
+            portfolio_version_id=portfolio_version_id
+        )
+        portfolio_result = PortfolioLoadHandler().handle(
+            portfolio_id=self.portfolio_in_use
+        )
+
+        # TODO handle if not found situation
+
+        result = PortfolioVersionActivationHandler().handle(
+            portfolio_version=portfolio_version_result.value,
+            portfolio=portfolio_result.value
+        )
+
+        if result.is_ok():
+            ctx.console.print(
+                f"[green]Portfolio Version {portfolio_version_id} set active"
+            )
+        else:
+            ctx.console.print(
+                f"[yellow]{result.value.value}"
+            )
 
     @command
     @argument(
