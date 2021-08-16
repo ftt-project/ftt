@@ -3,7 +3,6 @@ from typing import List, Optional
 
 import peewee
 
-from trade.storage.models.base import Base
 from trade.storage.models.portfolio import Portfolio
 from trade.storage.models.portfolio_version import PortfolioVersion
 from trade.storage.repositories.repository_interface import RepositoryInterface
@@ -38,9 +37,9 @@ class PortfolioVersionsRepository(RepositoryInterface):
         """
         return (
             PortfolioVersion.select()
-                .where(PortfolioVersion.portfolio_id == portfolio_id)
-                .order_by(PortfolioVersion.version.desc())
-                .get()
+            .where(PortfolioVersion.portfolio_id == portfolio_id)
+            .order_by(PortfolioVersion.version.desc())
+            .get()
         )
 
     @classmethod
@@ -48,10 +47,10 @@ class PortfolioVersionsRepository(RepositoryInterface):
         try:
             return (
                 PortfolioVersion.select()
-                    .join(Portfolio)
-                    .where(Portfolio.id == portfolio)
-                    .where(PortfolioVersion.active == True)
-                    .get()
+                .join(Portfolio)
+                .where(Portfolio.id == portfolio)
+                .where(PortfolioVersion.active == True)  # noqa: E712
+                .get()
             )
         except peewee.DoesNotExist:
             return None

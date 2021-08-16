@@ -17,7 +17,7 @@ class TestPortfolioVersionsCommands:
         )
 
     def test_balance_calculating_weights(
-            self, subject, portfolio, portfolio_version, security, mocker, context
+        self, subject, portfolio, portfolio_version, security, mocker, context
     ):
         mocked = mocker.patch(
             "trade.cli.commands.portfolio_versions_commands.WeightsCalculationHandler"
@@ -31,7 +31,7 @@ class TestPortfolioVersionsCommands:
         mocked.return_value.handle.assert_called_once()
 
     def test_accepts_portfolio_id_in_constructor(
-            self, subject, portfolio, portfolio_version, security, mocker
+        self, subject, portfolio, portfolio_version, security, mocker
     ):
         mocked = mocker.patch(
             "trade.cli.commands.portfolio_versions_commands.WeightsCalculationHandler"
@@ -54,7 +54,7 @@ class TestPortfolioVersionsCommands:
         )
 
     def test_prints_error_when_no_specified_portfolio_version_found(
-            self, subject, portfolio, portfolio_version, context
+        self, subject, portfolio, portfolio_version, context
     ):
         subject(portfolio_id=portfolio.id).balance(
             100, "2021-01-01", "2021-04-20", "1d"
@@ -65,7 +65,7 @@ class TestPortfolioVersionsCommands:
         )
 
     def test_balance_period_and_interval_arguments_are_optional(
-            self, subject, portfolio, portfolio_version, mocker
+        self, subject, portfolio, portfolio_version, mocker
     ):
         mocked = mocker.patch(
             "trade.cli.commands.portfolio_versions_commands.WeightsCalculationHandler"
@@ -80,35 +80,55 @@ class TestPortfolioVersionsCommands:
     def test_activate(self, subject, portfolio, portfolio_version, context):
         portfolio_version.active = False
         portfolio_version.save()
-        subject(portfolio_id=portfolio.id).activate(portfolio_version_id=portfolio_version.id)
+        subject(portfolio_id=portfolio.id).activate(
+            portfolio_version_id=portfolio_version.id
+        )
 
         context.get_context.return_value.console.print.assert_has_calls(
             [call(f"[green]Portfolio Version {portfolio_version.id} set active")]
         )
 
-    def test_activate_active_portfolio_version(self, subject, portfolio, portfolio_version, context):
+    def test_activate_active_portfolio_version(
+        self, subject, portfolio, portfolio_version, context
+    ):
         portfolio_version.active = True
         portfolio_version.save()
-        subject(portfolio_id=portfolio.id).activate(portfolio_version_id=portfolio_version.id)
+        subject(portfolio_id=portfolio.id).activate(
+            portfolio_version_id=portfolio_version.id
+        )
 
         context.get_context.return_value.console.print.assert_has_calls(
-            [call(f"[yellow]Portfolio Version #{portfolio_version.id} is already active")]
+            [
+                call(
+                    f"[yellow]Portfolio Version #{portfolio_version.id} is already active"
+                )
+            ]
         )
 
     def test_deactivate(self, subject, portfolio, portfolio_version, context):
         portfolio_version.active = True
         portfolio_version.save()
-        subject(portfolio_id=portfolio.id).deactivate(portfolio_version_id=portfolio_version.id)
+        subject(portfolio_id=portfolio.id).deactivate(
+            portfolio_version_id=portfolio_version.id
+        )
 
         context.get_context.return_value.console.print.assert_has_calls(
             [call(f"[green]Portfolio Version {portfolio_version.id} is deactivated")]
         )
 
-    def test_deactivate_not_active_portfolio(self, subject, portfolio, portfolio_version, context):
+    def test_deactivate_not_active_portfolio(
+        self, subject, portfolio, portfolio_version, context
+    ):
         portfolio_version.active = True
         portfolio_version.save()
-        subject(portfolio_id=portfolio.id).deactivate(portfolio_version_id=portfolio_version.id)
+        subject(portfolio_id=portfolio.id).deactivate(
+            portfolio_version_id=portfolio_version.id
+        )
 
         context.get_context.return_value.console.print.assert_has_calls(
-            [call(f"[yellow]Portfolio Version {portfolio_version.id} is already deactivated")]
+            [
+                call(
+                    f"[yellow]Portfolio Version {portfolio_version.id} is already deactivated"
+                )
+            ]
         )

@@ -1,6 +1,8 @@
 import pytest
 
-from trade.handlers.portfolio_version_steps.portfolio_version_deactivate_step import PortfolioVersionDeactivateStep
+from trade.handlers.portfolio_version_steps.portfolio_version_deactivate_step import (
+    PortfolioVersionDeactivateStep,
+)
 
 
 class TestPortfolioVersionDeactivateStep:

@@ -1,6 +1,8 @@
 import pytest
 
-from trade.handlers.portfolio_version_steps.portfolio_version_load_active_step import PortfolioVersionLoadActiveStep
+from trade.handlers.portfolio_version_steps.portfolio_version_load_active_step import (
+    PortfolioVersionLoadActiveStep,
+)
 
 
 class TestPortfolioVersionLoadActiveStep:

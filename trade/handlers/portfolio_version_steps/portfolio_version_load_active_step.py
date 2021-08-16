@@ -2,7 +2,9 @@ from result import OkErr, Ok
 
 from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage.models import Portfolio
-from trade.storage.repositories.portfolio_versions_repository import PortfolioVersionsRepository
+from trade.storage.repositories.portfolio_versions_repository import (
+    PortfolioVersionsRepository,
+)
 
 
 class PortfolioVersionLoadActiveStep(AbstractStep):
@@ -13,4 +15,3 @@ class PortfolioVersionLoadActiveStep(AbstractStep):
         version = PortfolioVersionsRepository.get_active_version(portfolio)
 
         return Ok(version)
-

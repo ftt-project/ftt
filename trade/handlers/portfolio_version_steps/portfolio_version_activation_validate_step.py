@@ -2,7 +2,9 @@ from result import OkErr, Ok, Err
 
 from trade.handlers.handler.abstract_step import AbstractStep
 from trade.storage.models import PortfolioVersion
-from trade.storage.repositories.portfolio_versions_repository import PortfolioVersionsRepository
+from trade.storage.repositories.portfolio_versions_repository import (
+    PortfolioVersionsRepository,
+)
 
 
 class PortfolioVersionActivationValidateStep(AbstractStep):
@@ -10,7 +12,9 @@ class PortfolioVersionActivationValidateStep(AbstractStep):
 
     @classmethod
     def process(cls, portfolio_version: PortfolioVersion) -> OkErr:
-        version = PortfolioVersionsRepository.get_active_version(portfolio_version.portfolio)
+        version = PortfolioVersionsRepository.get_active_version(
+            portfolio_version.portfolio
+        )
 
         if version != portfolio_version:
             return Ok(portfolio_version)
