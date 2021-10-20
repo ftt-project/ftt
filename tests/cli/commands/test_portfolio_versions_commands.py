@@ -119,7 +119,7 @@ class TestPortfolioVersionsCommands:
     def test_deactivate_not_active_portfolio(
         self, subject, portfolio, portfolio_version, context
     ):
-        portfolio_version.active = True
+        portfolio_version.active = False
         portfolio_version.save()
         subject(portfolio_id=portfolio.id).deactivate(
             portfolio_version_id=portfolio_version.id
@@ -128,7 +128,7 @@ class TestPortfolioVersionsCommands:
         context.get_context.return_value.console.print.assert_has_calls(
             [
                 call(
-                    f"[yellow]Portfolio Version {portfolio_version.id} is already deactivated"
+                    f"[yellow]Portfolio Version #{portfolio_version.id} is not active"
                 )
             ]
         )

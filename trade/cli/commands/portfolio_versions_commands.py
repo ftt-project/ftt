@@ -7,6 +7,9 @@ from trade.handlers.portfolio_load_handler import PortfolioLoadHandler
 from trade.handlers.portfolio_version_activation_handler import (
     PortfolioVersionActivationHandler,
 )
+from trade.handlers.portfolio_version_deactivation_handler import (
+    PortfolioVersionDeactivationHandler,
+)
 from trade.handlers.portfolio_version_loading_handler import PortfolioVersionLoadHandler
 from trade.handlers.weights_calculation_handler import WeightsCalculationHandler
 from trade.handlers.weights_list_handler import WeightsListHandler
@@ -145,7 +148,38 @@ class PortfolioVersionsCommands:
         "portfolio_version_id", description="Portfolio Version ID", positional=True
     )
     def deactivate(self, portfolio_version_id):
-        pass
+        """
+        Deactivate the indicated version of the portfolio
+        """
+        ctx = context.get_context()
+
+        # TODO refactor, duplicated in `balance` method
+        if self.portfolio_in_use is None:
+            ctx.console.print(
+                "[yellow]Select portfolio using `portfolio use ID` command"
+            )
+            return
+
+        portfolio_version_result = PortfolioVersionLoadHandler().handle(
+            portfolio_version_id=portfolio_version_id
+        )
+        portfolio_result = PortfolioLoadHandler().handle(
+            portfolio_id=self.portfolio_in_use
+        )
+
+        # TODO handle if not found situation
+
+        result = PortfolioVersionDeactivationHandler().handle(
+            portfolio_version=portfolio_version_result.value,
+            portfolio=portfolio_result.value,
+        )
+
+        if result.is_ok():
+            ctx.console.print(
+                f"[green]Portfolio Version {portfolio_version_id} is deactivated"
+            )
+        else:
+            ctx.console.print(f"[yellow]{result.value.value}")
 
     def statistic(self):
         """

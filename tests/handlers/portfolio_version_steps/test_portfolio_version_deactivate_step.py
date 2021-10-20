@@ -14,12 +14,12 @@ class TestPortfolioVersionDeactivateStep:
         portfolio_version.active = True
         portfolio_version.save()
 
-        result = subject.process(active_portfolio_version=portfolio_version)
+        result = subject.process(portfolio_version=portfolio_version)
 
         assert result.is_ok()
         assert not result.value.active
 
     def test_process_does_nothing_if_no_active_version(self, subject):
-        result = subject.process(active_portfolio_version=None)
+        result = subject.process(portfolio_version=None)
 
         assert result.is_ok()

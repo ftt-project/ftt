@@ -10,7 +10,7 @@ class TestPortfolioVersionActivationValidateStep:
     def subject(self):
         return PortfolioVersionActivationValidateStep
 
-    def test_process_activates_when_different_versions(
+    def test_process_returns_ok_when_different_versions(
         self, subject, portfolio, portfolio_version
     ):
         portfolio_version.active = False

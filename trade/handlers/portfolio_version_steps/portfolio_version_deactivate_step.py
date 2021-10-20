@@ -13,10 +13,10 @@ class PortfolioVersionDeactivateStep(AbstractStep):
     key = "deactivated_portfolio_version"
 
     @classmethod
-    def process(cls, active_portfolio_version: Optional[PortfolioVersion]):
-        if not active_portfolio_version:
+    def process(cls, portfolio_version: Optional[PortfolioVersion]):
+        if not portfolio_version:
             return Ok()
 
-        active_portfolio_version.active = False
-        result = PortfolioVersionsRepository.save(active_portfolio_version)
+        portfolio_version.active = False
+        result = PortfolioVersionsRepository.save(portfolio_version)
         return Ok(result)
