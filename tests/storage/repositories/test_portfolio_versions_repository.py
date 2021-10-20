@@ -24,3 +24,30 @@ class TestPortfolioVersionsRepository:
 
         assert type(result) == list
         assert result[0] == portfolio_version
+
+    def test_save(self, subject, portfolio_version):
+        portfolio_version.version = "10011"
+        result = subject.save(portfolio_version)
+
+        assert result == portfolio_version
+        assert result.version == "10011"
+
+    def test_get_active_version_when_exists(
+        self, subject, portfolio, portfolio_version
+    ):
+        portfolio_version.active = True
+        portfolio_version.save()
+
+        result = subject.get_active_version(portfolio)
+
+        assert result == portfolio_version
+
+    def test_get_active_version_returns_none(
+        self, subject, portfolio, portfolio_version
+    ):
+        portfolio_version.active = False
+        portfolio_version.save()
+
+        result = subject.get_active_version(portfolio)
+
+        assert result is None

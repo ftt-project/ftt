@@ -3,7 +3,6 @@ from unittest.mock import call
 import pytest
 
 from trade.cli.commands.portfolio_versions_commands import PortfolioVersionsCommands
-from trade.storage.models import Weight
 
 
 class TestPortfolioVersionsCommands:
@@ -77,3 +76,59 @@ class TestPortfolioVersionsCommands:
             portfolio_version_id=portfolio_version.id
         )
         mocked.return_value.handle.assert_called_once()
+
+    def test_activate(self, subject, portfolio, portfolio_version, context):
+        portfolio_version.active = False
+        portfolio_version.save()
+        subject(portfolio_id=portfolio.id).activate(
+            portfolio_version_id=portfolio_version.id
+        )
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call(f"[green]Portfolio Version {portfolio_version.id} set active")]
+        )
+
+    def test_activate_active_portfolio_version(
+        self, subject, portfolio, portfolio_version, context
+    ):
+        portfolio_version.active = True
+        portfolio_version.save()
+        subject(portfolio_id=portfolio.id).activate(
+            portfolio_version_id=portfolio_version.id
+        )
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [
+                call(
+                    f"[yellow]Portfolio Version #{portfolio_version.id} is already active"
+                )
+            ]
+        )
+
+    def test_deactivate(self, subject, portfolio, portfolio_version, context):
+        portfolio_version.active = True
+        portfolio_version.save()
+        subject(portfolio_id=portfolio.id).deactivate(
+            portfolio_version_id=portfolio_version.id
+        )
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call(f"[green]Portfolio Version {portfolio_version.id} is deactivated")]
+        )
+
+    def test_deactivate_not_active_portfolio(
+        self, subject, portfolio, portfolio_version, context
+    ):
+        portfolio_version.active = False
+        portfolio_version.save()
+        subject(portfolio_id=portfolio.id).deactivate(
+            portfolio_version_id=portfolio_version.id
+        )
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [
+                call(
+                    f"[yellow]Portfolio Version #{portfolio_version.id} is not active"
+                )
+            ]
+        )
