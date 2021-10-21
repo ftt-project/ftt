@@ -9,7 +9,7 @@ assignees: ''
 
 ### What is the reason to work on this?
 
-### What value it will bring?
+### What value will it bring?
 
 ### Acceptance criteria?
 
