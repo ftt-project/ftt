@@ -1,5 +1,5 @@
-from trade.storage.models.portfolio import Portfolio
-from trade.storage.repositories.portfolios_repository import PortfoliosRepository
+from ftt.storage.models.portfolio import Portfolio
+from ftt.storage.repositories.portfolios_repository import PortfoliosRepository
 
 from pytest import fixture
 

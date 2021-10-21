@@ -16,7 +16,7 @@ jobs:
         uses: ricardochaves/python-lint@v1.3.0
         with:
           # A list of all paths to test
-          python-root-list: trade
+          python-root-list: ftt
           use-pylint: false
           use-pycodestyle: false
           use-flake8: true

@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.handler.context import Context
+from ftt.handlers.handler.context import Context
 
 
 class TestContext:

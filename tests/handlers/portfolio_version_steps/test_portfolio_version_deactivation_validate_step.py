@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.portfolio_version_steps.portfolio_version_deactivation_validate_step import \
+from ftt.handlers.portfolio_version_steps.portfolio_version_deactivation_validate_step import \
     PortfolioVersionDeactivationValidateStep
 
 

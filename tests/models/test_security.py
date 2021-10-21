@@ -1,5 +1,5 @@
-from trade.storage.models.order import Order
-from trade.storage.models.security import Security
+from ftt.storage.models.order import Order
+from ftt.storage.models.security import Security
 
 
 class TestSecurity:

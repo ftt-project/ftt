@@ -4,12 +4,12 @@ from decimal import Decimal
 import pytest
 
 from tests import testcommon
-from trade.storage.models.order import Order
-from trade.piloting.observers.peak_observer import PeakObserver
-from trade.piloting.strategies import ValueProtectingStrategy
-from trade.piloting.strategies.dummy_buy_once_strategy import DummyBuyOnceStrategy
-from trade.storage.repositories.orders_repository import OrdersRepository
-from trade.storage.repositories.weights_repository import WeightsRepository
+from ftt.storage.models.order import Order
+from ftt.piloting.observers.peak_observer import PeakObserver
+from ftt.piloting.strategies import ValueProtectingStrategy
+from ftt.piloting.strategies.dummy_buy_once_strategy import DummyBuyOnceStrategy
+from ftt.storage.repositories.orders_repository import OrdersRepository
+from ftt.storage.repositories.weights_repository import WeightsRepository
 
 
 class TestValueProtectingStrategy:

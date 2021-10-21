@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.weights_list_handler import WeightsListHandler
+from ftt.handlers.weights_list_handler import WeightsListHandler
 
 
 class TestWeightsLoadHandler:

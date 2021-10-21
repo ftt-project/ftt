@@ -1,6 +1,6 @@
 import pytest
 
-from trade.cli.renderers.portfolios.portfolio_details import PortfolioDetails
+from ftt.cli.renderers.portfolios.portfolio_details import PortfolioDetails
 
 
 class TestPortfolioDetails:
@@ -9,7 +9,7 @@ class TestPortfolioDetails:
         return PortfolioDetails
 
     def test_renders_portfolio(self, subject, mocker, context, portfolio):
-        mocked = mocker.patch("trade.cli.renderers.portfolios.portfolio_details.Table")
+        mocked = mocker.patch("ftt.cli.renderers.portfolios.portfolio_details.Table")
         instance = mocked.return_value
 
         subject(context, portfolio).render()

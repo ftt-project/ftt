@@ -3,7 +3,7 @@ import pathlib
 
 import pytest
 
-from trade.handlers.portfolio_steps.portfolio_config_file_reader import (
+from ftt.handlers.portfolio_steps.portfolio_config_file_reader import (
     PortfolioConfigFileReaderStep,
 )
 

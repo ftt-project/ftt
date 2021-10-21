@@ -1,7 +1,7 @@
 import pytest
 
-from trade.handlers.portfolios_list_handler import PortfoliosListHandler
-from trade.storage.models import Portfolio
+from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
+from ftt.storage.models import Portfolio
 
 
 class TestPortfoliosListHandler:

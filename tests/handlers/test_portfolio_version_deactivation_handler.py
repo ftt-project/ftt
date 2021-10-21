@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.portfolio_version_deactivation_handler import PortfolioVersionDeactivationHandler
+from ftt.handlers.portfolio_version_deactivation_handler import PortfolioVersionDeactivationHandler
 
 
 class TestPortfolioVersionDeactivationHandler:

@@ -1,5 +1,5 @@
-from trade.storage.models.portfolio_version import PortfolioVersion
-from trade.storage.repositories.portfolio_versions_repository import (
+from ftt.storage.models.portfolio_version import PortfolioVersion
+from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )
 from pytest import fixture

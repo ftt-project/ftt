@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from trade.storage.mappers.security_price_mapper import SecurityPriceMapper
+from ftt.storage.mappers.security_price_mapper import SecurityPriceMapper
 
 
 class TestSecurityPriceMapper:

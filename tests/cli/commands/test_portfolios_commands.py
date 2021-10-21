@@ -4,8 +4,8 @@ from unittest.mock import call
 
 import pytest
 
-from trade.cli.commands.portfolios_commands import PortfoliosCommands
-from trade.storage.models import Portfolio
+from ftt.cli.commands.portfolios_commands import PortfoliosCommands
+from ftt.storage.models import Portfolio
 
 
 class TestPortfoliosCommands:
@@ -15,7 +15,7 @@ class TestPortfoliosCommands:
 
     @pytest.fixture(autouse=True)
     def mock_context(self, mocker, context):
-        mocker.patch("trade.cli.commands.portfolios_commands.context", new=context)
+        mocker.patch("ftt.cli.commands.portfolios_commands.context", new=context)
 
     @pytest.fixture
     def path_to_config(self):
@@ -24,7 +24,7 @@ class TestPortfoliosCommands:
         return path
 
     def test_list(self, subject, mocker, portfolio):
-        mocked = mocker.patch("trade.cli.commands.portfolios_commands.PortfoliosList")
+        mocked = mocker.patch("ftt.cli.commands.portfolios_commands.PortfoliosList")
         mocked.return_value.render.return_value
         subject.list()
 
@@ -35,7 +35,7 @@ class TestPortfoliosCommands:
         self, subject, mocker, portfolio, portfolio_version
     ):
         mocked = mocker.patch(
-            "trade.cli.commands.portfolios_commands.PortfolioDetails",
+            "ftt.cli.commands.portfolios_commands.PortfolioDetails",
             **{"return_value.render.return_value": True}
         )
         subject.details(portfolio.id)
@@ -46,7 +46,7 @@ class TestPortfoliosCommands:
         self, subject, mocker, portfolio, portfolio_version
     ):
         mocked = mocker.patch(
-            "trade.cli.commands.portfolios_commands.PortfolioVersionsList",
+            "ftt.cli.commands.portfolios_commands.PortfolioVersionsList",
             **{"return_value.render.return_value": True}
         )
         subject.details(portfolio.id)
@@ -64,11 +64,11 @@ class TestPortfoliosCommands:
         self, subject, mocker, path_to_config, context
     ):
         mocker.patch(
-            "trade.cli.commands.portfolios_commands.PortfolioConfigHandler",
+            "ftt.cli.commands.portfolios_commands.PortfolioConfigHandler",
             **{"return_value.handle.return_value.is_ok.return_value": False}
         )
         portfolio_mocker = mocker.patch(
-            "trade.cli.commands.portfolios_commands.PortfolioCreationHandler",
+            "ftt.cli.commands.portfolios_commands.PortfolioCreationHandler",
         )
         subject.import_from_file(path_to_config)
         context.get_context.return_value.console.print.assert_has_calls(
@@ -81,11 +81,11 @@ class TestPortfoliosCommands:
         self, subject, mocker, path_to_config, context
     ):
         mocker.patch(
-            "trade.cli.commands.portfolios_commands.PortfolioCreationHandler",
+            "ftt.cli.commands.portfolios_commands.PortfolioCreationHandler",
             **{"return_value.handle.return_value.is_ok.return_value": False}
         )
         securities_mocker = mocker.patch(
-            "trade.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
+            "ftt.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
         )
         subject.import_from_file(path_to_config)
 
@@ -98,11 +98,11 @@ class TestPortfoliosCommands:
         self, subject, mocker, path_to_config
     ):
         securities_mocker = mocker.patch(
-            "trade.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
+            "ftt.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
             **{"return_value.handle.return_value.value": True}
         )
         association_mocker = mocker.patch(
-            "trade.cli.commands.portfolios_commands.PortfolioAssociateSecuritiesHandler",
+            "ftt.cli.commands.portfolios_commands.PortfolioAssociateSecuritiesHandler",
             **{"return_value.handle.return_value.value": True}
         )
         subject.import_from_file(path_to_config)
@@ -114,11 +114,11 @@ class TestPortfoliosCommands:
         self, subject, mocker, path_to_config, context
     ):
         mocker.patch(
-            "trade.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
+            "ftt.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
             **{"return_value.handle.return_value.is_ok.return_value": False}
         )
         association_mocker = mocker.patch(
-            "trade.cli.commands.portfolios_commands.PortfolioAssociateSecuritiesHandler",
+            "ftt.cli.commands.portfolios_commands.PortfolioAssociateSecuritiesHandler",
         )
 
         subject.import_from_file(path_to_config)

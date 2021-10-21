@@ -1,7 +1,7 @@
 import pytest
 
-from trade.handlers.portfolio_steps.portfolio_deactivate_all_versions_step import PortfolioDeactivateAllVersionsStep
-from trade.storage.repositories.portfolio_versions_repository import PortfolioVersionsRepository
+from ftt.handlers.portfolio_steps.portfolio_deactivate_all_versions_step import PortfolioDeactivateAllVersionsStep
+from ftt.storage.repositories.portfolio_versions_repository import PortfolioVersionsRepository
 
 
 class TestPortfolioDeactivateAllVersionsStep:

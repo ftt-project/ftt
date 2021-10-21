@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from trade.handlers.weights_steps.weights_calculate_step import (
+from ftt.handlers.weights_steps.weights_calculate_step import (
     WeightsCalculateStep,
     WeightsCalculateStepResult,
 )

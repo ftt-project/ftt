@@ -3,8 +3,8 @@ import pathlib
 
 import pytest
 
-from trade.handlers.portfolio_config_handler import PortfolioConfigHandler
-from trade.handlers.portfolio_steps.portfolio_config_parser_step import PortfolioConfig
+from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
+from ftt.handlers.portfolio_steps.portfolio_config_parser_step import PortfolioConfig
 
 
 class TestPortfolioConfigHandler:

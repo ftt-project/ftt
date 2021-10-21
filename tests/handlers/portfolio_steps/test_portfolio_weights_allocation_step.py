@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.portfolio_steps.portfolio_weights_allocation_step import (
+from ftt.handlers.portfolio_steps.portfolio_weights_allocation_step import (
     PortfolioWeightsAllocationStep,
 )
 

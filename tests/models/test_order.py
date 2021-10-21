@@ -1,6 +1,6 @@
-from trade.storage.models.order import Order
-from trade.storage.models.portfolio_version import PortfolioVersion
-from trade.storage.models.security import Security
+from ftt.storage.models.order import Order
+from ftt.storage.models.portfolio_version import PortfolioVersion
+from ftt.storage.models.security import Security
 
 
 class TestOrder:

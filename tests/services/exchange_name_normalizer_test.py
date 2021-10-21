@@ -1,4 +1,4 @@
-from trade.piloting.services import ExchangeNameNormalizer
+from ftt.piloting.services import ExchangeNameNormalizer
 
 
 class TestExchangeNameNormalizer:

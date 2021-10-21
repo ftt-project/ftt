@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.portfolio_load_handler import PortfolioLoadHandler
+from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 
 
 class TestPortfolioLoadHandler:

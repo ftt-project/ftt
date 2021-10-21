@@ -108,7 +108,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-trade-env/
 
 # Spyder project settings
 .spyderproject

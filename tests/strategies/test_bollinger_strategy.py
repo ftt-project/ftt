@@ -2,8 +2,8 @@ from datetime import datetime
 
 import pytest
 from tests import testcommon
-from trade.storage.models.order import Order
-from trade.piloting.strategies import BollingerStrategy
+from ftt.storage.models.order import Order
+from ftt.piloting.strategies import BollingerStrategy
 
 
 class TestBollingerStrategy:

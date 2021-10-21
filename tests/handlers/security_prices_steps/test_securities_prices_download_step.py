@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from pandas import DataFrame
 
-from trade.handlers.security_prices_steps.securities_prices_download_step import (
+from ftt.handlers.security_prices_steps.securities_prices_download_step import (
     SecurityPricesDownloadStep,
 )
 

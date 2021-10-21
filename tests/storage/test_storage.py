@@ -1,8 +1,8 @@
 import pytest
 from peewee import Database
 
-from trade.storage import Storage
-from trade.storage.storage_manager import StorageManager
+from ftt.storage import Storage
+from ftt.storage.storage_manager import StorageManager
 
 
 class TestStorage:

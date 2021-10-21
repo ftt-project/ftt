@@ -1,8 +1,8 @@
 import pandas as pd
 import pytest
 
-from trade.handlers.securities_steps.securities_upsert_step import SecuritiesUpsertStep
-from trade.storage.models.security import Security
+from ftt.handlers.securities_steps.securities_upsert_step import SecuritiesUpsertStep
+from ftt.storage.models.security import Security
 
 
 class TestSecuritiesUpsertStep:
