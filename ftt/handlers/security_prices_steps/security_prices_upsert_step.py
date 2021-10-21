@@ -6,9 +6,7 @@ from result import Ok, OkErr
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.mappers.security_price_mapper import SecurityPriceMapper
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
-from ftt.storage.repositories.security_prices_repository import (
-    SecurityPricesRepository,
-)
+from ftt.storage.repositories.security_prices_repository import SecurityPricesRepository
 
 
 class SecurityPricesUpsertStep(AbstractStep):

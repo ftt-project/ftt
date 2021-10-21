@@ -1,7 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any, List
-
-from result import OkErr
+from typing import Any
 
 
 class MetaStep(ABCMeta):

@@ -1,5 +1,3 @@
-from typing import Any
-
 from result import Ok
 
 from ftt.handlers.handler.abstract_step import AbstractStep

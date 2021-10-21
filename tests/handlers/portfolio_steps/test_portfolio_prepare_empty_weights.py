@@ -3,9 +3,7 @@ import pytest
 from ftt.handlers.portfolio_steps.portfolio_prepare_empty_weights_step import (
     PortfolioPrepareEmptyWeightsStep,
 )
-from ftt.handlers.weights_steps.weights_calculate_step import (
-    WeightsCalculateStepResult,
-)
+from ftt.handlers.weights_steps.weights_calculate_step import WeightsCalculateStepResult
 
 
 class TestPortfolioPrepareEmptyWeightsStep:

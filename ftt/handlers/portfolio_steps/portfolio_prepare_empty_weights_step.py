@@ -3,9 +3,7 @@ from typing import List
 from result import Ok, OkErr
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.handlers.weights_steps.weights_calculate_step import (
-    WeightsCalculateStepResult,
-)
+from ftt.handlers.weights_steps.weights_calculate_step import WeightsCalculateStepResult
 
 
 class PortfolioPrepareEmptyWeightsStep(AbstractStep):

@@ -3,9 +3,7 @@ import pytest
 from ftt.handlers.portfolio_steps.portfolio_weights_persist_step import (
     PortfolioWeightsPersistStep,
 )
-from ftt.handlers.weights_steps.weights_calculate_step import (
-    WeightsCalculateStepResult,
-)
+from ftt.handlers.weights_steps.weights_calculate_step import WeightsCalculateStepResult
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.models.weight import Weight
 

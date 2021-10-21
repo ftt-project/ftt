@@ -126,9 +126,5 @@ class TestPortfolioVersionsCommands:
         )
 
         context.get_context.return_value.console.print.assert_has_calls(
-            [
-                call(
-                    f"[yellow]Portfolio Version #{portfolio_version.id} is not active"
-                )
-            ]
+            [call(f"[yellow]Portfolio Version #{portfolio_version.id} is not active")]
         )
