@@ -3,7 +3,7 @@ from pandas import DataFrame
 
 import pytest
 
-from trade.handlers.security_prices_steps.security_prices_dataframe_load_step import (
+from ftt.handlers.security_prices_steps.security_prices_dataframe_load_step import (
     SecurityPricesDataframeLoadStep,
 )
 

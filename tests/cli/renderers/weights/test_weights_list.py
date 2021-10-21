@@ -1,6 +1,6 @@
 import pytest
 
-from trade.cli.renderers.weights.weights_list import WeightsList
+from ftt.cli.renderers.weights.weights_list import WeightsList
 
 
 class TestWeightsList:
@@ -11,7 +11,7 @@ class TestWeightsList:
     def test_renders_list(
         self, subject, context, mocker, portfolio, portfolio_version, security, weight
     ):
-        mocked = mocker.patch("trade.cli.renderers.weights.weights_list.Table")
+        mocked = mocker.patch("ftt.cli.renderers.weights.weights_list.Table")
         instance = mocked.return_value
 
         subject(context, [weight]).render()

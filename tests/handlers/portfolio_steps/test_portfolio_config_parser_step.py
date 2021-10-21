@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from trade.handlers.portfolio_steps.portfolio_config_parser_step import (
+from ftt.handlers.portfolio_steps.portfolio_config_parser_step import (
     PortfolioConfigParserStep,
 )
 

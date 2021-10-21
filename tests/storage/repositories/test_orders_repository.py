@@ -2,8 +2,8 @@ from datetime import datetime
 
 import pytest
 
-from trade.storage.models.order import Order
-from trade.storage.repositories.orders_repository import OrdersRepository
+from ftt.storage.models.order import Order
+from ftt.storage.repositories.orders_repository import OrdersRepository
 
 
 class TestOrdersRepository:

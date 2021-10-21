@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.portfolio_version_activation_handler import (
+from ftt.handlers.portfolio_version_activation_handler import (
     PortfolioVersionActivationHandler,
 )
 

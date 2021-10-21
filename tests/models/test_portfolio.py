@@ -2,8 +2,8 @@ from datetime import datetime
 import peewee
 import pytest
 
-from trade.storage.models.portfolio import Portfolio
-from trade.storage.models.portfolio_version import PortfolioVersion
+from ftt.storage.models.portfolio import Portfolio
+from ftt.storage.models.portfolio_version import PortfolioVersion
 
 
 class TestPortfolio:

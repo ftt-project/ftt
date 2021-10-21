@@ -2,7 +2,7 @@ import pytest
 from tests import testcommon
 import backtrader as bt
 
-from trade.piloting.strategies.sizers import WeightedSizer
+from ftt.piloting.strategies.sizers import WeightedSizer
 
 
 class TestWeightedPortfolioSizer:

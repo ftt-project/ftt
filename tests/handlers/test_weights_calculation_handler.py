@@ -2,8 +2,8 @@ import datetime
 
 import pytest
 
-from trade.handlers.weights_calculation_handler import WeightsCalculationHandler
-from trade.storage.models.weight import Weight
+from ftt.handlers.weights_calculation_handler import WeightsCalculationHandler
+from ftt.storage.models.weight import Weight
 
 
 class TestWeightsCalculationHandler:

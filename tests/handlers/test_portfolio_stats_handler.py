@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.portfolio_stats_handler import PortfoliosStatsHandler
+from ftt.handlers.portfolio_stats_handler import PortfoliosStatsHandler
 
 
 class TestPortfoliosStatsHandler:

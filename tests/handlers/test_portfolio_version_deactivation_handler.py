@@ -1,6 +1,8 @@
 import pytest
 
-from trade.handlers.portfolio_version_deactivation_handler import PortfolioVersionDeactivationHandler
+from ftt.handlers.portfolio_version_deactivation_handler import (
+    PortfolioVersionDeactivationHandler,
+)
 
 
 class TestPortfolioVersionDeactivationHandler:
@@ -19,7 +21,9 @@ class TestPortfolioVersionDeactivationHandler:
         assert result.is_ok()
         assert not portfolio_version.active
 
-    def test_errors_on_deactivated_portfolio_version(self, subject, portfolio_version, portfolio):
+    def test_errors_on_deactivated_portfolio_version(
+        self, subject, portfolio_version, portfolio
+    ):
         portfolio_version.active = False
         portfolio_version.save()
 

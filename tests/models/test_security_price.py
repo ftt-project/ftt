@@ -1,4 +1,4 @@
-from trade.storage.models.security_price import SecurityPrice
+from ftt.storage.models.security_price import SecurityPrice
 
 
 class TestTickerReturn:

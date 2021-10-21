@@ -2,8 +2,8 @@ from datetime import datetime
 
 import pytest
 
-from trade.handlers.portfolio_steps.portfolio_create_step import PortfolioCreateStep
-from trade.storage.models.portfolio import Portfolio
+from ftt.handlers.portfolio_steps.portfolio_create_step import PortfolioCreateStep
+from ftt.storage.models.portfolio import Portfolio
 
 
 class TestPortfolioCreateStep:

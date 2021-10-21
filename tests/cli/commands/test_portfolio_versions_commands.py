@@ -2,7 +2,7 @@ from unittest.mock import call
 
 import pytest
 
-from trade.cli.commands.portfolio_versions_commands import PortfolioVersionsCommands
+from ftt.cli.commands.portfolio_versions_commands import PortfolioVersionsCommands
 
 
 class TestPortfolioVersionsCommands:
@@ -13,14 +13,14 @@ class TestPortfolioVersionsCommands:
     @pytest.fixture(autouse=True)
     def mock_context(self, mocker, context):
         mocker.patch(
-            "trade.cli.commands.portfolio_versions_commands.context", new=context
+            "ftt.cli.commands.portfolio_versions_commands.context", new=context
         )
 
     def test_balance_calculating_weights(
         self, subject, portfolio, portfolio_version, security, mocker, context
     ):
         mocked = mocker.patch(
-            "trade.cli.commands.portfolio_versions_commands.WeightsCalculationHandler"
+            "ftt.cli.commands.portfolio_versions_commands.WeightsCalculationHandler"
         )
         mocked.return_value.handle.return_value = mocker.Mock(is_okay=True)
 
@@ -34,7 +34,7 @@ class TestPortfolioVersionsCommands:
         self, subject, portfolio, portfolio_version, security, mocker
     ):
         mocked = mocker.patch(
-            "trade.cli.commands.portfolio_versions_commands.WeightsCalculationHandler"
+            "ftt.cli.commands.portfolio_versions_commands.WeightsCalculationHandler"
         )
         mocked.return_value.handle.return_value = mocker.Mock(is_okay=True)
 
@@ -68,7 +68,7 @@ class TestPortfolioVersionsCommands:
         self, subject, portfolio, portfolio_version, mocker
     ):
         mocked = mocker.patch(
-            "trade.cli.commands.portfolio_versions_commands.WeightsCalculationHandler"
+            "ftt.cli.commands.portfolio_versions_commands.WeightsCalculationHandler"
         )
         mocked.return_value.handle.return_value = mocker.Mock(is_okay=True)
 
@@ -126,9 +126,5 @@ class TestPortfolioVersionsCommands:
         )
 
         context.get_context.return_value.console.print.assert_has_calls(
-            [
-                call(
-                    f"[yellow]Portfolio Version #{portfolio_version.id} is not active"
-                )
-            ]
+            [call(f"[yellow]Portfolio Version #{portfolio_version.id} is not active")]
         )

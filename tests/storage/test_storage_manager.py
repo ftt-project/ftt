@@ -1,6 +1,6 @@
 import pytest
-from trade.storage.storage_manager import StorageManager
-from trade.storage.models.security import Security
+from ftt.storage.storage_manager import StorageManager
+from ftt.storage.models.security import Security
 
 
 class TestStorageManager:

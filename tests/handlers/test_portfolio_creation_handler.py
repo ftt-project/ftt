@@ -2,9 +2,9 @@ from datetime import datetime
 
 import pytest
 
-from trade.handlers.portfolio_creation_handler import PortfolioCreationHandler
-from trade.storage.models.portfolio import Portfolio
-from trade.storage.models.portfolio_version import PortfolioVersion
+from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
+from ftt.storage.models.portfolio import Portfolio
+from ftt.storage.models.portfolio_version import PortfolioVersion
 
 
 class TestPortfolioCreationHandler:

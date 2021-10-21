@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from trade.handlers.security_prices_steps.security_prices_upsert_step import (
+from ftt.handlers.security_prices_steps.security_prices_upsert_step import (
     SecurityPricesUpsertStep,
 )
 

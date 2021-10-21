@@ -1,6 +1,6 @@
 import pytest
 
-from trade.cli.renderers.securities.securities_list import SecuritiesList
+from ftt.cli.renderers.securities.securities_list import SecuritiesList
 
 
 class TestSecuritiesList:
@@ -9,7 +9,7 @@ class TestSecuritiesList:
         return SecuritiesList
 
     def test_renders_list(self, subject, mocker, context, security):
-        mocked = mocker.patch("trade.cli.renderers.securities.securities_list.Table")
+        mocked = mocker.patch("ftt.cli.renderers.securities.securities_list.Table")
         instance = mocked.return_value
 
         subject(context, [security]).render()

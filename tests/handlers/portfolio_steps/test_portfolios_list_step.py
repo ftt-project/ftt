@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.portfolio_steps.portfolios_list_step import PortfoliosListStep
+from ftt.handlers.portfolio_steps.portfolios_list_step import PortfoliosListStep
 
 
 class TestPortfoliosListStep:

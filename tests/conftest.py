@@ -3,14 +3,14 @@ from datetime import datetime
 import pytest
 import backtrader as bt
 
-from trade.piloting.strategies.sizers import WeightedSizer
-from trade.storage import Storage
-from trade.storage.models.order import Order
-from trade.storage.models.portfolio import Portfolio
-from trade.storage.models.portfolio_version import PortfolioVersion
-from trade.storage.models.security import Security
-from trade.storage.models.security_price import SecurityPrice
-from trade.storage.models.weight import Weight
+from ftt.piloting.strategies.sizers import WeightedSizer
+from ftt.storage import Storage
+from ftt.storage.models.order import Order
+from ftt.storage.models.portfolio import Portfolio
+from ftt.storage.models.portfolio_version import PortfolioVersion
+from ftt.storage.models.security import Security
+from ftt.storage.models.security_price import SecurityPrice
+from ftt.storage.models.weight import Weight
 
 
 @pytest.fixture(autouse=True, scope="function")

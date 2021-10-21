@@ -2,10 +2,8 @@ from datetime import datetime
 
 import pytest
 
-from trade.storage.models.security_price import SecurityPrice
-from trade.storage.repositories.security_prices_repository import (
-    SecurityPricesRepository,
-)
+from ftt.storage.models.security_price import SecurityPrice
+from ftt.storage.repositories.security_prices_repository import SecurityPricesRepository
 
 
 class TestSecurityPricesRepository:

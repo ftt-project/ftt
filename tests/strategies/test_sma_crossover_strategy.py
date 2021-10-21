@@ -3,9 +3,9 @@ from datetime import datetime
 import pytest
 
 from tests import testcommon
-from trade.storage.models.order import Order
-from trade.storage.repositories.orders_repository import OrdersRepository
-from trade.piloting.strategies.sma_crossover_strategy import SMACrossoverStrategy
+from ftt.storage.models.order import Order
+from ftt.storage.repositories.orders_repository import OrdersRepository
+from ftt.piloting.strategies.sma_crossover_strategy import SMACrossoverStrategy
 
 
 class TestSMACrossoverStrategy:

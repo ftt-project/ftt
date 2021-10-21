@@ -3,9 +3,9 @@ from datetime import datetime
 
 import pytest
 from tests import testcommon
-from trade.storage.models.order import Order
-from trade.storage.repositories.orders_repository import OrdersRepository
-from trade.piloting.strategies.md_macd_strategy import MdMACDStrategy
+from ftt.storage.models.order import Order
+from ftt.storage.repositories.orders_repository import OrdersRepository
+from ftt.piloting.strategies.md_macd_strategy import MdMACDStrategy
 
 
 class TestMdMACDStrategy:

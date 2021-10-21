@@ -1,6 +1,6 @@
 import pytest
 
-from trade.handlers.weights_steps.weights_load_step import WeightsLoadStep
+from ftt.handlers.weights_steps.weights_load_step import WeightsLoadStep
 
 
 class TestWeightsLoadStep:

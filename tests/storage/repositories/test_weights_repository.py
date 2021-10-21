@@ -2,8 +2,8 @@ from datetime import datetime
 
 from pytest import fixture
 
-from trade.storage.models.weight import Weight
-from trade.storage.repositories.weights_repository import WeightsRepository
+from ftt.storage.models.weight import Weight
+from ftt.storage.repositories.weights_repository import WeightsRepository
 
 
 class TestWeightsRepository:

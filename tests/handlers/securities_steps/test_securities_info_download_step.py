@@ -1,7 +1,7 @@
 import pytest
 from result import Ok, Err
 
-from trade.handlers.securities_steps.securities_info_download_step import (
+from ftt.handlers.securities_steps.securities_info_download_step import (
     SecuritiesInfoDownloadStep,
 )
 

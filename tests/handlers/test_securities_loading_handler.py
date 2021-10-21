@@ -3,8 +3,8 @@ import datetime
 import pandas as pd
 import pytest
 
-from trade.handlers.securities_loading_handler import SecuritiesLoadingHandler
-from trade.storage.models.security import Security
+from ftt.handlers.securities_loading_handler import SecuritiesLoadingHandler
+from ftt.storage.models.security import Security
 
 
 class TestSecuritiesLoadingHandler:
