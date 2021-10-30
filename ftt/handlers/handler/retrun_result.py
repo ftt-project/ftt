@@ -1,6 +1,10 @@
-class ReturnResult:
-    def __init__(self, key):
-        self.key = key
+from result import Ok
 
-    def process(self, input):
-        return input[self.key]
+
+class ReturnResult:
+    key = "return_result"
+
+    @classmethod
+    def process(cls, **input):
+        value = list(input.values())[0]
+        return Ok(value)

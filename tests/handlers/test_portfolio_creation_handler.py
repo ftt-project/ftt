@@ -24,12 +24,14 @@ class TestPortfolioCreationHandler:
 
     def test_creates_portfolio(self, subject, arguments):
         result = subject.handle(**arguments)
+
         assert result.is_ok()
         assert type(result.value) == Portfolio
         assert result.value.id is not None
 
     def test_creates_portfolio_first_version(self, subject, arguments):
         result = subject.handle(**arguments)
+
         assert result.is_ok()
         assert type(result.value.versions[0]) == PortfolioVersion
         assert result.value.versions[0].id is not None

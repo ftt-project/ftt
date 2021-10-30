@@ -19,5 +19,5 @@ class PortfolioAssociateSecuritiesHandler(Handler):
             "portfolio_version",
             "persist",
         ),
-        ReturnResult("portfolio_version"),
+        (ReturnResult, "portfolio_version"),
     ]

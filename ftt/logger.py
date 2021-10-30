@@ -1,10 +1,17 @@
 import logging
+import os
 
 from rich.logging import RichHandler
 
 
+def _log_path(file_name):
+    # This could be a system wide logging folder
+    path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(path, "..", "logs", file_name)
+
+
 def _setup_sql_logger():
-    file_handler = logging.FileHandler("logs/debug.log")
+    file_handler = logging.FileHandler(_log_path("debug.log"))
     fmt_file = (
         "%(levelname)s %(asctime)s [%(filename)s:%(funcName)s:%(lineno)d] %(message)s"
     )

@@ -10,6 +10,7 @@ class TestReturnResult:
 
     def test_return_one_key(self, subject):
         input = {"a:": 1, "b": 2}
-        processor = subject("b")
-        result = processor.process(input)
-        assert result == 2
+        result = subject.process(input=input)
+
+        assert result.is_ok()
+        assert result.value == input

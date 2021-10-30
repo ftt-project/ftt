@@ -12,5 +12,5 @@ class PortfolioVersionDeactivationHandler(Handler):
     handlers = [
         (PortfolioVersionDeactivationValidateStep, "portfolio_version"),
         (PortfolioVersionDeactivateStep, "portfolio_version"),
-        ReturnResult(PortfolioVersionDeactivateStep.key),
+        (ReturnResult, PortfolioVersionDeactivateStep.key),
     ]
