@@ -9,6 +9,8 @@ from ftt.handlers.portfolio_steps.portfolio_config_parser_step import (
 
 
 class PortfolioConfigHandler(Handler):
+    params = ("path",)
+
     handlers = [
         (PortfolioConfigFileReaderStep, "path"),
         (PortfolioConfigParserStep, PortfolioConfigFileReaderStep.key),

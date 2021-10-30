@@ -10,6 +10,8 @@ from ftt.handlers.portfolio_steps.portfolio_weights_persist_step import (
 
 
 class PortfolioAssociateSecuritiesHandler(Handler):
+    params = ("securities", "portfolio_version")
+
     handlers = [
         (PortfolioPrepareEmptyWeightsStep, "securities"),
         Context(assign=True, to="persist"),

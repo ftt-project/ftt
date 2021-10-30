@@ -9,6 +9,9 @@ class MetaHandler(ABCMeta):
     class HandlersAreMissing(Exception):
         pass
 
+    class HandlerParamsAreMissing(Exception):
+        pass
+
     def __new__(cls, name, bases, dct):
         x = super().__new__(cls, name, bases, dct)
 
@@ -18,6 +21,14 @@ class MetaHandler(ABCMeta):
         if x.__name__ != "Handler" and type(x.handlers) != list:
             raise ValueError(f"`{x}.handlers` must be type of list")
 
+        if x.__name__ != "Handler" and not hasattr(x, "params"):
+            raise MetaHandler.HandlerParamsAreMissing(f"{x} must define `params`")
+
+        if x.__name__ != "Handler" and (
+            type(x.params) != list and type(x.params) != tuple
+        ):
+            raise ValueError(f"`{x}.params` must be type of list or tuple")
+
         return x
 
 
@@ -26,6 +37,8 @@ class Handler(metaclass=MetaHandler):
         self.context = {}
 
     def handle(self, **input):
+        self.__check_given_params(input)
+
         self.context.update(input)
         last_result = None
         for handle in self.__class__.handlers:
@@ -37,6 +50,12 @@ class Handler(metaclass=MetaHandler):
             return Ok(self.context[ReturnResult.key])
         else:
             return Err(last_result)
+
+    def __check_given_params(self, input):
+        if set(self.__class__.params) != set(input.keys()):
+            raise ValueError(
+                f"Given params {input.keys()} are not equal to required params {self.__class__.params}"
+            )
 
     def __handle_processor(self, handle):
         if type(handle) is not tuple:

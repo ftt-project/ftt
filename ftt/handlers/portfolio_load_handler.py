@@ -4,6 +4,8 @@ from ftt.handlers.portfolio_steps.portfolio_load_step import PortfolioLoadStep
 
 
 class PortfolioLoadHandler(Handler):
+    params = ("portfolio_id",)
+
     handlers = [
         (PortfolioLoadStep, "portfolio_id"),
         (ReturnResult, PortfolioLoadStep.key),

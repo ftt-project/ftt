@@ -6,6 +6,8 @@ from ftt.handlers.portfolio_steps.portfolio_versions_list_step import (
 
 
 class PortfolioVersionsListHandler(Handler):
+    params = ("portfolio",)
+
     handlers = [
         (PortfolioVersionsListStep, "portfolio"),
         (ReturnResult, PortfolioVersionsListStep.key),

@@ -12,6 +12,8 @@ from ftt.handlers.portfolio_version_steps.portfolio_version_activation_validate_
 
 
 class PortfolioVersionActivationHandler(Handler):
+    params = ("portfolio", "portfolio_version")
+
     handlers = [
         (PortfolioVersionActivationValidateStep, "portfolio_version"),
         (PortfolioDeactivateAllVersionsStep, "portfolio"),
