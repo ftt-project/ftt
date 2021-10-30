@@ -16,5 +16,5 @@ class PortfolioVersionActivationHandler(Handler):
         (PortfolioVersionActivationValidateStep, "portfolio_version"),
         (PortfolioDeactivateAllVersionsStep, "portfolio"),
         (PortfolioVersionActivateStep, "portfolio_version"),
-        ReturnResult(PortfolioVersionActivateStep.key),
+        (ReturnResult, PortfolioVersionActivateStep.key),
     ]

@@ -8,5 +8,5 @@ from ftt.handlers.portfolio_version_steps.portfolio_version_load_step import (
 class PortfolioVersionLoadHandler(Handler):
     handlers = [
         (PortfolioVersionLoadStep, "portfolio_version_id"),
-        ReturnResult(PortfolioVersionLoadStep.key),
+        (ReturnResult, PortfolioVersionLoadStep.key),
     ]

@@ -2,6 +2,8 @@ from abc import ABCMeta
 
 from result import Err, Ok
 
+from ftt.handlers.handler.retrun_result import ReturnResult
+
 
 class MetaHandler(ABCMeta):
     class HandlersAreMissing(Exception):
@@ -25,15 +27,23 @@ class Handler(metaclass=MetaHandler):
 
     def handle(self, **input):
         self.context.update(input)
+        last_result = None
         for handle in self.__class__.handlers:
-            if type(handle) == tuple:
-                step, *keys = handle
-                args = {key: self.context.get(key) for key in keys}
-                result = step.process(**args)
-                if result.is_ok():
-                    self.context[step.key] = result.value
-                else:
-                    return Err(result)
-            else:
-                self.context = handle.process(self.context)
-        return Ok(self.context)
+            last_result = self.__handle_processor(handle)
+            if last_result.is_err():
+                break
+
+        if ReturnResult.key in self.context:
+            return Ok(self.context[ReturnResult.key])
+        else:
+            return Err(last_result)
+
+    def __handle_processor(self, handle):
+        if type(handle) is not tuple:
+            return handle.process(self.context)
+
+        step, *keys = handle
+        args = {key: self.context.get(key) for key in keys}
+        result = step.process(**args)
+        self.context[step.key] = result.value
+        return result

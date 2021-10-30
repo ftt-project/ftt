@@ -4,6 +4,7 @@ from unittest.mock import call
 
 import pytest
 
+import ftt
 from ftt.cli.commands.portfolios_commands import PortfoliosCommands
 from ftt.storage.models import Portfolio
 
@@ -17,11 +18,14 @@ class TestPortfoliosCommands:
     def mock_context(self, mocker, context):
         mocker.patch("ftt.cli.commands.portfolios_commands.context", new=context)
 
+    def absolute_path(self, file):
+        path = os.path.dirname(ftt.__file__)
+        path = os.path.join(path, "..", "config", file)
+        return os.path.abspath(path)
+
     @pytest.fixture
     def path_to_config(self):
-        realpath = pathlib.Path().resolve()
-        path = os.path.join(realpath, "config", "example_portfolio.yml")
-        return path
+        return self.absolute_path("example_portfolio.yml")
 
     def test_list(self, subject, mocker, portfolio):
         mocked = mocker.patch("ftt.cli.commands.portfolios_commands.PortfoliosList")

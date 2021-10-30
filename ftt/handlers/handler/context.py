@@ -1,3 +1,6 @@
+from result import Ok
+
+
 class Context:
     class Assigner:
         def __init__(self, assign, to):
@@ -6,7 +9,7 @@ class Context:
 
         def process(self, context):
             context[self.to] = self.assign
-            return context
+            return Ok(context)
 
     class Renamer:
         def __init__(self, rename, to):
@@ -16,7 +19,7 @@ class Context:
         def process(self, context):
             context[self.to] = context[self.rename]
             del context[self.rename]
-            return context
+            return Ok(context)
 
     def __new__(cls, **kwargs):
         if "assign" in kwargs:

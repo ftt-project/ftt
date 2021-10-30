@@ -6,5 +6,5 @@ from ftt.handlers.weights_steps.weights_load_step import WeightsLoadStep
 class WeightsListHandler(Handler):
     handlers = [
         (WeightsLoadStep, "portfolio_version"),
-        ReturnResult(WeightsLoadStep.key),
+        (ReturnResult, WeightsLoadStep.key),
     ]

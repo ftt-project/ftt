@@ -10,5 +10,5 @@ class PortfoliosStatsHandler(Handler):
 
     handlers = [
         (PortfolioWeightsAllocationStep, "portfolio_version"),
-        ReturnResult("stats"),
+        (ReturnResult, PortfolioWeightsAllocationStep.key),
     ]

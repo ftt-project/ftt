@@ -27,5 +27,5 @@ class SecuritiesLoadingHandler(Handler):
             "interval",
         ),
         (SecurityPricesUpsertStep, SecurityPricesDownloadStep.key, "interval"),
-        ReturnResult(SecuritiesUpsertStep.key),
+        (ReturnResult, SecuritiesUpsertStep.key),
     ]

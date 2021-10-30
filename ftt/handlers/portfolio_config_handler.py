@@ -12,5 +12,5 @@ class PortfolioConfigHandler(Handler):
     handlers = [
         (PortfolioConfigFileReaderStep, "path"),
         (PortfolioConfigParserStep, PortfolioConfigFileReaderStep.key),
-        ReturnResult(PortfolioConfigParserStep.key),
+        (ReturnResult, PortfolioConfigParserStep.key),
     ]

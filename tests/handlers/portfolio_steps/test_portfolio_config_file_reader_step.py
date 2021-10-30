@@ -1,8 +1,8 @@
 import os.path
-import pathlib
 
 import pytest
 
+import ftt
 from ftt.handlers.portfolio_steps.portfolio_config_file_reader import (
     PortfolioConfigFileReaderStep,
 )
@@ -13,15 +13,18 @@ class TestPortfolioConfigFileReaderStep:
     def subject(self):
         return PortfolioConfigFileReaderStep
 
+    def absolute_path(self, file):
+        path = os.path.dirname(ftt.__file__)
+        path = os.path.join(path, "..", "tests", "fixtures", file)
+        return os.path.abspath(path)
+
     @pytest.fixture
     def existing_path(self):
-        realpath = pathlib.Path().resolve()
-        return os.path.join(realpath, "tests", "fixtures", "portfolio_dummy_config.yml")
+        return self.absolute_path("portfolio_dummy_config.yml")
 
     @pytest.fixture
     def not_existing_path(self):
-        realpath = pathlib.Path().resolve()
-        return os.path.join(realpath, "tests", "fixtures", "no_such_config.yml")
+        return self.absolute_path("not_existing_file.yml")
 
     def test_reads_file_and_returns_config(self, subject, existing_path):
         result = subject.process(existing_path)

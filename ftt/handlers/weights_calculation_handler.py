@@ -29,5 +29,5 @@ class WeightsCalculationHandler(Handler):
             "portfolio_version",
             "persist",
         ),
-        ReturnResult(PortfolioWeightsPersistStep.key),
+        (ReturnResult, PortfolioWeightsPersistStep.key),
     ]
