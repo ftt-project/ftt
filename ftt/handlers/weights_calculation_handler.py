@@ -13,6 +13,16 @@ from ftt.handlers.weights_steps.weights_calculate_step import WeightsCalculateSt
 
 
 class WeightsCalculationHandler(Handler):
+    params = (
+        "securities",
+        "start_period",
+        "end_period",
+        "interval",
+        "portfolio",
+        "portfolio_budget",
+        "persist",
+    )
+
     handlers = [
         (PortfolioSecuritiesLoadStep, "portfolio", "portfolio_version"),
         (

@@ -13,9 +13,8 @@ from ftt.handlers.security_prices_steps.security_prices_upsert_step import (
 
 
 class SecuritiesLoadingHandler(Handler):
-    # TODO define handler input params and validate at the beginning
-    # params = ("securities", "period_form, "period_to", "interval")
-    #
+    params = ("securities", "start_period", "end_period", "interval")
+
     handlers = [
         (SecuritiesInfoDownloadStep, "securities"),
         (SecuritiesUpsertStep, SecuritiesInfoDownloadStep.key),

@@ -6,7 +6,7 @@ from ftt.handlers.portfolio_steps.portfolio_weights_allocation_step import (
 
 
 class PortfoliosStatsHandler(Handler):
-    params = ["portfolio_version"]
+    params = ("portfolio_version",)
 
     handlers = [
         (PortfolioWeightsAllocationStep, "portfolio_version"),
