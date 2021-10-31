@@ -63,22 +63,28 @@ class PortfolioVersionsCommands:
             ctx.console.print(f"[red]{portfolio_result.err().value}")
             return
 
-        period_start = (
-            period_start
-            if period_start is not None
-            else portfolio_result.value.period_start
-        )
-        period_end = (
-            period_end if period_end is not None else portfolio_result.value.period_end
-        )
-        interval = interval if interval is not None else portfolio_result.value.interval
-
         portfolio_version_result = PortfolioVersionLoadHandler().handle(
             portfolio_version_id=portfolio_version_id
         )
         if portfolio_version_result.is_err():
             ctx.console.print(f"[red]{portfolio_version_result.err().value}")
             return
+
+        period_start = (
+            period_start
+            if period_start is not None
+            else portfolio_version_result.value.period_start
+        )
+        period_end = (
+            period_end
+            if period_end is not None
+            else portfolio_version_result.value.period_end
+        )
+        interval = (
+            interval
+            if interval is not None
+            else portfolio_version_result.value.interval
+        )
 
         weights_result = WeightsCalculationHandler().handle(
             portfolio=portfolio_result.value,

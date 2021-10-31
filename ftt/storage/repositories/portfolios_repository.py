@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import List
 
 from ftt.storage.models.base import Base
@@ -9,10 +8,10 @@ from ftt.storage.models.weight import Weight
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )
-from ftt.storage.repositories.repository_interface import RepositoryInterface
+from ftt.storage.repositories.repository import Repository
 
 
-class PortfoliosRepository(RepositoryInterface):
+class PortfoliosRepository(Repository):
     @classmethod
     def save(cls, model: Base):
         raise NotImplementedError()
@@ -27,11 +26,7 @@ class PortfoliosRepository(RepositoryInterface):
 
     @classmethod
     def create(cls, **data: str) -> Base:
-        data["created_at"] = datetime.now()
-        data["updated_at"] = datetime.now()
-        portfolio = Portfolio.create(**data)
-
-        return portfolio
+        return cls._create(Portfolio, data)
 
     @classmethod
     def list(cls) -> List[Portfolio]:

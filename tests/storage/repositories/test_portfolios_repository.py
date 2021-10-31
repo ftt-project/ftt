@@ -17,7 +17,7 @@ class TestPortfoliosRepository:
         found = subject.get_by_name(portfolio.name)
         assert found.id == portfolio.id
 
-    def test_creates_portfolio_and_version(self, data, subject):
+    def test_creates_portfolio(self, data, subject):
         result = subject.create(**data)
 
         assert type(result) == Portfolio

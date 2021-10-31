@@ -18,10 +18,6 @@ class PortfolioDetails(AbstractRenderer):
         rows = [
             ("[bold magenta]ID", str(self.portfolio.id)),
             ("[bold magenta]Name", f"[bold cyan]{self.portfolio.name}"),
-            ("[bold magenta]Amount", str(self.portfolio.amount)),
-            ("[bold magenta]Period start", str(self.portfolio.period_start)),
-            ("[bold magenta]Period end", str(self.portfolio.period_end)),
-            ("[bold magenta]Interval", self.portfolio.interval),
         ]
         for name, value in rows:
             table.add_row(name, value)

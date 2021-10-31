@@ -16,8 +16,7 @@ class PortfoliosList(AbstractRenderer):
         table = Table(show_header=True, header_style="bold magenta")
         table.add_column("ID")
         table.add_column("Name")
-        table.add_column("Amount")
         for portfolio in self.list:
-            table.add_row(f"{portfolio.id}", portfolio.name, f"{portfolio.amount}")
+            table.add_row(f"{portfolio.id}", portfolio.name)
 
         self.context.console.print(table)
