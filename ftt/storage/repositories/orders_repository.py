@@ -10,11 +10,11 @@ from ftt.storage.models.security import Security
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )
-from ftt.storage.repositories.repository_interface import RepositoryInterface
+from ftt.storage.repositories.repository import Repository
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 
 
-class OrdersRepository(RepositoryInterface):
+class OrdersRepository(Repository):
     @classmethod
     def save(cls, model: Base) -> Order:
         pass

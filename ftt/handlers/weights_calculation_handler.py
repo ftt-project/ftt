@@ -20,6 +20,7 @@ class WeightsCalculationHandler(Handler):
         "interval",
         "portfolio",
         "portfolio_budget",
+        "portfolio_version",
         "persist",
     )
 
@@ -32,7 +33,12 @@ class WeightsCalculationHandler(Handler):
             "end_period",
             "interval",
         ),
-        (WeightsCalculateStep, SecurityPricesDataframeLoadStep.key, "portfolio"),
+        (
+            WeightsCalculateStep,
+            SecurityPricesDataframeLoadStep.key,
+            "portfolio",
+            "portfolio_version",
+        ),
         (
             PortfolioWeightsPersistStep,
             WeightsCalculateStep.key,

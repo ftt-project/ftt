@@ -1,6 +1,9 @@
 from nubia import argument, command, context
 
 from ftt.cli.renderers import PortfoliosList
+from ftt.cli.renderers.portfolio_versions.portfolio_version_details import (
+    PortfolioVersionDetails,
+)
 from ftt.cli.renderers.portfolio_versions.portfolio_versions_list import (
     PortfolioVersionsList,
 )
@@ -54,6 +57,8 @@ class PortfoliosCommands:
 
         result = PortfolioVersionsListHandler().handle(portfolio=result.value)
         PortfolioVersionsList(ctx, result.value).render()
+
+        PortfolioVersionDetails(ctx, result.value[-1]).render()
 
         portfolio_version = result.value[0]
         result = WeightsListHandler().handle(portfolio_version=portfolio_version)

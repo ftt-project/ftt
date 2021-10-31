@@ -44,7 +44,7 @@ def example():
     table.add_row(
         str(portfolio.id),
         portfolio.name,
-        str(portfolio.amount),
+        str(portfolio.versions[0].amount),
         str(portfolio.created_at),
     )
     ctx.console.print(table)
@@ -71,6 +71,8 @@ def example():
     with ctx.console.status("[bold green]Calculating weights") as _:
         result = WeightsCalculationHandler().handle(
             portfolio=portfolio,
+            portfolio_budget=config.budget,
+            securities=config.symbols,
             portfolio_version=portfolio.versions[0],
             start_period=config.period_start,
             end_period=config.period_end,

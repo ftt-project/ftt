@@ -4,10 +4,10 @@ from typing import List, Tuple
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.models.security import Security
 from ftt.storage.models.weight import Weight
-from ftt.storage.repositories.repository_interface import RepositoryInterface
+from ftt.storage.repositories.repository import Repository
 
 
-class SecuritiesRepository(RepositoryInterface):
+class SecuritiesRepository(Repository):
     @classmethod
     def get_by_name(cls, name: str) -> Security:
         return Security.get(Security.symbol == name)

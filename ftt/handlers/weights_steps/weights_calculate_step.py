@@ -6,6 +6,7 @@ from pypfopt import DiscreteAllocation, EfficientFrontier, expected_returns, ris
 from result import Err, Ok, OkErr
 
 from ftt.handlers.handler.abstract_step import AbstractStep
+from ftt.storage.models import PortfolioVersion
 from ftt.storage.models.portfolio import Portfolio
 
 
@@ -22,7 +23,12 @@ class WeightsCalculateStep(AbstractStep):
     key = "weights"
 
     @classmethod
-    def process(cls, security_prices: DataFrame, portfolio: Portfolio) -> OkErr:
+    def process(
+        cls,
+        security_prices: DataFrame,
+        portfolio: Portfolio,
+        portfolio_version: PortfolioVersion,
+    ) -> OkErr:
         try:
             _ = security_prices.pct_change().dropna()
 
@@ -39,7 +45,7 @@ class WeightsCalculateStep(AbstractStep):
             da = DiscreteAllocation(
                 cleaned_weights,
                 security_prices.iloc[-1],
-                total_portfolio_value=float(portfolio.amount),
+                total_portfolio_value=float(portfolio_version.amount),
             )
             alloc, leftover = da.lp_portfolio()
 

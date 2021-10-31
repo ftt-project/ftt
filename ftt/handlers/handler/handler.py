@@ -52,9 +52,11 @@ class Handler(metaclass=MetaHandler):
             return Err(last_result)
 
     def __check_given_params(self, input):
-        if set(self.__class__.params) != set(input.keys()):
+        difference = set(self.__class__.params).symmetric_difference(set(input.keys()))
+        if len(difference) > 0:
             raise ValueError(
-                f"Given params {input.keys()} are not equal to required params {self.__class__.params}"
+                f"Given params {input.keys()} are not equal to required params. "
+                f"Difference {difference}"
             )
 
     def __handle_processor(self, handle):

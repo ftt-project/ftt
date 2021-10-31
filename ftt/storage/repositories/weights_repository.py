@@ -7,10 +7,10 @@ from ftt.storage.models.base import Base
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.models.security import Security
 from ftt.storage.models.weight import Weight
-from ftt.storage.repositories.repository_interface import RepositoryInterface
+from ftt.storage.repositories.repository import Repository
 
 
-class WeightsRepository(RepositoryInterface):
+class WeightsRepository(Repository):
     @classmethod
     def save(cls, model: Weight) -> Weight:
         raise NotImplementedError()

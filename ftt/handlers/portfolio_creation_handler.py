@@ -11,15 +11,16 @@ class PortfolioCreationHandler(Handler):
     params = ("name", "amount", "period_start", "period_end", "interval")
 
     handlers = [
+        (PortfolioCreateStep, "name"),
+        Context(assign=1, to="version"),
         (
-            PortfolioCreateStep,
-            "name",
+            PortfolioVersionCreateStep,
+            "version",
+            "portfolio",
             "amount",
             "period_start",
             "period_end",
             "interval",
         ),
-        Context(assign=1, to="version"),
-        (PortfolioVersionCreateStep, "version", "portfolio"),
         (ReturnResult, PortfolioCreateStep.key),
     ]

@@ -24,8 +24,10 @@ class TestWeightsCalculateStep:
             ),
         ).rename_axis("datetime")
 
-    def test_calculates_weights(self, subject, dataframes, portfolio):
-        result = subject.process(dataframes, portfolio)
+    def test_calculates_weights(
+        self, subject, dataframes, portfolio, portfolio_version
+    ):
+        result = subject.process(dataframes, portfolio, portfolio_version)
 
         assert result.is_ok()
         assert type(result.value) == WeightsCalculateStepResult

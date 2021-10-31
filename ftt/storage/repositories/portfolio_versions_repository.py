@@ -5,10 +5,10 @@ import peewee
 
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
-from ftt.storage.repositories.repository_interface import RepositoryInterface
+from ftt.storage.repositories.repository import Repository
 
 
-class PortfolioVersionsRepository(RepositoryInterface):
+class PortfolioVersionsRepository(Repository):
     @classmethod
     def save(cls, model: PortfolioVersion) -> PortfolioVersion:
         model.updated_at = datetime.now()
@@ -18,9 +18,7 @@ class PortfolioVersionsRepository(RepositoryInterface):
 
     @classmethod
     def create(cls, **data: str) -> PortfolioVersion:
-        data["created_at"] = datetime.now()
-        data["updated_at"] = datetime.now()
-        return PortfolioVersion.create(**data)
+        return cls._create(PortfolioVersion, data)
 
     @classmethod
     def get_by_id(cls, id: int) -> PortfolioVersion:

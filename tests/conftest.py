@@ -94,10 +94,7 @@ def security_price(security):
 @pytest.fixture
 def portfolio():
     portfolio = Portfolio.create(
-        name="Portfolio TEST 1",
-        amount=30000.0,
-        updated_at=datetime.now(),
-        created_at=datetime.now(),
+        name="Portfolio TEST 1", updated_at=datetime.now(), created_at=datetime.now(),
     )
     try:
         yield portfolio
@@ -110,6 +107,7 @@ def portfolio_version(portfolio):
     portfolio_version = PortfolioVersion.create(
         portfolio=portfolio,
         version=1,
+        amount=30000.0,
         updated_at=datetime.now(),
         created_at=datetime.now(),
     )
