@@ -1,5 +1,10 @@
+from datetime import datetime
 from typing import List
 
+import peewee
+from playhouse.shortcuts import update_model_from_dict
+
+from ftt.storage.errors import PersistingError
 from ftt.storage.models.base import Base
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -13,8 +18,11 @@ from ftt.storage.repositories.repository import Repository
 
 class PortfoliosRepository(Repository):
     @classmethod
-    def save(cls, model: Base):
-        raise NotImplementedError()
+    def save(cls, model: Portfolio) -> Portfolio:
+        model.updated_at = datetime.now()
+        model.save()
+
+        return model
 
     @classmethod
     def get_by_id(cls, id: int):
@@ -47,3 +55,14 @@ class PortfoliosRepository(Repository):
             .where(PortfolioVersion.id == portfolio_version.id)
         )
         return list(result)
+
+    @classmethod
+    def update(cls, portfolio: Portfolio, params: dict) -> Portfolio:
+        try:
+            params["updated_at"] = datetime.now()
+            model = update_model_from_dict(portfolio, params)
+            model.save()
+        except (AttributeError, peewee.IntegrityError) as e:
+            raise PersistingError(portfolio, params, str(e))
+
+        return model

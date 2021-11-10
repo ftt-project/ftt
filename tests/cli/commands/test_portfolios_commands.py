@@ -131,3 +131,15 @@ class TestPortfoliosCommands:
         context.get_context.return_value.console.print.assert_has_calls(
             [call("[red]Failed to load securities information:")]
         )
+
+    def test_updates_portfolio(self, subject, portfolio, mocker):
+        update_mocker = mocker.patch(
+            "ftt.cli.commands.portfolios_commands.PortfolioUpdateHandler",
+            **{"return_value.handle.return_value.value": True}
+        )
+        prompt_mocker = mocker.patch("ftt.cli.commands.portfolios_commands.prompt")
+
+        subject.update(portfolio_id=portfolio.id)
+
+        prompt_mocker.assert_called_once_with("New name: ", default=portfolio.name)
+        update_mocker.return_value.handle.assert_called_once()
