@@ -1,4 +1,5 @@
 from nubia import argument, command, context
+from prompt_toolkit import prompt
 
 from ftt.cli.renderers import PortfoliosList
 from ftt.cli.renderers.portfolio_versions.portfolio_version_details import (
@@ -15,6 +16,7 @@ from ftt.handlers.portfolio_associate_securities_hanlder import (
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
+from ftt.handlers.portfolio_update_handler import PortfolioUpdateHandler
 from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHandler
 from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
 from ftt.handlers.securities_loading_handler import SecuritiesLoadingHandler
@@ -134,3 +136,38 @@ class PortfoliosCommands:
         ctx = context.get_context()
         ctx.portfolio_in_use = portfolio_id
         ctx.console.print(f"[green]Active portfolio #{portfolio_id}")
+
+    @command("update")
+    @argument("portfolio_id", description="Portfolio ID", positional=True)
+    def update(self, portfolio_id: int) -> None:
+        """
+        Update portfolio by ID
+        Possible to update attributes:
+            * name
+        """
+        ctx = context.get_context()
+
+        portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
+        if portfolio_result.is_err():
+            ctx.console.print(f"[red]{portfolio_result.err().value}")
+            return
+
+        params = {}
+        new_name = prompt("New name: ", default=portfolio_result.value.name)
+
+        if new_name != portfolio_result.value.name:
+            params["name"] = new_name
+
+        if len(params) == 0:
+            ctx.console.print("[green]Nothing to update")
+            return
+
+        result = PortfolioUpdateHandler().handle(
+            portfolio=portfolio_result.value, params=params
+        )
+        if result.is_ok():
+            ctx.console.print("[green]Portfolio successfully updated")
+        else:
+            ctx.console.print("[red]Failed to update portfolio:")
+            ctx.console.print(result.value)
+

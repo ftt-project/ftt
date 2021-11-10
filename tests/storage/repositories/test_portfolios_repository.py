@@ -1,3 +1,6 @@
+import pytest
+
+from ftt.storage.errors import PersistingError
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.repositories.portfolios_repository import PortfoliosRepository
 
@@ -24,9 +27,39 @@ class TestPortfoliosRepository:
         Portfolio.delete().execute()
 
     def test_get_securities_for_latest_version(
-        self, subject, portfolio, weight, security
+            self, subject, portfolio, weight, security
     ):
         result = subject.get_securities(portfolio)
 
         assert type(result) == list
         assert result[0] == security
+
+    def test_save(self, subject, portfolio):
+        portfolio.name = "New name"
+        result = subject.save(portfolio)
+
+        assert result == portfolio
+        assert Portfolio.get(portfolio.id).name == "New name"
+
+    def test_update(self, subject, portfolio):
+        params = {"name": "New name"}
+        result = subject.update(portfolio, params)
+
+        assert result == portfolio
+        assert Portfolio.get(portfolio.id).name == "New name"
+
+    def test_update_unknown_fields(self, subject, portfolio):
+        params = {"unknown": "New name"}
+        with pytest.raises(PersistingError) as exc:
+            subject.update(portfolio, params)
+
+        assert 'Failed to persist `Portfolio` with params' in str(exc.value)
+
+    def test_update_missing_field(self, subject, portfolio):
+        params = {"name": ""}
+        with pytest.raises(PersistingError) as exc:
+            subject.update(portfolio=portfolio, params=params)
+
+        assert 'Failed to persist `Portfolio` with params' in str(exc.value)
+        assert 'CHECK constraint failed' in str(exc.value)
+
