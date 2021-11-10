@@ -137,9 +137,7 @@ class TestPortfoliosCommands:
             "ftt.cli.commands.portfolios_commands.PortfolioUpdateHandler",
             **{"return_value.handle.return_value.value": True}
         )
-        prompt_mocker = mocker.patch(
-            "ftt.cli.commands.portfolios_commands.prompt"
-        )
+        prompt_mocker = mocker.patch("ftt.cli.commands.portfolios_commands.prompt")
 
         subject.update(portfolio_id=portfolio.id)
 

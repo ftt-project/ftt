@@ -7,7 +7,7 @@ from ftt.storage.repositories.portfolios_repository import PortfoliosRepository
 
 
 class PortfolioUpdateStep(AbstractStep):
-    key = 'updated_portfolio'
+    key = "updated_portfolio"
 
     @classmethod
     def process(cls, portfolio: Portfolio, params: dict) -> OkErr:

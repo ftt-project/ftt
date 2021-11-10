@@ -27,7 +27,7 @@ class TestPortfoliosRepository:
         Portfolio.delete().execute()
 
     def test_get_securities_for_latest_version(
-            self, subject, portfolio, weight, security
+        self, subject, portfolio, weight, security
     ):
         result = subject.get_securities(portfolio)
 
@@ -53,13 +53,12 @@ class TestPortfoliosRepository:
         with pytest.raises(PersistingError) as exc:
             subject.update(portfolio, params)
 
-        assert 'Failed to persist `Portfolio` with params' in str(exc.value)
+        assert "Failed to persist `Portfolio` with params" in str(exc.value)
 
     def test_update_missing_field(self, subject, portfolio):
         params = {"name": ""}
         with pytest.raises(PersistingError) as exc:
             subject.update(portfolio=portfolio, params=params)
 
-        assert 'Failed to persist `Portfolio` with params' in str(exc.value)
-        assert 'CHECK constraint failed' in str(exc.value)
-
+        assert "Failed to persist `Portfolio` with params" in str(exc.value)
+        assert "CHECK constraint failed" in str(exc.value)

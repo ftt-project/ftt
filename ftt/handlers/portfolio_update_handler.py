@@ -4,7 +4,10 @@ from ftt.handlers.portfolio_steps.portfolio_update_step import PortfolioUpdateSt
 
 
 class PortfolioUpdateHandler(Handler):
-    params = ("portfolio", "params",)
+    params = (
+        "portfolio",
+        "params",
+    )
 
     handlers = [
         (PortfolioUpdateStep, "portfolio", "params"),

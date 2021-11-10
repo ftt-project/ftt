@@ -170,4 +170,3 @@ class PortfoliosCommands:
         else:
             ctx.console.print("[red]Failed to update portfolio:")
             ctx.console.print(result.value)
-
