@@ -24,7 +24,9 @@ class TestPortfolioUpdateStep:
         assert result.is_ok()
         assert result.value.name == params["name"]
 
-    def test_process_unknown_fields(self, subject, portfolio, wrong_params):
+    def test_process_returns_error_if_unknown_fields(
+        self, subject, portfolio, wrong_params
+    ):
         result = subject.process(portfolio=portfolio, params=wrong_params)
 
         assert result.is_err()
@@ -33,7 +35,7 @@ class TestPortfolioUpdateStep:
             in result.value
         )
 
-    def test_process_missing_field(self, subject, portfolio):
+    def test_process_returns_error_if_missing_field(self, subject, portfolio):
         result = subject.process(portfolio=portfolio, params={"name": ""})
 
         assert result.is_err()

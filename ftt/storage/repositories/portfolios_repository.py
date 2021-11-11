@@ -1,10 +1,6 @@
 from datetime import datetime
 from typing import List
 
-import peewee
-from playhouse.shortcuts import update_model_from_dict
-
-from ftt.storage.errors import PersistingError
 from ftt.storage.models.base import Base
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -58,11 +54,4 @@ class PortfoliosRepository(Repository):
 
     @classmethod
     def update(cls, portfolio: Portfolio, params: dict) -> Portfolio:
-        try:
-            params["updated_at"] = datetime.now()
-            model = update_model_from_dict(portfolio, params)
-            model.save()
-        except (AttributeError, peewee.IntegrityError) as e:
-            raise PersistingError(portfolio, params, str(e))
-
-        return model
+        return cls._update(portfolio, params)

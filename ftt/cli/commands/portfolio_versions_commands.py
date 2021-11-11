@@ -1,6 +1,7 @@
 from typing import Optional
 
 from nubia import argument, command, context
+from prompt_toolkit import prompt
 
 from ftt.cli.renderers.weights.weights_list import WeightsList
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
@@ -11,6 +12,7 @@ from ftt.handlers.portfolio_version_deactivation_handler import (
     PortfolioVersionDeactivationHandler,
 )
 from ftt.handlers.portfolio_version_loading_handler import PortfolioVersionLoadHandler
+from ftt.handlers.portfolio_version_update_handler import PortfolioVersionUpdateHandler
 from ftt.handlers.weights_calculation_handler import WeightsCalculationHandler
 from ftt.handlers.weights_list_handler import WeightsListHandler
 
@@ -22,8 +24,8 @@ class PortfolioVersionsCommands:
     """
 
     def __init__(self, portfolio_id: Optional[int] = None):
-        ctx = context.get_context()
-        self.portfolio_in_use = int(portfolio_id or ctx.portfolio_in_use)
+        self.context = context.get_context()
+        self.portfolio_in_use = int(portfolio_id or self.context.portfolio_in_use)
 
     @command
     @argument(
@@ -192,3 +194,58 @@ class PortfolioVersionsCommands:
         Distribution of weighs/$
         """
         pass
+
+    @command
+    @argument(
+        "portfolio_version_id", description="Portfolio Version ID", positional=True
+    )
+    def update(self, portfolio_version_id):
+        portfolio_version_result = PortfolioVersionLoadHandler().handle(
+            portfolio_version_id=portfolio_version_id
+        )
+
+        if portfolio_version_result.value.active:
+            self.context.console.print(
+                f"[yellow]Portfolio Version #{portfolio_version_result.value.id} is active and cannot be updated"
+            )
+            return
+
+        params = {}
+        new_account_value = prompt(
+            "Account value: ", default=portfolio_version_result.value.amount
+        )
+        if new_account_value != portfolio_version_result.value.amount:
+            params["amount"] = new_account_value
+
+        new_period_start = prompt(
+            "Period start: ", default=portfolio_version_result.value.period_start
+        )
+        if new_period_start != portfolio_version_result.value.period_start:
+            params["period_start"] = new_period_start
+
+        new_period_end = prompt(
+            "Period end: ", default=portfolio_version_result.value.period_end
+        )
+        if new_period_end != portfolio_version_result.value.period_end:
+            params["period_end"] = new_period_end
+
+        new_interval = prompt(
+            "Interval: ", default=portfolio_version_result.value.interval
+        )
+        if new_interval != portfolio_version_result.value.interval:
+            params["interval"] = new_interval
+
+        if len(params) == 0:
+            self.context.console.print("[green]Nothing to update")
+            return
+
+        result = PortfolioVersionUpdateHandler().handle(
+            portfolio_version=portfolio_version_result.value, params=params
+        )
+        if result.is_ok():
+            self.context.console.print(
+                f"[green]Portfolio Version #{portfolio_version_result.value.id} is updated"
+            )
+        else:
+            self.context.console.print("[red]Failed to update portfolio:")
+            self.context.console.print(result.value)
