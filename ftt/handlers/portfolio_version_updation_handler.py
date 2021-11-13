@@ -5,7 +5,7 @@ from ftt.handlers.portfolio_version_steps.portfolio_version_update_step import (
 )
 
 
-class PortfolioVersionUpdateHandler(Handler):
+class PortfolioVersionUpdationHandler(Handler):
     params = (
         "portfolio_version",
         "params",

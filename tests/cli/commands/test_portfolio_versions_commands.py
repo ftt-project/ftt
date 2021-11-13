@@ -147,7 +147,6 @@ class TestPortfolioVersionsCommands:
             ]
         )
 
-    @pytest.mark.skip(reason="Fails on assert_has_calls")
     def test_update_not_active_portfolio_version(
         self, subject, portfolio, portfolio_version, context, mocker
     ):
@@ -162,16 +161,40 @@ class TestPortfolioVersionsCommands:
             portfolio_version_id=portfolio_version.id
         )
 
-        prompt_mocker.assert_has_calls(
-            [
-                call("Account value: ", default="30000.00"),
-                call("Period start: ", default=portfolio_version.period_start),
-                call("Period end: ", default=portfolio_version.period_end),
-                call("Interval: ", default=portfolio_version.interval),
-            ],
-            any_order=True,
+        prompt_mocker.assert_any_call("Account value: ", default="30000.00")
+        prompt_mocker.assert_any_call(
+            "Period start: ", default=str(portfolio_version.period_start)
         )
+        prompt_mocker.assert_any_call(
+            "Period end: ", default=str(portfolio_version.period_end)
+        )
+        prompt_mocker.assert_any_call("Interval: ", default=portfolio_version.interval)
 
         context.get_context.return_value.console.print.assert_has_calls(
             [call(f"[green]Portfolio Version #{portfolio_version.id} is updated")]
+        )
+
+    def test_create_from_existing(
+        self, subject, portfolio, portfolio_version, context, mocker
+    ):
+        prompt_mocker = mocker.patch(
+            "ftt.cli.commands.portfolio_versions_commands.prompt"
+        )
+        prompt_mocker.side_effect = [100, "2021-01-01", "2021-04-20", "1d"]
+
+        subject(portfolio_id=portfolio.id).create_from_existing(
+            portfolio_version_id=portfolio_version.id
+        )
+
+        prompt_mocker.assert_any_call("Account value: ", default="30000.00")
+        prompt_mocker.assert_any_call(
+            "Period start: ", default=str(portfolio_version.period_start)
+        )
+        prompt_mocker.assert_any_call(
+            "Period end: ", default=str(portfolio_version.period_end)
+        )
+        prompt_mocker.assert_any_call("Interval: ", default=portfolio_version.interval)
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call(f"[green]The new Portfolio Version #2 is created")]
         )

@@ -33,6 +33,12 @@ class PortfolioVersionsRepository(Repository):
         """
         TODO: use model instead of ID
         """
+        versions = PortfolioVersion.select().where(
+            PortfolioVersion.portfolio_id == portfolio_id
+        )
+        if len(versions) == 0:
+            return None
+
         return (
             PortfolioVersion.select()
             .where(PortfolioVersion.portfolio_id == portfolio_id)
