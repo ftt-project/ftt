@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
+import peewee
+from playhouse.shortcuts import update_model_from_dict
+
+from ftt.storage.errors import PersistingError
 from ftt.storage.models.base import Base
 
 
@@ -35,3 +39,14 @@ class Repository(ABC):
             )
         result = model_class.create(**data)
         return result
+
+    @classmethod
+    def _update(cls, instance, data) -> Base:
+        try:
+            data["updated_at"] = datetime.now()
+            model = update_model_from_dict(instance, data)
+            model.save()
+        except (AttributeError, peewee.IntegrityError) as e:
+            raise PersistingError(instance, data, str(e))
+
+        return model

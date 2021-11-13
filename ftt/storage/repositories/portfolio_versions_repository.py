@@ -61,3 +61,9 @@ class PortfolioVersionsRepository(Repository):
     def get_portfolio(cls, portfolio_version_id) -> Portfolio:
         portfolio_versions = PortfolioVersion.get_by_id(portfolio_version_id)
         return portfolio_versions.portfolio
+
+    @classmethod
+    def update(
+        cls, portfolio_version: PortfolioVersion, params: dict
+    ) -> PortfolioVersion:
+        return cls._update(portfolio_version, params)

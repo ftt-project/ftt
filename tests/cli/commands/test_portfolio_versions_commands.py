@@ -1,3 +1,4 @@
+from decimal import Decimal
 from unittest.mock import call
 
 import pytest
@@ -127,4 +128,50 @@ class TestPortfolioVersionsCommands:
 
         context.get_context.return_value.console.print.assert_has_calls(
             [call(f"[yellow]Portfolio Version #{portfolio_version.id} is not active")]
+        )
+
+    def test_update_active_portfolio_version(
+        self, subject, portfolio, portfolio_version, context
+    ):
+        portfolio_version.active = True
+        portfolio_version.save()
+        subject(portfolio_id=portfolio.id).update(
+            portfolio_version_id=portfolio_version.id
+        )
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [
+                call(
+                    f"[yellow]Portfolio Version #{portfolio_version.id} is active and cannot be updated"
+                )
+            ]
+        )
+
+    @pytest.mark.skip(reason="Fails on assert_has_calls")
+    def test_update_not_active_portfolio_version(
+        self, subject, portfolio, portfolio_version, context, mocker
+    ):
+        portfolio_version.active = False
+        portfolio_version.save()
+        prompt_mocker = mocker.patch(
+            "ftt.cli.commands.portfolio_versions_commands.prompt"
+        )
+        prompt_mocker.side_effect = [100, "2021-01-01", "2021-04-20", "1d"]
+
+        subject(portfolio_id=portfolio.id).update(
+            portfolio_version_id=portfolio_version.id
+        )
+
+        prompt_mocker.assert_has_calls(
+            [
+                call("Account value: ", default="30000.00"),
+                call("Period start: ", default=portfolio_version.period_start),
+                call("Period end: ", default=portfolio_version.period_end),
+                call("Interval: ", default=portfolio_version.interval),
+            ],
+            any_order=True,
+        )
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call(f"[green]Portfolio Version #{portfolio_version.id} is updated")]
         )

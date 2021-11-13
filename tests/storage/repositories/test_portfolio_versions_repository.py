@@ -1,3 +1,6 @@
+import pytest
+
+from ftt.storage.errors import PersistingError
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
@@ -51,3 +54,25 @@ class TestPortfolioVersionsRepository:
         result = subject.get_active_version(portfolio)
 
         assert result is None
+
+    def test_update(self, subject, portfolio_version):
+        params = {"interval": "1mo"}
+        result = subject.update(portfolio_version, params)
+
+        assert result == portfolio_version
+        assert PortfolioVersion.get(portfolio_version.id).interval == "1mo"
+
+    def test_update_unknown_fields(self, subject, portfolio_version):
+        params = {"unknown": "New name"}
+        with pytest.raises(PersistingError) as exc:
+            subject.update(portfolio_version, params)
+
+        assert "Failed to persist `PortfolioVersion` with params" in str(exc.value)
+
+    def test_update_missing_field(self, subject, portfolio_version):
+        params = {"period_start": ""}
+        with pytest.raises(PersistingError) as exc:
+            subject.update(portfolio_version=portfolio_version, params=params)
+
+        assert "Failed to persist `PortfolioVersion` with params" in str(exc.value)
+        assert "CHECK constraint failed" in str(exc.value)
