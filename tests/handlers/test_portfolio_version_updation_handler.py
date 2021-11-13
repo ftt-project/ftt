@@ -1,12 +1,14 @@
 import pytest
 
-from ftt.handlers.portfolio_version_update_handler import PortfolioVersionUpdateHandler
+from ftt.handlers.portfolio_version_updation_handler import (
+    PortfolioVersionUpdationHandler,
+)
 
 
 class TestPortfolioVersionUpdateHandler:
     @pytest.fixture
     def subject(self):
-        return PortfolioVersionUpdateHandler()
+        return PortfolioVersionUpdationHandler()
 
     @pytest.fixture
     def params(self):

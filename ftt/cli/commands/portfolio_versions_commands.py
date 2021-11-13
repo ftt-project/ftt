@@ -8,11 +8,16 @@ from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 from ftt.handlers.portfolio_version_activation_handler import (
     PortfolioVersionActivationHandler,
 )
+from ftt.handlers.portfolio_version_creation_handler import (
+    PortfolioVersionCreationHandler,
+)
 from ftt.handlers.portfolio_version_deactivation_handler import (
     PortfolioVersionDeactivationHandler,
 )
 from ftt.handlers.portfolio_version_loading_handler import PortfolioVersionLoadHandler
-from ftt.handlers.portfolio_version_update_handler import PortfolioVersionUpdateHandler
+from ftt.handlers.portfolio_version_updation_handler import (
+    PortfolioVersionUpdationHandler,
+)
 from ftt.handlers.weights_calculation_handler import WeightsCalculationHandler
 from ftt.handlers.weights_list_handler import WeightsListHandler
 
@@ -260,7 +265,7 @@ class PortfolioVersionsCommands:
             self.context.console.print("[green]Nothing to update")
             return
 
-        result = PortfolioVersionUpdateHandler().handle(
+        result = PortfolioVersionUpdationHandler().handle(
             portfolio_version=portfolio_version_result.value, params=params
         )
         if result.is_ok():
@@ -269,4 +274,80 @@ class PortfolioVersionsCommands:
             )
         else:
             self.context.console.print("[red]Failed to update portfolio:")
+            self.context.console.print(result.value)
+
+    @command("create-new")
+    @argument(
+        "portfolio_id", description="Portfolio ID", positional=True, type=int,
+    )
+    def create(self, portfolio_id: int):
+        """
+        Create a new portfolio version
+        """
+        pass
+
+    @command
+    @argument(
+        "portfolio_version_id",
+        description="Portfolio Version ID",
+        positional=True,
+        type=int,
+    )
+    def create_from_existing(self, portfolio_version_id: int):
+        """
+        Create a new portfolio version from an existing one
+        """
+        # TODO refactor, duplicated in `balance` method
+        if self.portfolio_in_use is None:
+            self.context.console.print(
+                "[yellow]Select portfolio using `portfolio use ID` command"
+            )
+            return
+        portfolio_result = PortfolioLoadHandler().handle(
+            portfolio_id=self.portfolio_in_use
+        )
+
+        portfolio_version_result = PortfolioVersionLoadHandler().handle(
+            portfolio_version_id=portfolio_version_id
+        )
+        # TODO handle if not found situation
+
+        params = {}
+        new_account_value = prompt(
+            "Account value: ", default=f"{portfolio_version_result.value.amount:.2f}"
+        )
+        if new_account_value != portfolio_version_result.value.amount:
+            params["amount"] = new_account_value
+
+        new_period_start = prompt(
+            "Period start: ", default=str(portfolio_version_result.value.period_start)
+        )
+        if new_period_start != portfolio_version_result.value.period_start:
+            params["period_start"] = new_period_start
+
+        new_period_end = prompt(
+            "Period end: ", default=str(portfolio_version_result.value.period_end)
+        )
+        if new_period_end != portfolio_version_result.value.period_end:
+            params["period_end"] = new_period_end
+
+        new_interval = prompt(
+            "Interval: ", default=portfolio_version_result.value.interval
+        )
+        if new_interval != portfolio_version_result.value.interval:
+            params["interval"] = new_interval
+
+        result = PortfolioVersionCreationHandler().handle(
+            portfolio=portfolio_result.value,
+            amount=params.get("amount"),
+            period_start=params.get("period_start"),
+            period_end=params.get("period_end"),
+            interval=params.get("interval"),
+        )
+        if result.is_ok():
+            self.context.console.print(
+                f"[green]The new Portfolio Version #{result.value.id} is created"
+            )
+        else:
+            self.context.console.print("[red]Failed to create portfolio version:")
             self.context.console.print(result.value)
