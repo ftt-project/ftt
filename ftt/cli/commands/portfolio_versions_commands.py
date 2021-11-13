@@ -29,7 +29,10 @@ class PortfolioVersionsCommands:
 
     @command
     @argument(
-        "portfolio_version_id", description="Portfolio Version ID", positional=True
+        "portfolio_version_id",
+        description="Portfolio Version ID",
+        positional=True,
+        type=int,
     )
     @argument("period_start", description="Beginning of period of historical prices")
     @argument("period_end", description="Ending of period of historical prices")
@@ -115,9 +118,12 @@ class PortfolioVersionsCommands:
 
     @command
     @argument(
-        "portfolio_version_id", description="Portfolio Version ID", positional=True
+        "portfolio_version_id",
+        description="Portfolio Version ID",
+        positional=True,
+        type=int,
     )
-    def activate(self, portfolio_version_id):
+    def activate(self, portfolio_version_id: int):
         """
         Activate the indicated version of the portfolio and deactivates the rest
         """
@@ -153,9 +159,12 @@ class PortfolioVersionsCommands:
 
     @command
     @argument(
-        "portfolio_version_id", description="Portfolio Version ID", positional=True
+        "portfolio_version_id",
+        description="Portfolio Version ID",
+        positional=True,
+        type=int,
     )
-    def deactivate(self, portfolio_version_id):
+    def deactivate(self, portfolio_version_id: int):
         """
         Deactivate the indicated version of the portfolio
         """
@@ -197,9 +206,21 @@ class PortfolioVersionsCommands:
 
     @command
     @argument(
-        "portfolio_version_id", description="Portfolio Version ID", positional=True
+        "portfolio_version_id",
+        description="Portfolio Version ID",
+        positional=True,
+        type=int,
     )
-    def update(self, portfolio_version_id):
+    def update(self, portfolio_version_id: int):
+        """
+        Update the indicated version of the portfolio.
+        Only not active portfolio versions can be updated.
+        Possible to update attributes:
+            - account value
+            - period start
+            - period end
+            - interval
+        """
         portfolio_version_result = PortfolioVersionLoadHandler().handle(
             portfolio_version_id=portfolio_version_id
         )
@@ -212,19 +233,19 @@ class PortfolioVersionsCommands:
 
         params = {}
         new_account_value = prompt(
-            "Account value: ", default=portfolio_version_result.value.amount
+            "Account value: ", default=f"{portfolio_version_result.value.amount:.2f}"
         )
         if new_account_value != portfolio_version_result.value.amount:
             params["amount"] = new_account_value
 
         new_period_start = prompt(
-            "Period start: ", default=portfolio_version_result.value.period_start
+            "Period start: ", default=str(portfolio_version_result.value.period_start)
         )
         if new_period_start != portfolio_version_result.value.period_start:
             params["period_start"] = new_period_start
 
         new_period_end = prompt(
-            "Period end: ", default=portfolio_version_result.value.period_end
+            "Period end: ", default=str(portfolio_version_result.value.period_end)
         )
         if new_period_end != portfolio_version_result.value.period_end:
             params["period_end"] = new_period_end

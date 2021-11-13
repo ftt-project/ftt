@@ -42,7 +42,7 @@ class PortfoliosCommands:
         PortfoliosList(ctx, result.value).render()
 
     @command
-    @argument("portfolio_id", description="Portfolio ID", positional=True)
+    @argument("portfolio_id", description="Portfolio ID", positional=True, type=int)
     def details(self, portfolio_id: int) -> None:
         """
         Display details of portfolio by its ID
@@ -128,7 +128,7 @@ class PortfoliosCommands:
             ctx.console.print(association_result.value)
 
     @command("use")
-    @argument("portfolio_id", description="Portfolio ID", positional=True)
+    @argument("portfolio_id", description="Portfolio ID", positional=True, type=int)
     def use(self, portfolio_id: int) -> None:
         """
         Assign active portfolio
@@ -138,12 +138,12 @@ class PortfoliosCommands:
         ctx.console.print(f"[green]Active portfolio #{portfolio_id}")
 
     @command("update")
-    @argument("portfolio_id", description="Portfolio ID", positional=True)
+    @argument("portfolio_id", description="Portfolio ID", positional=True, type=int)
     def update(self, portfolio_id: int) -> None:
         """
         Update portfolio by ID
         Possible to update attributes:
-            * name
+            - name
         """
         ctx = context.get_context()
 
