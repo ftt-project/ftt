@@ -292,24 +292,16 @@ class PortfolioVersionsCommands:
         )
 
         params = {}
-        new_account_value = prompt(
-            "Account value: "
-        )
+        new_account_value = prompt("Account value: ")
         params["amount"] = new_account_value
 
-        new_period_start = prompt(
-            "Period start: "
-        )
+        new_period_start = prompt("Period start: ")
         params["period_start"] = new_period_start
 
-        new_period_end = prompt(
-            "Period end: "
-        )
+        new_period_end = prompt("Period end: ")
         params["period_end"] = new_period_end
 
-        new_interval = prompt(
-            "Interval: "
-        )
+        new_interval = prompt("Interval: ")
         params["interval"] = new_interval
 
         result = PortfolioVersionCreationHandler().handle(
@@ -326,7 +318,6 @@ class PortfolioVersionsCommands:
         else:
             self.context.console.print("[red]Failed to create portfolio version:")
             self.context.console.print(result.value)
-
 
     @command
     @argument(
