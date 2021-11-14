@@ -198,3 +198,33 @@ class TestPortfolioVersionsCommands:
         context.get_context.return_value.console.print.assert_has_calls(
             [call(f"[green]The new Portfolio Version #2 is created")]
         )
+
+    def test_create_new(self, subject, portfolio, context, mocker):
+        prompt_mocker = mocker.patch(
+            "ftt.cli.commands.portfolio_versions_commands.prompt"
+        )
+        prompt_mocker.side_effect = [100, "2021-01-01", "2021-04-20", "1d"]
+
+        handler_mocker = mocker.patch(
+            "ftt.cli.commands.portfolio_versions_commands.PortfolioVersionCreationHandler"
+        )
+        handler_mocker.return_value.handle.return_value.value.id = 111
+
+        subject(portfolio_id=portfolio.id).create()
+
+        prompt_mocker.assert_any_call("Account value: ")
+        prompt_mocker.assert_any_call("Period start: ")
+        prompt_mocker.assert_any_call("Period end: ")
+        prompt_mocker.assert_any_call("Interval: ")
+
+        handler_mocker.return_value.handle.assert_called_once_with(
+            portfolio=portfolio,
+            amount=100,
+            period_start="2021-01-01",
+            period_end="2021-04-20",
+            interval="1d",
+        )
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call(f"[green]The new Portfolio Version #111 is created")]
+        )

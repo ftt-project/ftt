@@ -277,14 +277,56 @@ class PortfolioVersionsCommands:
             self.context.console.print(result.value)
 
     @command("create-new")
-    @argument(
-        "portfolio_id", description="Portfolio ID", positional=True, type=int,
-    )
-    def create(self, portfolio_id: int):
+    def create(self):
         """
         Create a new portfolio version
         """
-        pass
+        # TODO refactor, duplicated in `balance` method
+        if self.portfolio_in_use is None:
+            self.context.console.print(
+                "[yellow]Select portfolio using `portfolio use ID` command"
+            )
+            return
+        portfolio_result = PortfolioLoadHandler().handle(
+            portfolio_id=self.portfolio_in_use
+        )
+
+        params = {}
+        new_account_value = prompt(
+            "Account value: "
+        )
+        params["amount"] = new_account_value
+
+        new_period_start = prompt(
+            "Period start: "
+        )
+        params["period_start"] = new_period_start
+
+        new_period_end = prompt(
+            "Period end: "
+        )
+        params["period_end"] = new_period_end
+
+        new_interval = prompt(
+            "Interval: "
+        )
+        params["interval"] = new_interval
+
+        result = PortfolioVersionCreationHandler().handle(
+            portfolio=portfolio_result.value,
+            amount=params.get("amount"),
+            period_start=params.get("period_start"),
+            period_end=params.get("period_end"),
+            interval=params.get("interval"),
+        )
+        if result.is_ok():
+            self.context.console.print(
+                f"[green]The new Portfolio Version #{result.value.id} is created"
+            )
+        else:
+            self.context.console.print("[red]Failed to create portfolio version:")
+            self.context.console.print(result.value)
+
 
     @command
     @argument(
