@@ -3,6 +3,7 @@ from typing import List, Optional
 
 import peewee
 
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.repositories.repository import Repository
@@ -70,6 +71,6 @@ class PortfolioVersionsRepository(Repository):
 
     @classmethod
     def update(
-        cls, portfolio_version: PortfolioVersion, params: dict
+        cls, portfolio_version: PortfolioVersion, dto: PortfolioVersionDTO
     ) -> PortfolioVersion:
-        return cls._update(portfolio_version, params)
+        return cls._update(portfolio_version, dto)

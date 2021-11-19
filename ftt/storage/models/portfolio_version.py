@@ -6,7 +6,7 @@ from ftt.storage.models.portfolio import Portfolio
 
 class PortfolioVersion(Base):
     portfolio = peewee.ForeignKeyField(Portfolio, backref="versions")
-    amount = peewee.DecimalField(constraints=[peewee.Check("amount >= 0")], default=0)
+    value = peewee.DecimalField(constraints=[peewee.Check("value >= 0")], default=0)
     period_start = peewee.DateTimeField(
         null=True, constraints=[peewee.Check("length(period_start) > 0")]
     )

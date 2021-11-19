@@ -19,7 +19,7 @@ class PortfolioVersionDetails(AbstractRenderer):
 
         rows = [
             ("[bold magenta]ID", str(self.portfolio_version.id)),
-            ("[bold magenta]Account value", str(self.portfolio_version.amount)),
+            ("[bold magenta]Account value", str(self.portfolio_version.value)),
             ("[bold magenta]Period start", str(self.portfolio_version.period_start)),
             ("[bold magenta]Period end", str(self.portfolio_version.period_end)),
             ("[bold magenta]Interval", self.portfolio_version.interval),

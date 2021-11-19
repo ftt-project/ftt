@@ -14,7 +14,7 @@ class TestPortfolioVersionCreateHandler:
     def test_creates_new_version(self, subject, portfolio):
         result = subject.handle(
             portfolio=portfolio,
-            amount=999,
+            value=999,
             period_start="2019-01-01",
             period_end="2019-10-01",
             interval="1mo",
@@ -23,7 +23,7 @@ class TestPortfolioVersionCreateHandler:
         assert result.is_ok()
         assert type(result.value) == PortfolioVersion
         assert result.value.portfolio == portfolio
-        assert result.value.amount == 999
+        assert result.value.value == 999
         assert result.value.period_start == "2019-01-01"
         assert result.value.period_end == "2019-10-01"
         assert result.value.interval == "1mo"

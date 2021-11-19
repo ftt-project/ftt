@@ -6,10 +6,10 @@ from ftt.handlers.portfolio_steps.portfolio_update_step import PortfolioUpdateSt
 class PortfolioUpdateHandler(Handler):
     params = (
         "portfolio",
-        "params",
+        "dto",
     )
 
     handlers = [
-        (PortfolioUpdateStep, "portfolio", "params"),
+        (PortfolioUpdateStep, "portfolio", "dto"),
         (ReturnResult, PortfolioUpdateStep.key),
     ]

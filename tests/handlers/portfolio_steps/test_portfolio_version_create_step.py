@@ -18,7 +18,7 @@ class TestPortfolioVersionCreateStep:
         return {
             "portfolio": portfolio,
             "version": 1,
-            "amount": 10000,
+            "value": 10000,
             "period_start": datetime(2021, 1, 1),
             "period_end": datetime(2021, 4, 25),
             "interval": "1wk",

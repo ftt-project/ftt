@@ -24,14 +24,14 @@ class TestPortfolioVersion:
             created_at=datetime.now(),
         )
 
-        assert portfolio.amount == 0
+        assert portfolio.value == 0
 
     def test_amount_constraints(self, portfolio):
         with pytest.raises(peewee.IntegrityError) as e:
             PortfolioVersion.create(
                 portfolio=portfolio,
                 version=1,
-                amount=-1,
+                value=-1,
                 updated_at=datetime.now(),
                 created_at=datetime.now(),
             )

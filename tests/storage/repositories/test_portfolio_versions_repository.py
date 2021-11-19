@@ -1,5 +1,8 @@
+from dataclasses import dataclass
+
 import pytest
 
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
 from ftt.storage.errors import PersistingError
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.repositories.portfolio_versions_repository import (
@@ -56,23 +59,27 @@ class TestPortfolioVersionsRepository:
         assert result is None
 
     def test_update(self, subject, portfolio_version):
-        params = {"interval": "1mo"}
+        params = PortfolioVersionDTO(interval="1mo", value=100)
         result = subject.update(portfolio_version, params)
 
         assert result == portfolio_version
         assert PortfolioVersion.get(portfolio_version.id).interval == "1mo"
 
     def test_update_unknown_fields(self, subject, portfolio_version):
-        params = {"unknown": "New name"}
+        @dataclass
+        class FakeDTO(PortfolioVersionDTO):
+            field: str = "value"
+
+        dto = FakeDTO(field="New name")
         with pytest.raises(PersistingError) as exc:
-            subject.update(portfolio_version, params)
+            subject.update(portfolio_version, dto)
 
         assert "Failed to persist `PortfolioVersion` with params" in str(exc.value)
 
     def test_update_missing_field(self, subject, portfolio_version):
-        params = {"period_start": ""}
+        dto = PortfolioVersionDTO(period_start="", value=100)
         with pytest.raises(PersistingError) as exc:
-            subject.update(portfolio_version=portfolio_version, params=params)
+            subject.update(portfolio_version=portfolio_version, dto=dto)
 
         assert "Failed to persist `PortfolioVersion` with params" in str(exc.value)
         assert "CHECK constraint failed" in str(exc.value)

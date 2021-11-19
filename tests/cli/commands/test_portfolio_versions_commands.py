@@ -4,6 +4,7 @@ from unittest.mock import call
 import pytest
 
 from ftt.cli.commands.portfolio_versions_commands import PortfolioVersionsCommands
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
 
 
 class TestPortfolioVersionsCommands:
@@ -153,22 +154,18 @@ class TestPortfolioVersionsCommands:
         portfolio_version.active = False
         portfolio_version.save()
         prompt_mocker = mocker.patch(
-            "ftt.cli.commands.portfolio_versions_commands.prompt"
+            "ftt.cli.commands.portfolio_versions_commands.UpdatePortfolioPromptsHandler"
         )
-        prompt_mocker.side_effect = [100, "2021-01-01", "2021-04-20", "1d"]
+        prompt_mocker.return_value.handle.return_value.value = PortfolioVersionDTO(
+            value=100,
+            period_start="2021-01-01",
+            period_end="2021-04-20",
+            interval="1d",
+        )
 
         subject(portfolio_id=portfolio.id).update(
             portfolio_version_id=portfolio_version.id
         )
-
-        prompt_mocker.assert_any_call("Account value: ", default="30000.00")
-        prompt_mocker.assert_any_call(
-            "Period start: ", default=str(portfolio_version.period_start)
-        )
-        prompt_mocker.assert_any_call(
-            "Period end: ", default=str(portfolio_version.period_end)
-        )
-        prompt_mocker.assert_any_call("Interval: ", default=portfolio_version.interval)
 
         context.get_context.return_value.console.print.assert_has_calls(
             [call(f"[green]Portfolio Version #{portfolio_version.id} is updated")]
