@@ -15,14 +15,14 @@ class TestPortfolioVersionUpdateStep:
 
     @pytest.fixture
     def portfolio_version_dto(self):
-        return PortfolioVersionDTO(
-            value=1033
-        )
+        return PortfolioVersionDTO(value=1033)
 
     def test_process_updates_portfolio_version(
         self, subject, portfolio_version, portfolio_version_dto
     ):
-        result = subject.process(portfolio_version=portfolio_version, dto=portfolio_version_dto)
+        result = subject.process(
+            portfolio_version=portfolio_version, dto=portfolio_version_dto
+        )
 
         assert result.is_ok()
         assert portfolio_version.value == portfolio_version_dto.value
@@ -33,9 +33,7 @@ class TestPortfolioVersionUpdateStep:
             unknown_field: int = 9
 
         dto = UnknownDTO(unknown_field="value")
-        result = subject.process(
-            portfolio_version=portfolio_version, dto=dto
-        )
+        result = subject.process(portfolio_version=portfolio_version, dto=dto)
 
         assert result.is_err()
         assert (
@@ -45,7 +43,8 @@ class TestPortfolioVersionUpdateStep:
 
     def test_process_returns_error_if_missing_field(self, subject, portfolio_version):
         result = subject.process(
-            portfolio_version=portfolio_version, dto=PortfolioVersionDTO(interval="", value=1)
+            portfolio_version=portfolio_version,
+            dto=PortfolioVersionDTO(interval="", value=1),
         )
 
         assert result.is_err()

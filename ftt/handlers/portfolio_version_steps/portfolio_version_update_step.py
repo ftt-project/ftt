@@ -13,7 +13,9 @@ class PortfolioVersionUpdateStep(AbstractStep):
     key = "updated_portfolio_version"
 
     @classmethod
-    def process(cls, portfolio_version: PortfolioVersion, dto: PortfolioVersionDTO) -> OkErr:
+    def process(
+        cls, portfolio_version: PortfolioVersion, dto: PortfolioVersionDTO
+    ) -> OkErr:
         try:
             result = PortfolioVersionsRepository.update(portfolio_version, dto)
         except PersistingError as e:

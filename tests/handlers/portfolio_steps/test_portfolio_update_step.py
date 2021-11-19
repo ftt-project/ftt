@@ -13,9 +13,7 @@ class TestPortfolioUpdateStep:
 
     @pytest.fixture
     def portfolio_dto(self):
-        return PortfolioDTO(
-            name="New portfolio name",
-        )
+        return PortfolioDTO(name="New portfolio name",)
 
     def test_process(self, subject, portfolio, portfolio_dto):
         result = subject.process(portfolio=portfolio, dto=portfolio_dto)
@@ -23,9 +21,7 @@ class TestPortfolioUpdateStep:
         assert result.is_ok()
         assert result.value.name == portfolio_dto.name
 
-    def test_process_returns_error_if_unknown_fields(
-        self, subject, portfolio
-    ):
+    def test_process_returns_error_if_unknown_fields(self, subject, portfolio):
         @dataclass
         class FakeDTO(PortfolioDTO):
             wrong_field: str
