@@ -8,10 +8,10 @@ from ftt.handlers.portfolio_version_steps.portfolio_version_update_step import (
 class PortfolioVersionUpdationHandler(Handler):
     params = (
         "portfolio_version",
-        "params",
+        "dto",
     )
 
     handlers = [
-        (PortfolioVersionUpdateStep, "portfolio_version", "params"),
+        (PortfolioVersionUpdateStep, "portfolio_version", "dto"),
         (ReturnResult, PortfolioVersionUpdateStep.key),
     ]

@@ -8,7 +8,7 @@ from ftt.handlers.portfolio_steps.portfolio_version_create_step import (
 
 
 class PortfolioCreationHandler(Handler):
-    params = ("name", "amount", "period_start", "period_end", "interval")
+    params = ("name", "value", "period_start", "period_end", "interval")
 
     handlers = [
         (PortfolioCreateStep, "name"),
@@ -17,7 +17,7 @@ class PortfolioCreationHandler(Handler):
             PortfolioVersionCreateStep,
             "version",
             "portfolio",
-            "amount",
+            "value",
             "period_start",
             "period_end",
             "interval",

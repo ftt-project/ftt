@@ -107,7 +107,7 @@ def portfolio_version(portfolio):
     portfolio_version = PortfolioVersion.create(
         portfolio=portfolio,
         version=1,
-        amount=30000.0,
+        value=30000.0,
         updated_at=datetime.now(),
         created_at=datetime.now(),
     )

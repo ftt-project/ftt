@@ -33,7 +33,7 @@ class PortfolioVersionCreateStep(AbstractStep):
         cls,
         version: int,
         portfolio: Portfolio,
-        amount: float,
+        value: float,
         period_start: datetime,
         period_end: datetime,
         interval: str,
@@ -52,7 +52,7 @@ class PortfolioVersionCreateStep(AbstractStep):
         result = PortfolioVersionsRepository.create(
             version=version,
             portfolio_id=portfolio.id,
-            amount=amount,
+            value=value,
             period_start=period_start,
             period_end=period_end,
             interval=interval,

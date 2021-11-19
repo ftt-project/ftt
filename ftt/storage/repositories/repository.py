@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
+from dataclasses import asdict
 from datetime import datetime
 
 import peewee
 from playhouse.shortcuts import update_model_from_dict
 
+from ftt.storage.data_objects import DTOInterface
 from ftt.storage.errors import PersistingError
 from ftt.storage.models.base import Base
 
@@ -41,10 +43,11 @@ class Repository(ABC):
         return result
 
     @classmethod
-    def _update(cls, instance, data) -> Base:
+    def _update(cls, instance, data: DTOInterface) -> Base:
         try:
-            data["updated_at"] = datetime.now()
-            model = update_model_from_dict(instance, data)
+            dict_data = asdict(data)
+            dict_data["updated_at"] = datetime.now()
+            model = update_model_from_dict(instance, dict_data)
             model.save()
         except (AttributeError, peewee.IntegrityError) as e:
             raise PersistingError(instance, data, str(e))

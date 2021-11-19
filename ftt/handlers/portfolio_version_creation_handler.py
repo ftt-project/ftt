@@ -10,7 +10,7 @@ from ftt.handlers.portfolio_version_steps.portfolio_version_next_version_calcula
 
 
 class PortfolioVersionCreationHandler(Handler):
-    params = ("portfolio", "amount", "period_start", "period_end", "interval")
+    params = ("portfolio", "value", "period_start", "period_end", "interval")
 
     handlers = [
         (PortfolioVersionNextVersionCalculationStep, "portfolio"),
@@ -19,7 +19,7 @@ class PortfolioVersionCreationHandler(Handler):
             PortfolioVersionCreateStep,
             "portfolio",
             "version",
-            "amount",
+            "value",
             "period_start",
             "period_end",
             "interval",

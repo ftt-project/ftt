@@ -86,7 +86,7 @@ class PortfoliosCommands:
 
         portfolio_result = PortfolioCreationHandler().handle(
             name=config_result.value.name,
-            amount=config_result.value.budget,
+            value=config_result.value.budget,
             period_start=config_result.value.period_start,
             period_end=config_result.value.period_end,
             interval=config_result.value.interval,

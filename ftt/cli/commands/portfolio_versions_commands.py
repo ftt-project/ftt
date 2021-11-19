@@ -3,6 +3,9 @@ from typing import Optional
 from nubia import argument, command, context
 from prompt_toolkit import prompt
 
+from ftt.cli.handlers.update_portfolio_prompts_handler import (
+    UpdatePortfolioPromptsHandler,
+)
 from ftt.cli.renderers.weights.weights_list import WeightsList
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 from ftt.handlers.portfolio_version_activation_handler import (
@@ -20,6 +23,8 @@ from ftt.handlers.portfolio_version_updation_handler import (
 )
 from ftt.handlers.weights_calculation_handler import WeightsCalculationHandler
 from ftt.handlers.weights_list_handler import WeightsListHandler
+from ftt.storage.data_objects import is_empty
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
 
 
 @command("portfolio-versions")
@@ -236,37 +241,21 @@ class PortfolioVersionsCommands:
             )
             return
 
-        params = {}
-        new_account_value = prompt(
-            "Account value: ", default=f"{portfolio_version_result.value.amount:.2f}"
+        prompt_result = UpdatePortfolioPromptsHandler().handle(
+            defaults=PortfolioVersionDTO(
+                value=portfolio_version_result.value.value,
+                period_start=portfolio_version_result.value.period_start,
+                period_end=portfolio_version_result.value.period_end,
+                interval=portfolio_version_result.value.interval,
+            )
         )
-        if new_account_value != portfolio_version_result.value.amount:
-            params["amount"] = new_account_value
 
-        new_period_start = prompt(
-            "Period start: ", default=str(portfolio_version_result.value.period_start)
-        )
-        if new_period_start != portfolio_version_result.value.period_start:
-            params["period_start"] = new_period_start
-
-        new_period_end = prompt(
-            "Period end: ", default=str(portfolio_version_result.value.period_end)
-        )
-        if new_period_end != portfolio_version_result.value.period_end:
-            params["period_end"] = new_period_end
-
-        new_interval = prompt(
-            "Interval: ", default=portfolio_version_result.value.interval
-        )
-        if new_interval != portfolio_version_result.value.interval:
-            params["interval"] = new_interval
-
-        if len(params) == 0:
+        if is_empty(prompt_result.value):
             self.context.console.print("[green]Nothing to update")
             return
 
         result = PortfolioVersionUpdationHandler().handle(
-            portfolio_version=portfolio_version_result.value, params=params
+            portfolio_version=portfolio_version_result.value, dto=prompt_result.value
         )
         if result.is_ok():
             self.context.console.print(
@@ -347,10 +336,10 @@ class PortfolioVersionsCommands:
 
         params = {}
         new_account_value = prompt(
-            "Account value: ", default=f"{portfolio_version_result.value.amount:.2f}"
+            "Account value: ", default=f"{portfolio_version_result.value.value:.2f}"
         )
-        if new_account_value != portfolio_version_result.value.amount:
-            params["amount"] = new_account_value
+        if new_account_value != portfolio_version_result.value.value:
+            params["value"] = new_account_value
 
         new_period_start = prompt(
             "Period start: ", default=str(portfolio_version_result.value.period_start)
@@ -372,7 +361,7 @@ class PortfolioVersionsCommands:
 
         result = PortfolioVersionCreationHandler().handle(
             portfolio=portfolio_result.value,
-            amount=params.get("amount"),
+            value=params.get("value"),
             period_start=params.get("period_start"),
             period_end=params.get("period_end"),
             interval=params.get("interval"),
