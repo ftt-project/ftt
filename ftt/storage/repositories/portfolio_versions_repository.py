@@ -18,7 +18,7 @@ class PortfolioVersionsRepository(Repository):
         return model
 
     @classmethod
-    def create(cls, **data: str) -> PortfolioVersion:
+    def create(cls, **data: dict) -> PortfolioVersion:
         return cls._create(PortfolioVersion, data)
 
     @classmethod

@@ -1,4 +1,4 @@
-from nubia import argument, command
+from nubia import argument, command  # type: ignore
 
 from ftt.storage import Storage
 

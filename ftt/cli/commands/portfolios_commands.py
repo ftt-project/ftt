@@ -1,4 +1,4 @@
-from nubia import argument, command, context
+from nubia import argument, command, context  # type: ignore
 from prompt_toolkit import prompt
 
 from ftt.cli.renderers import PortfoliosList

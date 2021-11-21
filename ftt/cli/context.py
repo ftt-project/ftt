@@ -1,4 +1,4 @@
-from nubia import context, eventbus, exceptions
+from nubia import context, eventbus, exceptions  # type: ignore
 from rich.console import Console
 
 from ftt.storage import Storage

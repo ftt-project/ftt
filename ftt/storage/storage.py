@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from peewee import Database
 
@@ -11,7 +11,7 @@ class DatabaseNotInitialized(Exception):
 
 
 class Storage:
-    __storage_manager: StorageManager = None
+    __storage_manager: Optional[StorageManager] = None
 
     @classmethod
     def storage_manager(cls) -> StorageManager:

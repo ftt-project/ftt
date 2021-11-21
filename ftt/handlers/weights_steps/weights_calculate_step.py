@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-import pypfopt
+import pypfopt  # type: ignore
 from pandas import DataFrame
 from pypfopt import DiscreteAllocation, EfficientFrontier, expected_returns, risk_models
 from result import Err, Ok, OkErr

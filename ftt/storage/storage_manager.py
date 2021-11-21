@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import List, Optional, ContextManager
 
-from peewee import SqliteDatabase
+from peewee import SqliteDatabase  # type: ignore
 
 from ftt.storage.models.base import Base, database_proxy
 
@@ -9,7 +9,7 @@ class StorageManager:
     def __init__(self, db_name: str, environment: str, path: Optional[str] = None):
         self.db_name = db_name
         self.environment = environment
-        self.database: Optional[SqliteDatabase] = None
+        self.database: ContextManager[SqliteDatabase] = None
 
     def initialize_database(self, adapter=SqliteDatabase) -> None:
         database = adapter(f"{self.db_name}.{self.environment}.db")

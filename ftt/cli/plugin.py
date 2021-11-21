@@ -1,6 +1,6 @@
 import logging
 
-from nubia import PluginInterface
+from nubia import PluginInterface  # type: ignore
 from rich.logging import RichHandler
 
 from ftt.cli import commands

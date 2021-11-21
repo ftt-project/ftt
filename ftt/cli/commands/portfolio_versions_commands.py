@@ -1,6 +1,6 @@
 from typing import Optional
 
-from nubia import argument, command, context
+from nubia import argument, command, context  # type: ignore
 from prompt_toolkit import prompt
 
 from ftt.cli.handlers.update_portfolio_prompts_handler import (

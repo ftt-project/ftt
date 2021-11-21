@@ -1,6 +1,6 @@
 import sys
 
-from nubia import Nubia, Options
+from nubia import Nubia, Options  # type: ignore
 
 from ftt.cli import commands
 from ftt.cli.plugin import Plugin

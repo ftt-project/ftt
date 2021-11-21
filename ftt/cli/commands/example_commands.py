@@ -1,7 +1,7 @@
 import os
 import pathlib
 
-from nubia import command, context
+from nubia import command, context  # type: ignore
 from rich.table import Table
 
 from ftt.handlers.portfolio_associate_securities_hanlder import (
