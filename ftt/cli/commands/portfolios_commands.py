@@ -1,6 +1,9 @@
 from nubia import argument, command, context  # type: ignore
 from prompt_toolkit import prompt
 
+from ftt.cli.handlers.create_portfolio_prompts_handler import (
+    CreatePortfolioPromptsHandler,
+)
 from ftt.cli.renderers import PortfoliosList
 from ftt.cli.renderers.portfolio_versions.portfolio_version_details import (
     PortfolioVersionDetails,
@@ -26,11 +29,11 @@ from ftt.handlers.weights_list_handler import WeightsListHandler
 @command("portfolios")
 class PortfoliosCommands:
     """
-    Portfolio managing
-    TODO:
-    - [ ] new-version
-    - [ ] delete-version
+    Portfolio managing commands
     """
+
+    def __init__(self):
+        self.context = context.get_context()
 
     @command
     def list(self) -> None:
@@ -170,3 +173,29 @@ class PortfoliosCommands:
         else:
             ctx.console.print("[red]Failed to update portfolio:")
             ctx.console.print(result.value)
+
+    @command("create")
+    def create(self) -> None:
+        """
+        Create a new portfolio
+        """
+        prompt_result = CreatePortfolioPromptsHandler().handle()
+
+        if prompt_result.is_err():
+            self.context.console.print("[red]Correct your input to proceed")
+            self.context.console.print(prompt_result.value)
+            return
+
+        portfolio_dto = prompt_result.value["portfolio_dto"]
+        portfolio_version_dto = prompt_result.value["portfolio_version_dto"]
+        # TODO: refactor to use dto in handler
+        result = PortfolioCreationHandler().handle(
+            name=portfolio_dto.name,
+            value=portfolio_version_dto.value,
+            period_start=portfolio_version_dto.period_start,
+            period_end=portfolio_version_dto.period_end,
+            interval=portfolio_version_dto.interval,
+        )
+
+        if result.is_ok():
+            self.context.console.print("[green]Portfolio successfully created")

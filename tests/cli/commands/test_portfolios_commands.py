@@ -6,6 +6,8 @@ import pytest
 
 import ftt
 from ftt.cli.commands.portfolios_commands import PortfoliosCommands
+from ftt.storage.data_objects.portfolio_dto import PortfolioDTO
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
 from ftt.storage.models import Portfolio
 
 
@@ -143,3 +145,24 @@ class TestPortfoliosCommands:
 
         prompt_mocker.assert_called_once_with("New name: ", default=portfolio.name)
         update_mocker.return_value.handle.assert_called_once()
+
+    def test_create_portfolio(self, subject, mocker, context):
+        prompt_mocker = mocker.patch(
+            "ftt.cli.commands.portfolios_commands.CreatePortfolioPromptsHandler"
+        )
+        prompt_mocker.return_value.handle.return_value.is_err.return_value = False
+        prompt_mocker.return_value.handle.return_value.value = {
+            "portfolio_dto": PortfolioDTO(name="Utilities"),
+            "portfolio_version_dto": PortfolioVersionDTO(
+                value=113.0,
+                period_start="2019-01-01",
+                period_end="2019-12-31",
+                interval="1d",
+            ),
+        }
+
+        subject.create()
+
+        context.get_context.return_value.console.print.assert_any_call(
+            "[green]Portfolio successfully created"
+        )

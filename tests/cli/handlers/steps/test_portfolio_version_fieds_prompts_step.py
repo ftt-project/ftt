@@ -35,10 +35,10 @@ class TestPortfolioVersionFieldsPromptsStep:
         result = subject.process()
 
         assert result.is_ok()
-        prompt_mock.assert_any_call("Account value: ", default=None)
-        prompt_mock.assert_any_call("Period start: ", default=None)
-        prompt_mock.assert_any_call("Period end: ", default=None)
-        prompt_mock.assert_any_call("Interval: ", default=None)
+        prompt_mock.assert_any_call("Account value: ", default="")
+        prompt_mock.assert_any_call("Period start: ", default="")
+        prompt_mock.assert_any_call("Period end: ", default="")
+        prompt_mock.assert_any_call("Interval: ", default="")
 
     def test_process_requests_portfolio_version_fields_with_defaults(
         self, subject, portfolio_version_defaults, prompt_mock
@@ -47,14 +47,14 @@ class TestPortfolioVersionFieldsPromptsStep:
 
         assert result.is_ok()
         prompt_mock.assert_any_call(
-            "Account value: ", default=portfolio_version_defaults.value
+            "Account value: ", default=str(portfolio_version_defaults.value)
         )
         prompt_mock.assert_any_call(
-            "Period start: ", default=portfolio_version_defaults.period_start
+            "Period start: ", default=str(portfolio_version_defaults.period_start)
         )
         prompt_mock.assert_any_call(
-            "Period end: ", default=portfolio_version_defaults.period_end
+            "Period end: ", default=str(portfolio_version_defaults.period_end)
         )
         prompt_mock.assert_any_call(
-            "Interval: ", default=portfolio_version_defaults.interval
+            "Interval: ", default=str(portfolio_version_defaults.interval)
         )
