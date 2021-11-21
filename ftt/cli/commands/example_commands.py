@@ -29,7 +29,7 @@ def example():
 
     result = PortfolioCreationHandler().handle(
         name=config.name,
-        amount=config.budget,
+        value=config.budget,
         period_start=config.period_start,
         period_end=config.period_end,
         interval=config.interval,
@@ -38,13 +38,13 @@ def example():
 
     ctx.console.print("Portfolio successfully created", style="bold green")
     table = Table(show_header=True)
-    for name in ["ID", "Name", "Amount", "Created"]:
+    for name in ["ID", "Name", "Account value", "Created"]:
         table.add_column(name)
     # TODO: use presenter
     table.add_row(
         str(portfolio.id),
         portfolio.name,
-        str(portfolio.versions[0].amount),
+        str(portfolio.versions[0].value),
         str(portfolio.created_at),
     )
     ctx.console.print(table)
