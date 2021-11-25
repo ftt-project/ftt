@@ -24,7 +24,7 @@ class TestPortfolioFieldsPromptsStep:
         result = subject.process()
 
         assert result.is_ok()
-        prompt_mock.assert_any_call("Portfolio name: ")
+        assert prompt_mock.call_args[0][0] == "Portfolio name: "
 
     def test_process_returns_dto(self, subject, prompt_mock):
         result = subject.process()

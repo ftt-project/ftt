@@ -199,3 +199,6 @@ class PortfoliosCommands:
 
         if result.is_ok():
             self.context.console.print("[green]Portfolio successfully created")
+        else:
+            self.context.console.print("[red]Failed to create portfolio:")
+            self.context.console.print(f"  {result.value.value}")
