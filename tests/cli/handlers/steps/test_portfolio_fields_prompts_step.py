@@ -1,3 +1,5 @@
+from unittest.mock import ANY
+
 import pytest
 
 from ftt.cli.handlers.steps.portfolio_fields_prompts_step import (
@@ -24,7 +26,7 @@ class TestPortfolioFieldsPromptsStep:
         result = subject.process()
 
         assert result.is_ok()
-        assert prompt_mock.call_args[0][0] == "Portfolio name: "
+        prompt_mock.assert_any_call("Portfolio name: ", placeholder=ANY, validator=ANY)
 
     def test_process_returns_dto(self, subject, prompt_mock):
         result = subject.process()

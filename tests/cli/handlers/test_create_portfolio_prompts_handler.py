@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 
 from ftt.cli.handlers.create_portfolio_prompts_handler import (
@@ -33,6 +35,8 @@ class TestCreatePortfolioPromptsHandler:
         assert result.value["portfolio_dto"].name == "Utilities"
         assert type(result.value["portfolio_version_dto"]) == PortfolioVersionDTO
         assert result.value["portfolio_version_dto"].value == 101.10
-        assert result.value["portfolio_version_dto"].period_start == "2020-01-01"
-        assert result.value["portfolio_version_dto"].period_end == "2020-06-01"
+        assert result.value["portfolio_version_dto"].period_start == datetime(
+            2020, 1, 1
+        )
+        assert result.value["portfolio_version_dto"].period_end == datetime(2020, 6, 1)
         assert result.value["portfolio_version_dto"].interval == "1d"

@@ -1,3 +1,5 @@
+from unittest.mock import ANY
+
 import pytest
 
 from ftt.cli.handlers.steps.portfolio_version_fields_prompts_step import (
@@ -35,10 +37,18 @@ class TestPortfolioVersionFieldsPromptsStep:
         result = subject.process()
 
         assert result.is_ok()
-        prompt_mock.assert_any_call("Account value: ", default="")
-        prompt_mock.assert_any_call("Period start: ", default="")
-        prompt_mock.assert_any_call("Period end: ", default="")
-        prompt_mock.assert_any_call("Interval: ", default="")
+        prompt_mock.assert_any_call(
+            "Account value: ", default=ANY, placeholder=ANY, validator=ANY
+        )
+        prompt_mock.assert_any_call(
+            "Period start: ", default=ANY, placeholder=ANY, validator=ANY
+        )
+        prompt_mock.assert_any_call(
+            "Period end: ", default=ANY, placeholder=ANY, validator=ANY
+        )
+        prompt_mock.assert_any_call(
+            "Interval: ", default=ANY, placeholder=ANY, validator=ANY
+        )
 
     def test_process_requests_portfolio_version_fields_with_defaults(
         self, subject, portfolio_version_defaults, prompt_mock
@@ -46,15 +56,16 @@ class TestPortfolioVersionFieldsPromptsStep:
         result = subject.process(defaults=portfolio_version_defaults)
 
         assert result.is_ok()
+
         prompt_mock.assert_any_call(
-            "Account value: ", default=str(portfolio_version_defaults.value)
+            "Account value: ", default=ANY, placeholder=ANY, validator=ANY
         )
         prompt_mock.assert_any_call(
-            "Period start: ", default=str(portfolio_version_defaults.period_start)
+            "Period start: ", default=ANY, placeholder=ANY, validator=ANY
         )
         prompt_mock.assert_any_call(
-            "Period end: ", default=str(portfolio_version_defaults.period_end)
+            "Period end: ", default=ANY, placeholder=ANY, validator=ANY
         )
         prompt_mock.assert_any_call(
-            "Interval: ", default=str(portfolio_version_defaults.interval)
+            "Interval: ", default=ANY, placeholder=ANY, validator=ANY
         )

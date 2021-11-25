@@ -1,7 +1,9 @@
 from prompt_toolkit import prompt
+from prompt_toolkit.formatted_text import PygmentsTokens
 from prompt_toolkit.validation import Validator
 from result import OkErr, Ok
 
+from ftt.cli.token import Token
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.data_objects.portfolio_dto import PortfolioDTO
 
@@ -23,8 +25,14 @@ class PortfolioFieldsPromptsStep(AbstractStep):
 
         validator = Validator.from_callable(
             is_valid_name,
-            error_message="Not a valid name (Must be longer than 0).",
+            error_message="Not a valid name (Must be longer than 0 symbol).",
             move_cursor_to_end=True,
         )
 
-        return prompt("Portfolio name: ", validator=validator)
+        return prompt(
+            "Portfolio name: ",
+            validator=validator,
+            placeholder=PygmentsTokens(
+                [(Token.Placeholder, "Any name longer than 1 symbol")]
+            ),
+        )
