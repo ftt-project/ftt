@@ -6,5 +6,8 @@ class ReturnResult:
 
     @classmethod
     def process(cls, **input):
-        value = list(input.values())[0]
-        return Ok(value)
+        if len(input) == 1:
+            value = list(input.values())[0]
+            return Ok(value)
+        else:
+            return Ok(input)

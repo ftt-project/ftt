@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 
 from ftt.cli.handlers.update_portfolio_prompts_handler import (
@@ -25,6 +27,6 @@ class TestUpdatePortfolioPromptsHandler:
 
         assert result.is_ok()
         assert result.value.value == 101.10
-        assert result.value.period_start == "2020-01-01"
-        assert result.value.period_end == "2020-06-01"
+        assert result.value.period_start == datetime(2020, 1, 1)
+        assert result.value.period_end == datetime(2020, 6, 1)
         assert result.value.interval == "1d"

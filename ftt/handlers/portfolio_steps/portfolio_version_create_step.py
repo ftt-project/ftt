@@ -4,6 +4,7 @@ from result import Err, Ok, OkErr
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.models.portfolio import Portfolio
+from ftt.storage.models.portfolio_version import ACCEPTABLE_INTERVALS
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )
@@ -11,22 +12,6 @@ from ftt.storage.repositories.portfolio_versions_repository import (
 
 class PortfolioVersionCreateStep(AbstractStep):
     key = "portfolio_version"
-
-    ACCEPTABLE_INTERVALS = [
-        "1m",
-        "2m",
-        "5m",
-        "15m",
-        "30m",
-        "60m",
-        "90m",
-        "1h",
-        "1d",
-        "5d",
-        "1wk",
-        "1mo",
-        "3mo",
-    ]
 
     @classmethod
     def process(
@@ -38,9 +23,9 @@ class PortfolioVersionCreateStep(AbstractStep):
         period_end: datetime,
         interval: str,
     ) -> OkErr:
-        if interval not in cls.ACCEPTABLE_INTERVALS:
+        if interval not in ACCEPTABLE_INTERVALS:
             return Err(
-                f"Interval must be one of {cls.ACCEPTABLE_INTERVALS} but given {interval}."
+                f"Interval must be one of {ACCEPTABLE_INTERVALS} but given {interval}."
             )
 
         if period_end <= period_start:

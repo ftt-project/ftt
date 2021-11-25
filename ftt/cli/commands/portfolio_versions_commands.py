@@ -250,6 +250,7 @@ class PortfolioVersionsCommands:
             )
         )
 
+        # TODO: This should be part of the handler and we have to check for input errors here such as empty values
         if is_empty(prompt_result.value):
             self.context.console.print("[green]Nothing to update")
             return
