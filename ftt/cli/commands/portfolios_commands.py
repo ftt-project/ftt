@@ -24,6 +24,7 @@ from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHa
 from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
 from ftt.handlers.securities_loading_handler import SecuritiesLoadingHandler
 from ftt.handlers.weights_list_handler import WeightsListHandler
+from ftt.storage.data_objects.security_dto import SecurityDTO
 
 
 @command("portfolios")
@@ -80,6 +81,7 @@ class PortfoliosCommands:
         """
         Import from yml file
         """
+        # TODO refactor this method
         ctx = context.get_context()
         config_result = PortfolioConfigHandler().handle(path=path)
         if config_result.is_err():
@@ -105,11 +107,12 @@ class PortfoliosCommands:
             for symbol in config_result.value.symbols:
                 ctx.console.print(f"- {symbol}")
 
+            # TODO why both?
             securities_result = SecuritiesLoadingHandler().handle(
-                securities=config_result.value.symbols,
-                start_period=config_result.value.period_start,
-                end_period=config_result.value.period_end,
-                interval=config_result.value.interval,
+                securities=[
+                    SecurityDTO(symbol=symbol) for symbol in config_result.value.symbols
+                ],
+                portfolio_version=portfolio_result.value.versions[0],
             )
             if securities_result.is_ok():
                 ctx.console.print("[green]Securities information successfully imported")
@@ -119,7 +122,9 @@ class PortfoliosCommands:
                 return
 
         association_result = PortfolioAssociateSecuritiesHandler().handle(
-            securities=config_result.value.symbols,
+            securities=[
+                SecurityDTO(symbol=symbol) for symbol in config_result.value.symbols
+            ],
             portfolio_version=portfolio_result.value.versions[0],
         )
         if association_result.is_ok():

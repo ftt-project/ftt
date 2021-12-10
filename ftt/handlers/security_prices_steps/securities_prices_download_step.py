@@ -1,11 +1,12 @@
-from datetime import datetime
-from typing import List
+from typing import List, Union
 
 import yfinance as yf
 from pandas_datareader import data as pdr
 from result import Err, Ok, OkErr
 
 from ftt.handlers.handler.abstract_step import AbstractStep
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
+from ftt.storage.models import PortfolioVersion
 from ftt.storage.models.security import Security
 
 
@@ -16,15 +17,16 @@ class SecurityPricesDownloadStep(AbstractStep):
     def process(
         cls,
         securities: List[Security],
-        start_period: datetime,
-        end_period: datetime,
-        interval: str,
+        portfolio_version: Union[PortfolioVersionDTO, PortfolioVersion],
     ) -> OkErr:
         yf.pdr_override()
         symbols = [security.symbol for security in securities]
         try:
             dataframes = pdr.get_data_yahoo(
-                symbols, start=start_period, end=end_period, interval=interval,
+                symbols,
+                start=portfolio_version.period_start,
+                end=portfolio_version.period_end,
+                interval=portfolio_version.interval,
             ).dropna()
             if len(securities) == 1:
                 data = {securities[0].symbol: dataframes}

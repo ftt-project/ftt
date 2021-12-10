@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 
 from ftt.handlers.securities_loading_handler import SecuritiesLoadingHandler
+from ftt.storage.data_objects.security_dto import SecurityDTO
 from ftt.storage.models.security import Security
 
 
@@ -46,12 +47,10 @@ class TestSecuritiesLoadingHandler:
             ),
         ).rename_axis("Date")
 
-    def test_persists_loaded_securities(self, subject):
+    def test_persists_loaded_securities(self, subject, portfolio_version):
         result = subject().handle(
-            securities=["AAPL"],
-            start_period=datetime.date.today() - datetime.timedelta(days=2),
-            end_period=datetime.date.today(),
-            interval="1d",
+            securities=[SecurityDTO(symbol="AAAA")],
+            portfolio_version=portfolio_version,
         )
 
         assert result.is_ok()
@@ -60,12 +59,10 @@ class TestSecuritiesLoadingHandler:
         assert type(result.value[0]) == Security
         assert result.value[0].symbol == "AAPL"
 
-    def test_persist_historical_prices(self, subject):
+    def test_persist_historical_prices(self, subject, portfolio_version):
         result = subject().handle(
-            securities=["AAAA"],
-            start_period=datetime.date.today() - datetime.timedelta(days=2),
-            end_period=datetime.date.today(),
-            interval="1d",
+            securities=[SecurityDTO(symbol="AAAA")],
+            portfolio_version=portfolio_version,
         )
 
         assert len(result.value[0].prices) == 3

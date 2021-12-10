@@ -1,4 +1,3 @@
-from decimal import Decimal
 from unittest.mock import call
 
 import pytest
@@ -224,4 +223,25 @@ class TestPortfolioVersionsCommands:
 
         context.get_context.return_value.console.print.assert_has_calls(
             [call(f"[green]The new Portfolio Version #111 is created")]
+        )
+
+    def test_add_securities(
+        self,
+        subject,
+        portfolio,
+        portfolio_version,
+        context,
+        mock_external_info_requests,
+        mock_external_historic_data_requests,
+    ):
+        subject(portfolio_id=portfolio.id).securities_add(
+            portfolio_version_id=portfolio_version.id, securities="MSFT"
+        )
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [
+                call(
+                    f"[green]Securities were added to Portfolio Version #{portfolio_version.id}"
+                )
+            ]
         )

@@ -13,18 +13,12 @@ from ftt.handlers.security_prices_steps.security_prices_upsert_step import (
 
 
 class SecuritiesLoadingHandler(Handler):
-    params = ("securities", "start_period", "end_period", "interval")
+    params = ("securities", "portfolio_version")
 
     handlers = [
         (SecuritiesInfoDownloadStep, "securities"),
         (SecuritiesUpsertStep, SecuritiesInfoDownloadStep.key),
-        (
-            SecurityPricesDownloadStep,
-            SecuritiesUpsertStep.key,
-            "start_period",
-            "end_period",
-            "interval",
-        ),
-        (SecurityPricesUpsertStep, SecurityPricesDownloadStep.key, "interval"),
+        (SecurityPricesDownloadStep, SecuritiesUpsertStep.key, "portfolio_version"),
+        (SecurityPricesUpsertStep, SecurityPricesDownloadStep.key, "portfolio_version"),
         (ReturnResult, SecuritiesUpsertStep.key),
     ]
