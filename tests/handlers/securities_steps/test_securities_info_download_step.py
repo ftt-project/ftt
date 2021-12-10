@@ -4,6 +4,7 @@ from result import Ok, Err
 from ftt.handlers.securities_steps.securities_info_download_step import (
     SecuritiesInfoDownloadStep,
 )
+from ftt.storage.data_objects.security_dto import SecurityDTO
 
 
 class TestSecuritiesInfoDownloadStep:
@@ -11,19 +12,27 @@ class TestSecuritiesInfoDownloadStep:
     def subject(self):
         return SecuritiesInfoDownloadStep
 
-    def test_returns_collection(self, subject, mocker):
-        mock = mocker.patch("yfinance.Ticker")
-        result = subject().process(["AAAA"])
+    @pytest.fixture
+    def security_dto(self):
+        return SecurityDTO(symbol="AAAA",)
 
-        mock.assert_called_once_with("AAAA")
+    def test_returns_collection(
+        self, subject, security_dto, mock_external_info_requests
+    ):
+        result = subject().process([security_dto])
+
+        mock_external_info_requests.assert_called_once_with("AAAA")
         assert isinstance(result, Ok)
         assert isinstance(result.value, list)
 
-    def test_error_on_downlaod(self, subject, mocker):
-        mock = mocker.patch("yfinance.Ticker")
-        mock.side_effect = Exception("failed to load because of reason")
+    def test_error_on_download(
+        self, subject, mocker, security_dto, mock_external_info_requests
+    ):
+        mock_external_info_requests.side_effect = Exception(
+            "failed to load because of reason"
+        )
 
-        result = subject().process(["AAAA"])
+        result = subject().process([security_dto])
 
         assert isinstance(result, Err)
         assert (

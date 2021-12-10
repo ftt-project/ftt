@@ -4,6 +4,7 @@ import pytest
 from ftt.handlers.security_prices_steps.security_prices_upsert_step import (
     SecurityPricesUpsertStep,
 )
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
 
 
 class TestSecurityPricesUpsertStep:
@@ -33,14 +34,22 @@ class TestSecurityPricesUpsertStep:
             ).rename_axis("Date")
         }
 
-    def test_persists_historical_prices(self, subject, data, security, security_price):
-        result = subject.process(data, "5m")
+    @pytest.fixture
+    def portfolio_version_dto(self):
+        return PortfolioVersionDTO(interval="5m")
+
+    def test_persists_historical_prices(
+        self, subject, data, security, security_price, portfolio_version_dto
+    ):
+        result = subject.process(data, portfolio_version_dto)
 
         assert result.is_ok()
         assert type(result.value) == dict
         assert result.value[security.symbol] == 3
 
-    def test_upserts_historical_prices(self, subject, data, security, security_price):
-        subject.process(data, "5m")
-        result = subject.process(data, "5m")
+    def test_upserts_historical_prices(
+        self, subject, data, security, security_price, portfolio_version_dto
+    ):
+        subject.process(data, portfolio_version_dto)
+        result = subject.process(data, portfolio_version_dto)
         assert result.value[security.symbol] == 0

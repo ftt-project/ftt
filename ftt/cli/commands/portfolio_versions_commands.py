@@ -18,6 +18,9 @@ from ftt.handlers.portfolio_version_deactivation_handler import (
     PortfolioVersionDeactivationHandler,
 )
 from ftt.handlers.portfolio_version_loading_handler import PortfolioVersionLoadHandler
+from ftt.handlers.portfolio_version_securities_adding_handler import (
+    PortfolioVersionSecuritiesAddingHandler,
+)
 from ftt.handlers.portfolio_version_updation_handler import (
     PortfolioVersionUpdationHandler,
 )
@@ -25,6 +28,7 @@ from ftt.handlers.weights_calculation_handler import WeightsCalculationHandler
 from ftt.handlers.weights_list_handler import WeightsListHandler
 from ftt.storage.data_objects import is_empty
 from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
+from ftt.storage.data_objects.security_dto import SecurityDTO
 
 
 @command("portfolio-versions")
@@ -370,6 +374,34 @@ class PortfolioVersionsCommands:
         if result.is_ok():
             self.context.console.print(
                 f"[green]The new Portfolio Version #{result.value.id} is created"
+            )
+        else:
+            self.context.console.print("[red]Failed to create portfolio version:")
+            self.context.console.print(result.value)
+
+    @command
+    @argument(
+        "portfolio_version_id",
+        description="Portfolio Version ID",
+        positional=True,
+        type=int,
+    )
+    @argument("securities", description="List of securities separated by space")
+    def securities_add(self, portfolio_version_id: int, securities: str):
+        """
+        Provide list of securities to be added to the indicated portfolio version
+        """
+        securities_dto = [
+            SecurityDTO(symbol=security) for security in securities.split(" ")
+        ]
+
+        result = PortfolioVersionSecuritiesAddingHandler().handle(
+            portfolio_version_id=portfolio_version_id, securities=securities_dto,
+        )
+
+        if result.is_ok():
+            self.context.console.print(
+                f"[green]Securities were added to Portfolio Version #{result.value['portfolio_version'].id}"
             )
         else:
             self.context.console.print("[red]Failed to create portfolio version:")

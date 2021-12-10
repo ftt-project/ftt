@@ -13,6 +13,7 @@ class PortfolioVersionLoadStep(AbstractStep):
     @classmethod
     def process(cls, portfolio_version_id: int) -> OkErr:
         try:
+            # TODO: peewee exception handling must be moved to the repository level
             found = PortfolioVersionsRepository.get_by_id(portfolio_version_id)
         except peewee.DoesNotExist:
             return Err(

@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytest
 import backtrader as bt
+from pandas import DataFrame, DatetimeIndex
 
 from ftt.piloting.strategies.sizers import WeightedSizer
 from ftt.storage import Storage
@@ -108,6 +109,9 @@ def portfolio_version(portfolio):
         portfolio=portfolio,
         version=1,
         value=30000.0,
+        period_start=datetime(2020, 1, 1),
+        period_end=datetime(2020, 10, 5),
+        interval="1mo",
         updated_at=datetime.now(),
         created_at=datetime.now(),
     )
@@ -148,3 +152,38 @@ def order(security, portfolio_version):
         yield order
     finally:
         order.delete_instance()
+
+
+@pytest.fixture
+def mock_external_info_requests(mocker):
+    mock = mocker.patch("yfinance.Ticker")
+    mock.return_value.info = {
+        "symbol": "AAPL",
+        "exchange": "NMS",
+        "quoteType": "stock",
+        "shortName": "Apple Inc.",
+        "longName": "Apple Inc.",
+    }
+
+    return mock
+
+
+@pytest.fixture
+def mock_external_historic_data_requests(mocker):
+    mocker.patch("yfinance.pdr_override")
+    mock = mocker.patch("pandas_datareader.data.get_data_yahoo")
+    mock.return_value = DataFrame(
+        data={
+            "Adj Close": [124.279999, 125.059998, 123.540001],
+            "Close": [124.279999, 125.059998, 123.540001],
+            "High": [125.349998, 125.239998, 124.849998],
+            "Low": [123.940002, 124.050003, 123.129997],
+            "Open": [125.080002, 124.279999, 124.680000],
+            "Volume": [67637100, 59278900, 76229200],
+        },
+        index=DatetimeIndex(
+            ["2021-06-01 01:01:01", "2021-06-02 01:01:01", "2021-06-03 01:01:01",]
+        ),
+    ).rename_axis("Date")
+
+    return mock

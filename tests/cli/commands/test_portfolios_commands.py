@@ -31,7 +31,6 @@ class TestPortfoliosCommands:
 
     def test_list(self, subject, mocker, portfolio):
         mocked = mocker.patch("ftt.cli.commands.portfolios_commands.PortfoliosList")
-        mocked.return_value.render.return_value
         subject.list()
 
         assert type(mocked.call_args[0][1]) == list
@@ -59,7 +58,13 @@ class TestPortfoliosCommands:
 
         assert portfolio_version in mocked.call_args[0][1]
 
-    def test_import_correct_config_from_file(self, subject, path_to_config):
+    def test_import_correct_config_from_file(
+        self,
+        subject,
+        path_to_config,
+        mock_external_info_requests,
+        mock_external_historic_data_requests,
+    ):
         before = Portfolio.select().count()
         subject.import_from_file(path_to_config)
         after = Portfolio.select().count()
@@ -67,7 +72,13 @@ class TestPortfoliosCommands:
         assert (after - before) == 1
 
     def test_writes_message_on_config_parsing_failure(
-        self, subject, mocker, path_to_config, context
+        self,
+        subject,
+        mocker,
+        path_to_config,
+        context,
+        mock_external_info_requests,
+        mock_external_historic_data_requests,
     ):
         mocker.patch(
             "ftt.cli.commands.portfolios_commands.PortfolioConfigHandler",

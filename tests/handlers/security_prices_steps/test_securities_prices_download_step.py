@@ -6,6 +6,7 @@ from pandas import DataFrame
 from ftt.handlers.security_prices_steps.securities_prices_download_step import (
     SecurityPricesDownloadStep,
 )
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
 
 
 class TestSecurityPricesDownloadStep:
@@ -13,17 +14,24 @@ class TestSecurityPricesDownloadStep:
     def subject(self):
         return SecurityPricesDownloadStep
 
-    def test_load_securities_historical_prices(self, subject, mocker, security):
-        mocker.patch("yfinance.pdr_override")
-        mock = mocker.patch("pandas_datareader.data.get_data_yahoo")
-        mock.return_value = DataFrame()
-        result = subject.process(
-            securities=[security],
-            start_period=datetime.today(),
-            end_period=datetime.today(),
-            interval="1d",
+    @pytest.fixture
+    def portfolio_version_dto(self):
+        return PortfolioVersionDTO(
+            period_start=datetime.today(), period_end=datetime.today(), interval="1d",
         )
 
-        mock.assert_called_once()
+    def test_load_securities_historical_prices(
+        self,
+        subject,
+        mocker,
+        security,
+        portfolio_version_dto,
+        mock_external_historic_data_requests,
+    ):
+        result = subject.process(
+            securities=[security], portfolio_version=portfolio_version_dto,
+        )
+
+        mock_external_historic_data_requests.assert_called_once()
         assert result.is_ok()
         assert result.value[security.symbol] is not None
