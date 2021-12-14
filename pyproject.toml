@@ -23,7 +23,6 @@ rich = "^9.5.1"
 chime = "^0.6.0"
 autopep8 = "^1.5.4"
 backtrader = "^1.9.76"
-Pf = "^0.1"
 pyfolio = {git = "https://github.com/stzp777/pyfolio"}
 matplotlib = "3.2.2"
 jupyter = "^1.0.0"

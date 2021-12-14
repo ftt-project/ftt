@@ -13,7 +13,9 @@ class PeakObserver(bt.Observer):
 
     plotinfo = dict(plot=True, subplot=True, plotlinelabels=True)
 
-    plotlines = dict(peak=dict(markersize=1.0, color="lime", fillstyle="full"),)
+    plotlines = dict(
+        peak=dict(markersize=1.0, color="lime", fillstyle="full"),
+    )
 
     def next(self):
         portfolio_version_id = self._owner.p.portfolio_version_id
