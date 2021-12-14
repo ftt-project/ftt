@@ -58,3 +58,15 @@ fft> portfolio import sp_companies.yml
 ftt> portfolio build <ID>
 ```
 
+## Development
+
+Dependencies
+
+* pyenv
+* poetry
+
+```commandline
+pyenv install PYTHON_VERSION
+pip install cmake
+poetry update
+```
