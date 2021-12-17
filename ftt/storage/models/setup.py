@@ -1,10 +1,10 @@
 import os
 
 import peewee
-import psycopg2  # type: ignore
+# import psycopg2  # type: ignore
 from dotenv import dotenv_values
-from playhouse.postgres_ext import PostgresqlExtDatabase  # type: ignore
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT  # type: ignore
+# from playhouse.postgres_ext import PostgresqlExtDatabase  # type: ignore
+# from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT  # type: ignore
 
 from ftt.logger import logger
 
@@ -56,7 +56,7 @@ def create_database():
         user=config["user"],
         password=config["password"],
     )
-    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    # conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     conn.cursor().execute(
         f"CREATE DATABASE {config['database']} WITH OWNER {config['user']}"
     )
