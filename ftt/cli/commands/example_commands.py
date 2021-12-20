@@ -88,7 +88,8 @@ def example():
         table.add_column(name)
     for symbol, qty in portfolio_stats["planned_weights"].items():
         table.add_row(
-            str(symbol), str(qty),
+            str(symbol),
+            str(qty),
         )
     ctx.console.print(table)
     ctx.console.print("Weights are calculated and saved", style="bold green")

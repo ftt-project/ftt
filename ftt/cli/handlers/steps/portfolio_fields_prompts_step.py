@@ -14,7 +14,9 @@ class PortfolioFieldsPromptsStep(AbstractStep):
     @classmethod
     def process(cls) -> OkErr:
         name = cls.prompt_name()
-        dto = PortfolioDTO(name=name,)
+        dto = PortfolioDTO(
+            name=name,
+        )
 
         return Ok(dto)
 
