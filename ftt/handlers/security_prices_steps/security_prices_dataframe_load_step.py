@@ -24,10 +24,7 @@ class SecurityPricesDataframeLoadStep(AbstractStep):
         dataframes = []
         for security in securities:
             query, params = (
-                SecurityPrice.select(
-                    SecurityPrice.datetime,
-                    SecurityPrice.close,
-                )
+                SecurityPrice.select(SecurityPrice.datetime, SecurityPrice.close,)
                 .where(
                     SecurityPrice.interval == interval,
                     SecurityPrice.datetime >= start_period,
