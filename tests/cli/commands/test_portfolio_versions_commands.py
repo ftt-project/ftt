@@ -245,19 +245,3 @@ class TestPortfolioVersionsCommands:
                 )
             ]
         )
-
-    def test_remove_securities(self, subject, portfolio, portfolio_version, context, weight, security,
-        mock_external_info_requests,
-        mock_external_historic_data_requests,
-    ):
-        subject(portfolio_id=portfolio.id).securities_remove(
-            portfolio_version_id=portfolio_version.id, securities=security.symbol
-        )
-
-        context.get_context.return_value.console.print.assert_has_calls(
-            [
-                call(
-                    f"[green]Securities were removed from Portfolio Version #{portfolio_version.id}"
-                )
-            ]
-        )
