@@ -396,8 +396,7 @@ class PortfolioVersionsCommands:
         ]
 
         result = PortfolioVersionSecuritiesAddingHandler().handle(
-            portfolio_version_id=portfolio_version_id,
-            securities=securities_dto,
+            portfolio_version_id=portfolio_version_id, securities=securities_dto,
         )
 
         if result.is_ok():
