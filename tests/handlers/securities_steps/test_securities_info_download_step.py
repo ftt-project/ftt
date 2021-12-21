@@ -14,7 +14,9 @@ class TestSecuritiesInfoDownloadStep:
 
     @pytest.fixture
     def security_dto(self):
-        return SecurityDTO(symbol="AAAA",)
+        return SecurityDTO(
+            symbol="AAAA",
+        )
 
     def test_returns_collection(
         self, subject, security_dto, mock_external_info_requests

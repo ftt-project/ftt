@@ -94,3 +94,15 @@ class TestWeightsRepository:
         result = subject.get_by_portfolio_version(portfolio_version)
 
         assert result[0] == weight
+
+    def test_delete_returns_true(self, subject, weight):
+        result = subject.delete(weight)
+
+        assert result is True
+        assert not Weight.select().where(weight.id).exists()
+
+    def test_delete_not_persisted_record_returns_false(self, subject, weight):
+        subject.delete(weight)
+        result = subject.delete(weight)
+
+        assert result is False

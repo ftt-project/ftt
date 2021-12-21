@@ -21,9 +21,13 @@ from ftt.handlers.portfolio_version_loading_handler import PortfolioVersionLoadH
 from ftt.handlers.portfolio_version_securities_adding_handler import (
     PortfolioVersionSecuritiesAddingHandler,
 )
+from ftt.handlers.portfolio_version_securities_disassociate_handler import (
+    PortfolioVersionSecuritiesDisassociateHandler,
+)
 from ftt.handlers.portfolio_version_updation_handler import (
     PortfolioVersionUpdationHandler,
 )
+from ftt.handlers.securities_load_handler import SecuritiesLoadHandler
 from ftt.handlers.weights_calculation_handler import WeightsCalculationHandler
 from ftt.handlers.weights_list_handler import WeightsListHandler
 from ftt.storage.data_objects import is_empty
@@ -405,5 +409,41 @@ class PortfolioVersionsCommands:
                 f"[green]Securities were added to Portfolio Version #{result.value['portfolio_version'].id}"
             )
         else:
-            self.context.console.print("[red]Failed to create portfolio version:")
+            self.context.console.print(
+                "[red]Failed to add security to portfolio version:"
+            )
+            self.context.console.print(result.value)
+
+    @command
+    @argument(
+        "portfolio_version_id",
+        description="Portfolio Version ID",
+        positional=True,
+        type=int,
+    )
+    @argument("securities", description="List of securities separated by space")
+    def securities_remove(self, portfolio_version_id: int, securities: str):
+        """
+        Provide list of securities to be removed from indicated portfolio version
+        """
+
+        securities_result = SecuritiesLoadHandler().handle(security_symbols=[securities.split(" ")])
+
+        if securities_result.is_err():
+            self.context.console.print(securities_result.value)
+            return
+
+        result = PortfolioVersionSecuritiesDisassociateHandler().handle(
+            portfolio_version_id=portfolio_version_id,
+            securities=securities_result.value,
+        )
+
+        if result.is_ok():
+            self.context.console.print(
+                f"[green]Securities were removed from Portfolio Version #{result.value['portfolio_version'].id}"
+            )
+        else:
+            self.context.console.print(
+                "[red]Failed to remove security from portfolio version:"
+            )
             self.context.console.print(result.value)

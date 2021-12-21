@@ -18,8 +18,8 @@ class PortfolioVersionFieldsPromptsStep(AbstractStep):
     @classmethod
     def process(cls, defaults: PortfolioVersionDTO = PortfolioVersionDTO()) -> OkErr:
         value = cls.prompt_value(defaults)
-        period_start = cls.prompt_period(defaults, "Period start", datetime(1950, 1, 1))
-        period_end = cls.prompt_period(defaults, "Period end", period_start)
+        period_start = cls.prompt_period(defaults.period_start, "Period start", datetime(1950, 1, 1))
+        period_end = cls.prompt_period(defaults.period_end, "Period end", period_start)
         interval = cls.prompt_interval(defaults)
 
         dto = PortfolioVersionDTO(
@@ -71,7 +71,7 @@ class PortfolioVersionFieldsPromptsStep(AbstractStep):
         result = prompt(
             f"{prompt_message}: ",
             validator=cls.period_validator(valid_lower_period),
-            default=str(defaults.period_start or ""),
+            default=str(defaults or ""),
             placeholder=PygmentsTokens([(Token.Placeholder, "YYYY-MM-DD")]),
         )
 

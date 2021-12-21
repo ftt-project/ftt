@@ -48,6 +48,9 @@ class WeightsRepository(Repository):
     def find_by_security_and_portfolio(
         cls, security: Security, portfolio_version_id: int
     ) -> Weight:
+        """
+        TODO: use portfolio version model instead of id
+        """
         return (
             Weight.select()
             .join(PortfolioVersion)
@@ -138,3 +141,8 @@ class WeightsRepository(Repository):
         weight.peaked_value = value
         weight.save()
         return cls.get_by_id(weight.id)
+
+    @classmethod
+    def delete(cls, weight: Weight) -> bool:
+        result = weight.delete_instance()
+        return result == 1

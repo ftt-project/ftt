@@ -102,7 +102,7 @@ class TestPortfoliosCommands:
             **{"return_value.handle.return_value.is_ok.return_value": False}
         )
         securities_mocker = mocker.patch(
-            "ftt.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
+            "ftt.cli.commands.portfolios_commands.SecuritiesInformationPricesLoadingHandler",
         )
         subject.import_from_file(path_to_config)
 
@@ -115,7 +115,7 @@ class TestPortfoliosCommands:
         self, subject, mocker, path_to_config
     ):
         securities_mocker = mocker.patch(
-            "ftt.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
+            "ftt.cli.commands.portfolios_commands.SecuritiesInformationPricesLoadingHandler",
             **{"return_value.handle.return_value.value": True}
         )
         association_mocker = mocker.patch(
@@ -131,7 +131,7 @@ class TestPortfoliosCommands:
         self, subject, mocker, path_to_config, context
     ):
         mocker.patch(
-            "ftt.cli.commands.portfolios_commands.SecuritiesLoadingHandler",
+            "ftt.cli.commands.portfolios_commands.SecuritiesInformationPricesLoadingHandler",
             **{"return_value.handle.return_value.is_ok.return_value": False}
         )
         association_mocker = mocker.patch(
