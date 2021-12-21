@@ -4,9 +4,9 @@ from ftt.handlers.securities_steps.securities_load_step import SecuritiesLoadSte
 
 
 class SecuritiesLoadHandler(Handler):
-    params = ("security_symbols", )
+    params = ("security_symbols",)
 
     handlers = [
         (SecuritiesLoadStep, "security_symbols"),
-        (ReturnResult, SecuritiesLoadStep.key)
+        (ReturnResult, SecuritiesLoadStep.key),
     ]

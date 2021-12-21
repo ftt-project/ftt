@@ -18,7 +18,9 @@ class PortfolioVersionFieldsPromptsStep(AbstractStep):
     @classmethod
     def process(cls, defaults: PortfolioVersionDTO = PortfolioVersionDTO()) -> OkErr:
         value = cls.prompt_value(defaults)
-        period_start = cls.prompt_period(defaults.period_start, "Period start", datetime(1950, 1, 1))
+        period_start = cls.prompt_period(
+            defaults.period_start, "Period start", datetime(1950, 1, 1)
+        )
         period_end = cls.prompt_period(defaults.period_end, "Period end", period_start)
         interval = cls.prompt_interval(defaults)
 

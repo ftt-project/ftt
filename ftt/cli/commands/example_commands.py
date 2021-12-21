@@ -10,7 +10,9 @@ from ftt.handlers.portfolio_associate_securities_hanlder import (
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from ftt.handlers.portfolio_stats_handler import PortfoliosStatsHandler
-from ftt.handlers.securities_information_prices_loading_handler import SecuritiesInformationPricesLoadingHandler
+from ftt.handlers.securities_information_prices_loading_handler import (
+    SecuritiesInformationPricesLoadingHandler,
+)
 from ftt.handlers.weights_calculation_handler import WeightsCalculationHandler
 from ftt.storage import Storage
 from ftt.storage.data_objects.security_dto import SecurityDTO
@@ -56,7 +58,6 @@ def example():
         for symbol in config.symbols:
             ctx.console.print(f"- {symbol}")
 
-
         result = SecuritiesInformationPricesLoadingHandler().handle(
             portfolio_version=portfolio.versions[0],
             securities=security_dtos,
@@ -64,7 +65,7 @@ def example():
         _ = result.value
 
     with ctx.console.status(
-            "[bold green]Portfolio successfully associated with securities"
+        "[bold green]Portfolio successfully associated with securities"
     ) as _:
         _ = PortfolioAssociateSecuritiesHandler().handle(
             securities=security_dtos, portfolio_version=portfolio.versions[0]

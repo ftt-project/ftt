@@ -22,7 +22,9 @@ from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 from ftt.handlers.portfolio_update_handler import PortfolioUpdateHandler
 from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHandler
 from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
-from ftt.handlers.securities_information_prices_loading_handler import SecuritiesInformationPricesLoadingHandler
+from ftt.handlers.securities_information_prices_loading_handler import (
+    SecuritiesInformationPricesLoadingHandler,
+)
 from ftt.handlers.weights_list_handler import WeightsListHandler
 from ftt.storage.data_objects.security_dto import SecurityDTO
 

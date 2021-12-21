@@ -3,7 +3,9 @@ import datetime
 import pandas as pd
 import pytest
 
-from ftt.handlers.securities_information_prices_loading_handler import SecuritiesInformationPricesLoadingHandler
+from ftt.handlers.securities_information_prices_loading_handler import (
+    SecuritiesInformationPricesLoadingHandler,
+)
 from ftt.storage.data_objects.security_dto import SecurityDTO
 from ftt.storage.models.security import Security
 

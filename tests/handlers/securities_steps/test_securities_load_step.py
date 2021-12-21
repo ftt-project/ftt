@@ -17,7 +17,9 @@ class TestSecuritiesLoadStep:
         assert result.value[0].symbol == security.symbol
 
     def test_process_errors_when_security_does_not_exist(self, subject):
-        result = subject.process(security_symbols=['ABC', "CDE"])
+        result = subject.process(security_symbols=["ABC", "CDE"])
 
         assert result.is_err()
-        assert result.value == "Security ABC does not exist; Security CDE does not exist"
+        assert (
+            result.value == "Security ABC does not exist; Security CDE does not exist"
+        )

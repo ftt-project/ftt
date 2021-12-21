@@ -4,7 +4,6 @@ import peewee
 from result import Err, Ok, OkErr
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.models import Security
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 
 
@@ -25,5 +24,6 @@ class SecuritiesLoadStep(AbstractStep):
         if all([result.is_ok() for result in results]):
             return Ok([result.value for result in results])
         else:
-            return Err("; ".join([result.value for result in results if result.is_err()]))
-
+            return Err(
+                "; ".join([result.value for result in results if result.is_err()])
+            )

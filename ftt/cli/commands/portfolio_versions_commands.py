@@ -427,7 +427,9 @@ class PortfolioVersionsCommands:
         Provide list of securities to be removed from indicated portfolio version
         """
 
-        securities_result = SecuritiesLoadHandler().handle(security_symbols=[securities.split(" ")])
+        securities_result = SecuritiesLoadHandler().handle(
+            security_symbols=[securities.split(" ")]
+        )
 
         if securities_result.is_err():
             self.context.console.print(securities_result.value)
