@@ -12,7 +12,7 @@ from ftt.handlers.security_prices_steps.security_prices_upsert_step import (
 )
 
 
-class SecuritiesLoadingHandler(Handler):
+class SecuritiesInformationPricesLoadingHandler(Handler):
     params = ("securities", "portfolio_version")
 
     handlers = [

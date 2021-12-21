@@ -10,9 +10,12 @@ from ftt.handlers.portfolio_associate_securities_hanlder import (
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from ftt.handlers.portfolio_stats_handler import PortfoliosStatsHandler
-from ftt.handlers.securities_loading_handler import SecuritiesLoadingHandler
+from ftt.handlers.securities_information_prices_loading_handler import (
+    SecuritiesInformationPricesLoadingHandler,
+)
 from ftt.handlers.weights_calculation_handler import WeightsCalculationHandler
 from ftt.storage import Storage
+from ftt.storage.data_objects.security_dto import SecurityDTO
 
 
 @command
@@ -49,15 +52,15 @@ def example():
     )
     ctx.console.print(table)
 
+    security_dtos = [SecurityDTO(symbol=symbol) for symbol in config.symbols]
+
     with ctx.console.status("[bold green]Loading securities information") as _:
         for symbol in config.symbols:
             ctx.console.print(f"- {symbol}")
 
-        result = SecuritiesLoadingHandler().handle(
-            securities=config.symbols,
-            start_period=config.period_start,
-            end_period=config.period_end,
-            interval=config.interval,
+        result = SecuritiesInformationPricesLoadingHandler().handle(
+            portfolio_version=portfolio.versions[0],
+            securities=security_dtos,
         )
         _ = result.value
 
@@ -65,7 +68,7 @@ def example():
         "[bold green]Portfolio successfully associated with securities"
     ) as _:
         _ = PortfolioAssociateSecuritiesHandler().handle(
-            securities=config.symbols, portfolio_version=portfolio.versions[0]
+            securities=security_dtos, portfolio_version=portfolio.versions[0]
         )
 
     with ctx.console.status("[bold green]Calculating weights") as _:

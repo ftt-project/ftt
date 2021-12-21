@@ -14,7 +14,14 @@ class TestPortfolioPrepareEmptyWeightsStep:
 
     @pytest.fixture
     def security_dtos(self):
-        return [SecurityDTO(symbol="AAPL",), SecurityDTO(symbol="MSFT",)]
+        return [
+            SecurityDTO(
+                symbol="AAPL",
+            ),
+            SecurityDTO(
+                symbol="MSFT",
+            ),
+        ]
 
     def test_returns_empty_weights(self, subject, security_dtos):
         result = subject.process(securities=security_dtos)

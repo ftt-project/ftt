@@ -17,7 +17,9 @@ class TestSecurityPricesDownloadStep:
     @pytest.fixture
     def portfolio_version_dto(self):
         return PortfolioVersionDTO(
-            period_start=datetime.today(), period_end=datetime.today(), interval="1d",
+            period_start=datetime.today(),
+            period_end=datetime.today(),
+            interval="1d",
         )
 
     def test_load_securities_historical_prices(
@@ -29,7 +31,8 @@ class TestSecurityPricesDownloadStep:
         mock_external_historic_data_requests,
     ):
         result = subject.process(
-            securities=[security], portfolio_version=portfolio_version_dto,
+            securities=[security],
+            portfolio_version=portfolio_version_dto,
         )
 
         mock_external_historic_data_requests.assert_called_once()

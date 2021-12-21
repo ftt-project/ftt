@@ -13,7 +13,9 @@ class TestPortfolioUpdateStep:
 
     @pytest.fixture
     def portfolio_dto(self):
-        return PortfolioDTO(name="New portfolio name",)
+        return PortfolioDTO(
+            name="New portfolio name",
+        )
 
     def test_process(self, subject, portfolio, portfolio_dto):
         result = subject.process(portfolio=portfolio, dto=portfolio_dto)

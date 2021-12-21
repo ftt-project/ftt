@@ -95,7 +95,9 @@ def security_price(security):
 @pytest.fixture
 def portfolio():
     portfolio = Portfolio.create(
-        name="Portfolio TEST 1", updated_at=datetime.now(), created_at=datetime.now(),
+        name="Portfolio TEST 1",
+        updated_at=datetime.now(),
+        created_at=datetime.now(),
     )
     try:
         yield portfolio
@@ -182,7 +184,11 @@ def mock_external_historic_data_requests(mocker):
             "Volume": [67637100, 59278900, 76229200],
         },
         index=DatetimeIndex(
-            ["2021-06-01 01:01:01", "2021-06-02 01:01:01", "2021-06-03 01:01:01",]
+            [
+                "2021-06-01 01:01:01",
+                "2021-06-02 01:01:01",
+                "2021-06-03 01:01:01",
+            ]
         ),
     ).rename_axis("Date")
 
