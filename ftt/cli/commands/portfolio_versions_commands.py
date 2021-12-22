@@ -272,7 +272,12 @@ class PortfolioVersionsCommands:
             self.context.console.print(portfolio_version_result.value)
             return
 
-        params = {}
+        params = {
+            "value": portfolio_version_result.value.value,
+            "period_start": portfolio_version_result.value.period_start,
+            "period_end": portfolio_version_result.value.period_end,
+            "interval": portfolio_version_result.value.interval,
+        }
         new_account_value = prompt(
             "Account value: ", default=f"{portfolio_version_result.value.value:.2f}"
         )
