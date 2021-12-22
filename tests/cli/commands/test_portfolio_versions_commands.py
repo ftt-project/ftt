@@ -202,7 +202,7 @@ class TestPortfolioVersionsCommands:
 
         handler_mocker.return_value.handle.assert_called_once_with(
             portfolio=portfolio,
-            amount=100,
+            value=100,
             period_start="2021-01-01",
             period_end="2021-04-20",
             interval="1d",

@@ -28,7 +28,6 @@ class StatusBar(statusbar.StatusBar):
                 spacer,
                 is_verbose,
                 spacer,
-                portfolio,
             ]
             if t is not None
         ]

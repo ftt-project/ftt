@@ -212,9 +212,10 @@ class PortfolioVersionsCommands:
         """
         portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
 
+        # TODO: refactor to use the same logic as the update command
         params = {}
         new_account_value = prompt("Account value: ")
-        params["amount"] = new_account_value
+        params["value"] = new_account_value
 
         new_period_start = prompt("Period start: ")
         params["period_start"] = new_period_start
@@ -227,7 +228,7 @@ class PortfolioVersionsCommands:
 
         result = PortfolioVersionCreationHandler().handle(
             portfolio=portfolio_result.value,
-            amount=params.get("amount"),
+            value=params.get("value"),
             period_start=params.get("period_start"),
             period_end=params.get("period_end"),
             interval=params.get("interval"),
