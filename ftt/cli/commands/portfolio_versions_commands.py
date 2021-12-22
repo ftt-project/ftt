@@ -52,19 +52,9 @@ class PortfolioVersionsCommands:
         positional=True,
         type=int,
     )
-    @argument("period_start", description="Beginning of period of historical prices")
-    @argument("period_end", description="Ending of period of historical prices")
-    @argument(
-        "interval",
-        description="Trading interval",
-        choices=["1m", "5m", "15m", "1d", "1wk", "1mo"],
-    )
     def balance(
         self,
         portfolio_version_id: int,
-        period_start: str = None,
-        period_end: str = None,
-        interval: str = None,
     ) -> None:
         """
         Balance portfolio version
@@ -93,28 +83,12 @@ class PortfolioVersionsCommands:
             ctx.console.print(f"[red]{portfolio_version_result.err().value}")
             return
 
-        period_start = (
-            period_start
-            if period_start is not None
-            else portfolio_version_result.value.period_start
-        )
-        period_end = (
-            period_end
-            if period_end is not None
-            else portfolio_version_result.value.period_end
-        )
-        interval = (
-            interval
-            if interval is not None
-            else portfolio_version_result.value.interval
-        )
-
         weights_result = WeightsCalculationHandler().handle(
             portfolio=portfolio_result.value,
             portfolio_version=portfolio_version_result.value,
-            start_period=period_start,
-            end_period=period_end,
-            interval=interval,
+            start_period=portfolio_version_result.value.period_start,
+            end_period=portfolio_version_result.value.period_end,
+            interval=portfolio_version_result.value.interval,
             persist=True,
         )
 
@@ -147,32 +121,20 @@ class PortfolioVersionsCommands:
         """
         ctx = context.get_context()
 
-        # TODO refactor, duplicated in `balance` method
-        if self.portfolio_in_use is None:
-            ctx.console.print(
-                "[yellow]Select portfolio using `portfolio use ID` command"
-            )
-            return
-
-        portfolio_version_result = PortfolioVersionLoadHandler().handle(
-            portfolio_version_id=portfolio_version_id
-        )
-        portfolio_result = PortfolioLoadHandler().handle(
-            portfolio_id=self.portfolio_in_use
-        )
-
         # TODO handle if not found situation
 
         result = PortfolioVersionActivationHandler().handle(
-            portfolio_version=portfolio_version_result.value,
-            portfolio=portfolio_result.value,
+            portfolio_version_id=portfolio_version_id,
         )
 
         if result.is_ok():
             ctx.console.print(
-                f"[green]Portfolio Version {portfolio_version_id} set active"
+                f"[green]Portfolio version {portfolio_version_id} set active"
             )
         else:
+            ctx.console.print(
+                f"[yellow]Failed to activate portfolio version #{portfolio_version_id}"
+            )
             ctx.console.print(f"[yellow]{result.value.value}")
 
     @command

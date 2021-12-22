@@ -8,6 +8,13 @@ from ftt.storage.repositories.portfolio_versions_repository import (
 
 
 class PortfolioVersionActivationValidateStep(AbstractStep):
+    """
+    Performs validation of portfolio version before activation
+
+    * Checks if portfolio version is not already activated
+    * Checks if portfolio version has associated weights
+    """
+
     key = "portfolio_version_activation_validation"
 
     @classmethod
@@ -16,7 +23,20 @@ class PortfolioVersionActivationValidateStep(AbstractStep):
             portfolio_version.portfolio
         )
 
-        if version != portfolio_version:
-            return Ok(portfolio_version)
-        else:
-            return Err(f"Portfolio Version #{portfolio_version.id} is already active")
+        if version == portfolio_version:
+            return Err(f"Portfolio version #{portfolio_version.id} is already active")
+
+        if portfolio_version.weights.count() == 0:
+            return Err(
+                f"Portfolio version #{portfolio_version.id} does not have any "
+                "weights associated. Run balance step first."
+            )
+
+        for weight in portfolio_version.weights:
+            if weight.planned_position == 0:
+                return Err(
+                    f"Portfolio version #{portfolio_version.id} has {weight.security.symbol} with "
+                    "zero planned weight. Run balance step first."
+                )
+
+        return Ok(portfolio_version)
