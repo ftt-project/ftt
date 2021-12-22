@@ -1,4 +1,3 @@
-
 from result import Err, Ok, OkErr
 
 from ftt.handlers.handler.abstract_step import AbstractStep
