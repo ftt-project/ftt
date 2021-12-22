@@ -1,5 +1,3 @@
-from typing import Optional
-
 from nubia import argument, command, context  # type: ignore
 from prompt_toolkit import prompt
 
@@ -41,9 +39,8 @@ class PortfolioVersionsCommands:
     Portfolio Versions managing
     """
 
-    def __init__(self, portfolio_id: Optional[int] = None):
+    def __init__(self):
         self.context = context.get_context()
-        self.portfolio_in_use = int(portfolio_id or self.context.portfolio_in_use)
 
     @command
     @argument(
@@ -61,19 +58,6 @@ class PortfolioVersionsCommands:
 
         `save` False is not yet implemented
         """
-        if self.portfolio_in_use is None:
-            self.context.console.print(
-                "[yellow]Select portfolio using `portfolio use ID` command"
-            )
-            return
-
-        portfolio_result = PortfolioLoadHandler().handle(
-            portfolio_id=self.portfolio_in_use
-        )
-        if portfolio_result.is_err():
-            self.context.console.print(f"[red]{portfolio_result.err().value}")
-            return
-
         portfolio_version_result = PortfolioVersionLoadHandler().handle(
             portfolio_version_id=portfolio_version_id
         )
@@ -82,7 +66,6 @@ class PortfolioVersionsCommands:
             return
 
         weights_result = WeightsCalculationHandler().handle(
-            portfolio=portfolio_result.value,
             portfolio_version=portfolio_version_result.value,
             start_period=portfolio_version_result.value.period_start,
             end_period=portfolio_version_result.value.period_end,
@@ -217,19 +200,17 @@ class PortfolioVersionsCommands:
             self.context.console.print(result.value)
 
     @command("create-new")
-    def create(self):
+    @argument(
+        "portfolio_id",
+        description="Portfolio ID",
+        positional=True,
+        type=int,
+    )
+    def create(self, portfolio_id):
         """
         Create a new portfolio version
         """
-        # TODO refactor, duplicated in `balance` method
-        if self.portfolio_in_use is None:
-            self.context.console.print(
-                "[yellow]Select portfolio using `portfolio use ID` command"
-            )
-            return
-        portfolio_result = PortfolioLoadHandler().handle(
-            portfolio_id=self.portfolio_in_use
-        )
+        portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
 
         params = {}
         new_account_value = prompt("Account value: ")
@@ -261,29 +242,34 @@ class PortfolioVersionsCommands:
 
     @command
     @argument(
+        "portfolio_id",
+        description="Portfolio ID",
+        positional=True,
+        type=int,
+    )
+    @argument(
         "portfolio_version_id",
         description="Portfolio Version ID",
         positional=True,
         type=int,
     )
-    def create_from_existing(self, portfolio_version_id: int):
+    def create_from_existing(self, portfolio_id: int, portfolio_version_id: int):
         """
         Create a new portfolio version from an existing one
         """
-        # TODO refactor, duplicated in `balance` method
-        if self.portfolio_in_use is None:
-            self.context.console.print(
-                "[yellow]Select portfolio using `portfolio use ID` command"
-            )
+        portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
+
+        if portfolio_result.is_err():
+            self.context.console.print(portfolio_result.value)
             return
-        portfolio_result = PortfolioLoadHandler().handle(
-            portfolio_id=self.portfolio_in_use
-        )
 
         portfolio_version_result = PortfolioVersionLoadHandler().handle(
             portfolio_version_id=portfolio_version_id
         )
-        # TODO handle if not found situation
+
+        if portfolio_version_result.is_err():
+            self.context.console.print(portfolio_version_result.value)
+            return
 
         params = {}
         new_account_value = prompt(

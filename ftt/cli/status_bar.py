@@ -21,14 +21,6 @@ class StatusBar(statusbar.StatusBar):
         else:
             is_verbose = (Token.Info, "OFF")
 
-        if context.get_context().portfolio_in_use is not None:
-            portfolio = (
-                Name.Query,
-                f"Active Portfolio #{context.get_context().portfolio_in_use}",
-            )
-        else:
-            portfolio = None
-
         return [
             t
             for t in [

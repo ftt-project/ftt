@@ -19,10 +19,10 @@ class TestPortfolioSecuritiesLoadStep:
         assert len(result.value) == 1
         assert result.value[0] == security
 
-    def test_returns_err_when_no_securities(
+    def test_returns_errors_when_no_securities(
         self, subject, portfolio, portfolio_version
     ):
         result = subject.process(portfolio)
 
         assert result.is_err()
-        assert "No securities in portfolio" in result.value
+        assert result.value == "No securities associated with portfolio version 1"

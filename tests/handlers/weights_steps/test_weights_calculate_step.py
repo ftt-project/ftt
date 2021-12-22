@@ -27,7 +27,7 @@ class TestWeightsCalculateStep:
     def test_calculates_weights(
         self, subject, dataframes, portfolio, portfolio_version
     ):
-        result = subject.process(dataframes, portfolio, portfolio_version)
+        result = subject.process(dataframes, portfolio_version)
 
         assert result.is_ok()
         assert type(result.value) == WeightsCalculateStepResult

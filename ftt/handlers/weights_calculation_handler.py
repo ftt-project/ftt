@@ -17,13 +17,12 @@ class WeightsCalculationHandler(Handler):
         "start_period",
         "end_period",
         "interval",
-        "portfolio",
         "portfolio_version",
         "persist",
     )
 
     handlers = [
-        (PortfolioSecuritiesLoadStep, "portfolio", "portfolio_version"),
+        (PortfolioSecuritiesLoadStep, "portfolio_version"),
         (
             SecurityPricesDataframeLoadStep,
             PortfolioSecuritiesLoadStep.key,
@@ -34,7 +33,6 @@ class WeightsCalculationHandler(Handler):
         (
             WeightsCalculateStep,
             SecurityPricesDataframeLoadStep.key,
-            "portfolio",
             "portfolio_version",
         ),
         (
