@@ -1,5 +1,5 @@
 from nubia import context, statusbar  # type: ignore
-from pygments.token import Name, Token  # type: ignore
+from pygments.token import Token  # type: ignore
 
 
 class StatusBar(statusbar.StatusBar):
