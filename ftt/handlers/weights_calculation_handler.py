@@ -6,7 +6,9 @@ from ftt.handlers.portfolio_steps.portfolio_securities_load_step import (
 from ftt.handlers.portfolio_steps.portfolio_weights_persist_step import (
     PortfolioWeightsPersistStep,
 )
-from ftt.handlers.portfolio_version_steps.portfolio_version_load_step import PortfolioVersionLoadStep
+from ftt.handlers.portfolio_version_steps.portfolio_version_load_step import (
+    PortfolioVersionLoadStep,
+)
 from ftt.handlers.security_prices_steps.security_prices_dataframe_load_step import (
     SecurityPricesDataframeLoadStep,
 )
@@ -17,6 +19,7 @@ class WeightsCalculationHandler(Handler):
     """
     Handler for calculating weights for a portfolio version.
     """
+
     params = (
         "portfolio_version",
         "start_period",

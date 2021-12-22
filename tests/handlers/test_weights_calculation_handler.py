@@ -13,25 +13,36 @@ class TestWeightsCalculationHandler:
     def subject(self):
         return WeightsCalculationHandler()
 
-    @pytest.mark.skip(reason="Improve collection to make algorithm run properly or mock")
+    @pytest.mark.skip(
+        reason="Improve collection to make algorithm run properly or mock"
+    )
     def test_calculates_weights_and_persist(
-        self, subject, portfolio, portfolio_version, security, security_price, weight, mocker
+        self,
+        subject,
+        portfolio,
+        portfolio_version,
+        security,
+        security_price,
+        weight,
+        mocker,
     ):
         mock = mocker.patch(
             "ftt.handlers.weights_steps.weights_calculate_step.WeightsCalculateStep"
         )
-        mock.process.return_value = Ok(WeightsCalculateStepResult(
-            allocation=100,
-            leftover=20,
-            expected_annual_return=0.1,
-            annual_volatility=0.2,
-            sharpe_ratio=0.3,
-        ))
+        mock.process.return_value = Ok(
+            WeightsCalculateStepResult(
+                allocation=100,
+                leftover=20,
+                expected_annual_return=0.1,
+                annual_volatility=0.2,
+                sharpe_ratio=0.3,
+            )
+        )
         result = subject.handle(
             portfolio_version=portfolio_version,
             start_period=datetime.date.today() - datetime.timedelta(days=1),
             end_period=datetime.datetime.now(),
-            interval='1d',
+            interval="1d",
             persist=True,
         )
         assert result.is_ok()
