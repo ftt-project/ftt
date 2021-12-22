@@ -135,8 +135,11 @@ class TestPortfolioVersionsCommands:
             portfolio_version_id=portfolio_version.id
         )
 
-        context.get_context.return_value.console.print.assert_has_calls(
-            [call(f"[yellow]Portfolio Version #{portfolio_version.id} is not active")]
+        context.get_context.return_value.console.print.assert_any_call(
+            f"[yellow]Failed to deactivate portfolio version #{portfolio_version.id}"
+        )
+        context.get_context.return_value.console.print.assert_any_call(
+            f"[yellow]Portfolio version #{portfolio_version.id} is not active"
         )
 
     def test_update_active_portfolio_version(

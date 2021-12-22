@@ -61,10 +61,8 @@ class PortfolioVersionsCommands:
 
         `save` False is not yet implemented
         """
-        ctx = context.get_context()
-
         if self.portfolio_in_use is None:
-            ctx.console.print(
+            self.context.console.print(
                 "[yellow]Select portfolio using `portfolio use ID` command"
             )
             return
@@ -73,14 +71,14 @@ class PortfolioVersionsCommands:
             portfolio_id=self.portfolio_in_use
         )
         if portfolio_result.is_err():
-            ctx.console.print(f"[red]{portfolio_result.err().value}")
+            self.context.console.print(f"[red]{portfolio_result.err().value}")
             return
 
         portfolio_version_result = PortfolioVersionLoadHandler().handle(
             portfolio_version_id=portfolio_version_id
         )
         if portfolio_version_result.is_err():
-            ctx.console.print(f"[red]{portfolio_version_result.err().value}")
+            self.context.console.print(f"[red]{portfolio_version_result.err().value}")
             return
 
         weights_result = WeightsCalculationHandler().handle(
@@ -93,17 +91,19 @@ class PortfolioVersionsCommands:
         )
 
         if weights_result.is_err():
-            ctx.console.print(
+            self.context.console.print(
                 "[red]:disappointed: Failed to calculate weights for this portfolio:"
             )
-            ctx.console.print(f"    [red]:right_arrow: {weights_result.err().value}")
+            self.context.console.print(
+                f"    [red]:right_arrow: {weights_result.err().value}"
+            )
             return
 
         result = WeightsListHandler().handle(
             portfolio_version=portfolio_version_result.value
         )
         WeightsList(
-            ctx,
+            self.context,
             result.value,
             f"Portfolio Version [bold cyan]#{portfolio_version_result.value.id}[/bold cyan] list of weights",
         ).render()
@@ -119,23 +119,19 @@ class PortfolioVersionsCommands:
         """
         Activate the indicated version of the portfolio and deactivates the rest
         """
-        ctx = context.get_context()
-
-        # TODO handle if not found situation
-
         result = PortfolioVersionActivationHandler().handle(
             portfolio_version_id=portfolio_version_id,
         )
 
         if result.is_ok():
-            ctx.console.print(
+            self.context.console.print(
                 f"[green]Portfolio version {portfolio_version_id} set active"
             )
         else:
-            ctx.console.print(
+            self.context.console.print(
                 f"[yellow]Failed to activate portfolio version #{portfolio_version_id}"
             )
-            ctx.console.print(f"[yellow]{result.value.value}")
+            self.context.console.print(f"[yellow]{result.value.value}")
 
     @command
     @argument(
@@ -148,35 +144,19 @@ class PortfolioVersionsCommands:
         """
         Deactivate the indicated version of the portfolio
         """
-        ctx = context.get_context()
-
-        # TODO refactor, duplicated in `balance` method
-        if self.portfolio_in_use is None:
-            ctx.console.print(
-                "[yellow]Select portfolio using `portfolio use ID` command"
-            )
-            return
-
-        portfolio_version_result = PortfolioVersionLoadHandler().handle(
-            portfolio_version_id=portfolio_version_id
-        )
-        portfolio_result = PortfolioLoadHandler().handle(
-            portfolio_id=self.portfolio_in_use
-        )
-
-        # TODO handle if not found situation
-
         result = PortfolioVersionDeactivationHandler().handle(
-            portfolio_version=portfolio_version_result.value,
-            portfolio=portfolio_result.value,
+            portfolio_version_id=portfolio_version_id,
         )
 
         if result.is_ok():
-            ctx.console.print(
+            self.context.console.print(
                 f"[green]Portfolio Version {portfolio_version_id} is deactivated"
             )
         else:
-            ctx.console.print(f"[yellow]{result.value.value}")
+            self.context.console.print(
+                f"[yellow]Failed to deactivate portfolio version #{portfolio_version_id}"
+            )
+            self.context.console.print(f"[yellow]{result.value.value}")
 
     def statistic(self):
         """

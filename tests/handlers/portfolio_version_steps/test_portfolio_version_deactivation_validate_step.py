@@ -20,7 +20,7 @@ class TestPortfolioVersionDeactivationValidateStep:
 
         assert result.is_err()
         assert (
-            result.value == f"Portfolio Version #{portfolio_version.id} is not active"
+            result.value == f"Portfolio version #{portfolio_version.id} is not active"
         )
 
     def test_process_returns_error_when_version_is_not_active(
