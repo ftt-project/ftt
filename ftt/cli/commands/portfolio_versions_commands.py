@@ -1,5 +1,3 @@
-from typing import Optional
-
 from nubia import argument, command, context  # type: ignore
 from prompt_toolkit import prompt
 
@@ -41,9 +39,8 @@ class PortfolioVersionsCommands:
     Portfolio Versions managing
     """
 
-    def __init__(self, portfolio_id: Optional[int] = None):
+    def __init__(self):
         self.context = context.get_context()
-        self.portfolio_in_use = int(portfolio_id or self.context.portfolio_in_use)
 
     @command
     @argument(
@@ -52,84 +49,44 @@ class PortfolioVersionsCommands:
         positional=True,
         type=int,
     )
-    @argument("period_start", description="Beginning of period of historical prices")
-    @argument("period_end", description="Ending of period of historical prices")
-    @argument(
-        "interval",
-        description="Trading interval",
-        choices=["1m", "5m", "15m", "1d", "1wk", "1mo"],
-    )
     def balance(
         self,
         portfolio_version_id: int,
-        period_start: str = None,
-        period_end: str = None,
-        interval: str = None,
     ) -> None:
         """
         Balance portfolio version
 
         `save` False is not yet implemented
         """
-        ctx = context.get_context()
-
-        if self.portfolio_in_use is None:
-            ctx.console.print(
-                "[yellow]Select portfolio using `portfolio use ID` command"
-            )
-            return
-
-        portfolio_result = PortfolioLoadHandler().handle(
-            portfolio_id=self.portfolio_in_use
-        )
-        if portfolio_result.is_err():
-            ctx.console.print(f"[red]{portfolio_result.err().value}")
-            return
-
         portfolio_version_result = PortfolioVersionLoadHandler().handle(
             portfolio_version_id=portfolio_version_id
         )
         if portfolio_version_result.is_err():
-            ctx.console.print(f"[red]{portfolio_version_result.err().value}")
+            self.context.console.print(f"[red]{portfolio_version_result.err().value}")
             return
 
-        period_start = (
-            period_start
-            if period_start is not None
-            else portfolio_version_result.value.period_start
-        )
-        period_end = (
-            period_end
-            if period_end is not None
-            else portfolio_version_result.value.period_end
-        )
-        interval = (
-            interval
-            if interval is not None
-            else portfolio_version_result.value.interval
-        )
-
         weights_result = WeightsCalculationHandler().handle(
-            portfolio=portfolio_result.value,
             portfolio_version=portfolio_version_result.value,
-            start_period=period_start,
-            end_period=period_end,
-            interval=interval,
+            start_period=portfolio_version_result.value.period_start,
+            end_period=portfolio_version_result.value.period_end,
+            interval=portfolio_version_result.value.interval,
             persist=True,
         )
 
         if weights_result.is_err():
-            ctx.console.print(
+            self.context.console.print(
                 "[red]:disappointed: Failed to calculate weights for this portfolio:"
             )
-            ctx.console.print(f"    [red]:right_arrow: {weights_result.err().value}")
+            self.context.console.print(
+                f"    [red]:right_arrow: {weights_result.err().value}"
+            )
             return
 
         result = WeightsListHandler().handle(
             portfolio_version=portfolio_version_result.value
         )
         WeightsList(
-            ctx,
+            self.context,
             result.value,
             f"Portfolio Version [bold cyan]#{portfolio_version_result.value.id}[/bold cyan] list of weights",
         ).render()
@@ -145,35 +102,19 @@ class PortfolioVersionsCommands:
         """
         Activate the indicated version of the portfolio and deactivates the rest
         """
-        ctx = context.get_context()
-
-        # TODO refactor, duplicated in `balance` method
-        if self.portfolio_in_use is None:
-            ctx.console.print(
-                "[yellow]Select portfolio using `portfolio use ID` command"
-            )
-            return
-
-        portfolio_version_result = PortfolioVersionLoadHandler().handle(
-            portfolio_version_id=portfolio_version_id
-        )
-        portfolio_result = PortfolioLoadHandler().handle(
-            portfolio_id=self.portfolio_in_use
-        )
-
-        # TODO handle if not found situation
-
         result = PortfolioVersionActivationHandler().handle(
-            portfolio_version=portfolio_version_result.value,
-            portfolio=portfolio_result.value,
+            portfolio_version_id=portfolio_version_id,
         )
 
         if result.is_ok():
-            ctx.console.print(
-                f"[green]Portfolio Version {portfolio_version_id} set active"
+            self.context.console.print(
+                f"[green]Portfolio version {portfolio_version_id} set active"
             )
         else:
-            ctx.console.print(f"[yellow]{result.value.value}")
+            self.context.console.print(
+                f"[yellow]Failed to activate portfolio version #{portfolio_version_id}"
+            )
+            self.context.console.print(f"[yellow]{result.value.value}")
 
     @command
     @argument(
@@ -186,35 +127,19 @@ class PortfolioVersionsCommands:
         """
         Deactivate the indicated version of the portfolio
         """
-        ctx = context.get_context()
-
-        # TODO refactor, duplicated in `balance` method
-        if self.portfolio_in_use is None:
-            ctx.console.print(
-                "[yellow]Select portfolio using `portfolio use ID` command"
-            )
-            return
-
-        portfolio_version_result = PortfolioVersionLoadHandler().handle(
-            portfolio_version_id=portfolio_version_id
-        )
-        portfolio_result = PortfolioLoadHandler().handle(
-            portfolio_id=self.portfolio_in_use
-        )
-
-        # TODO handle if not found situation
-
         result = PortfolioVersionDeactivationHandler().handle(
-            portfolio_version=portfolio_version_result.value,
-            portfolio=portfolio_result.value,
+            portfolio_version_id=portfolio_version_id,
         )
 
         if result.is_ok():
-            ctx.console.print(
+            self.context.console.print(
                 f"[green]Portfolio Version {portfolio_version_id} is deactivated"
             )
         else:
-            ctx.console.print(f"[yellow]{result.value.value}")
+            self.context.console.print(
+                f"[yellow]Failed to deactivate portfolio version #{portfolio_version_id}"
+            )
+            self.context.console.print(f"[yellow]{result.value.value}")
 
     def statistic(self):
         """
@@ -275,23 +200,22 @@ class PortfolioVersionsCommands:
             self.context.console.print(result.value)
 
     @command("create-new")
-    def create(self):
+    @argument(
+        "portfolio_id",
+        description="Portfolio ID",
+        positional=True,
+        type=int,
+    )
+    def create(self, portfolio_id):
         """
         Create a new portfolio version
         """
-        # TODO refactor, duplicated in `balance` method
-        if self.portfolio_in_use is None:
-            self.context.console.print(
-                "[yellow]Select portfolio using `portfolio use ID` command"
-            )
-            return
-        portfolio_result = PortfolioLoadHandler().handle(
-            portfolio_id=self.portfolio_in_use
-        )
+        portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
 
+        # TODO: refactor to use the same logic as the update command
         params = {}
         new_account_value = prompt("Account value: ")
-        params["amount"] = new_account_value
+        params["value"] = new_account_value
 
         new_period_start = prompt("Period start: ")
         params["period_start"] = new_period_start
@@ -304,7 +228,7 @@ class PortfolioVersionsCommands:
 
         result = PortfolioVersionCreationHandler().handle(
             portfolio=portfolio_result.value,
-            amount=params.get("amount"),
+            value=params.get("value"),
             period_start=params.get("period_start"),
             period_end=params.get("period_end"),
             interval=params.get("interval"),
@@ -319,31 +243,41 @@ class PortfolioVersionsCommands:
 
     @command
     @argument(
+        "portfolio_id",
+        description="Portfolio ID",
+        positional=True,
+        type=int,
+    )
+    @argument(
         "portfolio_version_id",
         description="Portfolio Version ID",
         positional=True,
         type=int,
     )
-    def create_from_existing(self, portfolio_version_id: int):
+    def create_from_existing(self, portfolio_id: int, portfolio_version_id: int):
         """
         Create a new portfolio version from an existing one
         """
-        # TODO refactor, duplicated in `balance` method
-        if self.portfolio_in_use is None:
-            self.context.console.print(
-                "[yellow]Select portfolio using `portfolio use ID` command"
-            )
+        portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
+
+        if portfolio_result.is_err():
+            self.context.console.print(portfolio_result.value)
             return
-        portfolio_result = PortfolioLoadHandler().handle(
-            portfolio_id=self.portfolio_in_use
-        )
 
         portfolio_version_result = PortfolioVersionLoadHandler().handle(
             portfolio_version_id=portfolio_version_id
         )
-        # TODO handle if not found situation
 
-        params = {}
+        if portfolio_version_result.is_err():
+            self.context.console.print(portfolio_version_result.value)
+            return
+
+        params = {
+            "value": portfolio_version_result.value.value,
+            "period_start": portfolio_version_result.value.period_start,
+            "period_end": portfolio_version_result.value.period_end,
+            "interval": portfolio_version_result.value.interval,
+        }
         new_account_value = prompt(
             "Account value: ", default=f"{portfolio_version_result.value.value:.2f}"
         )

@@ -1,5 +1,5 @@
 from nubia import context, statusbar  # type: ignore
-from pygments.token import Name, Token  # type: ignore
+from pygments.token import Token  # type: ignore
 
 
 class StatusBar(statusbar.StatusBar):
@@ -21,14 +21,6 @@ class StatusBar(statusbar.StatusBar):
         else:
             is_verbose = (Token.Info, "OFF")
 
-        if context.get_context().portfolio_in_use is not None:
-            portfolio = (
-                Name.Query,
-                f"Active Portfolio #{context.get_context().portfolio_in_use}",
-            )
-        else:
-            portfolio = None
-
         return [
             t
             for t in [
@@ -36,7 +28,6 @@ class StatusBar(statusbar.StatusBar):
                 spacer,
                 is_verbose,
                 spacer,
-                portfolio,
             ]
             if t is not None
         ]

@@ -5,6 +5,12 @@ from ftt.storage.models import PortfolioVersion
 
 
 class PortfolioVersionDeactivationValidateStep(AbstractStep):
+    """
+    Validate if the portfolio version can be deactivated.
+
+    * checks if the portfolio version is active
+    """
+
     key = "portfolio_version_deactivation_validation"
 
     @classmethod
@@ -12,4 +18,4 @@ class PortfolioVersionDeactivationValidateStep(AbstractStep):
         if portfolio_version.active:
             return Ok(portfolio_version)
         else:
-            return Err(f"Portfolio Version #{portfolio_version.id} is not active")
+            return Err(f"Portfolio version #{portfolio_version.id} is not active")

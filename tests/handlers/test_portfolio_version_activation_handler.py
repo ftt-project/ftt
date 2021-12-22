@@ -3,6 +3,7 @@ import pytest
 from ftt.handlers.portfolio_version_activation_handler import (
     PortfolioVersionActivationHandler,
 )
+from tests.helpers import reload_record
 
 
 class TestPortfolioVersionActivationHandler:
@@ -10,16 +11,16 @@ class TestPortfolioVersionActivationHandler:
     def subject(self):
         return PortfolioVersionActivationHandler()
 
-    def test_activates_portfolio_version(self, subject, portfolio_version, portfolio):
+    def test_activates_portfolio_version(
+        self, subject, portfolio_version, portfolio, weight
+    ):
         portfolio_version.active = False
         portfolio_version.save()
 
-        result = subject.handle(
-            portfolio_version=portfolio_version, portfolio=portfolio
-        )
+        result = subject.handle(portfolio_version_id=portfolio_version.id)
 
         assert result.is_ok()
-        assert portfolio_version.active
+        assert reload_record(portfolio_version).active
 
     def test_only_one_portfolio_can_be_active(
         self, subject, portfolio_version, portfolio
@@ -27,9 +28,35 @@ class TestPortfolioVersionActivationHandler:
         portfolio_version.active = True
         portfolio_version.save()
 
-        result = subject.handle(
-            portfolio_version=portfolio_version, portfolio=portfolio
-        )
+        result = subject.handle(portfolio_version_id=portfolio_version.id)
 
         assert result.is_err()
-        assert result.err().value == "Portfolio Version #1 is already active"
+        assert result.err().value == "Portfolio version #1 is already active"
+
+    def test_process_errors_when_no_weights_associated(
+        self, subject, portfolio_version, portfolio
+    ):
+        portfolio_version.active = False
+        portfolio_version.save()
+
+        result = subject.handle(portfolio_version_id=portfolio_version.id)
+
+        assert result.is_err()
+        assert (
+            result.err().value
+            == "Portfolio version #1 does not have any weights associated. Run balance step first."
+        )
+
+    def test_process_errors_when_weights_planned_positions_is_zero(
+        self, subject, portfolio_version, portfolio, weight
+    ):
+        weight.planned_position = 0
+        weight.save()
+
+        result = subject.handle(portfolio_version_id=portfolio_version.id)
+
+        assert result.is_err()
+        assert (
+            result.err().value
+            == "Portfolio version #1 has AA.XX with zero planned weight. Run balance step first."
+        )

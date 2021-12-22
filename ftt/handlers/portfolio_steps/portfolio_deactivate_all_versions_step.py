@@ -8,6 +8,10 @@ from ftt.storage.repositories.portfolio_versions_repository import (
 
 
 class PortfolioDeactivateAllVersionsStep(AbstractStep):
+    """
+    Deactivate all versions of a portfolio.
+    """
+
     key = "deactivated_portfolio_versions"
 
     @classmethod

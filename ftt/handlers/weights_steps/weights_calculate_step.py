@@ -7,7 +7,6 @@ from result import Err, Ok, OkErr
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.models import PortfolioVersion
-from ftt.storage.models.portfolio import Portfolio
 
 
 @dataclass(frozen=True)
@@ -26,7 +25,6 @@ class WeightsCalculateStep(AbstractStep):
     def process(
         cls,
         security_prices: DataFrame,
-        portfolio: Portfolio,
         portfolio_version: PortfolioVersion,
     ) -> OkErr:
         try:

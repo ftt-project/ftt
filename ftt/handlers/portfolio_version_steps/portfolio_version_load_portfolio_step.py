@@ -7,15 +7,13 @@ from ftt.storage.repositories.portfolio_versions_repository import (
 )
 
 
-class PortfolioVersionActivateStep(AbstractStep):
-    """
-    Activates a portfolio version
-    """
-
-    key = "portfolio_version"
+class PortfolioVersionLoadPortfolioStep(AbstractStep):
+    key = "portfolio"
 
     @classmethod
     def process(cls, portfolio_version: PortfolioVersion) -> OkErr:
-        portfolio_version.active = True
-        result = PortfolioVersionsRepository.save(portfolio_version)
+        result = PortfolioVersionsRepository.get_portfolio(
+            portfolio_version_id=portfolio_version.id,
+        )
+
         return Ok(result)

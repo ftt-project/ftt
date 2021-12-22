@@ -3,6 +3,7 @@ import pytest
 from ftt.handlers.portfolio_version_deactivation_handler import (
     PortfolioVersionDeactivationHandler,
 )
+from tests.helpers import reload_record
 
 
 class TestPortfolioVersionDeactivationHandler:
@@ -14,12 +15,10 @@ class TestPortfolioVersionDeactivationHandler:
         portfolio_version.active = True
         portfolio_version.save()
 
-        result = subject.handle(
-            portfolio_version=portfolio_version, portfolio=portfolio
-        )
+        result = subject.handle(portfolio_version_id=portfolio_version.id)
 
         assert result.is_ok()
-        assert not portfolio_version.active
+        assert not reload_record(portfolio_version).active
 
     def test_errors_on_deactivated_portfolio_version(
         self, subject, portfolio_version, portfolio
@@ -27,8 +26,6 @@ class TestPortfolioVersionDeactivationHandler:
         portfolio_version.active = False
         portfolio_version.save()
 
-        result = subject.handle(
-            portfolio_version=portfolio_version, portfolio=portfolio
-        )
+        result = subject.handle(portfolio_version_id=portfolio_version.id)
 
         assert result.is_err()

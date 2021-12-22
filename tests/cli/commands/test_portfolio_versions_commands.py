@@ -25,41 +25,27 @@ class TestPortfolioVersionsCommands:
         )
         mocked.return_value.handle.return_value = mocker.Mock(is_okay=True)
 
-        context.get_context.return_value.portfolio_in_use = portfolio.id
-
-        subject().balance(portfolio_version.id, "2021-01-01", "2021-04-20", "1d")
+        subject().balance(portfolio_version.id)
 
         mocked.return_value.handle.assert_called_once()
 
-    def test_accepts_portfolio_id_in_constructor(
-        self, subject, portfolio, portfolio_version, security, mocker
+    def test_balance_requires_associated_securities(
+        self, subject, portfolio_version, context
     ):
-        mocked = mocker.patch(
-            "ftt.cli.commands.portfolio_versions_commands.WeightsCalculationHandler"
-        )
-        mocked.return_value.handle.return_value = mocker.Mock(is_okay=True)
-
-        subject(portfolio_id=portfolio.id).balance(
-            portfolio_version.id, "2021-01-01", "2021-04-20", "1d"
-        )
-
-        mocked.return_value.handle.assert_called_once()
-
-    def test_requires_active_portfolio(self, subject, portfolio_version, context):
-        subject(portfolio_id=100).balance(
-            portfolio_version.id, "2021-01-01", "2021-04-20", "1d"
-        )
+        subject().balance(portfolio_version_id=portfolio_version.id)
 
         context.get_context.return_value.console.print.assert_has_calls(
-            [call("[red]Portfolio with ID 100 does not exist")]
+            [
+                call(
+                    "    [red]:right_arrow: No securities associated with portfolio version 1"
+                )
+            ]
         )
 
-    def test_prints_error_when_no_specified_portfolio_version_found(
+    def test_balance_prints_error_when_no_specified_portfolio_version_found(
         self, subject, portfolio, portfolio_version, context
     ):
-        subject(portfolio_id=portfolio.id).balance(
-            100, "2021-01-01", "2021-04-20", "1d"
-        )
+        subject().balance(portfolio_version_id=100)
 
         context.get_context.return_value.console.print.assert_has_calls(
             [call("[red]Portfolio Version with ID 100 does not exist")]
@@ -73,20 +59,16 @@ class TestPortfolioVersionsCommands:
         )
         mocked.return_value.handle.return_value = mocker.Mock(is_okay=True)
 
-        subject(portfolio_id=portfolio.id).balance(
-            portfolio_version_id=portfolio_version.id
-        )
+        subject().balance(portfolio_version_id=portfolio_version.id)
         mocked.return_value.handle.assert_called_once()
 
-    def test_activate(self, subject, portfolio, portfolio_version, context):
+    def test_activate(self, subject, portfolio, portfolio_version, weight, context):
         portfolio_version.active = False
         portfolio_version.save()
-        subject(portfolio_id=portfolio.id).activate(
-            portfolio_version_id=portfolio_version.id
-        )
+        subject().activate(portfolio_version_id=portfolio_version.id)
 
         context.get_context.return_value.console.print.assert_has_calls(
-            [call(f"[green]Portfolio Version {portfolio_version.id} set active")]
+            [call(f"[green]Portfolio version {portfolio_version.id} set active")]
         )
 
     def test_activate_active_portfolio_version(
@@ -94,24 +76,31 @@ class TestPortfolioVersionsCommands:
     ):
         portfolio_version.active = True
         portfolio_version.save()
-        subject(portfolio_id=portfolio.id).activate(
-            portfolio_version_id=portfolio_version.id
+        subject().activate(portfolio_version_id=portfolio_version.id)
+
+        context.get_context.return_value.console.print.assert_any_call(
+            f"[yellow]Failed to activate portfolio version #{portfolio_version.id}"
+        )
+        context.get_context.return_value.console.print.assert_any_call(
+            f"[yellow]Portfolio version #{portfolio_version.id} is already active"
         )
 
-        context.get_context.return_value.console.print.assert_has_calls(
-            [
-                call(
-                    f"[yellow]Portfolio Version #{portfolio_version.id} is already active"
-                )
-            ]
+    def test_activate_errors_when_no_weights_associated(
+        self, subject, portfolio, portfolio_version, context
+    ):
+        subject().activate(portfolio_version_id=portfolio_version.id)
+
+        context.get_context.return_value.console.print.assert_any_call(
+            f"[yellow]Failed to activate portfolio version #{portfolio_version.id}"
+        )
+        context.get_context.return_value.console.print.assert_any_call(
+            f"[yellow]Portfolio version #{portfolio_version.id} does not have any weights associated. Run balance step first."
         )
 
     def test_deactivate(self, subject, portfolio, portfolio_version, context):
         portfolio_version.active = True
         portfolio_version.save()
-        subject(portfolio_id=portfolio.id).deactivate(
-            portfolio_version_id=portfolio_version.id
-        )
+        subject().deactivate(portfolio_version_id=portfolio_version.id)
 
         context.get_context.return_value.console.print.assert_has_calls(
             [call(f"[green]Portfolio Version {portfolio_version.id} is deactivated")]
@@ -122,12 +111,13 @@ class TestPortfolioVersionsCommands:
     ):
         portfolio_version.active = False
         portfolio_version.save()
-        subject(portfolio_id=portfolio.id).deactivate(
-            portfolio_version_id=portfolio_version.id
-        )
+        subject().deactivate(portfolio_version_id=portfolio_version.id)
 
-        context.get_context.return_value.console.print.assert_has_calls(
-            [call(f"[yellow]Portfolio Version #{portfolio_version.id} is not active")]
+        context.get_context.return_value.console.print.assert_any_call(
+            f"[yellow]Failed to deactivate portfolio version #{portfolio_version.id}"
+        )
+        context.get_context.return_value.console.print.assert_any_call(
+            f"[yellow]Portfolio version #{portfolio_version.id} is not active"
         )
 
     def test_update_active_portfolio_version(
@@ -135,9 +125,7 @@ class TestPortfolioVersionsCommands:
     ):
         portfolio_version.active = True
         portfolio_version.save()
-        subject(portfolio_id=portfolio.id).update(
-            portfolio_version_id=portfolio_version.id
-        )
+        subject().update(portfolio_version_id=portfolio_version.id)
 
         context.get_context.return_value.console.print.assert_has_calls(
             [
@@ -162,9 +150,7 @@ class TestPortfolioVersionsCommands:
             interval="1d",
         )
 
-        subject(portfolio_id=portfolio.id).update(
-            portfolio_version_id=portfolio_version.id
-        )
+        subject().update(portfolio_version_id=portfolio_version.id)
 
         context.get_context.return_value.console.print.assert_has_calls(
             [call(f"[green]Portfolio Version #{portfolio_version.id} is updated")]
@@ -178,8 +164,9 @@ class TestPortfolioVersionsCommands:
         )
         prompt_mocker.side_effect = [100, "2021-01-01", "2021-04-20", "1d"]
 
-        subject(portfolio_id=portfolio.id).create_from_existing(
-            portfolio_version_id=portfolio_version.id
+        subject().create_from_existing(
+            portfolio_version_id=portfolio_version.id,
+            portfolio_id=portfolio.id,
         )
 
         prompt_mocker.assert_any_call("Account value: ", default="30000.00")
@@ -206,7 +193,7 @@ class TestPortfolioVersionsCommands:
         )
         handler_mocker.return_value.handle.return_value.value.id = 111
 
-        subject(portfolio_id=portfolio.id).create()
+        subject().create(portfolio_id=portfolio.id)
 
         prompt_mocker.assert_any_call("Account value: ")
         prompt_mocker.assert_any_call("Period start: ")
@@ -215,7 +202,7 @@ class TestPortfolioVersionsCommands:
 
         handler_mocker.return_value.handle.assert_called_once_with(
             portfolio=portfolio,
-            amount=100,
+            value=100,
             period_start="2021-01-01",
             period_end="2021-04-20",
             interval="1d",
@@ -234,7 +221,7 @@ class TestPortfolioVersionsCommands:
         mock_external_info_requests,
         mock_external_historic_data_requests,
     ):
-        subject(portfolio_id=portfolio.id).securities_add(
+        subject().securities_add(
             portfolio_version_id=portfolio_version.id, securities="MSFT"
         )
 
@@ -257,7 +244,7 @@ class TestPortfolioVersionsCommands:
         mock_external_info_requests,
         mock_external_historic_data_requests,
     ):
-        subject(portfolio_id=portfolio.id).securities_remove(
+        subject().securities_remove(
             portfolio_version_id=portfolio_version.id, securities=security.symbol
         )
 
