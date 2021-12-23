@@ -4,6 +4,9 @@ from prompt_toolkit import prompt
 from ftt.cli.handlers.update_portfolio_prompts_handler import (
     UpdatePortfolioPromptsHandler,
 )
+from ftt.cli.renderers.portfolio_versions.portfolio_version_details import (
+    PortfolioVersionDetails,
+)
 from ftt.cli.renderers.weights.weights_list import WeightsList
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 from ftt.handlers.portfolio_version_activation_handler import (
@@ -15,7 +18,7 @@ from ftt.handlers.portfolio_version_creation_handler import (
 from ftt.handlers.portfolio_version_deactivation_handler import (
     PortfolioVersionDeactivationHandler,
 )
-from ftt.handlers.portfolio_version_loading_handler import PortfolioVersionLoadHandler
+from ftt.handlers.portfolio_version_load_handler import PortfolioVersionLoadHandler
 from ftt.handlers.portfolio_version_securities_adding_handler import (
     PortfolioVersionSecuritiesAddingHandler,
 )
@@ -383,3 +386,58 @@ class PortfolioVersionsCommands:
                 "[red]Failed to remove security from portfolio version:"
             )
             self.context.console.print(result.value)
+
+    @command
+    @argument(
+        "portfolio_version_id",
+        description="Portfolio Version ID",
+        positional=True,
+        type=int,
+    )
+    def securities_list(self, portfolio_version_id: int):
+        """
+        Provide list of securities associated with portfolio version
+        """
+        portfolio_version_result = PortfolioVersionLoadHandler().handle(
+            portfolio_version_id=portfolio_version_id
+        )
+
+        if portfolio_version_result.is_err():
+            self.context.console.print("[red]Failed to get portfolio version details:")
+            self.context.console.print(portfolio_version_result.err().value)
+            return
+
+        weights_result = WeightsListHandler().handle(
+            portfolio_version=portfolio_version_result.value
+        )
+
+        WeightsList(
+            self.context,
+            weights_result.value,
+            f"Portfolio Version [bold cyan]#{portfolio_version_result.value.id}[/bold cyan] list of weights",
+        ).render()
+
+    @command
+    @argument(
+        "portfolio_version_id",
+        description="Portfolio Version ID",
+        positional=True,
+        type=int,
+    )
+    def details(self, portfolio_version_id: int):
+        """
+        Provide details of portfolio version
+        """
+        portfolio_version_result = PortfolioVersionLoadHandler().handle(
+            portfolio_version_id=portfolio_version_id
+        )
+
+        if portfolio_version_result.is_err():
+            self.context.console.print("[red]Failed to get portfolio version details:")
+            self.context.console.print(portfolio_version_result.err().value)
+            return
+
+        PortfolioVersionDetails(
+            self.context,
+            portfolio_version_result.value,
+        ).render()

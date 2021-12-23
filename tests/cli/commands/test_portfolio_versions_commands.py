@@ -241,8 +241,6 @@ class TestPortfolioVersionsCommands:
         context,
         weight,
         security,
-        mock_external_info_requests,
-        mock_external_historic_data_requests,
     ):
         subject().securities_remove(
             portfolio_version_id=portfolio_version.id, securities=security.symbol
@@ -255,3 +253,39 @@ class TestPortfolioVersionsCommands:
                 )
             ]
         )
+
+    def test_securities_list_displays_list_of_weights(
+        self, subject, portfolio_version, mocker, weight, security
+    ):
+        mocked = mocker.patch(
+            "ftt.cli.commands.portfolio_versions_commands.WeightsList",
+            **{"return_value.render.return_value": True},
+        )
+
+        subject().securities_list(portfolio_version_id=portfolio_version.id)
+
+        assert weight in mocked.call_args[0][1]
+
+    def test_securities_list_displays_error_message_when_no_version_found(
+        self, subject, context
+    ):
+        subject().securities_list(portfolio_version_id=111)
+
+        context.get_context.return_value.console.print.assert_any_call(
+            "[red]Failed to get portfolio version details:"
+        )
+        context.get_context.return_value.console.print.assert_any_call(
+            "Portfolio Version with ID 111 does not exist"
+        )
+
+    def test_details_displays_portfolio_version_details(
+        self, subject, portfolio_version, mocker
+    ):
+        mocked = mocker.patch(
+            "ftt.cli.commands.portfolio_versions_commands.PortfolioVersionDetails",
+            **{"return_value.render.return_value": True},
+        )
+
+        subject().details(portfolio_version_id=portfolio_version.id)
+
+        assert portfolio_version == mocked.call_args[0][1]
