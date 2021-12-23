@@ -1,14 +1,14 @@
 import pytest
 
 from ftt.cli.renderers.portfolio_versions.portfolio_version_details import (
-    PortfolioVersionDetails,
+    PortfolioVersionBriefDetails,
 )
 
 
 class TestPortfolioVersionDetails:
     @pytest.fixture
     def subject(self):
-        return PortfolioVersionDetails
+        return PortfolioVersionBriefDetails
 
     def test_renders_details(
         self, subject, portfolio, portfolio_version, mocker, context

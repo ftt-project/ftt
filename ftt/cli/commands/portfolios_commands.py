@@ -6,7 +6,7 @@ from ftt.cli.handlers.create_portfolio_prompts_handler import (
 )
 from ftt.cli.renderers import PortfoliosList
 from ftt.cli.renderers.portfolio_versions.portfolio_version_details import (
-    PortfolioVersionDetails,
+    PortfolioVersionBriefDetails,
 )
 from ftt.cli.renderers.portfolio_versions.portfolio_versions_list import (
     PortfolioVersionsList,
@@ -66,7 +66,7 @@ class PortfoliosCommands:
         result = PortfolioVersionsListHandler().handle(portfolio=result.value)
         PortfolioVersionsList(ctx, result.value).render()
 
-        PortfolioVersionDetails(ctx, result.value[-1]).render()
+        PortfolioVersionBriefDetails(ctx, result.value[-1]).render()
 
         portfolio_version = result.value[0]
         result = WeightsListHandler().handle(portfolio_version=portfolio_version)

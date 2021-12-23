@@ -6,6 +6,10 @@ from ftt.handlers.portfolio_steps.portfolio_versions_list_step import (
 
 
 class PortfolioVersionsListHandler(Handler):
+    """
+    Returns a list of all versions of a portfolio.
+    """
+
     params = ("portfolio",)
 
     handlers = [
