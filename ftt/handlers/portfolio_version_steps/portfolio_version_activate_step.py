@@ -9,7 +9,7 @@ from ftt.storage.repositories.portfolio_versions_repository import (
 
 class PortfolioVersionActivateStep(AbstractStep):
     """
-    Activates a portfolio version
+    Activates a portfolio_management version
     """
 
     key = "portfolio_version"

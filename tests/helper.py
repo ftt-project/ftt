@@ -31,6 +31,6 @@ def weights_seed(ticker_name="AA.BB", current_position=2, planned_position=10):
         planned_position=planned_position,
     )
 
-    return namedtuple("SeedData", ["ticker", "portfolio", "weight"])(
+    return namedtuple("SeedData", ["ticker", "portfolio_management", "weight"])(
         ticker, portfolio, weight
     )

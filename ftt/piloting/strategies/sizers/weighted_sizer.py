@@ -13,7 +13,7 @@ class WeightedSizer(bt.Sizer):
     params = (("dataname", None),)
 
     def _getsizing(self, comminfo, cash, data, isbuy):
-        # portfolio = Portfolio.get_weights(self.p.dataname)
+        # portfolio_management = Portfolio.get_weights(self.p.dataname)
         # TODO: handle sell event
         ticker_name = data._name
         ticker = SecuritiesRepository().get_by_name(ticker_name)

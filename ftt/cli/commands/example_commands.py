@@ -21,7 +21,7 @@ from ftt.storage.data_objects.security_dto import SecurityDTO
 @command
 def example():
     """
-    Create example portfolio with weights from example config
+    Create example portfolio_management with weights from example config
     """
     ctx = context.get_context()
 

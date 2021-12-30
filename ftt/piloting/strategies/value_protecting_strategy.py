@@ -34,7 +34,7 @@ class ValueProtectingStrategy(BaseStrategy):
 
     def sell_signal(self, data):
         """
-        To protect from dip it sells when the portfolio price becomes lower than VALUE * MULT
+        To protect from dip it sells when the portfolio_management price becomes lower than VALUE * MULT
         """
         value = data.close[0]
         security = SecuritiesRepository().get_by_name(data._name)

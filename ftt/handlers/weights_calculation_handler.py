@@ -1,5 +1,5 @@
 from ftt.handlers.handler.handler import Handler
-from ftt.handlers.handler.retrun_result import ReturnResult
+from ftt.handlers.handler.return_result import ReturnResult
 from ftt.handlers.portfolio_steps.portfolio_securities_load_step import (
     PortfolioSecuritiesLoadStep,
 )
@@ -17,7 +17,9 @@ from ftt.handlers.weights_steps.weights_calculate_step import WeightsCalculateSt
 
 class WeightsCalculationHandler(Handler):
     """
-    Handler for calculating weights for a portfolio version.
+    Handler for calculating weights for a portfolio_management version.
+
+    TODO: deprecate and remove. Use PortfolioOptimizationHandler instead
     """
 
     params = (

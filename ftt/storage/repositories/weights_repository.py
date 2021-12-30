@@ -49,7 +49,7 @@ class WeightsRepository(Repository):
         cls, security: Security, portfolio_version_id: int
     ) -> Weight:
         """
-        TODO: use portfolio version model instead of id
+        TODO: use portfolio_management version model instead of id
         """
         return (
             Weight.select()

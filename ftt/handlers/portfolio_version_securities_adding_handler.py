@@ -1,6 +1,5 @@
-from ftt.handlers.handler.context import Context
 from ftt.handlers.handler.handler import Handler
-from ftt.handlers.handler.retrun_result import ReturnResult
+from ftt.handlers.handler.return_result import ReturnResult
 from ftt.handlers.portfolio_steps.portfolio_prepare_empty_weights_step import (
     PortfolioPrepareEmptyWeightsStep,
 )
@@ -44,12 +43,10 @@ class PortfolioVersionSecuritiesAddingHandler(Handler):
             PortfolioVersionLoadStep.key,
         ),
         (PortfolioPrepareEmptyWeightsStep, "securities"),
-        Context(assign=True, to="persist"),
         (
             PortfolioWeightsPersistStep,
             PortfolioPrepareEmptyWeightsStep.key,
             "portfolio_version",
-            "persist",
         ),
         (ReturnResult, PortfolioVersionLoadStep.key, SecuritiesUpsertStep.key),
     ]

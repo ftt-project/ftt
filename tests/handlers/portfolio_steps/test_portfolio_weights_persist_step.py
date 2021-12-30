@@ -24,25 +24,16 @@ class TestPortfolioWeightsPersistStep:
         )
 
     def test_persist_weights(self, subject, calculation_result, portfolio_version):
-        result = subject.process(portfolio_version, calculation_result, True)
+        result = subject.process(portfolio_version, calculation_result)
 
         assert result.is_ok()
         assert type(result.value) == list
         assert isinstance(result.value[0], Weight)
 
-    def test_persist_weights_is_false(
-        self, subject, calculation_result, portfolio_version
-    ):
-        result = subject.process(portfolio_version, calculation_result, False)
-
-        assert result.is_ok()
-        assert type(result.value) == list
-        assert len(result.value) == 0
-
     def test_updates_portfolio_version_with_stats(
         self, subject, calculation_result, portfolio_version
     ):
-        result = subject.process(portfolio_version, calculation_result, True)
+        result = subject.process(portfolio_version, calculation_result)
 
         portfolio_version = PortfolioVersion.get(portfolio_version.id)
         assert result.is_ok()

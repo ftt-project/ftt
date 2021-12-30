@@ -79,7 +79,7 @@ class TestPortfolioVersionsCommands:
         subject().activate(portfolio_version_id=portfolio_version.id)
 
         context.get_context.return_value.console.print.assert_any_call(
-            f"[yellow]Failed to activate portfolio version #{portfolio_version.id}"
+            f"[yellow]Failed to activate portfolio_management version #{portfolio_version.id}"
         )
         context.get_context.return_value.console.print.assert_any_call(
             f"[yellow]Portfolio version #{portfolio_version.id} is already active"
@@ -91,7 +91,7 @@ class TestPortfolioVersionsCommands:
         subject().activate(portfolio_version_id=portfolio_version.id)
 
         context.get_context.return_value.console.print.assert_any_call(
-            f"[yellow]Failed to activate portfolio version #{portfolio_version.id}"
+            f"[yellow]Failed to activate portfolio_management version #{portfolio_version.id}"
         )
         context.get_context.return_value.console.print.assert_any_call(
             f"[yellow]Portfolio version #{portfolio_version.id} does not have any weights associated. Run balance step first."
@@ -114,7 +114,7 @@ class TestPortfolioVersionsCommands:
         subject().deactivate(portfolio_version_id=portfolio_version.id)
 
         context.get_context.return_value.console.print.assert_any_call(
-            f"[yellow]Failed to deactivate portfolio version #{portfolio_version.id}"
+            f"[yellow]Failed to deactivate portfolio_management version #{portfolio_version.id}"
         )
         context.get_context.return_value.console.print.assert_any_call(
             f"[yellow]Portfolio version #{portfolio_version.id} is not active"
@@ -272,7 +272,7 @@ class TestPortfolioVersionsCommands:
         subject().securities_list(portfolio_version_id=111)
 
         context.get_context.return_value.console.print.assert_any_call(
-            "[red]Failed to get portfolio version details:"
+            "[red]Failed to get portfolio_management version details:"
         )
         context.get_context.return_value.console.print.assert_any_call(
             "Portfolio Version with ID 111 does not exist"

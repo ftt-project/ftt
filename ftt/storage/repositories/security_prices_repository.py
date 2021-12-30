@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List, Tuple
 
+from ftt.storage.models import Security
 from ftt.storage.models.security_price import SecurityPrice
 from ftt.storage.repositories.repository import Repository
 
@@ -33,3 +34,22 @@ class SecurityPricesRepository(Repository):
     @staticmethod
     def get_by_id(self, id: int) -> SecurityPrice:
         pass
+
+    @staticmethod
+    def find_by_security_prices(
+        security: Security, interval: str, period_start: datetime, period_end: datetime
+    ) -> SecurityPrice:
+        query = (
+            SecurityPrice.select()
+            .where(
+                SecurityPrice.security == security,
+                SecurityPrice.interval == interval,
+                (
+                    (SecurityPrice.datetime >= period_start)
+                    & (SecurityPrice.datetime <= period_end)
+                ),
+            )
+            .order_by(SecurityPrice.datetime.asc())
+        )
+
+        return query.execute()

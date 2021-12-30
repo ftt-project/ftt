@@ -1,7 +1,7 @@
 from result import Ok
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.handlers.weights_steps.weights_calculate_step import WeightsCalculateStepResult
+from ftt.portfolio_management import PortfolioAllocationDTO
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 from ftt.storage.repositories.weights_repository import WeightsRepository
@@ -14,14 +14,11 @@ class PortfolioWeightsPersistStep(AbstractStep):
     def process(
         cls,
         portfolio_version: PortfolioVersion,
-        weights: WeightsCalculateStepResult,
-        persist: bool,
+        portfolio_version_allocation: PortfolioAllocationDTO,
     ) -> Ok:
         result = []
-        if not persist:
-            return Ok(result)
 
-        for symbol, qty in weights.allocation.items():
+        for symbol, qty in portfolio_version_allocation.allocation.items():
             security = SecuritiesRepository.get_by_name(symbol)
             weight = WeightsRepository.upsert(
                 {
@@ -33,9 +30,13 @@ class PortfolioWeightsPersistStep(AbstractStep):
             )
             result.append(weight)
 
-        portfolio_version.expected_annual_return = weights.expected_annual_return
-        portfolio_version.annual_volatility = weights.annual_volatility
-        portfolio_version.sharpe_ratio = weights.sharpe_ratio
+        portfolio_version.expected_annual_return = (
+            portfolio_version_allocation.expected_annual_return
+        )
+        portfolio_version.annual_volatility = (
+            portfolio_version_allocation.annual_volatility
+        )
+        portfolio_version.sharpe_ratio = portfolio_version_allocation.sharpe_ratio
         portfolio_version.save()
 
         return Ok(result)
