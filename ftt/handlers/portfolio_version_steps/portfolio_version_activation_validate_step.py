@@ -9,10 +9,10 @@ from ftt.storage.repositories.portfolio_versions_repository import (
 
 class PortfolioVersionActivationValidateStep(AbstractStep):
     """
-    Performs validation of portfolio_management version before activation
+    Performs validation of portfolio version before activation
 
-    * Checks if portfolio_management version is not already activated
-    * Checks if portfolio_management version has associated weights
+    * Checks if portfolio version is not already activated
+    * Checks if portfolio version has associated weights
     """
 
     key = "portfolio_version_activation_validation"

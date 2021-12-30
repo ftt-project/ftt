@@ -17,7 +17,7 @@ from ftt.handlers.weights_steps.weights_calculate_step import WeightsCalculateSt
 
 class WeightsCalculationHandler(Handler):
     """
-    Handler for calculating weights for a portfolio_management version.
+    Handler for calculating weights for a portfolio version.
 
     TODO: deprecate and remove. Use PortfolioOptimizationHandler instead
     """

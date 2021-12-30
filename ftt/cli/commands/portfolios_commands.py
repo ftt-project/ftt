@@ -51,9 +51,9 @@ class PortfoliosCommands:
     @argument("portfolio_id", description="Portfolio ID", positional=True, type=int)
     def details(self, portfolio_id: int) -> None:
         """
-        Display details of portfolio_management by its ID
+        Display details of portfolio by its ID
         """
-        # portfolio_management
+        # portfolio
         # versions
         # last version
         # weights x securities
@@ -101,7 +101,7 @@ class PortfoliosCommands:
         if portfolio_result.is_ok():
             ctx.console.print("[green]Portfolio successfully created")
         else:
-            ctx.console.print("[red]Failed to create portfolio_management:")
+            ctx.console.print("[red]Failed to create portfolio:")
             ctx.console.print(portfolio_result.value)
             return
 
@@ -131,19 +131,17 @@ class PortfoliosCommands:
         )
         if association_result.is_ok():
             ctx.console.print(
-                "[green]Securities successfully associated with portfolio_management"
+                "[green]Securities successfully associated with portfolio"
             )
         else:
-            ctx.console.print(
-                "[red]Failed to associate securities with portfolio_management:"
-            )
+            ctx.console.print("[red]Failed to associate securities with portfolio:")
             ctx.console.print(association_result.value)
 
     @command("update")
     @argument("portfolio_id", description="Portfolio ID", positional=True, type=int)
     def update(self, portfolio_id: int) -> None:
         """
-        Update portfolio_management by ID
+        Update portfolio by ID
         Possible to update attributes:
             - name
         """
@@ -170,13 +168,13 @@ class PortfoliosCommands:
         if result.is_ok():
             ctx.console.print("[green]Portfolio successfully updated")
         else:
-            ctx.console.print("[red]Failed to update portfolio_management:")
+            ctx.console.print("[red]Failed to update portfolio:")
             ctx.console.print(result.value)
 
     @command("create")
     def create(self) -> None:
         """
-        Create a new portfolio_management
+        Create a new portfolio
         """
         prompt_result = CreatePortfolioPromptsHandler().handle()
 
@@ -199,5 +197,5 @@ class PortfoliosCommands:
         if result.is_ok():
             self.context.console.print("[green]Portfolio successfully created")
         else:
-            self.context.console.print("[red]Failed to create portfolio_management:")
+            self.context.console.print("[red]Failed to create portfolio:")
             self.context.console.print(f"  {result.value.value}")

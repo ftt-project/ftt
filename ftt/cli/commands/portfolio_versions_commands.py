@@ -36,7 +36,7 @@ from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
 from ftt.storage.data_objects.security_dto import SecurityDTO
 
 
-@command("portfolio_management-versions")
+@command("portfolio-versions")
 class PortfolioVersionsCommands:
     """
     Portfolio Versions managing
@@ -57,7 +57,7 @@ class PortfolioVersionsCommands:
         portfolio_version_id: int,
     ) -> None:
         """
-        Balance portfolio_management version
+        Balance portfolio version
 
         `save` False is not yet implemented
         """
@@ -78,7 +78,7 @@ class PortfolioVersionsCommands:
 
         if weights_result.is_err():
             self.context.console.print(
-                "[red]:disappointed: Failed to calculate weights for this portfolio_management:"
+                "[red]:disappointed: Failed to calculate weights for this portfolio:"
             )
             self.context.console.print(
                 f"    [red]:right_arrow: {weights_result.err().value}"
@@ -103,7 +103,7 @@ class PortfolioVersionsCommands:
     )
     def activate(self, portfolio_version_id: int):
         """
-        Activate the indicated version of the portfolio_management and deactivates the rest
+        Activate the indicated version of the portfolio and deactivates the rest
         """
         result = PortfolioVersionActivationHandler().handle(
             portfolio_version_id=portfolio_version_id,
@@ -115,7 +115,7 @@ class PortfolioVersionsCommands:
             )
         else:
             self.context.console.print(
-                f"[yellow]Failed to activate portfolio_management version #{portfolio_version_id}"
+                f"[yellow]Failed to activate portfolio version #{portfolio_version_id}"
             )
             self.context.console.print(f"[yellow]{result.value.value}")
 
@@ -128,7 +128,7 @@ class PortfolioVersionsCommands:
     )
     def deactivate(self, portfolio_version_id: int):
         """
-        Deactivate the indicated version of the portfolio_management
+        Deactivate the indicated version of the portfolio
         """
         result = PortfolioVersionDeactivationHandler().handle(
             portfolio_version_id=portfolio_version_id,
@@ -140,7 +140,7 @@ class PortfolioVersionsCommands:
             )
         else:
             self.context.console.print(
-                f"[yellow]Failed to deactivate portfolio_management version #{portfolio_version_id}"
+                f"[yellow]Failed to deactivate portfolio version #{portfolio_version_id}"
             )
             self.context.console.print(f"[yellow]{result.value.value}")
 
@@ -159,8 +159,8 @@ class PortfolioVersionsCommands:
     )
     def update(self, portfolio_version_id: int):
         """
-        Update the indicated version of the portfolio_management.
-        Only not active portfolio_management versions can be updated.
+        Update the indicated version of the portfolio.
+        Only not active portfolio versions can be updated.
         Possible to update attributes:
             - account value
             - period start
@@ -199,7 +199,7 @@ class PortfolioVersionsCommands:
                 f"[green]Portfolio Version #{portfolio_version_result.value.id} is updated"
             )
         else:
-            self.context.console.print("[red]Failed to update portfolio_management:")
+            self.context.console.print("[red]Failed to update portfolio:")
             self.context.console.print(result.value)
 
     @command("create-new")
@@ -211,7 +211,7 @@ class PortfolioVersionsCommands:
     )
     def create(self, portfolio_id):
         """
-        Create a new portfolio_management version
+        Create a new portfolio version
         """
         portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
 
@@ -241,9 +241,7 @@ class PortfolioVersionsCommands:
                 f"[green]The new Portfolio Version #{result.value.id} is created"
             )
         else:
-            self.context.console.print(
-                "[red]Failed to create portfolio_management version:"
-            )
+            self.context.console.print("[red]Failed to create portfolio version:")
             self.context.console.print(result.value)
 
     @command
@@ -261,7 +259,7 @@ class PortfolioVersionsCommands:
     )
     def create_from_existing(self, portfolio_id: int, portfolio_version_id: int):
         """
-        Create a new portfolio_management version from an existing one
+        Create a new portfolio version from an existing one
         """
         portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
 
@@ -319,9 +317,7 @@ class PortfolioVersionsCommands:
                 f"[green]The new Portfolio Version #{result.value.id} is created"
             )
         else:
-            self.context.console.print(
-                "[red]Failed to create portfolio_management version:"
-            )
+            self.context.console.print("[red]Failed to create portfolio version:")
             self.context.console.print(result.value)
 
     @command
@@ -334,7 +330,7 @@ class PortfolioVersionsCommands:
     @argument("securities", description="List of securities separated by space")
     def securities_add(self, portfolio_version_id: int, securities: str):
         """
-        Provide list of securities to be added to the indicated portfolio_management version
+        Provide list of securities to be added to the indicated portfolio version
         """
         securities_dto = [
             SecurityDTO(symbol=security) for security in securities.split(" ")
@@ -351,7 +347,7 @@ class PortfolioVersionsCommands:
             )
         else:
             self.context.console.print(
-                "[red]Failed to add security to portfolio_management version:"
+                "[red]Failed to add security to portfolio version:"
             )
             self.context.console.print(result.value)
 
@@ -365,7 +361,7 @@ class PortfolioVersionsCommands:
     @argument("securities", description="List of securities separated by space")
     def securities_remove(self, portfolio_version_id: int, securities: str):
         """
-        Provide list of securities to be removed from indicated portfolio_management version
+        Provide list of securities to be removed from indicated portfolio version
         """
 
         securities_result = SecuritiesLoadHandler().handle(
@@ -387,7 +383,7 @@ class PortfolioVersionsCommands:
             )
         else:
             self.context.console.print(
-                "[red]Failed to remove security from portfolio_management version:"
+                "[red]Failed to remove security from portfolio version:"
             )
             self.context.console.print(result.value)
 
@@ -400,16 +396,14 @@ class PortfolioVersionsCommands:
     )
     def securities_list(self, portfolio_version_id: int):
         """
-        Provide list of securities associated with portfolio_management version
+        Provide list of securities associated with portfolio version
         """
         portfolio_version_result = PortfolioVersionLoadHandler().handle(
             portfolio_version_id=portfolio_version_id
         )
 
         if portfolio_version_result.is_err():
-            self.context.console.print(
-                "[red]Failed to get portfolio_management version details:"
-            )
+            self.context.console.print("[red]Failed to get portfolio version details:")
             self.context.console.print(portfolio_version_result.err().value)
             return
 
@@ -432,16 +426,14 @@ class PortfolioVersionsCommands:
     )
     def details(self, portfolio_version_id: int):
         """
-        Provide details of portfolio_management version
+        Provide details of portfolio version
         """
         portfolio_version_result = PortfolioVersionLoadHandler().handle(
             portfolio_version_id=portfolio_version_id
         )
 
         if portfolio_version_result.is_err():
-            self.context.console.print(
-                "[red]Failed to get portfolio_management version details:"
-            )
+            self.context.console.print("[red]Failed to get portfolio version details:")
             self.context.console.print(portfolio_version_result.err().value)
             return
 

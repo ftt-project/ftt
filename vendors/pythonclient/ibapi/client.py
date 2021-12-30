@@ -1500,7 +1500,7 @@ class EClient(object):
     ########################################################################
 
     def reqAccountUpdates(self, subscribe:bool, acctCode:str):
-        """Call this function to start getting account values, portfolio_management,
+        """Call this function to start getting account values, portfolio,
         and last update time information via EWrapper.updateAccountValue(),
         EWrapperi.updatePortfolio() and Wrapper.updateAccountTime().
 
@@ -1508,7 +1508,7 @@ class EClient(object):
             and Portfoliolio updates. If set to FALSE, the client will stop
             receiving this information.
         acctCode:str -The account code for which to receive account and
-            portfolio_management updates."""
+            portfolio updates."""
 
         self.logRequest(current_fn_name(), vars())
 

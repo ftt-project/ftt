@@ -108,7 +108,7 @@ class TestPortfoliosCommands:
 
         securities_mocker.assert_not_called()
         context.get_context.return_value.console.print.assert_has_calls(
-            [call("[red]Failed to create portfolio_management:")]
+            [call("[red]Failed to create portfolio:")]
         )
 
     def test_on_correct_config_request_assets_info(
