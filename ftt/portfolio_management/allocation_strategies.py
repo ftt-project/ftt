@@ -36,7 +36,9 @@ class DefaultAllocationStrategy:
 
         self.__set_expected_annual_return(mu)
         self.__set_annual_volatility(sigma)
-        self.allocation_dto.allocation = self.__normalize_allocation(weights.keys().to_list(), alloc)
+        self.allocation_dto.allocation = self.__normalize_allocation(
+            weights.keys().to_list(), alloc
+        )
         self.allocation_dto.leftover = leftover
 
         return self.allocation_dto

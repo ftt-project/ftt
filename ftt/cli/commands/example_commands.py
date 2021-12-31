@@ -14,7 +14,10 @@ from ftt.handlers.portfolio_stats_handler import PortfoliosStatsHandler
 from ftt.handlers.securities_information_prices_loading_handler import (
     SecuritiesInformationPricesLoadingHandler,
 )
-from ftt.portfolio_management import HistoricalOptimizationStrategy, DefaultAllocationStrategy
+from ftt.portfolio_management import (
+    HistoricalOptimizationStrategy,
+    DefaultAllocationStrategy,
+)
 from ftt.storage import Storage
 from ftt.storage.data_objects.security_dto import SecurityDTO
 
@@ -76,7 +79,7 @@ def example():
         _ = PortfolioOptimizationHandler().handle(
             portfolio_version_id=portfolio.versions[0].id,
             optimization_strategy=HistoricalOptimizationStrategy,
-            allocation_strategy=DefaultAllocationStrategy
+            allocation_strategy=DefaultAllocationStrategy,
         )
 
     result = PortfoliosStatsHandler().handle(portfolio_version=portfolio.versions[0])

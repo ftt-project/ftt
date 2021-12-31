@@ -31,7 +31,10 @@ from ftt.handlers.portfolio_version_updation_handler import (
 )
 from ftt.handlers.securities_load_handler import SecuritiesLoadHandler
 from ftt.handlers.weights_list_handler import WeightsListHandler
-from ftt.portfolio_management import HistoricalOptimizationStrategy, DefaultAllocationStrategy
+from ftt.portfolio_management import (
+    HistoricalOptimizationStrategy,
+    DefaultAllocationStrategy,
+)
 from ftt.storage.data_objects import is_empty
 from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
 from ftt.storage.data_objects.security_dto import SecurityDTO
@@ -72,7 +75,7 @@ class PortfolioVersionsCommands:
         optimization_result = PortfolioOptimizationHandler().handle(
             portfolio_version_id=portfolio_version_result.value.id,
             optimization_strategy=HistoricalOptimizationStrategy,
-            allocation_strategy=DefaultAllocationStrategy
+            allocation_strategy=DefaultAllocationStrategy,
         )
 
         if optimization_result.is_err():
