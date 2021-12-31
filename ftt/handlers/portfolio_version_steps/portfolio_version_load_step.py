@@ -9,7 +9,7 @@ from ftt.storage.repositories.portfolio_versions_repository import (
 
 class PortfolioVersionLoadStep(AbstractStep):
     """
-    Loads portfolio version from database by its ID
+    Loads portfolio_management version from database by its ID
     """
 
     key = "portfolio_version"

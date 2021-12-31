@@ -9,6 +9,7 @@ from ftt.cli.renderers.portfolio_versions.portfolio_version_details import (
 )
 from ftt.cli.renderers.weights.weights_list import WeightsList
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
+from ftt.handlers.portfolio_optimization_handler import PortfolioOptimizationHandler
 from ftt.handlers.portfolio_version_activation_handler import (
     PortfolioVersionActivationHandler,
 )
@@ -29,8 +30,11 @@ from ftt.handlers.portfolio_version_updation_handler import (
     PortfolioVersionUpdationHandler,
 )
 from ftt.handlers.securities_load_handler import SecuritiesLoadHandler
-from ftt.handlers.weights_calculation_handler import WeightsCalculationHandler
 from ftt.handlers.weights_list_handler import WeightsListHandler
+from ftt.portfolio_management import (
+    HistoricalOptimizationStrategy,
+    DefaultAllocationStrategy,
+)
 from ftt.storage.data_objects import is_empty
 from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
 from ftt.storage.data_objects.security_dto import SecurityDTO
@@ -52,12 +56,12 @@ class PortfolioVersionsCommands:
         positional=True,
         type=int,
     )
-    def balance(
+    def optimize(
         self,
         portfolio_version_id: int,
     ) -> None:
         """
-        Balance portfolio version
+        Optimize portfolio version
 
         `save` False is not yet implemented
         """
@@ -68,20 +72,18 @@ class PortfolioVersionsCommands:
             self.context.console.print(f"[red]{portfolio_version_result.err().value}")
             return
 
-        weights_result = WeightsCalculationHandler().handle(
-            portfolio_version=portfolio_version_result.value,
-            start_period=portfolio_version_result.value.period_start,
-            end_period=portfolio_version_result.value.period_end,
-            interval=portfolio_version_result.value.interval,
-            persist=True,
+        optimization_result = PortfolioOptimizationHandler().handle(
+            portfolio_version_id=portfolio_version_result.value.id,
+            optimization_strategy=HistoricalOptimizationStrategy,
+            allocation_strategy=DefaultAllocationStrategy,
         )
 
-        if weights_result.is_err():
+        if optimization_result.is_err():
             self.context.console.print(
                 "[red]:disappointed: Failed to calculate weights for this portfolio:"
             )
             self.context.console.print(
-                f"    [red]:right_arrow: {weights_result.err().value}"
+                f"    [red]:right_arrow: {optimization_result.err().value}"
             )
             return
 

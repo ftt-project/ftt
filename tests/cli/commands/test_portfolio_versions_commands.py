@@ -17,22 +17,22 @@ class TestPortfolioVersionsCommands:
             "ftt.cli.commands.portfolio_versions_commands.context", new=context
         )
 
-    def test_balance_calculating_weights(
+    def test_optimize_portfolio(
         self, subject, portfolio, portfolio_version, security, mocker, context
     ):
         mocked = mocker.patch(
-            "ftt.cli.commands.portfolio_versions_commands.WeightsCalculationHandler"
+            "ftt.cli.commands.portfolio_versions_commands.PortfolioOptimizationHandler"
         )
         mocked.return_value.handle.return_value = mocker.Mock(is_okay=True)
 
-        subject().balance(portfolio_version.id)
+        subject().optimize(portfolio_version.id)
 
         mocked.return_value.handle.assert_called_once()
 
-    def test_balance_requires_associated_securities(
+    def test_optimize_requires_associated_securities(
         self, subject, portfolio_version, context
     ):
-        subject().balance(portfolio_version_id=portfolio_version.id)
+        subject().optimize(portfolio_version_id=portfolio_version.id)
 
         context.get_context.return_value.console.print.assert_has_calls(
             [
@@ -42,16 +42,16 @@ class TestPortfolioVersionsCommands:
             ]
         )
 
-    def test_balance_prints_error_when_no_specified_portfolio_version_found(
+    def test_optimize_prints_error_when_no_specified_portfolio_version_found(
         self, subject, portfolio, portfolio_version, context
     ):
-        subject().balance(portfolio_version_id=100)
+        subject().optimize(portfolio_version_id=100)
 
         context.get_context.return_value.console.print.assert_has_calls(
             [call("[red]Portfolio Version with ID 100 does not exist")]
         )
 
-    def test_balance_period_and_interval_arguments_are_optional(
+    def test_optimize_period_and_interval_arguments_are_optional(
         self, subject, portfolio, portfolio_version, mocker
     ):
         mocked = mocker.patch(
@@ -59,7 +59,7 @@ class TestPortfolioVersionsCommands:
         )
         mocked.return_value.handle.return_value = mocker.Mock(is_okay=True)
 
-        subject().balance(portfolio_version_id=portfolio_version.id)
+        subject().optimize(portfolio_version_id=portfolio_version.id)
         mocked.return_value.handle.assert_called_once()
 
     def test_activate(self, subject, portfolio, portfolio_version, weight, context):

@@ -2,7 +2,7 @@ from abc import ABCMeta
 
 from result import Err, Ok
 
-from ftt.handlers.handler.retrun_result import ReturnResult
+from ftt.handlers.handler.return_result import ReturnResult
 
 
 class MetaHandler(ABCMeta):

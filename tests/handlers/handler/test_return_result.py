@@ -1,6 +1,6 @@
 import pytest
 
-from ftt.handlers.handler.retrun_result import ReturnResult
+from ftt.handlers.handler.return_result import ReturnResult
 
 
 class TestReturnResult:

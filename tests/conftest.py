@@ -71,6 +71,31 @@ def security():
 
 
 @pytest.fixture
+def security_factory():
+    def _security(symbol="AA.XX"):
+        return Security.create(
+            symbol=symbol,
+            exchange="SYD",
+            company_name="Company AAXX",
+            exchange_name="SYD",
+            quote_type="Stock",
+            type_display="Stock",
+            industry="Technologies",
+            sector="Technology",
+            country="US",
+            short_name="Short name",
+            long_name="Long name",
+            currency="USD",
+            updated_at=datetime.now(),
+            created_at=datetime.now(),
+        )
+
+    yield _security
+
+    Security.delete().execute()
+
+
+@pytest.fixture
 def security_price(security):
     price = SecurityPrice.create(
         security=security,
@@ -93,6 +118,38 @@ def security_price(security):
 
 
 @pytest.fixture
+def security_price_factory():
+    def _security_price(
+        security,
+        dt=None,
+        open=100,
+        high=110,
+        low=90,
+        close=100,
+        volume=1000,
+        interval="5m",
+    ):
+        return SecurityPrice.create(
+            security=security,
+            datetime=dt if dt is not None else datetime.today(),
+            open=open,
+            high=high,
+            low=low,
+            close=close,
+            volume=volume,
+            interval=interval,
+            change=1,
+            percent_change=1,
+            updated_at=datetime.now(),
+            created_at=datetime.now(),
+        )
+
+    yield _security_price
+
+    SecurityPrice.delete().execute()
+
+
+@pytest.fixture
 def portfolio():
     portfolio = Portfolio.create(
         name="Portfolio TEST 1",
@@ -103,6 +160,20 @@ def portfolio():
         yield portfolio
     finally:
         portfolio.delete_instance()
+
+
+@pytest.fixture
+def portfolio_factory():
+    def _portfolio(name):
+        return Portfolio.create(
+            name=name,
+            updated_at=datetime.now(),
+            created_at=datetime.now(),
+        )
+
+    yield _portfolio
+
+    Portfolio.delete().execute()
 
 
 @pytest.fixture
@@ -124,6 +195,32 @@ def portfolio_version(portfolio):
 
 
 @pytest.fixture
+def portfolio_version_factory(portfolio):
+    def _portfolio_version(
+        value=30000.0,
+        portfolio=portfolio,
+        version=1,
+        interval="1mo",
+        period_start=datetime(2020, 1, 1),
+        period_end=datetime(2020, 10, 5),
+    ):
+        return PortfolioVersion.create(
+            portfolio=portfolio,
+            version=version,
+            value=value,
+            period_start=period_start,
+            period_end=period_end,
+            interval=interval,
+            updated_at=datetime.now(),
+            created_at=datetime.now(),
+        )
+
+    yield _portfolio_version
+
+    PortfolioVersion.delete().execute()
+
+
+@pytest.fixture
 def weight(portfolio_version, security):
     weight = Weight.create(
         portfolio_version=portfolio_version,
@@ -137,6 +234,23 @@ def weight(portfolio_version, security):
         yield weight
     finally:
         weight.delete_instance()
+
+
+@pytest.fixture
+def weight_factory():
+    def _weight(portfolio_version, security, planned_position=0, position=0):
+        return Weight.create(
+            portfolio_version=portfolio_version,
+            security=security,
+            planned_position=planned_position,
+            position=position,
+            updated_at=datetime.now(),
+            created_at=datetime.now(),
+        )
+
+    yield _weight
+
+    Weight.delete().execute()
 
 
 @pytest.fixture
@@ -193,3 +307,30 @@ def mock_external_historic_data_requests(mocker):
     ).rename_axis("Date")
 
     return mock
+
+
+@pytest.fixture
+def securities_weights_list_factory(
+    security_factory, weight_factory, security_price_factory
+):
+    def _securities_weights_list(portfolio_version, date_range, interval, n=11):
+        fixture_data = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
+
+        weights = []
+        for i, symbol in enumerate(fixture_data[:n]):
+            security = security_factory(symbol=symbol)
+            for dt in date_range:
+                _ = security_price_factory(
+                    security=security,
+                    dt=dt.to_pydatetime(),
+                    interval=interval,
+                    close=dt.day,
+                )
+            weight = weight_factory(
+                security=security, portfolio_version=portfolio_version
+            )
+            weights.append(weight)
+
+        return weights
+
+    yield _securities_weights_list

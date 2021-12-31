@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 import pytest
 
@@ -15,7 +15,7 @@ class TestSecurityPricesRepository:
     def data(self, security):
         return {
             "security": security,
-            "datetime": datetime.today(),
+            "datetime": datetime.datetime.today(),
             "open": 100,
             "high": 101,
             "low": 99,
@@ -39,3 +39,16 @@ class TestSecurityPricesRepository:
         result2, flag = subject.upsert(data)
         assert flag is not True
         assert result1 == result2
+
+    def test_find_by_security_prices_returns_list_of_prices(
+        self, subject, security, security_price
+    ):
+        result = subject.find_by_security_prices(
+            security=security,
+            interval=security_price.interval,
+            period_start=(security_price.datetime - datetime.timedelta(days=1)),
+            period_end=(security_price.datetime + datetime.timedelta(days=1)),
+        )
+
+        assert len(result) == 1
+        assert result[0] == security_price
