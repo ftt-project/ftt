@@ -77,3 +77,12 @@ class DefaultAllocationStrategy:
                 f"{self.allocation_dto.annual_volatility} does not match actual {sigma}"
             )
         self.allocation_dto.annual_volatility = sigma
+
+
+class AllocationStrategyResolver:
+    strategies = ["default"]
+
+    @classmethod
+    def resolve(cls, strategy_name: str):
+        if strategy_name == "default":
+            return DefaultAllocationStrategy

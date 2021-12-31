@@ -19,6 +19,10 @@ class WeightsCalculateStepResult:
 
 
 class WeightsCalculateStep(AbstractStep):
+    """
+    TODO: deprecate and remove
+    """
+
     key = "weights"
 
     @classmethod

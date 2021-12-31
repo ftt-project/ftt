@@ -4,6 +4,7 @@ import pytest
 from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 from ftt.portfolio_management.optimization_strategies import (
     HistoricalOptimizationStrategy,
+    OptimizationStrategyResolver,
 )
 
 
@@ -25,3 +26,14 @@ class TestHistoricalOptimizationStrategy:
         }
         assert result.sharpe_ratio == 1.7857686182618002
         assert type(result.cov_matrix) == pd.DataFrame
+
+
+class TestOptimizationStrategyResolver:
+    @pytest.fixture
+    def subject(self):
+        return OptimizationStrategyResolver
+
+    def test_resolve_returns_historical_optimization_strategy(self, subject):
+        result = subject.resolve(strategy_name="historical")
+
+        assert result == HistoricalOptimizationStrategy

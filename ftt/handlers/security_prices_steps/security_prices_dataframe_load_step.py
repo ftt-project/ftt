@@ -11,6 +11,10 @@ from ftt.storage.models.security_price import SecurityPrice
 
 
 class SecurityPricesDataframeLoadStep(AbstractStep):
+    """
+    TODO: deprecate and remove
+    """
+
     key = "security_prices"
 
     @classmethod
