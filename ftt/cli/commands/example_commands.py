@@ -9,11 +9,12 @@ from ftt.handlers.portfolio_associate_securities_hanlder import (
 )
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
+from ftt.handlers.portfolio_optimization_handler import PortfolioOptimizationHandler
 from ftt.handlers.portfolio_stats_handler import PortfoliosStatsHandler
 from ftt.handlers.securities_information_prices_loading_handler import (
     SecuritiesInformationPricesLoadingHandler,
 )
-from ftt.handlers.weights_calculation_handler import WeightsCalculationHandler
+from ftt.portfolio_management import HistoricalOptimizationStrategy, DefaultAllocationStrategy
 from ftt.storage import Storage
 from ftt.storage.data_objects.security_dto import SecurityDTO
 
@@ -72,14 +73,11 @@ def example():
         )
 
     with ctx.console.status("[bold green]Calculating weights") as _:
-        result = WeightsCalculationHandler().handle(
-            portfolio_version=portfolio.versions[0],
-            start_period=config.period_start,
-            end_period=config.period_end,
-            interval=config.interval,
-            persist=True,
+        _ = PortfolioOptimizationHandler().handle(
+            portfolio_version_id=portfolio.versions[0].id,
+            optimization_strategy=HistoricalOptimizationStrategy,
+            allocation_strategy=DefaultAllocationStrategy
         )
-        _ = result.value
 
     result = PortfoliosStatsHandler().handle(portfolio_version=portfolio.versions[0])
     portfolio_stats = result.value

@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from ftt.portfolio_management import PortfolioAllocationDTO
+from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 from ftt.portfolio_management.optimization_strategies import (
     HistoricalOptimizationStrategy,
 )

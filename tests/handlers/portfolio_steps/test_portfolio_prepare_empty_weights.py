@@ -3,7 +3,7 @@ import pytest
 from ftt.handlers.portfolio_steps.portfolio_prepare_empty_weights_step import (
     PortfolioPrepareEmptyWeightsStep,
 )
-from ftt.portfolio_management import PortfolioAllocationDTO
+from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 from ftt.storage.data_objects.security_dto import SecurityDTO
 
 

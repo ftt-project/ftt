@@ -1,8 +1,9 @@
+import numpy as np
 import pandas as pd
 from pypfopt import DiscreteAllocation
 from pypfopt.base_optimizer import BaseOptimizer, portfolio_performance
 
-from ftt.portfolio_management import PortfolioAllocationDTO
+from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 
 
 class DefaultAllocationStrategy:
@@ -33,6 +34,27 @@ class DefaultAllocationStrategy:
         )
         alloc, leftover = da.lp_portfolio()
 
+        self.__set_expected_annual_return(mu)
+        self.__set_annual_volatility(sigma)
+        self.allocation_dto.allocation = self.__normalize_allocation(weights.keys().to_list(), alloc)
+        self.allocation_dto.leftover = leftover
+
+        return self.allocation_dto
+
+    def __normalize_allocation(self, symbols, allocation):
+        """
+        Allocation by default comes in as a dict of symbol index and amount.
+        Weights that are too small are ignored.
+        This function returns a dict of symbol and amount with zeros included.
+        """
+        w = dict(zip(symbols, np.zeros(len(symbols)).tolist()))
+        for index, (symbol, sw) in enumerate(w.items()):
+            if index in allocation:
+                w[symbol] = allocation[index]
+
+        return w
+
+    def __set_expected_annual_return(self, mu):
         if (
             self.allocation_dto.expected_annual_return is not None
             and self.allocation_dto.expected_annual_return != mu
@@ -43,6 +65,7 @@ class DefaultAllocationStrategy:
             )
         self.allocation_dto.expected_annual_return = mu
 
+    def __set_annual_volatility(self, sigma):
         if (
             self.allocation_dto.annual_volatility is not None
             and self.allocation_dto.annual_volatility != sigma
@@ -52,10 +75,3 @@ class DefaultAllocationStrategy:
                 f"{self.allocation_dto.annual_volatility} does not match actual {sigma}"
             )
         self.allocation_dto.annual_volatility = sigma
-
-        self.allocation_dto.allocation = pd.Series(
-            index=weights.keys(), data=alloc.values()
-        ).to_dict()
-        self.allocation_dto.leftover = leftover
-
-        return self.allocation_dto

@@ -3,7 +3,7 @@ from typing import List
 from result import Ok, OkErr
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.portfolio_management import PortfolioAllocationDTO
+from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 from ftt.storage.data_objects.security_dto import SecurityDTO
 
 

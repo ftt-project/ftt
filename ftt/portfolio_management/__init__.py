@@ -1,15 +1,5 @@
-from dataclasses import dataclass
-from typing import Optional
+__all__ = ["HistoricalOptimizationStrategy", "DefaultAllocationStrategy"]
 
-import pandas as pd
-
-
-@dataclass
-class PortfolioAllocationDTO:
-    weights: Optional[dict[str, float]] = None
-    allocation: Optional[dict[str, float]] = None
-    leftover: Optional[float] = None
-    expected_annual_return: Optional[float] = None
-    annual_volatility: Optional[float] = None
-    sharpe_ratio: Optional[float] = None
-    cov_matrix: Optional[pd.DataFrame] = None
+from ftt.portfolio_management.allocation_strategies import DefaultAllocationStrategy
+from ftt.portfolio_management.dtos import PortfolioAllocationDTO
+from ftt.portfolio_management.optimization_strategies import HistoricalOptimizationStrategy
