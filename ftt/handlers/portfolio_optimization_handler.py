@@ -18,7 +18,11 @@ from ftt.handlers.security_prices_steps.security_prices_load_step import (
 
 
 class PortfolioOptimizationHandler(Handler):
-    params = ("portfolio_version_id", "optimization_strategy", "allocation_strategy")
+    params = (
+        "portfolio_version_id",
+        "optimization_strategy_name",
+        "allocation_strategy_name",
+    )
 
     handlers = [
         (PortfolioVersionLoadStep, "portfolio_version_id"),
@@ -27,14 +31,14 @@ class PortfolioOptimizationHandler(Handler):
             PortfolioVersionOptimizationStep,
             PortfolioVersionLoadStep.key,
             SecurityPricesLoadStep.key,
-            "optimization_strategy",
+            "optimization_strategy_name",
         ),
         (
             PortfolioVersionAllocationStep,
             PortfolioVersionLoadStep.key,
             SecurityPricesLoadStep.key,
             PortfolioVersionOptimizationStep.key,
-            "allocation_strategy",
+            "allocation_strategy_name",
         ),
         (
             PortfolioWeightsPersistStep,

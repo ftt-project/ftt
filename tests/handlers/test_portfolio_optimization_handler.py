@@ -4,10 +4,6 @@ import pandas as pd
 import pytest
 
 from ftt.handlers.portfolio_optimization_handler import PortfolioOptimizationHandler
-from ftt.portfolio_management.allocation_strategies import DefaultAllocationStrategy
-from ftt.portfolio_management.optimization_strategies import (
-    HistoricalOptimizationStrategy,
-)
 from tests.helpers import reload_record
 
 
@@ -39,8 +35,8 @@ class TestPortfolioOptimizationHandler:
 
         result = subject.handle(
             portfolio_version_id=portfolio_version.id,
-            optimization_strategy=HistoricalOptimizationStrategy,
-            allocation_strategy=DefaultAllocationStrategy,
+            optimization_strategy_name="historical",
+            allocation_strategy_name="default",
         )
 
         assert result.is_ok()

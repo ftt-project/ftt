@@ -25,14 +25,18 @@ class TestPortfolioVersionsCommands:
         )
         mocked.return_value.handle.return_value = mocker.Mock(is_okay=True)
 
-        subject().optimize(portfolio_version.id)
+        subject().optimize(portfolio_version.id, "historical", "default")
 
         mocked.return_value.handle.assert_called_once()
 
     def test_optimize_requires_associated_securities(
         self, subject, portfolio_version, context
     ):
-        subject().optimize(portfolio_version_id=portfolio_version.id)
+        subject().optimize(
+            portfolio_version_id=portfolio_version.id,
+            optimization_strategy="historical",
+            allocation_strategy="default",
+        )
 
         context.get_context.return_value.console.print.assert_has_calls(
             [
@@ -45,7 +49,7 @@ class TestPortfolioVersionsCommands:
     def test_optimize_prints_error_when_no_specified_portfolio_version_found(
         self, subject, portfolio, portfolio_version, context
     ):
-        subject().optimize(portfolio_version_id=100)
+        subject().optimize(portfolio_version_id=100, optimization_strategy="historical")
 
         context.get_context.return_value.console.print.assert_has_calls(
             [call("[red]Portfolio Version with ID 100 does not exist")]
@@ -55,11 +59,14 @@ class TestPortfolioVersionsCommands:
         self, subject, portfolio, portfolio_version, mocker
     ):
         mocked = mocker.patch(
-            "ftt.cli.commands.portfolio_versions_commands.WeightsCalculationHandler"
+            "ftt.cli.commands.portfolio_versions_commands.PortfolioOptimizationHandler"
         )
         mocked.return_value.handle.return_value = mocker.Mock(is_okay=True)
 
-        subject().optimize(portfolio_version_id=portfolio_version.id)
+        subject().optimize(
+            portfolio_version_id=portfolio_version.id,
+            optimization_strategy="historical",
+        )
         mocked.return_value.handle.assert_called_once()
 
     def test_activate(self, subject, portfolio, portfolio_version, weight, context):

@@ -6,6 +6,10 @@ from ftt.storage.repositories.securities_repository import SecuritiesRepository
 
 
 class PortfolioSecuritiesLoadStep(AbstractStep):
+    """
+    TODO: deprecate and remove
+    """
+
     key = "securities"
 
     @classmethod

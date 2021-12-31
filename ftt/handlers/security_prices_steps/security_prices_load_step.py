@@ -1,4 +1,4 @@
-from result import OkErr, Ok
+from result import OkErr, Ok, Err
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.data_objects.portfolio_security_prices_range_dto import (
@@ -17,6 +17,11 @@ class SecurityPricesLoadStep(AbstractStep):
         securities = SecuritiesRepository.find_securities(
             portfolio_version=portfolio_version
         )
+        if len(securities) == 0:
+            return Err(
+                f"No securities associated with portfolio version {portfolio_version.id}"
+            )
+
         prices = {}
         datetime_list = None
         for security in securities:

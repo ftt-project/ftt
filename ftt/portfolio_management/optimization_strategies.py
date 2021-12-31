@@ -1,7 +1,7 @@
 import riskfolio as rp
 from riskfolio import Sharpe
 
-from ftt.portfolio_management import PortfolioAllocationDTO
+from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 
 
 class HistoricalOptimizationStrategy:
@@ -37,3 +37,12 @@ class HistoricalOptimizationStrategy:
             sharpe_ratio=sharpe,
             cov_matrix=self.portfolio.cov,
         )
+
+
+class OptimizationStrategyResolver:
+    strategies = ["historical"]
+
+    @classmethod
+    def resolve(cls, strategy_name: str):
+        if strategy_name == "historical":
+            return HistoricalOptimizationStrategy
