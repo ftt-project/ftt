@@ -1,8 +1,8 @@
 from datetime import date
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 import pendulum
-from result import Err, Ok, OkErr
+from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 
@@ -20,7 +20,7 @@ class PortfolioConfigParserStep(AbstractStep):
     key = "config"
 
     @classmethod
-    def process(cls, raw_config) -> OkErr:
+    def process(cls, raw_config) -> Result[PortfolioConfig, Optional[list]]:
         keys = ["name", "budget", "symbols", "period_start", "period_end", "interval"]
         errors = []
         for k in keys:

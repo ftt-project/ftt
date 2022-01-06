@@ -1,7 +1,9 @@
+from typing import Optional
+
 from prompt_toolkit import prompt
 from prompt_toolkit.formatted_text import PygmentsTokens
 from prompt_toolkit.validation import Validator
-from result import OkErr, Ok
+from result import Ok, Result
 
 from ftt.cli.token import Token
 from ftt.handlers.handler.abstract_step import AbstractStep
@@ -12,7 +14,7 @@ class PortfolioFieldsPromptsStep(AbstractStep):
     key = "portfolio_dto"
 
     @classmethod
-    def process(cls) -> OkErr:
+    def process(cls) -> Result[PortfolioDTO, Optional[str]]:
         name = cls.prompt_name()
         dto = PortfolioDTO(
             name=name,

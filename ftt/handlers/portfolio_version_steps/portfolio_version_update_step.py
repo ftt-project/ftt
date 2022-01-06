@@ -1,4 +1,6 @@
-from result import OkErr, Err, Ok
+from typing import Optional
+
+from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
@@ -15,7 +17,7 @@ class PortfolioVersionUpdateStep(AbstractStep):
     @classmethod
     def process(
         cls, portfolio_version: PortfolioVersion, dto: PortfolioVersionDTO
-    ) -> OkErr:
+    ) -> Result[PortfolioVersion, Optional[str]]:
         try:
             result = PortfolioVersionsRepository.update(portfolio_version, dto)
         except PersistingError as e:

@@ -1,5 +1,7 @@
+from typing import Optional
+
 import peewee
-from result import OkErr, Ok, Err
+from result import Ok, Err, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.models import PortfolioVersion, Security
@@ -12,7 +14,7 @@ class WeightsDeleteStep(AbstractStep):
     @classmethod
     def process(
         cls, portfolio_version: PortfolioVersion, securities: Security
-    ) -> OkErr:
+    ) -> Result[bool, Optional[str]]:
         results = []
         for security in securities:
             try:
@@ -29,6 +31,6 @@ class WeightsDeleteStep(AbstractStep):
                 )
 
         if all([result.is_ok() for result in results]):
-            return Ok()
+            return Ok(True)
         else:
             return Err("; ".join([result.value for result in results]))

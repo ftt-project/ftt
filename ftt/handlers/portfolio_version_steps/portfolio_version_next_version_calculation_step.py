@@ -1,4 +1,6 @@
-from result import OkErr, Ok
+from typing import Optional
+
+from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.models import Portfolio
@@ -11,7 +13,7 @@ class PortfolioVersionNextVersionCalculationStep(AbstractStep):
     key = "next_version"
 
     @classmethod
-    def process(cls, portfolio: Portfolio) -> OkErr:
+    def process(cls, portfolio: Portfolio) -> Result[int, Optional[str]]:
         result = PortfolioVersionsRepository.get_latest_version(portfolio.id)
 
         if result is None:

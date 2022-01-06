@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-from pypfopt import DiscreteAllocation
-from pypfopt.base_optimizer import BaseOptimizer, portfolio_performance
+from pypfopt import DiscreteAllocation  # type: ignore
+from pypfopt.base_optimizer import BaseOptimizer, portfolio_performance  # type: ignore
 
 from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 

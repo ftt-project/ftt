@@ -1,9 +1,10 @@
 from dataclasses import dataclass
+from typing import Optional
 
 import pypfopt  # type: ignore
 from pandas import DataFrame
 from pypfopt import DiscreteAllocation, EfficientFrontier, expected_returns, risk_models
-from result import Err, Ok, OkErr
+from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.models import PortfolioVersion
@@ -30,7 +31,7 @@ class WeightsCalculateStep(AbstractStep):
         cls,
         security_prices: DataFrame,
         portfolio_version: PortfolioVersion,
-    ) -> OkErr:
+    ) -> Result[WeightsCalculateStepResult, Optional[str]]:
         try:
             _ = security_prices.pct_change().dropna()
 

@@ -1,4 +1,6 @@
-from result import OkErr, Ok
+from typing import Optional
+
+from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.portfolio_management.allocation_strategies import AllocationStrategyResolver
@@ -16,7 +18,7 @@ class PortfolioVersionAllocationStep(AbstractStep):
         portfolio_version: PortfolioVersion,
         allocation_strategy_name,
         security_prices,
-    ) -> OkErr:
+    ) -> Result[PortfolioAllocationDTO, Optional[str]]:
         latest_prices = {k: v[-1] for k, v in security_prices.prices.items()}
         allocation_strategy = cls.__resolve_optimization_strategy(
             allocation_strategy_name

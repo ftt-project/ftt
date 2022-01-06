@@ -1,4 +1,4 @@
-from pygments.token import Token
+from pygments.token import Token  # type: ignore
 
 
 class Token:

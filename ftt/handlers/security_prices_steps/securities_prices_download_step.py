@@ -1,8 +1,8 @@
-from typing import List, Union
+from typing import List, Union, Optional
 
 import yfinance as yf
 from pandas_datareader import data as pdr
-from result import Err, Ok, OkErr
+from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
@@ -18,7 +18,7 @@ class SecurityPricesDownloadStep(AbstractStep):
         cls,
         securities: List[Security],
         portfolio_version: Union[PortfolioVersionDTO, PortfolioVersion],
-    ) -> OkErr:
+    ) -> Result[dict, Optional[str]]:
         yf.pdr_override()
         symbols = [security.symbol for security in securities]
         try:
@@ -38,4 +38,4 @@ class SecurityPricesDownloadStep(AbstractStep):
 
             return Ok(data)
         except Exception as e:
-            return Err(e)
+            return Err(str(e))

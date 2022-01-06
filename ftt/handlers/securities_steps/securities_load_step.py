@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Optional
 
 import peewee
-from result import Err, Ok, OkErr
+from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
@@ -11,7 +11,7 @@ class SecuritiesLoadStep(AbstractStep):
     key = "securities"
 
     @classmethod
-    def process(cls, security_symbols: List[str]) -> OkErr:
+    def process(cls, security_symbols: List[str]) -> Result[list, Optional[str]]:
         results = []
         for security_symbol in security_symbols:
             try:

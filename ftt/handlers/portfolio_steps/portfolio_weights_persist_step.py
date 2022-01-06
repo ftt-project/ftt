@@ -1,7 +1,10 @@
-from result import Ok
+from typing import List, Optional
+
+from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.portfolio_management.dtos import PortfolioAllocationDTO
+from ftt.storage.models import Weight
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 from ftt.storage.repositories.weights_repository import WeightsRepository
@@ -15,7 +18,7 @@ class PortfolioWeightsPersistStep(AbstractStep):
         cls,
         portfolio_version: PortfolioVersion,
         portfolio_version_allocation: PortfolioAllocationDTO,
-    ) -> Ok:
+    ) -> Result[List[Weight], Optional[str]]:
         result = []
 
         for symbol, qty in portfolio_version_allocation.allocation.items():

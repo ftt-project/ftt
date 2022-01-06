@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 import pandas as pd
-from result import Ok, OkErr
+from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage import Storage
@@ -24,7 +24,7 @@ class SecurityPricesDataframeLoadStep(AbstractStep):
         start_period: datetime,
         end_period: datetime,
         interval: str,
-    ) -> OkErr:
+    ) -> Result[pd.DataFrame, Optional[str]]:
         dataframes = []
         for security in securities:
             query, params = (

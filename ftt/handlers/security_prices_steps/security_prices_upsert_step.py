@@ -1,7 +1,7 @@
-from typing import Dict, Union
+from typing import Dict, Union, Optional
 
 import pandas as pd
-from result import Ok, OkErr
+from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
@@ -19,7 +19,7 @@ class SecurityPricesUpsertStep(AbstractStep):
         cls,
         security_prices_data: Dict[str, pd.DataFrame],
         portfolio_version: Union[PortfolioVersion, PortfolioVersionDTO],
-    ) -> OkErr:
+    ) -> Result[dict, Optional[str]]:
         mapped_data = [
             (symbol, SecurityPriceMapper.from_dataframe(dataframe).to_dicts())
             for symbol, dataframe in security_prices_data.items()

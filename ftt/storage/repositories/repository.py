@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import asdict
 from datetime import datetime
 
 import peewee
-from playhouse.shortcuts import update_model_from_dict
+from playhouse.shortcuts import update_model_from_dict  # type: ignore
 
 from ftt.storage.data_objects import DTOInterface
 from ftt.storage.errors import PersistingError
@@ -11,21 +11,6 @@ from ftt.storage.models.base import Base
 
 
 class Repository(ABC):
-    @staticmethod
-    @abstractmethod
-    def create(self, data: dict) -> Base:
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def save(self, model: Base) -> Base:
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def get_by_id(self, id: int) -> Base:
-        pass
-
     @classmethod
     def _create(cls, model_class, data) -> Base:
         data["created_at"] = datetime.now()
