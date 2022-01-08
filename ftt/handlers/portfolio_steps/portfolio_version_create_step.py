@@ -1,10 +1,11 @@
 from datetime import datetime
+from typing import Optional
 
-from result import Err, Ok, OkErr
+from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.models.portfolio import Portfolio
-from ftt.storage.models.portfolio_version import ACCEPTABLE_INTERVALS
+from ftt.storage.models.portfolio_version import ACCEPTABLE_INTERVALS, PortfolioVersion
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )
@@ -22,7 +23,7 @@ class PortfolioVersionCreateStep(AbstractStep):
         period_start: datetime,
         period_end: datetime,
         interval: str,
-    ) -> OkErr:
+    ) -> Result[PortfolioVersion, Optional[str]]:
         if interval not in ACCEPTABLE_INTERVALS:
             return Err(
                 f"Interval must be one of {ACCEPTABLE_INTERVALS} but given {interval}."

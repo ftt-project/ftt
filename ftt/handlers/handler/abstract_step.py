@@ -1,5 +1,4 @@
-from abc import ABCMeta, abstractmethod
-from typing import Any
+from abc import ABCMeta
 
 
 class MetaStep(ABCMeta):
@@ -14,7 +13,4 @@ class MetaStep(ABCMeta):
 
 
 class AbstractStep(metaclass=MetaStep):
-    @classmethod
-    @abstractmethod
-    def process(cls, *args: Any):
-        pass
+    pass

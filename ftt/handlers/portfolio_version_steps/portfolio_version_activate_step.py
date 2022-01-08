@@ -1,4 +1,6 @@
-from result import OkErr, Ok
+from typing import Optional
+
+from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.models import PortfolioVersion
@@ -15,7 +17,9 @@ class PortfolioVersionActivateStep(AbstractStep):
     key = "portfolio_version"
 
     @classmethod
-    def process(cls, portfolio_version: PortfolioVersion) -> OkErr:
+    def process(
+        cls, portfolio_version: PortfolioVersion
+    ) -> Result[PortfolioVersion, Optional[str]]:
         portfolio_version.active = True
         result = PortfolioVersionsRepository.save(portfolio_version)
         return Ok(result)

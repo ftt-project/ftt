@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from ftt.storage.data_objects import DTOInterface
 
@@ -6,11 +7,11 @@ from ftt.storage.data_objects import DTOInterface
 @dataclass
 class SecurityDTO(DTOInterface):
     symbol: str
-    quote_type: str = None
-    sector: str = None
-    country: str = None
-    industry: str = None
-    currency: str = None
-    exchange: str = None
-    short_name: str = None
-    long_name: str = None
+    quote_type: Optional[str] = None
+    sector: Optional[str] = None
+    country: Optional[str] = None
+    industry: Optional[str] = None
+    currency: Optional[str] = None
+    exchange: Optional[str] = None
+    short_name: Optional[str] = None
+    long_name: Optional[str] = None

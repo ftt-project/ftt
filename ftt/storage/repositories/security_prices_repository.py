@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Tuple
+from typing import Tuple
 
 from ftt.storage.models import Security
 from ftt.storage.models.security_price import SecurityPrice
@@ -8,7 +8,7 @@ from ftt.storage.repositories.repository import Repository
 
 class SecurityPricesRepository(Repository):
     @classmethod
-    def upsert(cls, data: List[dict]) -> Tuple[SecurityPrice, bool]:
+    def upsert(cls, data: dict) -> Tuple[SecurityPrice, bool]:
         data["updated_at"] = datetime.now()
         data["created_at"] = datetime.now()
         data["change"] = data["close"] - data["open"]

@@ -1,9 +1,12 @@
+from typing import Optional
+
 import pandas as pd
-from result import OkErr, Ok
+from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.portfolio_management.optimization_strategies import (
     OptimizationStrategyResolver,
+    AbstractOptimizationStrategy,
 )
 from ftt.storage.data_objects.portfolio_security_prices_range_dto import (
     PortfolioSecurityPricesRangeDTO,
@@ -20,7 +23,7 @@ class PortfolioVersionOptimizationStep(AbstractStep):
         optimization_strategy_name: str,
         portfolio_version: PortfolioVersion,
         security_prices: PortfolioSecurityPricesRangeDTO,
-    ) -> OkErr:
+    ) -> Result[AbstractOptimizationStrategy, Optional[str]]:
         returns = pd.DataFrame(
             data=security_prices.prices,
             index=pd.to_datetime(security_prices.datetime_list),

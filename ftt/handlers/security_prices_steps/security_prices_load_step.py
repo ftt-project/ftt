@@ -1,4 +1,6 @@
-from result import OkErr, Ok, Err
+from typing import Optional
+
+from result import Ok, Err, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.data_objects.portfolio_security_prices_range_dto import (
@@ -13,7 +15,9 @@ class SecurityPricesLoadStep(AbstractStep):
     key = "security_prices"
 
     @classmethod
-    def process(cls, portfolio_version: PortfolioVersion) -> OkErr:
+    def process(
+        cls, portfolio_version: PortfolioVersion
+    ) -> Result[PortfolioSecurityPricesRangeDTO, Optional[str]]:
         securities = SecuritiesRepository.find_securities(
             portfolio_version=portfolio_version
         )

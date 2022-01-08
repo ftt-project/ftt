@@ -1,5 +1,7 @@
+from typing import Optional
+
 import yaml
-from result import Err, Ok, OkErr
+from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 
@@ -8,7 +10,7 @@ class PortfolioConfigFileReaderStep(AbstractStep):
     key = "raw_config"
 
     @classmethod
-    def process(cls, path: str) -> OkErr:
+    def process(cls, path: str) -> Result[dict, Optional[Exception]]:
         try:
             stream = open(path, "r")
             config = yaml.safe_load(stream)

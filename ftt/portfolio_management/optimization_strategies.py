@@ -1,10 +1,16 @@
-import riskfolio as rp
+from abc import ABC
+
+import riskfolio as rp  # type: ignore
 from riskfolio import Sharpe
 
 from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 
 
-class HistoricalOptimizationStrategy:
+class AbstractOptimizationStrategy(ABC):
+    pass
+
+
+class HistoricalOptimizationStrategy(AbstractOptimizationStrategy):
     def __init__(self, returns):
         self.returns = returns
         self.portfolio = rp.Portfolio(returns=returns)

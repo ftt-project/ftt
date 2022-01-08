@@ -1,6 +1,6 @@
-from typing import List
+from typing import List, Optional
 
-from result import Ok, OkErr
+from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.portfolio_management.dtos import PortfolioAllocationDTO
@@ -11,9 +11,11 @@ class PortfolioPrepareEmptyWeightsStep(AbstractStep):
     key = "portfolio_version_allocation"
 
     @classmethod
-    def process(cls, securities: List[SecurityDTO]) -> OkErr:
+    def process(
+        cls, securities: List[SecurityDTO]
+    ) -> Result[PortfolioAllocationDTO, Optional[str]]:
         result = dict(
-            zip([security.symbol for security in securities], [0 for _ in securities])
+            zip([security.symbol for security in securities], [0.0 for _ in securities])
         )
         allocation_dto = PortfolioAllocationDTO(
             weights=result,

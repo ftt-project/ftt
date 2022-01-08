@@ -1,6 +1,9 @@
-from result import Err, Ok, OkErr
+from typing import List, Optional
+
+from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
+from ftt.storage.models import Security
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 
@@ -13,7 +16,9 @@ class PortfolioSecuritiesLoadStep(AbstractStep):
     key = "securities"
 
     @classmethod
-    def process(cls, portfolio_version: PortfolioVersion) -> OkErr:
+    def process(
+        cls, portfolio_version: PortfolioVersion
+    ) -> Result[List[Security], Optional[str]]:
         securities = SecuritiesRepository.find_securities(portfolio_version)
 
         if len(securities) == 0:

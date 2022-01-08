@@ -1011,11 +1011,11 @@ use_chardet_on_py3 = ["chardet (>=3.0.2,<5)"]
 
 [[package]]
 name = "result"
-version = "0.6.0"
-description = "A rust-like result type for Python"
+version = "0.7.0"
+description = "A Rust-like result type for Python"
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.6"
 
 [[package]]
 name = "rich"
@@ -1311,7 +1311,7 @@ requests = ">=2.20"
 [metadata]
 lock-version = "1.1"
 python-versions = "3.9.5"
-content-hash = "f0c96c93166e4dfe703cb07ec56e58cd7270e3aa4de3c31ec71dae0d097da50e"
+content-hash = "e90d8a4954cff4117bfda8c3eff26cf44b08c8824a3118e6f5c36d45802649fa"
 
 [metadata.files]
 appdirs = [
@@ -2182,8 +2182,8 @@ requests = [
     {file = "requests-2.26.0.tar.gz", hash = "sha256:b8aa58f8cf793ffd8782d3d8cb19e66ef36f7aba4353eec859e74678b01b07a7"},
 ]
 result = [
-    {file = "result-0.6.0-py3-none-any.whl", hash = "sha256:31d632b1aaca74e3798e700ae5a9a9a752fee639a5f054080bed7c8086170567"},
-    {file = "result-0.6.0.tar.gz", hash = "sha256:3c69a9d76b305957eb8d7f036cb5ed5af561f48624f705b5e9cff042f560c3d2"},
+    {file = "result-0.7.0-py3-none-any.whl", hash = "sha256:97dcc4b2c6b376713c8de1b49d583a272e05ea2cd45e7fd18a3e8be42fc9fa6f"},
+    {file = "result-0.7.0.tar.gz", hash = "sha256:bd649435fbf457de32e5e941d63d787c21193b126d48c848458ddda1683de980"},
 ]
 rich = [
     {file = "rich-9.13.0-py3-none-any.whl", hash = "sha256:9004f6449c89abadf689dad6f92393e760b8c3a8a8c4ea6d8d474066307c0e66"},

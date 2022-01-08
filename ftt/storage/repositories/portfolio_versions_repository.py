@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import peewee
 
@@ -30,7 +30,7 @@ class PortfolioVersionsRepository(Repository):
         raise NotImplementedError()
 
     @classmethod
-    def get_latest_version(cls, portfolio_id: int) -> PortfolioVersion:
+    def get_latest_version(cls, portfolio_id: int) -> Union[PortfolioVersion, None]:
         """
         TODO: use model instead of ID
         """

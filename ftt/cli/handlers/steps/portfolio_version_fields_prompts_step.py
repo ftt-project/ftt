@@ -1,10 +1,11 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Optional
 
 from prompt_toolkit import prompt
 from prompt_toolkit.formatted_text import PygmentsTokens
 from prompt_toolkit.validation import Validator
-from result import OkErr, Ok
+from result import Ok, Result
 
 from ftt.cli.token import Token
 from ftt.handlers.handler.abstract_step import AbstractStep
@@ -16,7 +17,9 @@ class PortfolioVersionFieldsPromptsStep(AbstractStep):
     key = "portfolio_version_dto"
 
     @classmethod
-    def process(cls, defaults: PortfolioVersionDTO = PortfolioVersionDTO()) -> OkErr:
+    def process(
+        cls, defaults: PortfolioVersionDTO = PortfolioVersionDTO()
+    ) -> Result[PortfolioVersionDTO, Optional[str]]:
         value = cls.prompt_value(defaults)
         period_start = cls.prompt_period(
             defaults.period_start, "Period start", datetime(1950, 1, 1)
