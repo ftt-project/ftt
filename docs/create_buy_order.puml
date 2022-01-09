@@ -1,0 +1,28 @@
+@startuml
+participant "PortfolioVersionsCommand#create_orders" as pvcom
+participant CreateBuyOrdersHandler as cbohandl
+participant OrderPrepareStep as oprepstep
+participant OrderProcessStep as cprocstep
+participant IBApp
+
+pvcom -> cbohandl : handle(\n  securities_weights=dict[SecuritySymbol, WeightValue]\n)
+activate cbohandl
+
+cbohandl -> oprepstep : process(\n  securities_weights=dict[SecuritySymbol, WeightValue]\n)
+oprepstep --> cbohandl : prepared_orders=dict[SecuritySymbol, OrderDTO]
+
+cbohandl -> cprocstep : process(\n  securities_weights=dict[SecuritySymbol, WeightValue],\n  prepared_orders=dict[SecuritySymbol, OrderDTO]\n)
+loop each (SecuritySymbol, Contract, Order)
+  cprocstep -> IBApp : placeOrder(int, Contract, Order)
+  create collections OrdersRegistry
+  activate OrdersRegistry
+  cprocstep -> OrdersRegistry : create(OrderDTO)
+  OrdersRegistry --> cprocstep : Order
+  deactivate OrdersRegistry
+end
+cprocstep --> cbohandl : processed_orders=list[Order]
+
+deactivate cbohandl
+
+cbohandl --> pvcom : processed_orders=list[Order]
+@enduml
