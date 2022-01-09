@@ -1,9 +1,14 @@
 @startuml
+header Financial Trading Tools
+title Create Buy Order Sequence Diagram
+
 participant "PortfolioVersionsCommand#create_orders" as pvcom
 participant CreateBuyOrdersHandler as cbohandl
 participant OrderPrepareStep as oprepstep
 participant OrderProcessStep as cprocstep
 participant IBApp
+
+[-> IBApp : threading.Thread.start()
 
 pvcom -> cbohandl : handle(\n  securities_weights=dict[SecuritySymbol, WeightValue]\n)
 activate cbohandl
