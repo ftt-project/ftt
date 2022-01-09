@@ -29,7 +29,7 @@ pyfolio = {git = "https://github.com/stzp777/pyfolio"}
 #jupyterlab = "^3.0.0"
 #QuantStats = "^0.0.25"
 pendulum = "^2.1.2"
-cvxopt = "1.2.5"
+cvxopt = "1.2.7"
 pyportfolioopt = "^1.2.7"
 ibpythonic = "^0.1.6"
 IbPy2 = "^0.8.0"
