@@ -1,4 +1,4 @@
-from abc import ABC
+import abc
 
 import riskfolio as rp  # type: ignore
 from riskfolio import Sharpe
@@ -6,11 +6,13 @@ from riskfolio import Sharpe
 from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 
 
-class AbstractOptimizationStrategy(ABC):
-    pass
+class AbstractOptimizationStrategy(metaclass=abc.ABCMeta):
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        return hasattr(subclass, "optimize") and callable(subclass.optimize)
 
 
-class HistoricalOptimizationStrategy(AbstractOptimizationStrategy):
+class HistoricalOptimizationStrategy:
     def __init__(self, returns):
         self.returns = returns
         self.portfolio = rp.Portfolio(returns=returns)
@@ -45,10 +47,61 @@ class HistoricalOptimizationStrategy(AbstractOptimizationStrategy):
         )
 
 
+class RiskParityOptimizationStrategy:
+    def __init__(self, returns):
+        self.returns = returns
+        self.portfolio = rp.Portfolio(returns=returns)
+
+    def optimize(self):
+        # TODO: method_mu and method_cov must be options and accessible in CLI as options
+        method_mu = (
+            "hist"  # Method to estimate expected returns based on historical data.
+        )
+        method_cov = (
+            "hist"  # Method to estimate covariance matrix based on historical data.
+        )
+        self.portfolio.assets_stats(method_mu=method_mu, method_cov=method_cov, d=0.94)
+
+        model = "Classic"  # Could be Classic (historical) or FM (Factor Model)
+        rm = "MV"  # Risk measure used, this time will be variance
+        hist = (
+            True  # Use historical scenarios for risk measures that depend on scenarios
+        )
+        rf = 0  # Risk free rate
+        b = None  # Risk contribution constraints vector
+
+        weights = self.portfolio.rp_optimization(
+            model=model, rm=rm, rf=rf, b=b, hist=hist
+        )
+
+        sharpe = Sharpe(
+            weights,
+            mu=self.portfolio.mu,
+            returns=self.returns,
+            cov=self.portfolio.cov,
+            rf=rf,
+        )
+
+        return PortfolioAllocationDTO(
+            weights=weights.to_dict()["weights"],
+            sharpe_ratio=sharpe,
+            cov_matrix=self.portfolio.cov,
+        )
+
+
 class OptimizationStrategyResolver:
-    strategies = ["historical"]
+    _strategies = {
+        "historical": HistoricalOptimizationStrategy,
+        "risk_parity": RiskParityOptimizationStrategy,
+    }
+
+    @classmethod
+    def strategies(cls):
+        return cls._strategies.keys()
 
     @classmethod
     def resolve(cls, strategy_name: str):
-        if strategy_name == "historical":
-            return HistoricalOptimizationStrategy
+        try:
+            return cls._strategies[strategy_name]
+        except KeyError:
+            raise ValueError(f"Unknown optimization strategy {strategy_name}")

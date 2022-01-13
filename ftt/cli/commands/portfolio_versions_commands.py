@@ -61,7 +61,7 @@ class PortfolioVersionsCommands:
         description="Optimization strategy",
         positional=True,
         type=str,
-        choices=OptimizationStrategyResolver.strategies,
+        choices=OptimizationStrategyResolver.strategies(),
     )
     @argument(
         "allocation_strategy",
