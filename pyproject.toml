@@ -1,7 +1,8 @@
 [tool.poetry]
 name = "ftt"
 version = "0.1.0"
-description = ""
+description = "Financial Trading Tools"
+keywords = ["ftt", "finance", "stocks", "asset-allocation", "portfolio-optimization", "interactive-brokers", "ib", "portfolio-rebalancing", "portfolio-management"]
 authors = ["Artem Melnykov <melnykov.artem.v@gmail.com>"]
 
 [tool.poetry.dependencies]
@@ -15,13 +16,13 @@ peewee = "^3.14.0"
 rich = "^9.5.1"
 chime = "^0.6.0"
 backtrader = "^1.9.76"
-pyfolio = {git = "https://github.com/stzp777/pyfolio"}
+#pyfolio = {git = "https://github.com/stzp777/pyfolio"}
 pendulum = "^2.1.2"
 cvxopt = "1.2.7"
 pyportfolioopt = "^1.2.7"
 ibpythonic = "^0.1.6"
 IbPy2 = "^0.8.0"
-ibapi = {path = "vendors/pythonclient"}
+#ibapi = {path = "vendors/pythonclient"}
 python-dotenv = "^0.17.0"
 mypy = "^0.812"
 python-nubia = "^0.2b5"
@@ -29,6 +30,7 @@ result = "^0.7.0"
 Riskfolio-Lib = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
+nuitka = "0.6.19.1"
 autopep8 = "^1.5.4"
 isort = "^5.9.1"
 pytest-mock = "^3.5.1"
@@ -36,6 +38,7 @@ pytest = "^6.2.3"
 flake8 = "^3.9.1"
 black = "^20.8b1"
 pylint = "^2.6.0"
+zstandard = "^0.16.0"
 
 [build-system]
 requires = ["poetry>=0.12"]

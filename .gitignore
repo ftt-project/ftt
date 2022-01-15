@@ -136,3 +136,12 @@ data/db/
 *.db
 
 pyvenv.cfg
+
+ftt.build/
+ftt.dist/
+ftt.onefile-build/
+output/
+build/
+dist/
+ftt.cpython-39-darwin.so
+ftt.bin

@@ -70,3 +70,11 @@ pyenv install PYTHON_VERSION
 pip install cmake
 poetry update
 ```
+
+## Build
+
+```commandline
+poetry lock
+poetry export --without-hashes -f requirements.txt > requirements.txt
+pyoxidizer run
+```
