@@ -11,6 +11,7 @@ class Portfolio(Base):
     )
     created_at = peewee.DateTimeField(default=datetime.now)
     updated_at = peewee.DateTimeField()
+    deleted_at = peewee.DateTimeField(null=True)
 
     class Meta:
         indexes = ((("name",), True),)
