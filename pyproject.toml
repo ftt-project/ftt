@@ -6,7 +6,6 @@ authors = ["Artem Melnykov <melnykov.artem.v@gmail.com>"]
 
 packages = [
     { include = "ftt" },
-    { include = "vendors/pythonclient" }
 ]
 
 [tool.poetry.dependencies]
