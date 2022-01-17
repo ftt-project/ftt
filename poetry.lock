@@ -307,16 +307,11 @@ woff = ["zopfli (>=0.1.4)", "brotlicffi (>=0.8.0)", "brotli (>=1.0.1)"]
 
 [[package]]
 name = "ibapi"
-version = "9.76.1"
-description = "Python IB API"
+version = "9.81.1.post1"
+description = "Official Interactive Brokers API"
 category = "main"
 optional = false
-python-versions = "*"
-develop = false
-
-[package.source]
-type = "directory"
-url = "vendors/pythonclient"
+python-versions = ">=3.1"
 
 [[package]]
 name = "ibpy2"
@@ -1311,7 +1306,7 @@ requests = ">=2.20"
 [metadata]
 lock-version = "1.1"
 python-versions = "3.9.5"
-content-hash = "01fce2fdc7d493fca978cb7f5461e81010a3624420c351f2e267a5937083b611"
+content-hash = "d2a803ae2acb30ac67df5ad633b5396aa97571fddd024b225424ff14379029dd"
 
 [metadata.files]
 appdirs = [
@@ -1494,7 +1489,9 @@ fonttools = [
     {file = "fonttools-4.28.5-py3-none-any.whl", hash = "sha256:edf251d5d2cc0580d5f72de4621c338d8c66c5f61abb50cf486640f73c8194d5"},
     {file = "fonttools-4.28.5.zip", hash = "sha256:545c05d0f7903a863c2020e07b8f0a57517f2c40d940bded77076397872d14ca"},
 ]
-ibapi = []
+ibapi = [
+    {file = "ibapi-9.81.1.post1.tar.gz", hash = "sha256:49f6678bf4cced996920f32ad4b48e6897749ac30ba14a661082285f4ec09cd6"},
+]
 ibpy2 = [
     {file = "IbPy2-0.8.0.tar.gz", hash = "sha256:f0f401734bfa2573f9f5bae212ce8d2a48b6779bd153dd11e7603a34f4fcfd7c"},
 ]
