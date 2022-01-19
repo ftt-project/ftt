@@ -69,3 +69,10 @@ class TestPortfoliosRepository:
 
         assert "Failed to persist `Portfolio` with params" in str(exc.value)
         assert "CHECK constraint failed" in str(exc.value)
+
+    def test_delete_return_model(self, subject, portfolio):
+        result = subject.delete(portfolio)
+
+        assert result.deleted_at is not None
+        assert result == portfolio
+        assert Portfolio.get(portfolio.id) == portfolio

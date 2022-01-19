@@ -56,3 +56,10 @@ class PortfoliosRepository(Repository):
     @classmethod
     def update(cls, portfolio: Portfolio, dto: DTOInterface) -> Portfolio:
         return cls._update(portfolio, dto)
+
+    @classmethod
+    def delete(cls, portfolio: Portfolio) -> Portfolio:
+        portfolio.deleted_at = datetime.now()
+        portfolio.save()
+
+        return portfolio
