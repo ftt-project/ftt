@@ -60,6 +60,7 @@ class PortfoliosRepository(Repository):
     @classmethod
     def delete(cls, portfolio: Portfolio) -> Portfolio:
         portfolio.deleted_at = datetime.now()
+        portfolio.updated_at = datetime.now()
         portfolio.save()
 
         return portfolio
