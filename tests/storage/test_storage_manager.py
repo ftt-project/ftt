@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from ftt.storage.storage_manager import StorageManager
 from ftt.storage.models.security import Security
@@ -6,7 +8,7 @@ from ftt.storage.models.security import Security
 class TestStorageManager:
     @pytest.fixture
     def subject(self):
-        return StorageManager(db_name="ftt", environment="test")
+        return StorageManager(db_name="ftt", environment="test", root_path=os.getcwd())
 
     @pytest.fixture
     def context(self, mocker):

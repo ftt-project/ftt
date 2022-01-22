@@ -1,3 +1,3 @@
-from ftt.cli.shell import Shell
+from ftt.cli.application import Application
 
-Shell.initialize_and_run()
+Application.initialize_and_run()
