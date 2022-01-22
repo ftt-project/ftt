@@ -11,17 +11,6 @@ class Context(context.Context):
         self.console = Console()
 
     def on_connected(self, *args, **kwargs):
-        # from ftt.cli.application import APPLICATION_NAME
-        # result = DatabaseStructureInitializationHandler().handle(environment=self.environment, application_name=APPLICATION_NAME)
-        # if result.is_err():
-        #     self.console.print(result.unwrap_err())
-        #     exit(1)
-        #
-        # if result.value.first_run:
-        #     self.console.print("First run detected, running database structure initialization")
-        #     pass
-
-        # print version
         pass
 
     def set_environment(self, environment):

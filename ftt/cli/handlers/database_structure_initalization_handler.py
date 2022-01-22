@@ -13,6 +13,7 @@ class DatabaseStructureInitializationHandler(Handler):
 
     handlers = [
         (InitializeApplicationConfigStep, "environment", "application_name"),
+        (SetWorkingDirectoryStep, InitializeApplicationConfigStep.key),
         (FirstRunDetectStep, InitializeApplicationConfigStep.key),
         (RootFolderSetupStep, InitializeApplicationConfigStep.key),
         (DatabaseSetupStep, InitializeApplicationConfigStep.key),

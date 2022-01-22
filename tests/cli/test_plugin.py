@@ -8,12 +8,6 @@ class TestPlugin:
     def subject(self):
         return Plugin
 
-    # def test_set_environment(self, subject, mocker):
-    #     sys = mocker.patch('ftt.cli.plugin.sys')
-    #     sys.argv = ['__main__.py', '--version', '--dev']
-    #     sys.exit.return_value = None
-    #
-    #     parser = subject().get_opts_parser()
-    #     argv
-    #
-    #     assert instance.environment == 'development'
+    @pytest.mark.skip(reason="TODO")
+    def test_something(self, subject):
+        assert subject.something() == "something"
