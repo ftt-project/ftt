@@ -1,7 +1,9 @@
 from nubia import context, eventbus, exceptions  # type: ignore
 from rich.console import Console
 
-from ftt.cli.handlers.database_structure_initalization_handler import DatabaseStructureInitializationHandler
+from ftt.cli.handlers.prepare_environment_handler import (
+    PrepareEnvironmentHandler,
+)
 
 
 class Context(context.Context):

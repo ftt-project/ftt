@@ -3,7 +3,9 @@ import sys
 from nubia import Nubia, Options  # type: ignore
 from nubia.internal import context
 
-from ftt.cli.handlers.database_structure_initalization_handler import DatabaseStructureInitializationHandler
+from ftt.cli.handlers.prepare_environment_handler import (
+    PrepareEnvironmentHandler,
+)
 from ftt.cli.plugin import Plugin
 
 
@@ -41,9 +43,8 @@ class Application:
             else:
                 environment = ENVIRONMENT.production
 
-        result = DatabaseStructureInitializationHandler().handle(
-            environment=environment,
-            application_name=APPLICATION_NAME
+        result = PrepareEnvironmentHandler().handle(
+            environment=environment, application_name=APPLICATION_NAME
         )
         cnt = context.get_context()
         cnt.set_environment(environment)
@@ -53,11 +54,12 @@ class Application:
             exit(1)
 
         if result.value.first_run:
-            cnt.console.print("First run detected, running database structure initialization")
+            cnt.console.print(
+                "First run detected, running database structure initialization"
+            )
 
         return shell
 
     @classmethod
     def initialize_and_run(cls) -> None:
         sys.exit(cls.initialize().run())
-

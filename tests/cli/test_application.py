@@ -1,6 +1,6 @@
 import pytest
 
-from ftt.cli.application import Application
+from ftt.application import Application
 
 
 class TestApplication:

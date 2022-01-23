@@ -1,9 +1,5 @@
-import os
-from pathlib import Path
-
 import pytest
 
-from ftt.cli.application_config_dto import ApplicationConfigDTO
 from ftt.cli.handlers.steps.database_setup_step import DatabaseSetupStep
 
 
@@ -19,8 +15,13 @@ class TestDatabaseSetupStep:
             "ftt.cli.handlers.steps.database_setup_step.Storage.initialize_database",
             return_value=False,
         )
+        manager = mocker.patch(
+            "ftt.cli.handlers.steps.database_setup_step.Storage.storage_manager",
+        )
+        manager.create_tables.return_value = True
 
         result = subject.process(application_config_dto=application_config_dto)
 
         assert result.is_ok()
         assert initializer.call_count == 1
+        assert manager.call_count == 1

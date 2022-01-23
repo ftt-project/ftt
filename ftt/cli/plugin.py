@@ -47,20 +47,20 @@ class Plugin(PluginInterface):
             "--prod",
             action="store_true",
             default=True,
-            help="Run application in production mode. Create and use configuration file and database in user folder."
+            help="Run application in production mode. Create and use configuration file and database in user folder.",
         )
         opts_parser.add_argument(
             "--dev",
             action="store_true",
             default=False,
             help="Run application locally. Create and use configuration file and database in current directory. "
-            "Used for development purposes."
+            "Used for development purposes.",
         )
         opts_parser.add_argument(
             "--test",
             action="store_true",
             default=False,
             help="Run application locally. Create configuration file and database in current directory. "
-            "Used for testing."
+            "Used for testing.",
         )
         return opts_parser
