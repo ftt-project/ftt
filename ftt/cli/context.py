@@ -1,16 +1,24 @@
 from nubia import context, eventbus, exceptions  # type: ignore
 from rich.console import Console
 
-from ftt.storage import Storage
-
 
 class Context(context.Context):
-    def on_connected(self, *args, **kwargs):
-        # TODO take environment from outside
-        environment = "dev"
-        Storage.initialize_database(application_name="ftt", environment=environment)
-
+    def __init__(self):
+        super().__init__()
+        self._environment = None
         self.console = Console()
+
+    def on_connected(self, *args, **kwargs):
+        pass
+
+    def set_environment(self, environment):
+        with self._lock:
+            self._environment = environment
+
+    @property
+    def environment(self):
+        with self._lock:
+            return self._environment
 
     def on_cli(self, cmd, args):
         # dispatch the on connected message

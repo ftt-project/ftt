@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from peewee import Database
 
@@ -19,6 +21,8 @@ class TestStorage:
         assert type(result) == list
 
     def test_get_database(self, subject):
-        subject.initialize_database(application_name="ftt", environment="test")
+        subject.initialize_database(
+            application_name="ftt", environment="test", root_path=os.getcwd()
+        )
         result = subject.get_database()
         assert isinstance(result, Database)

@@ -1,3 +1,4 @@
+import pathlib
 from typing import List, Optional
 
 from peewee import Database
@@ -25,11 +26,13 @@ class Storage:
         return Base.__subclasses__()
 
     @classmethod
-    def initialize_database(cls, application_name, environment) -> None:
+    def initialize_database(
+        cls, application_name: str, environment: str, root_path: pathlib.Path
+    ) -> None:
         if Storage.__storage_manager is not None:
             return
 
-        storage_manager = StorageManager(application_name, environment)
+        storage_manager = StorageManager(application_name, environment, root_path)
         storage_manager.initialize_database()
         Storage.__storage_manager = storage_manager
 
