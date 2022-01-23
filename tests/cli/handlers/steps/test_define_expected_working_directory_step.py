@@ -3,7 +3,9 @@ from pathlib import Path
 
 import pytest
 
-from ftt.cli.handlers.steps.define_expected_working_directory_step import DefineExpectedWorkingDirectoryStep
+from ftt.cli.handlers.steps.define_expected_working_directory_step import (
+    DefineExpectedWorkingDirectoryStep,
+)
 
 
 class TestDefineExpectedWorkingDirectoryStep:

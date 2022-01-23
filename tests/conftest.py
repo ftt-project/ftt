@@ -1,10 +1,8 @@
 from datetime import datetime
 
 import pytest
-import backtrader as bt
 from pandas import DataFrame, DatetimeIndex
 
-from ftt.piloting.strategies.sizers import WeightedSizer
 from ftt.storage import Storage
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio
