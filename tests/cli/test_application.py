@@ -1,0 +1,13 @@
+import pytest
+
+from ftt.application import Application
+
+
+class TestApplication:
+    @pytest.fixture
+    def subject(self):
+        return Application
+
+    @pytest.mark.skip(reason="TODO")
+    def test_exit_successfully(self, mocker, subject):
+        pass
