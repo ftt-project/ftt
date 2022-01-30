@@ -10,9 +10,9 @@ class PortfolioConfigFileReaderStep(AbstractStep):
     key = "raw_config"
 
     @classmethod
-    def process(cls, path: str) -> Result[dict, Optional[Exception]]:
+    def process(cls, example_config_path: str) -> Result[dict, Optional[Exception]]:
         try:
-            stream = open(path, "r")
+            stream = open(example_config_path, "r")
             config = yaml.safe_load(stream)
             return Ok(config)
         except FileNotFoundError as e:

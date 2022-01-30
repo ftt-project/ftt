@@ -13,17 +13,8 @@ class TestPortfolioConfigHandler:
     def subject(self):
         return PortfolioConfigHandler()
 
-    def absolute_path(self, file):
-        path = os.path.dirname(ftt.__file__)
-        path = os.path.join(path, "..", "tests", "fixtures", file)
-        return os.path.abspath(path)
-
-    @pytest.fixture
-    def existing_path(self):
-        return self.absolute_path("portfolio_dummy_config.yml")
-
-    def test_returns_config_object(self, subject, existing_path):
-        result = subject.handle(path=existing_path)
+    def test_returns_config_object(self, subject):
+        result = subject.handle()
 
         assert result.is_ok()
         assert isinstance(result.value, PortfolioConfig)
