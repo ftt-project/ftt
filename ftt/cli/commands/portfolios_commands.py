@@ -18,6 +18,7 @@ from ftt.handlers.portfolio_associate_securities_hanlder import (
 )
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
+from ftt.handlers.portfolio_deletion_handler import PortfolioDeletionHandler
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 from ftt.handlers.portfolio_update_handler import PortfolioUpdateHandler
 from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHandler
@@ -43,9 +44,8 @@ class PortfoliosCommands:
         """
         List existing portfolios
         """
-        ctx = context.get_context()
         result = PortfoliosListHandler().handle()
-        PortfoliosList(ctx, result.value).render()
+        PortfoliosList(self.context, result.value).render()
 
     @command
     @argument("portfolio_id", description="Portfolio ID", positional=True, type=int)
@@ -58,21 +58,20 @@ class PortfoliosCommands:
         # last version
         # weights x securities
         # securities list: matrix of all securities per version
-        ctx = context.get_context()
 
         result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
-        PortfolioDetails(ctx, result.value).render()
+        PortfolioDetails(self.context, result.value).render()
 
         result = PortfolioVersionsListHandler().handle(portfolio=result.value)
-        PortfolioVersionsList(ctx, result.value).render()
+        PortfolioVersionsList(self.context, result.value).render()
 
-        PortfolioVersionBriefDetails(ctx, result.value[-1]).render()
+        PortfolioVersionBriefDetails(self.context, result.value[-1]).render()
 
         portfolio_version = result.value[0]
         result = WeightsListHandler().handle(portfolio_version=portfolio_version)
 
         WeightsList(
-            ctx,
+            self.context,
             result.value,
             f"Portfolio Version [bold cyan]#{portfolio_version.id}[/bold cyan] list of weights",
         ).render()
@@ -84,11 +83,10 @@ class PortfoliosCommands:
         Import from yml file
         """
         # TODO refactor this method
-        ctx = context.get_context()
         config_result = PortfolioConfigHandler().handle(path=path)
         if config_result.is_err():
-            ctx.console.print("[bold red]Failed to read config file:")
-            ctx.console.print(config_result.value)
+            self.context.console.print("[bold red]Failed to read config file:")
+            self.context.console.print(config_result.value)
             return
 
         portfolio_result = PortfolioCreationHandler().handle(
@@ -99,15 +97,15 @@ class PortfoliosCommands:
             interval=config_result.value.interval,
         )
         if portfolio_result.is_ok():
-            ctx.console.print("[green]Portfolio successfully created")
+            self.context.console.print("[green]Portfolio successfully created")
         else:
-            ctx.console.print("[red]Failed to create portfolio:")
-            ctx.console.print(portfolio_result.value)
+            self.context.console.print("[red]Failed to create portfolio:")
+            self.context.console.print(portfolio_result.value)
             return
 
-        with ctx.console.status("[green]Loading securities information") as _:
+        with self.context.console.status("[green]Loading securities information") as _:
             for symbol in config_result.value.symbols:
-                ctx.console.print(f"- {symbol}")
+                self.context.console.print(f"- {symbol}")
 
             # TODO why both?
             securities_result = SecuritiesInformationPricesLoadingHandler().handle(
@@ -117,10 +115,14 @@ class PortfoliosCommands:
                 portfolio_version=portfolio_result.value.versions[0],
             )
             if securities_result.is_ok():
-                ctx.console.print("[green]Securities information successfully imported")
+                self.context.console.print(
+                    "[green]Securities information successfully imported"
+                )
             else:
-                ctx.console.print("[red]Failed to load securities information:")
-                ctx.console.print(securities_result.value)
+                self.context.console.print(
+                    "[red]Failed to load securities information:"
+                )
+                self.context.console.print(securities_result.value)
                 return
 
         association_result = PortfolioAssociateSecuritiesHandler().handle(
@@ -130,12 +132,14 @@ class PortfoliosCommands:
             portfolio_version=portfolio_result.value.versions[0],
         )
         if association_result.is_ok():
-            ctx.console.print(
+            self.context.console.print(
                 "[green]Securities successfully associated with portfolio"
             )
         else:
-            ctx.console.print("[red]Failed to associate securities with portfolio:")
-            ctx.console.print(association_result.value)
+            self.context.console.print(
+                "[red]Failed to associate securities with portfolio:"
+            )
+            self.context.console.print(association_result.value)
 
     @command("update")
     @argument("portfolio_id", description="Portfolio ID", positional=True, type=int)
@@ -145,11 +149,10 @@ class PortfoliosCommands:
         Possible to update attributes:
             - name
         """
-        ctx = context.get_context()
 
         portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
         if portfolio_result.is_err():
-            ctx.console.print(f"[red]{portfolio_result.err().value}")
+            self.context.console.print(f"[red]{portfolio_result.err().value}")
             return
 
         params = {}
@@ -159,17 +162,17 @@ class PortfoliosCommands:
             params["name"] = new_name
 
         if len(params) == 0:
-            ctx.console.print("[green]Nothing to update")
+            self.context.console.print("[green]Nothing to update")
             return
 
         result = PortfolioUpdateHandler().handle(
             portfolio=portfolio_result.value, params=params
         )
         if result.is_ok():
-            ctx.console.print("[green]Portfolio successfully updated")
+            self.context.console.print("[green]Portfolio successfully updated")
         else:
-            ctx.console.print("[red]Failed to update portfolio:")
-            ctx.console.print(result.value)
+            self.context.console.print("[red]Failed to update portfolio:")
+            self.context.console.print(result.value)
 
     @command("create")
     def create(self) -> None:
@@ -199,3 +202,18 @@ class PortfoliosCommands:
         else:
             self.context.console.print("[red]Failed to create portfolio:")
             self.context.console.print(f"  {result.value.value}")
+
+    @command("delete")
+    @argument("portfolio_id")
+    def delete(self, portfolio_id: int) -> None:
+        """
+        Delete portfolio by ID
+        """
+
+        result = PortfolioDeletionHandler().handle(portfolio_id=portfolio_id)
+
+        if result.is_ok():
+            self.context.console.print("[green]Portfolio successfully deleted")
+        else:
+            self.context.console.print("[red]Failed to delete portfolio:")
+            self.context.console.print(result.value)
