@@ -177,3 +177,27 @@ class TestPortfoliosCommands:
         context.get_context.return_value.console.print.assert_any_call(
             "[green]Portfolio successfully created"
         )
+
+    def test_delete_print_success_on_portfolio_delete(self, subject, portfolio, context):
+        subject.delete(portfolio_id=portfolio.id)
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call("[green]Portfolio successfully deleted")]
+        )
+
+    def test_delete_print_message_on_failure(self, subject, portfolio, mocker, context):
+        mocked_handler = mocker.patch("ftt.cli.commands.portfolios_commands.PortfolioDeletionHandler")
+        mocked_handler.return_value.handle.return_value.is_ok.return_value = False
+
+        subject.delete(portfolio_id=portfolio.id)
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call("[red]Failed to delete portfolio:")]
+        )
+
+    def test_delete_returns_error_on_non_existing_portfolio(self, subject, context):
+        subject.delete(portfolio_id=111)
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call("[red]Failed to delete portfolio:")]
+        )
