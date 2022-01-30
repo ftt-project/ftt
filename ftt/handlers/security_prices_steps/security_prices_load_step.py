@@ -18,9 +18,7 @@ class SecurityPricesLoadStep(AbstractStep):
     def process(
         cls, portfolio_version: PortfolioVersion
     ) -> Result[PortfolioSecurityPricesRangeDTO, Optional[str]]:
-        securities = SecuritiesRepository.find_securities(
-            portfolio_version=portfolio_version
-        )
+        securities = cls.__load_securities(portfolio_version)
         if len(securities) == 0:
             return Err(
                 f"No securities associated with portfolio version {portfolio_version.id}"
@@ -29,18 +27,33 @@ class SecurityPricesLoadStep(AbstractStep):
         prices = {}
         datetime_list = None
         for security in securities:
-            security_prices = SecurityPricesRepository.find_by_security_prices(
-                security=security,
-                interval=portfolio_version.interval,
-                period_start=portfolio_version.period_start,
-                period_end=portfolio_version.period_end,
-            )
+            security_prices = cls.__load_prices(security, portfolio_version)
+            prices[security.symbol] = [float(price.close) for price in security_prices]
+
             if datetime_list is None:
                 datetime_list = [price.datetime for price in security_prices]
-            prices[security.symbol] = [float(price.close) for price in security_prices]
+
+        shapes = {
+            security_symbol: len(price) for security_symbol, price in prices.items()
+        }
+        if len(set(shapes.values())) > 1:
+            return Err(f"Data points shapes do not match: {shapes}")
 
         dto = PortfolioSecurityPricesRangeDTO(
             prices=prices, datetime_list=datetime_list
         )
 
         return Ok(dto)
+
+    @staticmethod
+    def __load_securities(portfolio_version):
+        return SecuritiesRepository.find_securities(portfolio_version=portfolio_version)
+
+    @staticmethod
+    def __load_prices(security, portfolio_version):
+        return SecurityPricesRepository.find_by_security_prices(
+            security=security,
+            interval=portfolio_version.interval,
+            period_start=portfolio_version.period_start,
+            period_end=portfolio_version.period_end,
+        )

@@ -49,7 +49,10 @@ class Handler(metaclass=MetaHandler):
         if ReturnResult.key in self.context:
             return Ok(self.context[ReturnResult.key])
         else:
-            return Err(last_result)
+            if type(last_result) == Err:
+                return last_result
+            else:
+                return Err(last_result)
 
     def __check_given_params(self, input):
         difference = set(self.__class__.params).symmetric_difference(set(input.keys()))

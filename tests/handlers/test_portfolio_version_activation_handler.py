@@ -31,7 +31,7 @@ class TestPortfolioVersionActivationHandler:
         result = subject.handle(portfolio_version_id=portfolio_version.id)
 
         assert result.is_err()
-        assert result.err().value == "Portfolio version #1 is already active"
+        assert result.unwrap_err() == "Portfolio version #1 is already active"
 
     def test_process_errors_when_no_weights_associated(
         self, subject, portfolio_version, portfolio
@@ -43,7 +43,7 @@ class TestPortfolioVersionActivationHandler:
 
         assert result.is_err()
         assert (
-            result.err().value
+            result.unwrap_err()
             == "Portfolio version #1 does not have any weights associated. Run balance step first."
         )
 
@@ -57,6 +57,6 @@ class TestPortfolioVersionActivationHandler:
 
         assert result.is_err()
         assert (
-            result.err().value
+            result.unwrap_err()
             == "Portfolio version #1 has AA.XX with zero planned weight. Run balance step first."
         )

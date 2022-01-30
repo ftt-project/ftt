@@ -38,7 +38,7 @@ class SecurityPricesRepository(Repository):
     @staticmethod
     def find_by_security_prices(
         security: Security, interval: str, period_start: datetime, period_end: datetime
-    ) -> SecurityPrice:
+    ) -> list[SecurityPrice]:
         query = (
             SecurityPrice.select()
             .where(
