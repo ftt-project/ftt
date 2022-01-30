@@ -58,6 +58,13 @@ class TestPortfoliosCommands:
 
         assert portfolio_version in mocked.call_args[0][1]
 
+    def test_details_writes_message_when_portfolio_not_found(self, subject, context):
+        subject.details(101)
+
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call("Portfolio with ID 101 does not exist", style="red")]
+        )
+
     def test_import_correct_config_from_file(
         self,
         subject,
@@ -145,7 +152,7 @@ class TestPortfoliosCommands:
             [call("[red]Failed to load securities information:")]
         )
 
-    def test_updates_portfolio(self, subject, portfolio, mocker):
+    def test_update_call_update_handler(self, subject, portfolio, mocker):
         update_mocker = mocker.patch(
             "ftt.cli.commands.portfolios_commands.PortfolioUpdateHandler",
             **{"return_value.handle.return_value.value": True}
@@ -156,6 +163,34 @@ class TestPortfoliosCommands:
 
         prompt_mocker.assert_called_once_with("New name: ", default=portfolio.name)
         update_mocker.return_value.handle.assert_called_once()
+
+    def test_update_writes_message_on_update(self, subject, portfolio, mocker, context):
+        prompt_mocker = mocker.patch("ftt.cli.commands.portfolios_commands.prompt")
+
+        subject.update(portfolio_id=portfolio.id)
+
+        prompt_mocker.assert_called_once_with("New name: ", default=portfolio.name)
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call("[green]Portfolio successfully updated")]
+        )
+
+    def test_update_writes_message_on_update_failure(
+        self, subject, portfolio, mocker, context
+    ):
+        prompt_mocker = mocker.patch("ftt.cli.commands.portfolios_commands.prompt")
+        update_mock = mocker.patch(
+            "ftt.cli.commands.portfolios_commands.PortfolioUpdateHandler",
+            **{"return_value.handle.return_value.is_ok.return_value": False}
+        )
+        update_mock.return_value.handle.return_value.is_ok.return_value = False
+        update_mock.return_value.handle.return_value.value = "error"
+
+        subject.update(portfolio_id=portfolio.id)
+
+        prompt_mocker.assert_called_once_with("New name: ", default=portfolio.name)
+        context.get_context.return_value.console.print.assert_has_calls(
+            [call("[red]Failed to update portfolio:"), call("error")]
+        )
 
     def test_create_portfolio(self, subject, mocker, context):
         prompt_mocker = mocker.patch(

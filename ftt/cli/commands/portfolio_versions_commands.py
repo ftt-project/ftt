@@ -84,7 +84,7 @@ class PortfolioVersionsCommands:
             portfolio_version_id=portfolio_version_id
         )
         if portfolio_version_result.is_err():
-            self.context.console.print(f"[red]{portfolio_version_result.err().value}")
+            self.context.console.print(f"[red]{portfolio_version_result.unwrap_err()}")
             return
 
         optimization_result = PortfolioOptimizationHandler().handle(
@@ -98,7 +98,7 @@ class PortfolioVersionsCommands:
                 "[red]:disappointed: Failed to calculate weights for this portfolio:"
             )
             self.context.console.print(
-                f"    [red]:right_arrow: {optimization_result.err().value}"
+                f"    [red]:right_arrow: {optimization_result.unwrap_err()}"
             )
             return
 
@@ -134,7 +134,7 @@ class PortfolioVersionsCommands:
             self.context.console.print(
                 f"[yellow]Failed to activate portfolio version #{portfolio_version_id}"
             )
-            self.context.console.print(f"[yellow]{result.value.value}")
+            self.context.console.print(f"[yellow]{result.unwrap_err()}")
 
     @command
     @argument(
@@ -159,7 +159,7 @@ class PortfolioVersionsCommands:
             self.context.console.print(
                 f"[yellow]Failed to deactivate portfolio version #{portfolio_version_id}"
             )
-            self.context.console.print(f"[yellow]{result.value.value}")
+            self.context.console.print(f"[yellow]{result.unwrap_err()}")
 
     def statistic(self):
         """
@@ -353,10 +353,11 @@ class PortfolioVersionsCommands:
             SecurityDTO(symbol=security) for security in securities.split(" ")
         ]
 
-        result = PortfolioVersionSecuritiesAddingHandler().handle(
-            portfolio_version_id=portfolio_version_id,
-            securities=securities_dto,
-        )
+        with self.context.console.status("[green]Loading securities information") as _:
+            result = PortfolioVersionSecuritiesAddingHandler().handle(
+                portfolio_version_id=portfolio_version_id,
+                securities=securities_dto,
+            )
 
         if result.is_ok():
             self.context.console.print(
@@ -421,7 +422,7 @@ class PortfolioVersionsCommands:
 
         if portfolio_version_result.is_err():
             self.context.console.print("[red]Failed to get portfolio version details:")
-            self.context.console.print(portfolio_version_result.err().value)
+            self.context.console.print(portfolio_version_result.unwrap_err())
             return
 
         weights_result = WeightsListHandler().handle(

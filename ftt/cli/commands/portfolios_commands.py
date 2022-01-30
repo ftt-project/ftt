@@ -26,6 +26,7 @@ from ftt.handlers.securities_information_prices_loading_handler import (
     SecuritiesInformationPricesLoadingHandler,
 )
 from ftt.handlers.weights_list_handler import WeightsListHandler
+from ftt.storage.data_objects.portfolio_dto import PortfolioDTO
 from ftt.storage.data_objects.security_dto import SecurityDTO
 
 
@@ -61,6 +62,9 @@ class PortfoliosCommands:
         ctx = context.get_context()
 
         result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
+        if result.is_err():
+            ctx.console.print(result.unwrap_err(), style="red")
+            return
         PortfolioDetails(ctx, result.value).render()
 
         result = PortfolioVersionsListHandler().handle(portfolio=result.value)
@@ -68,7 +72,7 @@ class PortfoliosCommands:
 
         PortfolioVersionBriefDetails(ctx, result.value[-1]).render()
 
-        portfolio_version = result.value[0]
+        portfolio_version = result.value[-1]
         result = WeightsListHandler().handle(portfolio_version=portfolio_version)
 
         WeightsList(
@@ -162,8 +166,9 @@ class PortfoliosCommands:
             ctx.console.print("[green]Nothing to update")
             return
 
+        dto = PortfolioDTO(**params)
         result = PortfolioUpdateHandler().handle(
-            portfolio=portfolio_result.value, params=params
+            portfolio=portfolio_result.value, dto=dto
         )
         if result.is_ok():
             ctx.console.print("[green]Portfolio successfully updated")
