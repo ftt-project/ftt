@@ -85,7 +85,7 @@ class PortfoliosCommands:
         """
         # TODO refactor this method
         ctx = context.get_context()
-        config_result = PortfolioConfigHandler().handle(path=path)
+        config_result = PortfolioConfigHandler().handle()
         if config_result.is_err():
             ctx.console.print("[bold red]Failed to read config file:")
             ctx.console.print(config_result.value)

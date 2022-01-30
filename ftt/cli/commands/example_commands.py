@@ -1,9 +1,7 @@
-import os
-import pathlib
-
 from nubia import command, context  # type: ignore
-from rich.table import Table
 
+from ftt.cli.renderers.portfolios.portfolio_details import PortfolioDetails
+from ftt.cli.renderers.weights.weights_list import WeightsList
 from ftt.handlers.portfolio_associate_securities_hanlder import (
     PortfolioAssociateSecuritiesHandler,
 )
@@ -14,11 +12,11 @@ from ftt.handlers.portfolio_stats_handler import PortfoliosStatsHandler
 from ftt.handlers.securities_information_prices_loading_handler import (
     SecuritiesInformationPricesLoadingHandler,
 )
-from ftt.portfolio_management import (
-    HistoricalOptimizationStrategy,
-    DefaultAllocationStrategy,
+from ftt.handlers.weights_list_handler import WeightsListHandler
+from ftt.portfolio_management.allocation_strategies import AllocationStrategyResolver
+from ftt.portfolio_management.optimization_strategies import (
+    OptimizationStrategyResolver,
 )
-from ftt.storage import Storage
 from ftt.storage.data_objects.security_dto import SecurityDTO
 
 
@@ -29,37 +27,24 @@ def example():
     """
     ctx = context.get_context()
 
-    # TODO: take env from context
-    Storage.initialize_database(application_name="ftt", environment="dev")
-
-    config = read_config()
+    config = PortfolioConfigHandler().handle()
 
     result = PortfolioCreationHandler().handle(
-        name=config.name,
-        value=config.budget,
-        period_start=config.period_start,
-        period_end=config.period_end,
-        interval=config.interval,
+        name=config.value.name,
+        value=config.value.budget,
+        period_start=config.value.period_start,
+        period_end=config.value.period_end,
+        interval=config.value.interval,
     )
     portfolio = result.value
 
     ctx.console.print("Portfolio successfully created", style="bold green")
-    table = Table(show_header=True)
-    for name in ["ID", "Name", "Account value", "Created"]:
-        table.add_column(name)
-    # TODO: use presenter
-    table.add_row(
-        str(portfolio.id),
-        portfolio.name,
-        str(portfolio.versions[0].value),
-        str(portfolio.created_at),
-    )
-    ctx.console.print(table)
+    PortfolioDetails(ctx, portfolio).render()
 
-    security_dtos = [SecurityDTO(symbol=symbol) for symbol in config.symbols]
+    security_dtos = [SecurityDTO(symbol=symbol) for symbol in config.value.symbols]
 
     with ctx.console.status("[bold green]Loading securities information") as _:
-        for symbol in config.symbols:
+        for symbol in config.value.symbols:
             ctx.console.print(f"- {symbol}")
 
         result = SecuritiesInformationPricesLoadingHandler().handle(
@@ -78,27 +63,17 @@ def example():
     with ctx.console.status("[bold green]Calculating weights") as _:
         _ = PortfolioOptimizationHandler().handle(
             portfolio_version_id=portfolio.versions[0].id,
-            optimization_strategy=HistoricalOptimizationStrategy,
-            allocation_strategy=DefaultAllocationStrategy,
+            optimization_strategy_name=OptimizationStrategyResolver.strategies()[0],
+            allocation_strategy_name=AllocationStrategyResolver.strategies[0],
         )
 
     result = PortfoliosStatsHandler().handle(portfolio_version=portfolio.versions[0])
-    portfolio_stats = result.value
-    table = Table(show_header=True)
-    for name in ["Symbol", "Quantity"]:
-        table.add_column(name)
-    for symbol, qty in portfolio_stats["planned_weights"].items():
-        table.add_row(
-            str(symbol),
-            str(qty),
-        )
-    ctx.console.print(table)
-    ctx.console.print("Weights are calculated and saved", style="bold green")
+    if result.is_ok():
+        ctx.console.print("Weights are calculated and saved", style="bold green")
+    else:
+        ctx.console.print(result.unwrap_err())
 
-
-def read_config():
-    realpath = pathlib.Path().resolve()
-    path = os.path.join(realpath, "config", "example_portfolio.yml")
-    result = PortfolioConfigHandler().handle(path=path)
-    # TODO: handle exception
-    return result.value
+    weights_result = WeightsListHandler().handle(
+        portfolio_version=portfolio.versions[0]
+    )
+    WeightsList(ctx, weights_result.value).render()

@@ -96,11 +96,11 @@ class OptimizationStrategyResolver:
     }
 
     @classmethod
-    def strategies(cls):
-        return cls._strategies.keys()
+    def strategies(cls) -> list[str]:
+        return list(cls._strategies.keys())
 
     @classmethod
-    def resolve(cls, strategy_name: str):
+    def resolve(cls, strategy_name: str) -> AbstractOptimizationStrategy:
         try:
             return cls._strategies[strategy_name]
         except KeyError:
