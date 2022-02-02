@@ -27,6 +27,9 @@ class PortfoliosRepository(Repository):
 
     @classmethod
     def get_by_name(cls, name: str) -> Base:
+        """
+        Deprecated
+        """
         return Portfolio.get(Portfolio.name == name)
 
     @classmethod

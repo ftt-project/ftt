@@ -18,6 +18,6 @@ class DefinePackagePathStep(AbstractStep):
     def process(cls) -> Result[Path, Optional[str]]:
         import ftt
 
-        path = Path.joinpath(Path(ftt.__file__), Path(".."), Path("..")).resolve()
+        path = Path.joinpath(Path(ftt.__file__), Path("..")).resolve()
 
         return Ok(path)
