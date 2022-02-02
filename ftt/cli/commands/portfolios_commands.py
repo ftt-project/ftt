@@ -20,6 +20,9 @@ from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 from ftt.handlers.portfolio_update_handler import PortfolioUpdateHandler
+from ftt.handlers.portfolio_version_load_active_handler import (
+    PortfolioVersionLoadActiveHandler,
+)
 from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHandler
 from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
 from ftt.handlers.securities_information_prices_loading_handler import (
@@ -54,32 +57,53 @@ class PortfoliosCommands:
         """
         Display details of portfolio by its ID
         """
-        # portfolio
-        # versions
-        # last version
-        # weights x securities
-        # securities list: matrix of all securities per version
         ctx = context.get_context()
 
-        result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
-        if result.is_err():
-            ctx.console.print(result.unwrap_err(), style="red")
+        portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
+        if portfolio_result.is_err():
+            ctx.console.print(portfolio_result.unwrap_err(), style="red")
             return
-        PortfolioDetails(ctx, result.value).render()
+        PortfolioDetails(ctx, portfolio_result.value).render()
 
-        result = PortfolioVersionsListHandler().handle(portfolio=result.value)
-        PortfolioVersionsList(ctx, result.value).render()
+        versions_result = PortfolioVersionsListHandler().handle(
+            portfolio=portfolio_result.value
+        )
+        PortfolioVersionsList(ctx, versions_result.value).render()
 
-        PortfolioVersionBriefDetails(ctx, result.value[-1]).render()
+        active_portfolio_version_result = PortfolioVersionLoadActiveHandler().handle(
+            portfolio_id=portfolio_result.value.id
+        )
 
-        portfolio_version = result.value[-1]
-        result = WeightsListHandler().handle(portfolio_version=portfolio_version)
+        if active_portfolio_version_result.is_err():
+            ctx.console.print(
+                f"Failed to load active portfolio version for portfolio #{portfolio_result.value.id}",
+                style="red",
+            )
+            return
 
-        WeightsList(
-            ctx,
-            result.value,
-            f"Portfolio Version [bold cyan]#{portfolio_version.id}[/bold cyan] list of weights",
-        ).render()
+        if active_portfolio_version_result.value:
+            PortfolioVersionBriefDetails(
+                ctx, active_portfolio_version_result.value
+            ).render()
+
+            result = WeightsListHandler().handle(
+                portfolio_version=active_portfolio_version_result.value
+            )
+
+            WeightsList(
+                ctx,
+                result.value,
+                f"Active Portfolio Version [bold cyan]#{active_portfolio_version_result.value.id}[/bold cyan] "
+                f"list of weights",
+            ).render()
+        else:
+            ctx.console.print(
+                f"\nPortfolio #{portfolio_result.value.id} do not have any active portfolio version."
+            )
+            ctx.console.print(
+                f"Use `portfolio-versions securities-list portfolio-version-id={versions_result.value[-1]}` "
+                f"to display weights of particular version."
+            )
 
     @command("import")
     @argument("path", description="YAML file to import", positional=True)

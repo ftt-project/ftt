@@ -52,5 +52,6 @@ class TestPortfolioVersionActivationValidateStep:
         assert result.is_err()
         assert (
             result.value
-            == f"Portfolio version #1 has {security.symbol} with zero planned weight. Run balance step first."
+            == f"Portfolio version #{portfolio_version.id} do not have any planned position greater than 0. "
+               "Run `portfolio-versions optimize` first."
         )

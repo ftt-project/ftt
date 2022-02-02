@@ -36,11 +36,13 @@ class PortfolioVersionActivationValidateStep(AbstractStep):
                 "weights associated. Run balance step first."
             )
 
-        for weight in portfolio_version.weights:
-            if weight.planned_position == 0:
-                return Err(
-                    f"Portfolio version #{portfolio_version.id} has {weight.security.symbol} with "
-                    "zero planned weight. Run balance step first."
-                )
+        planned_positions_zero = [
+            weight.planned_position == 0 for weight in portfolio_version.weights
+        ]
+        if all(planned_positions_zero):
+            return Err(
+                f"Portfolio version #{portfolio_version.id} do not have any planned position greater than 0. "
+                "Run `portfolio-versions optimize` first."
+            )
 
         return Ok(portfolio_version)
