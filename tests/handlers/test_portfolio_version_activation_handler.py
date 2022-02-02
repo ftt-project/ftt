@@ -58,5 +58,5 @@ class TestPortfolioVersionActivationHandler:
         assert result.is_err()
         assert (
             result.unwrap_err()
-            == "Portfolio version #1 has AA.XX with zero planned weight. Run balance step first."
+            == f"Portfolio version #{portfolio_version.id} do not have any planned position greater than 0. Run `portfolio-versions optimize` first."
         )
