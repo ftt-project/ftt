@@ -27,24 +27,30 @@ def example():
     """
     ctx = context.get_context()
 
-    config = PortfolioConfigHandler().handle()
+    config_result = PortfolioConfigHandler().handle()
+    if config_result.is_err():
+        ctx.console.print("Failed to load example config file.", style="red")
+        ctx.console.print(config_result.unwrap_err())
+        return
 
     result = PortfolioCreationHandler().handle(
-        name=config.value.name,
-        value=config.value.budget,
-        period_start=config.value.period_start,
-        period_end=config.value.period_end,
-        interval=config.value.interval,
+        name=config_result.value.name,
+        value=config_result.value.budget,
+        period_start=config_result.value.period_start,
+        period_end=config_result.value.period_end,
+        interval=config_result.value.interval,
     )
     portfolio = result.value
 
     ctx.console.print("Portfolio successfully created", style="bold green")
     PortfolioDetails(ctx, portfolio).render()
 
-    security_dtos = [SecurityDTO(symbol=symbol) for symbol in config.value.symbols]
+    security_dtos = [
+        SecurityDTO(symbol=symbol) for symbol in config_result.value.symbols
+    ]
 
     with ctx.console.status("[bold green]Loading securities information") as _:
-        for symbol in config.value.symbols:
+        for symbol in config_result.value.symbols:
             ctx.console.print(f"- {symbol}")
 
         result = SecuritiesInformationPricesLoadingHandler().handle(
