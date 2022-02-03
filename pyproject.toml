@@ -18,7 +18,14 @@ packages = [
     { include = "ftt" },
 ]
 
+include = [
+    "LICENSE.md",
+]
+
+readme = "README.md"
+
 [tool.poetry.urls]
+"Homepage" = "https://github.com/ftt-project/ftt"
 "Bug Tracker" = "https://github.com/ftt-project/ftt/issues"
 
 
