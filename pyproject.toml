@@ -3,6 +3,20 @@ name = "ftt"
 version = "0.1.0"
 description = "Financial Trading Tool (FTT) – is an asset management application that helps to make the right decision on time."
 authors = ["Artem Melnykov <melnykov.artem.v@gmail.com>"]
+classifiers = [
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Environment :: Console",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3.9",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Financial and Insurance Industry",
+]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/ftt-project/ftt/issues"
 
 packages = [
     { include = "ftt" },
