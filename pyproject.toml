@@ -14,13 +14,13 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Intended Audience :: Financial and Insurance Industry",
 ]
+packages = [
+    { include = "ftt" },
+]
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/ftt-project/ftt/issues"
 
-packages = [
-    { include = "ftt" },
-]
 
 [tool.poetry.dependencies]
 python = "^3.9"
