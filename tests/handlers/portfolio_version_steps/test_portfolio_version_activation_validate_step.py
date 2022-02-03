@@ -53,5 +53,5 @@ class TestPortfolioVersionActivationValidateStep:
         assert (
             result.value
             == f"Portfolio version #{portfolio_version.id} do not have any planned position greater than 0. "
-               "Run `portfolio-versions optimize` first."
+            "Run `portfolio-versions optimize` first."
         )
