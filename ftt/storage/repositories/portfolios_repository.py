@@ -23,7 +23,11 @@ class PortfoliosRepository(Repository):
 
     @classmethod
     def get_by_id(cls, id: int):
-        return Portfolio.get(id)
+        return (
+            Portfolio.select()
+            .where(Portfolio.deleted_at.is_null(True) & Portfolio.id == id)
+            .get()
+        )
 
     @classmethod
     def get_by_name(cls, name: str) -> Base:
@@ -35,7 +39,9 @@ class PortfoliosRepository(Repository):
 
     @classmethod
     def list(cls) -> List[Portfolio]:
-        return Portfolio.select().execute()
+        return list(
+            Portfolio.select().where(Portfolio.deleted_at.is_null(True)).execute()
+        )
 
     @classmethod
     def get_securities(cls, portfolio: Portfolio) -> List[Security]:
