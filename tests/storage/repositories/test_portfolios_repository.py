@@ -1,5 +1,7 @@
+import datetime
 from dataclasses import dataclass
 
+import peewee
 import pytest
 
 from ftt.storage.data_objects.portfolio_dto import PortfolioDTO
@@ -76,3 +78,25 @@ class TestPortfoliosRepository:
         assert result.deleted_at is not None
         assert result == portfolio
         assert Portfolio.get(portfolio.id) == portfolio
+
+    def test_list_return_portfolio(self, subject, portfolio_factory):
+        p1 = portfolio_factory("Portfolio 1")
+        p2 = portfolio_factory("Portfolio 2")
+        p2.deleted_at = datetime.datetime.now()
+        p2.save()
+        result = PortfoliosRepository.list()
+
+        assert type(result) == list
+        assert p1 in result
+        assert p2 not in result
+
+    def test_get_by_id_returns_portfolio(self, subject, portfolio):
+        result = subject.get_by_id(portfolio.id)
+
+        assert result == portfolio
+
+    def test_get_by_id_does_not_return_deleted_portfolio(self, subject, portfolio):
+        portfolio.deleted_at = datetime.datetime.now()
+        portfolio.save()
+        with pytest.raises(peewee.DoesNotExist):
+            _ = subject.get_by_id(portfolio.id)
