@@ -19,14 +19,15 @@ class Plugin(PluginInterface):
         return self.context
 
     def create_usage_logger(self, context):
-        shell_handler = RichHandler()
-        shell_handler.setLevel(logging.INFO)
-        fmt_shell = "%(message)s"
-        shell_formatter = logging.Formatter(fmt_shell)
-        shell_handler.setFormatter(shell_formatter)
-        return None
-        # TODO use canonical logger
-        return shell_handler
+        pass
+        # shell_handler = RichHandler()
+        # shell_handler.setLevel(logging.INFO)
+        # fmt_shell = "%(message)s"
+        # shell_formatter = logging.Formatter(fmt_shell)
+        # shell_handler.setFormatter(shell_formatter)
+        # return None
+        # # TODO use canonical logger
+        # return shell_handler
 
     def get_status_bar(self, context):
         return StatusBar(context)
