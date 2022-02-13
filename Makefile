@@ -1,6 +1,13 @@
 clean:
-	rm -rf dist/*
-	rm -rf build/*
+	rm -rf dist build .mypy_cache .pytest_cache
+	find . -regex ".*/__pycache__" -exec rm -rf {} +
+	find . -regex ".*\.egg-info" -exec rm -rf {} +
+
+test:
+	pytest tests
+
+build: clean
+	poetry build
 
 package: clean
 	pyinstaller --onefile \
