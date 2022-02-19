@@ -20,7 +20,7 @@ class PortfolioDeletionValidateStep(AbstractStep):
 
         if active_portfolio_version is not None:
             return Err(
-                f"Does not failed delete Portfolio Version. Exists active version {portfolio.id}"
+                f"Failed to delete Portfolio. Portfolio Version #{portfolio.id} is active."
             )
         else:
             return Ok(active_portfolio_version)
