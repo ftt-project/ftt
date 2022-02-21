@@ -37,3 +37,7 @@ class TestPortfolioVersion:
             )
 
         assert "CHECK constraint failed" in str(e.value)
+
+    def test_deleted_at(self):
+        assert PortfolioVersion().deleted_at is None
+        assert PortfolioVersion(version=1).deleted_at is None
