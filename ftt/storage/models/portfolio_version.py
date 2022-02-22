@@ -37,6 +37,7 @@ class PortfolioVersion(Base):
     expected_annual_return = peewee.FloatField(null=True)
     annual_volatility = peewee.FloatField(null=True)
     sharpe_ratio = peewee.FloatField(null=True)
+    deleted_at = peewee.DateTimeField(null=True)
 
     class Meta:
         indexes = ((("portfolio_id", "version"), True),)
