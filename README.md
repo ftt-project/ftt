@@ -2,6 +2,9 @@
 
 > Finance is hard. Programming is hard.
 
+[![Testing](https://github.com/ftt-project/ftt/actions/workflows/testing.yml/badge.svg)](https://github.com/ftt-project/ftt/actions/workflows/testing.yml)
+[![Linting](https://github.com/ftt-project/ftt/actions/workflows/linting.yml/badge.svg)](https://github.com/ftt-project/ftt/actions/workflows/linting.yml)
+
 FTT is a financial asset management application that helps to make right decision on time.
 
 ## Mission
