@@ -20,12 +20,12 @@ class TestHistoricalOptimizationStrategy:
         result = subject(returns=prices_list_factory()).optimize()
 
         assert type(result) == PortfolioAllocationDTO
-        assert result.weights == {
-            "A": 0.2002220674020526,
-            "B": 0.20022206743949972,
-            "C": 0.2002220674522131,
-            "D": 0.20022206745177576,
-            "E": 0.19911173025445889,
+        assert {k: round(v, 2) for k, v in result.weights.items()} == {
+            "A": 0.2,
+            "B": 0.2,
+            "C": 0.2,
+            "D": 0.2,
+            "E": 0.2,
         }
         assert result.sharpe_ratio == 1.7857686182618002
         assert type(result.cov_matrix) == pd.DataFrame
@@ -42,12 +42,12 @@ class TestRiskParityOptimizationStrategy:
         result = subject(returns=prices_list_factory()).optimize()
 
         assert type(result) == PortfolioAllocationDTO
-        assert result.weights == {
-            "A": 0.19999999999863521,
-            "B": 0.20000000000029788,
-            "C": 0.19999999999954424,
-            "D": 0.20000000000179705,
-            "E": 0.19999999999972562,
+        assert {k: round(v, 2) for k, v in result.weights.items()} == {
+            "A": 0.2,
+            "B": 0.2,
+            "C": 0.2,
+            "D": 0.2,
+            "E": 0.2,
         }
         assert result.sharpe_ratio == 1.7857686182706065
         assert type(result.cov_matrix) == pd.DataFrame
