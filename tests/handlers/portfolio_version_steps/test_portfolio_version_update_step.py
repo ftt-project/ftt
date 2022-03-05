@@ -48,4 +48,4 @@ class TestPortfolioVersionUpdateStep:
         )
 
         assert result.is_err()
-        assert "CHECK constraint failed: length(interval) > 0" in result.value
+        assert "Failed to persist `PortfolioVersion`" in result.value
