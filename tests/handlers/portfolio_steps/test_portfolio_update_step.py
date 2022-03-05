@@ -41,4 +41,4 @@ class TestPortfolioUpdateStep:
         result = subject.process(portfolio=portfolio, dto=PortfolioDTO(name=""))
 
         assert result.is_err()
-        assert "CHECK constraint failed: length(name) > 0" in result.value
+        assert "Failed to persist `Portfolio`" in result.value
