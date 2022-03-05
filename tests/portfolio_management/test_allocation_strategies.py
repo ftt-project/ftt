@@ -40,7 +40,7 @@ class TestDefaultAllocationStrategy:
         assert result == dto
         assert dto.leftover == 27.0
         assert dto.allocation == {"A": 44, "B": 81, "C": 11}
-        assert dto.expected_annual_return == 142.8
+        assert round(dto.expected_annual_return, 1) == 142.8
         assert round(dto.annual_volatility, 3) == 2.049
         assert dto.sharpe_ratio is None
 
