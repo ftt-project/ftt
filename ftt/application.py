@@ -62,4 +62,15 @@ class Application:
 
     @classmethod
     def initialize_and_run(cls) -> None:
-        sys.exit(cls.initialize().run())
+        from pyinstrument import Profiler
+
+        profiler = Profiler()
+        profiler.start()
+
+        result = cls.initialize().run()
+
+        profiler.stop()
+
+        profiler.print()
+
+        sys.exit(result)
