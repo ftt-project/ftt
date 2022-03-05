@@ -4,7 +4,7 @@ clean:
 	find . -regex ".*\.egg-info" -exec rm -rf {} +
 
 test:
-	pytest tests
+	poetry run pytest tests
 
 lint:
 	black ftt tests
