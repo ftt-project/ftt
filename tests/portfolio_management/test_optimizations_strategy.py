@@ -27,7 +27,7 @@ class TestHistoricalOptimizationStrategy:
             "D": 0.2,
             "E": 0.2,
         }
-        assert result.sharpe_ratio == 1.7857686182618002
+        assert round(result.sharpe_ratio, 3) == 1.786
         assert type(result.cov_matrix) == pd.DataFrame
 
 
@@ -49,7 +49,7 @@ class TestRiskParityOptimizationStrategy:
             "D": 0.2,
             "E": 0.2,
         }
-        assert result.sharpe_ratio == 1.7857686182706065
+        assert round(result.sharpe_ratio, 3) == 1.786
         assert type(result.cov_matrix) == pd.DataFrame
 
 
