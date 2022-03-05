@@ -1,8 +1,6 @@
-import logging
 from typing import Optional
 
 from nubia import PluginInterface  # type: ignore
-from rich.logging import RichHandler
 
 from ftt.cli.context import Context
 from ftt.cli.prompt import Prompt

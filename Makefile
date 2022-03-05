@@ -6,6 +6,10 @@ clean:
 test:
 	pytest tests
 
+lint:
+	black ftt tests
+	flake8 ftt
+
 build: clean
 	poetry build
 
