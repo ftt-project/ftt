@@ -2,8 +2,11 @@
 
 > Finance is hard. Programming is hard.
 
+![PyPI](https://img.shields.io/pypi/v/ftt)
 [![Testing](https://github.com/ftt-project/ftt/actions/workflows/testing.yml/badge.svg)](https://github.com/ftt-project/ftt/actions/workflows/testing.yml)
 [![Linting](https://github.com/ftt-project/ftt/actions/workflows/linting.yml/badge.svg)](https://github.com/ftt-project/ftt/actions/workflows/linting.yml)
+![GitHub](https://img.shields.io/github/license/ftt-project/ftt)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ftt)
 
 FTT is a financial asset management application that helps to make right decision on time.
 
