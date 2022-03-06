@@ -52,6 +52,7 @@ class RiskParityOptimizationStrategy:
     def __init__(self, returns):
         self.returns = returns
         from riskfolio import Portfolio
+
         self.portfolio = Portfolio(returns=returns)
 
     def optimize(self):
@@ -77,6 +78,7 @@ class RiskParityOptimizationStrategy:
         )
 
         from riskfolio import Sharpe
+
         sharpe = Sharpe(
             weights,
             mu=self.portfolio.mu,
