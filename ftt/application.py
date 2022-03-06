@@ -20,7 +20,7 @@ APPLICATION_NAME = "ftt"
 
 class Application:
     @classmethod
-    def initialize(cls, test_mode: bool = False) -> None:
+    def initialize(cls, test_mode: bool = False) -> Nubia:
         from ftt.cli import commands
 
         plugin = Plugin()
@@ -62,15 +62,4 @@ class Application:
 
     @classmethod
     def initialize_and_run(cls) -> None:
-        from pyinstrument import Profiler
-
-        profiler = Profiler()
-        profiler.start()
-
-        result = cls.initialize().run()
-
-        profiler.stop()
-
-        profiler.print()
-
-        sys.exit(result)
+        sys.exit(cls.initialize().run())

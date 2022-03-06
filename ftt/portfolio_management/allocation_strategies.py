@@ -1,7 +1,5 @@
 import numpy as np
 import pandas as pd
-from pypfopt import DiscreteAllocation  # type: ignore
-from pypfopt.base_optimizer import BaseOptimizer, portfolio_performance  # type: ignore
 
 from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 
@@ -18,6 +16,9 @@ class DefaultAllocationStrategy:
         self.latest_prices = pd.Series(latest_prices)
 
     def allocate(self):
+        from pypfopt import DiscreteAllocation  # type: ignore
+        from pypfopt.base_optimizer import BaseOptimizer, portfolio_performance  # type: ignore
+
         optimizer = BaseOptimizer(len(self.latest_prices))
         weights = pd.Series(self.allocation_dto.weights)
         optimizer.set_weights(weights)

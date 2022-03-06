@@ -1,8 +1,5 @@
 import abc
 
-import riskfolio as rp  # type: ignore
-from riskfolio import Sharpe
-
 from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 
 
@@ -14,10 +11,14 @@ class AbstractOptimizationStrategy(metaclass=abc.ABCMeta):
 
 class HistoricalOptimizationStrategy:
     def __init__(self, returns):
+        from riskfolio import Portfolio
+
         self.returns = returns
-        self.portfolio = rp.Portfolio(returns=returns)
+        self.portfolio = Portfolio(returns=returns)
 
     def optimize(self):
+        from riskfolio import Sharpe
+
         self.portfolio.assets_stats()
         model = "Classic"  # Could be Classic (historical), BL (Black Litterman) or FM (Factor Model)
         rm = "MV"  # Risk measure used, this time will be variance
@@ -50,7 +51,8 @@ class HistoricalOptimizationStrategy:
 class RiskParityOptimizationStrategy:
     def __init__(self, returns):
         self.returns = returns
-        self.portfolio = rp.Portfolio(returns=returns)
+        from riskfolio import Portfolio
+        self.portfolio = Portfolio(returns=returns)
 
     def optimize(self):
         # TODO: method_mu and method_cov must be options and accessible in CLI as options
@@ -74,6 +76,7 @@ class RiskParityOptimizationStrategy:
             model=model, rm=rm, rf=rf, b=b, hist=hist
         )
 
+        from riskfolio import Sharpe
         sharpe = Sharpe(
             weights,
             mu=self.portfolio.mu,

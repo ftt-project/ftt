@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-import pandas as pd
+from pandas import DataFrame
 
 
 @dataclass
@@ -12,4 +12,4 @@ class PortfolioAllocationDTO:
     expected_annual_return: Optional[float] = None
     annual_volatility: Optional[float] = None
     sharpe_ratio: Optional[float] = None
-    cov_matrix: Optional[pd.DataFrame] = None
+    cov_matrix: Optional[DataFrame] = None
