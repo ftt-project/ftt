@@ -20,7 +20,7 @@ APPLICATION_NAME = "ftt"
 
 class Application:
     @classmethod
-    def initialize(cls, test_mode: bool = False) -> None:
+    def initialize(cls, test_mode: bool = False) -> Nubia:
         from ftt.cli import commands
 
         plugin = Plugin()
