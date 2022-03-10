@@ -7,6 +7,7 @@
 [![Linting](https://github.com/ftt-project/ftt/actions/workflows/linting.yml/badge.svg)](https://github.com/ftt-project/ftt/actions/workflows/linting.yml)
 ![GitHub](https://img.shields.io/github/license/ftt-project/ftt)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ftt)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/ftt-project/ftt.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ftt-project/ftt/alerts/)
 
 FTT is a financial asset management application that helps to make right decision on time.
 
