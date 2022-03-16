@@ -73,7 +73,9 @@ class IBClient(EClient):
         self.reqPositions()
 
         try:
-            positions = open_positions_done_queue.get(timeout=IBClient.MAX_WAIT_TIME_SECONDS)
+            positions = open_positions_done_queue.get(
+                timeout=IBClient.MAX_WAIT_TIME_SECONDS
+            )
         except queue.Empty:
             print(
                 "Time queue was empty or exceeded maximum timeout of "

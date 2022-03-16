@@ -6,7 +6,6 @@ from ibapi.common import OrderId
 from ibapi.order import Order
 from ibapi.order_state import OrderState
 
-from ftt.brokers.contract import Contract
 from ftt.brokers.position import Position
 
 
@@ -134,38 +133,42 @@ class IBWrapper(EWrapper):
         """
         self._next_valid_id.put(order_id)
 
-    def position(self, account: str, contract: IBContract, position: Decimal, avg_cost: float) -> None:
+    def position(
+        self, account: str, contract: IBContract, position: Decimal, avg_cost: float
+    ) -> None:
         """
         This method receives open positions from IB, maps them into `ib.Position` object, and puts into the
         `_open_positions_queue` queue to be retrieved in `positionEnd` callback.
 
         See https://interactivebrokers.github.io/tws-api/positions.html
         """
-        self._open_positions_queue.put(Position(
-            account=account,
-            contract=contract,
-            position=position,
-            avg_cost=avg_cost
-        ))
+        self._open_positions_queue.put(
+            Position(
+                account=account, contract=contract, position=position, avg_cost=avg_cost
+            )
+        )
 
     def positionEnd(self) -> None:
         """
         See https://interactivebrokers.github.io/tws-api/positions.html
         """
-        self._open_positions_done_queue.put(
-            list(self._open_positions_queue.queue)
-        )
+        self._open_positions_done_queue.put(list(self._open_positions_queue.queue))
 
-    def openOrder(self, order_id: OrderId, contract: IBContract, order: Order,
-                  order_state: OrderState):
-        self._open_orders_queue.put({
-            "order_id": order_id,
-            "contract": contract,
-            "order": order,
-            "order_state": order_state
-        })
+    def openOrder(
+        self,
+        order_id: OrderId,
+        contract: IBContract,
+        order: Order,
+        order_state: OrderState,
+    ):
+        self._open_orders_queue.put(
+            {
+                "order_id": order_id,
+                "contract": contract,
+                "order": order,
+                "order_state": order_state,
+            }
+        )
 
     def openOrderEnd(self):
-        self._open_orders_done_queue.put(
-            list(self._open_orders_queue.queue)
-        )
+        self._open_orders_done_queue.put(list(self._open_orders_queue.queue))

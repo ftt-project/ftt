@@ -1,13 +1,13 @@
 from datetime import datetime
 
 from nubia import command
-from nubia.internal import context
 
 from ftt.brokers.utils import build_brokerage_service
 
 
 def config():
     from collections import namedtuple
+
     dictionary = {"host": "127.0.0.1", "port": 7497, "client_id": 1234}
     return namedtuple("Config", dictionary.keys())(*dictionary.values())
 
@@ -17,8 +17,6 @@ def time():
     """
     Returns time on IB server
     """
-    ctx = context.get_context()
-
     brokerage_service = build_brokerage_service("Interactive Brokers")
     server_time = brokerage_service.obtain_server_time()
 

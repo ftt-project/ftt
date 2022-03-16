@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List
 
 from result import Result, Ok
 
@@ -18,7 +18,9 @@ class ComparePlannedActualPositionsStep(AbstractStep):
     key = "positions_comparison"
 
     @classmethod
-    def process(cls, weights: List[Weight], positions: List[Position]) -> Result[list[tuple[Order, Contract]], str]:
+    def process(
+        cls, weights: List[Weight], positions: List[Position]
+    ) -> Result[list[tuple[Order, Contract]], str]:
         """
         Parameters
         ----------
@@ -38,7 +40,9 @@ class ComparePlannedActualPositionsStep(AbstractStep):
         normalized_by_symbol_planned_positions = cls._normalize_positions(positions)
         normalized_by_symbol_weights = cls._normalize_weights(weights)
 
-        symbols_collection = list(normalized_by_symbol_planned_positions.keys()) + list(normalized_by_symbol_weights.keys())
+        symbols_collection = list(normalized_by_symbol_planned_positions.keys()) + list(
+            normalized_by_symbol_weights.keys()
+        )
         symbols_collection = set(symbols_collection)
 
         result = []
@@ -48,48 +52,55 @@ class ComparePlannedActualPositionsStep(AbstractStep):
             if weight and position:
                 if weight < position:
                     result.append(
-                        (Order(
-                            action=Order.Action.BUY,
-                            total_quantity=float(position - weight),
-                        ),
-                         Contract(
-                             symbol=symbol,
-                         ),)
+                        (
+                            Order(
+                                action=Order.Action.BUY,
+                                total_quantity=float(position - weight),
+                            ),
+                            Contract(
+                                symbol=symbol,
+                            ),
+                        )
                     )
                 elif weight > position:
                     result.append(
-                        (Order(
-                            action=Order.Action.SELL,
-                            total_quantity=float(weight - position),
-                        ),
-                         Contract(
-                             symbol=symbol,
-                         ),)
+                        (
+                            Order(
+                                action=Order.Action.SELL,
+                                total_quantity=float(weight - position),
+                            ),
+                            Contract(
+                                symbol=symbol,
+                            ),
+                        )
                     )
                 else:
                     # no action required
                     pass
             elif weight and not position:
                 result.append(
-                    (Order(
-                        action=Order.Action.SELL,
-                        total_quantity=float(weight),
-                    ),
-                     Contract(
-                         symbol=symbol,
-                     ),)
+                    (
+                        Order(
+                            action=Order.Action.SELL,
+                            total_quantity=float(weight),
+                        ),
+                        Contract(
+                            symbol=symbol,
+                        ),
+                    )
                 )
             elif position and not weight:
                 result.append(
-                    (Order(
-                        action=Order.Action.BUY,
-                        total_quantity=float(position),
-                    ),
-                     Contract(
-                         symbol=symbol,
-                     ),)
+                    (
+                        Order(
+                            action=Order.Action.BUY,
+                            total_quantity=float(position),
+                        ),
+                        Contract(
+                            symbol=symbol,
+                        ),
+                    )
                 )
-
 
         return Ok(result)
 
