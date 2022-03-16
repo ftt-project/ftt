@@ -7,3 +7,6 @@ class TestIBBrokerageService:
     @pytest.fixture
     def subject(self):
         return IBBrokerageService
+
+    def test_open_positions(self, subject):
+        pass

@@ -15,3 +15,12 @@ class BrokerageService:
 
     def obtain_server_time(self):
         return self._implementation.obtain_server_time()
+
+    def next_valid_id(self):
+        return self._implementation.next_valid_id()
+
+    def place_order(self, contract, order):
+        return self._implementation.place_order(contract, order)
+
+    def open_orders(self):
+        return self._implementation.open_orders()

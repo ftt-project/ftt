@@ -20,5 +20,3 @@ class IBBrokerageService(IBWrapper, IBClient):
         thread = threading.Thread(target=self.run)
         thread.start()
         setattr(self, "_thread", thread)
-
-        self.init_error()
