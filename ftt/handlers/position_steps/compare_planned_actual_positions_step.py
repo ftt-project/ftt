@@ -54,7 +54,7 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                     result.append(
                         (
                             Order(
-                                action=Order.Action.BUY,
+                                action=Order.Action.SELL,
                                 total_quantity=float(position - weight),
                             ),
                             Contract(
@@ -66,7 +66,7 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                     result.append(
                         (
                             Order(
-                                action=Order.Action.SELL,
+                                action=Order.Action.BUY,
                                 total_quantity=float(weight - position),
                             ),
                             Contract(
@@ -75,13 +75,13 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                         )
                     )
                 else:
-                    # no action required
+                    # no action required planned position (in weigths) is equal to actual position (in positions)
                     pass
             elif weight and not position:
                 result.append(
                     (
                         Order(
-                            action=Order.Action.SELL,
+                            action=Order.Action.BUY,
                             total_quantity=float(weight),
                         ),
                         Contract(
@@ -89,18 +89,11 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                         ),
                     )
                 )
-            elif position and not weight:
-                result.append(
-                    (
-                        Order(
-                            action=Order.Action.BUY,
-                            total_quantity=float(position),
-                        ),
-                        Contract(
-                            symbol=symbol,
-                        ),
-                    )
-                )
+            else:
+                # no action required
+                # we could have more open positions in the system that do not belong to current portfolio's weights,
+                # and we ignore them
+                pass
 
         return Ok(result)
 

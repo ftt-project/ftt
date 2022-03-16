@@ -47,7 +47,7 @@ class TestComparePlannedActualPositionsStep:
         assert result.is_ok()
         assert len(result.value) == 0
 
-    def test_returns_combination_order_contract_with_buy_action(
+    def test_returns_combination_order_contract_with_sell_action(
         self, subject, weight_factory, portfolio_version, security_factory, position
     ):
         result = subject.process(
@@ -67,11 +67,11 @@ class TestComparePlannedActualPositionsStep:
         assert type(result.value[0][0]) == Order
         assert type(result.value[0][1]) == Contract
 
-        assert result.value[0][0].action == Order.Action.BUY
+        assert result.value[0][0].action == Order.Action.SELL
         assert result.value[0][0].total_quantity == 10
         assert result.value[0][1].symbol == "AA-1"
 
-    def test_returns_combination_order_contract_with_sell_action(
+    def test_returns_combination_order_contract_with_buy_action(
         self, subject, weight_factory, portfolio_version, security_factory, position
     ):
         result = subject.process(
@@ -87,7 +87,7 @@ class TestComparePlannedActualPositionsStep:
 
         assert result.is_ok()
         assert len(result.value) == 1
-        assert result.value[0][0].action == Order.Action.SELL
+        assert result.value[0][0].action == Order.Action.BUY
         assert result.value[0][0].total_quantity == 5
         assert result.value[0][1].symbol == "AA-1"
 
@@ -112,15 +112,15 @@ class TestComparePlannedActualPositionsStep:
         assert result.is_ok()
         assert len(result.value) == 2
 
-        assert result.value[0][0].action == Order.Action.BUY
+        assert result.value[0][0].action == Order.Action.SELL
         assert result.value[0][0].total_quantity == 7.0
         assert result.value[0][1].symbol == "AA-2"
 
-        assert result.value[1][0].action == Order.Action.SELL
+        assert result.value[1][0].action == Order.Action.BUY
         assert result.value[1][0].total_quantity == 5.0
         assert result.value[1][1].symbol == "AA-1"
 
-    def test_returns_combination_buy_order_contract_with_new_positions(
+    def test_returns_no_actions_required_ignores_positions_not_in_portfolio(
         self, subject, weight_factory, portfolio_version, security_factory, position
     ):
         result = subject.process(
@@ -136,13 +136,9 @@ class TestComparePlannedActualPositionsStep:
         )
 
         assert result.is_ok()
-        assert len(result.value) == 1
+        assert len(result.value) == 0
 
-        assert result.value[0][0].action == Order.Action.BUY
-        assert result.value[0][0].total_quantity == 17.0
-        assert result.value[0][1].symbol == "AA-2"
-
-    def test_returns_combination_sell_order_contract_with_no_positions(
+    def test_returns_combination_buy_order_contract_with_no_positions(
         self, subject, weight_factory, portfolio_version, security_factory, position
     ):
         result = subject.process(
@@ -162,6 +158,6 @@ class TestComparePlannedActualPositionsStep:
         assert result.is_ok()
         assert len(result.value) == 1
 
-        assert result.value[0][0].action == Order.Action.SELL
+        assert result.value[0][0].action == Order.Action.BUY
         assert result.value[0][0].total_quantity == 10.0
         assert result.value[0][1].symbol == "AA-2"
