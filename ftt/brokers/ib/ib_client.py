@@ -6,6 +6,7 @@ from ibapi.order import Order as IBOrder
 
 from ftt.brokers.contract import Contract
 from ftt.brokers.order import Order
+from ftt.brokers.position import Position
 
 
 class IBClient(EClient):
@@ -65,8 +66,8 @@ class IBClient(EClient):
 
         Returns
         -------
-        `TBD`
-            TBD --> WHAT IT SHOULD RETURN? SHOULD I USE DTO?
+        `list` of `Position`
+            The open positions for this client.
         """
         open_positions_done_queue = self.wrapper.open_positions()
 

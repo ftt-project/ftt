@@ -150,6 +150,7 @@ class IBWrapper(EWrapper):
 
     def positionEnd(self) -> None:
         """
+        See `position` method.
         See https://interactivebrokers.github.io/tws-api/positions.html
         """
         self._open_positions_done_queue.put(list(self._open_positions_queue.queue))

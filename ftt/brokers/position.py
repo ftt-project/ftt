@@ -9,5 +9,5 @@ from ftt.brokers.contract import Contract
 class Position:
     account: str
     contract: Contract
-    position: Decimal
+    position: float
     avg_cost: Optional[float] = 0.0
