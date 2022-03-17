@@ -1,3 +1,7 @@
+from ftt.brokers.broker_order import BrokerOrder
+from ftt.brokers.contract import Contract
+
+
 class BrokerageService:
     """
     This class follows Bridge pattern abstracting concrete brokerage service implementation.
@@ -19,7 +23,7 @@ class BrokerageService:
     def next_valid_id(self):
         return self._implementation.next_valid_id()
 
-    def place_order(self, contract, order):
+    def place_order(self, contract: Contract, order: BrokerOrder):
         return self._implementation.place_order(contract, order)
 
     def open_orders(self):

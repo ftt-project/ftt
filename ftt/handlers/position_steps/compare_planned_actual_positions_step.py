@@ -3,7 +3,7 @@ from typing import List
 from result import Result, Ok
 
 from ftt.brokers.contract import Contract
-from ftt.brokers.order import Order
+from ftt.brokers.broker_order import BrokerOrder
 from ftt.brokers.position import Position
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.models import Weight
@@ -15,12 +15,12 @@ class ComparePlannedActualPositionsStep(AbstractStep):
     Returns a combination of Order and Contract that is enough to represent the difference for order placement
     """
 
-    key = "positions_comparison"
+    key = "order_candidates"
 
     @classmethod
     def process(
         cls, weights: List[Weight], positions: List[Position]
-    ) -> Result[list[tuple[Order, Contract]], str]:
+    ) -> Result[list[tuple[BrokerOrder, Contract]], str]:
         """
         Parameters
         ----------
@@ -53,8 +53,8 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                 if weight < position:
                     result.append(
                         (
-                            Order(
-                                action=Order.Action.SELL,
+                            BrokerOrder(
+                                action=BrokerOrder.Action.SELL,
                                 total_quantity=float(position - weight),
                             ),
                             Contract(
@@ -65,8 +65,8 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                 elif weight > position:
                     result.append(
                         (
-                            Order(
-                                action=Order.Action.BUY,
+                            BrokerOrder(
+                                action=BrokerOrder.Action.BUY,
                                 total_quantity=float(weight - position),
                             ),
                             Contract(
@@ -80,8 +80,8 @@ class ComparePlannedActualPositionsStep(AbstractStep):
             elif weight and not position:
                 result.append(
                     (
-                        Order(
-                            action=Order.Action.BUY,
+                        BrokerOrder(
+                            action=BrokerOrder.Action.BUY,
                             total_quantity=float(weight),
                         ),
                         Contract(

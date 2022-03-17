@@ -1,7 +1,7 @@
 import pytest
 
 from ftt.brokers.contract import Contract
-from ftt.brokers.order import Order
+from ftt.brokers.broker_order import BrokerOrder
 from ftt.brokers.position import Position
 from ftt.handlers.position_steps.compare_planned_actual_positions_step import (
     ComparePlannedActualPositionsStep,
@@ -64,10 +64,10 @@ class TestComparePlannedActualPositionsStep:
         assert result.is_ok()
         assert len(result.value) == 1
         assert type(result.value[0]) == tuple
-        assert type(result.value[0][0]) == Order
+        assert type(result.value[0][0]) == BrokerOrder
         assert type(result.value[0][1]) == Contract
 
-        assert result.value[0][0].action == Order.Action.SELL
+        assert result.value[0][0].action == BrokerOrder.Action.SELL
         assert result.value[0][0].total_quantity == 10
         assert result.value[0][1].symbol == "AA-1"
 
@@ -87,7 +87,7 @@ class TestComparePlannedActualPositionsStep:
 
         assert result.is_ok()
         assert len(result.value) == 1
-        assert result.value[0][0].action == Order.Action.BUY
+        assert result.value[0][0].action == BrokerOrder.Action.BUY
         assert result.value[0][0].total_quantity == 5
         assert result.value[0][1].symbol == "AA-1"
 
@@ -112,11 +112,11 @@ class TestComparePlannedActualPositionsStep:
         assert result.is_ok()
         assert len(result.value) == 2
 
-        assert result.value[0][0].action == Order.Action.SELL
+        assert result.value[0][0].action == BrokerOrder.Action.SELL
         assert result.value[0][0].total_quantity == 7.0
         assert result.value[0][1].symbol == "AA-2"
 
-        assert result.value[1][0].action == Order.Action.BUY
+        assert result.value[1][0].action == BrokerOrder.Action.BUY
         assert result.value[1][0].total_quantity == 5.0
         assert result.value[1][1].symbol == "AA-1"
 
@@ -158,6 +158,6 @@ class TestComparePlannedActualPositionsStep:
         assert result.is_ok()
         assert len(result.value) == 1
 
-        assert result.value[0][0].action == Order.Action.BUY
+        assert result.value[0][0].action == BrokerOrder.Action.BUY
         assert result.value[0][0].total_quantity == 10.0
         assert result.value[0][1].symbol == "AA-2"

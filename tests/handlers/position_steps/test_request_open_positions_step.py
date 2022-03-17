@@ -2,7 +2,9 @@ import pytest
 
 from ftt.brokers.contract import Contract
 from ftt.brokers.position import Position
-from ftt.handlers.position_steps.request_open_positions_step import RequestOpenPositionsStep
+from ftt.handlers.position_steps.request_open_positions_step import (
+    RequestOpenPositionsStep,
+)
 
 
 class TestRequestOpenPositionsStep:
@@ -13,15 +15,17 @@ class TestRequestOpenPositionsStep:
     @pytest.fixture
     def position(self):
         Position(
-            account='account-123',
+            account="account-123",
             contract=Contract(
-                symbol='AAPL',
+                symbol="AAPL",
             ),
-            position=10.0
+            position=10.0,
         )
 
     def test_returns_open_positions(self, subject, mocker, position):
-        mocked = mocker.patch('ftt.handlers.position_steps.request_open_positions_step.build_brokerage_service')
+        mocked = mocker.patch(
+            "ftt.handlers.position_steps.request_open_positions_step.build_brokerage_service"
+        )
         mocked.return_value.open_positions.return_value = [position]
 
         result = subject.process()

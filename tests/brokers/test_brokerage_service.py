@@ -26,3 +26,7 @@ class TestBrokerageService:
         service = subject(x_brokerage_service)
         service.obtain_server_time()
         x_brokerage_service.obtain_server_time.assert_called_once()
+
+    @pytest.mark.skip(reason="Not implemented")
+    def test_place_order(self, subject):
+        pass

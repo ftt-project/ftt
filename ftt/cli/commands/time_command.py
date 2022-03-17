@@ -41,24 +41,25 @@ def open_position():
 
 @command
 def place_order():
-    from ftt.brokers.contract import Contract
-    from ftt.brokers.order import Order
-
-    brokerage_service = build_brokerage_service("Interactive Brokers", config())
-    contract = Contract(
-        symbol="SHOP",
-        security_type="STK",
-        exchange="SMART",
-        currency="USD",
-    )
-    order = Order(
-        action="BUY",
-        total_quantity=1.0,
-        order_type="MKT",
-    )
-
-    order_id = brokerage_service.place_order(contract, order)
-    print(order_id)
-
-    open_orders = brokerage_service.open_orders()
-    print(open_orders)
+    pass
+    # from ftt.brokers.contract import Contract
+    # from ftt.brokers.order import Order
+    #
+    # brokerage_service = build_brokerage_service("Interactive Brokers", config())
+    # contract = Contract(
+    #     symbol="SHOP",
+    #     security_type="STK",
+    #     exchange="SMART",
+    #     currency="USD",
+    # )
+    # order = BrokerOrder(
+    #     action="BUY",
+    #     total_quantity=1.0,
+    #     order_type="MKT",
+    # )
+    #
+    # order_id = brokerage_service.place_order(contract, order)
+    # print(order_id)
+    #
+    # open_orders = brokerage_service.open_orders()
+    # print(open_orders)

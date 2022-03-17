@@ -5,8 +5,7 @@ from ibapi.wrapper import Contract as IBContract
 from ibapi.order import Order as IBOrder
 
 from ftt.brokers.contract import Contract
-from ftt.brokers.order import Order
-from ftt.brokers.position import Position
+from ftt.brokers.broker_order import BrokerOrder
 
 
 class IBClient(EClient):
@@ -116,7 +115,7 @@ class IBClient(EClient):
 
         return next_valid_id
 
-    def place_order(self, contract: Contract, order: Order) -> int:
+    def place_order(self, contract: Contract, order: BrokerOrder) -> int:
         """
         Places order asynchronously according to given contact and order
 
