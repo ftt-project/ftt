@@ -53,7 +53,7 @@ def place_order():
     )
     order = Order(
         action="BUY",
-        total_quantity="1",
+        total_quantity=1.0,
         order_type="MKT",
     )
 
