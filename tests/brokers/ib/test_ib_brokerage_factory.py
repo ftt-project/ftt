@@ -14,5 +14,5 @@ class TestIBBrokerageFactory:
         factory = subject(config)
         result = factory.build()
 
-        assert type(result) == BrokerageService
+        assert type(result) == IBBrokerageService
         assert result.provider_name == IBBrokerageService.provider_name

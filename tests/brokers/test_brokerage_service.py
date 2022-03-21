@@ -20,7 +20,7 @@ class TestBrokerageService:
     def test_open_positions(self, subject, x_brokerage_service):
         service = subject(x_brokerage_service)
         service.open_positions()
-        x_brokerage_service.open_positions.assert_called_once()
+        x_brokerage_service.obtain_open_positions.assert_called_once()
 
     def test_obtain_server_time(self, subject, x_brokerage_service):
         service = subject(x_brokerage_service)

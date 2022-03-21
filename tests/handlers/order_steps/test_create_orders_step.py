@@ -26,6 +26,7 @@ class TestCreateOrdersStep:
                 BrokerOrder(
                     action=BrokerOrder.Action.SELL,
                     total_quantity=100,
+                    order_type=BrokerOrder.OrderType.MARKET,
                 ),
                 Contract(
                     symbol=security_1.symbol,
@@ -35,6 +36,7 @@ class TestCreateOrdersStep:
                 BrokerOrder(
                     action=BrokerOrder.Action.SELL,
                     total_quantity=75,
+                    order_type=BrokerOrder.OrderType.MARKET,
                 ),
                 Contract(
                     symbol=security_2.symbol,

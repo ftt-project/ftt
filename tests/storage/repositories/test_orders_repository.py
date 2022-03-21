@@ -11,14 +11,17 @@ class TestOrdersRepository:
     def subject(self):
         return OrdersRepository
 
-    def test_create(self, subject, security, portfolio_version):
+    def test_create(self, subject, security, portfolio_version, portfolio):
         result = subject.create(
             {
                 "security": security,
+                "portfolio": portfolio,
                 "portfolio_version": portfolio_version,
                 "status": "created",
                 "type": "buy",
                 "desired_price": 100,
+                "action": "BUY",
+                "order_type": "LIMIT",
             }
         )
 
@@ -31,7 +34,8 @@ class TestOrdersRepository:
             symbol_name=security.symbol,
             portfolio_version_id=portfolio_version.id,
             desired_price=1,
-            type="buy",
+            order_type="LIMIT",
+            action="BUY",
         )
         assert type(result) == Order
         assert result.id is not None
@@ -64,9 +68,11 @@ class TestOrdersRepository:
     ):
         order_closed = Order.create(
             security=security,
-            type="buy",
+            order_type="BUY",
+            action="BUY",
+            portfolio=portfolio,
             portfolio_version=portfolio_version,
-            status=Order.Completed,
+            status=Order.Status.COMPLETED,
             executed_at=datetime.now(),
             desired_price=10,
             execution_price=10,
@@ -97,14 +103,14 @@ class TestOrdersRepository:
         assert result.executed_at is not None
 
     def test_last_successful_order(self, subject, order, portfolio, security):
-        order.status = Order.Completed
+        order.status = Order.Status.COMPLETED
         order.save()
         buy_result = subject.last_successful_order(
-            portfolio=portfolio, security=security, type="buy"
+            portfolio=portfolio, security=security, action="BUY"
         )
         assert order == buy_result
 
         sell_result = subject.last_successful_order(
-            portfolio=portfolio, security=security, type="sell"
+            portfolio=portfolio, security=security, action="SELL"
         )
         assert sell_result is None

@@ -483,7 +483,7 @@ class PortfolioVersionsCommands:
                 f"[green]Positions were synchronized for Portfolio Version #{portfolio_version_id}"
             )
             self.context.console.print(
-                f"[green]Orders were created for Portfolio Version #{portfolio_version_id}: " 
+                f"[green]Orders were created for Portfolio Version #{portfolio_version_id}: "
                 f"{[order.id for order in result.value]}"
             )
         else:

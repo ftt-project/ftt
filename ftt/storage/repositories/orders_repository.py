@@ -39,17 +39,21 @@ class OrdersRepository(Repository):
         symbol_name: str,
         portfolio_version_id: int,
         desired_price: float,
-        type: str,
+        order_type: str,
+        action: str,
     ) -> Order:
+        portfolio_version = PortfolioVersionsRepository().get_by_id(
+            portfolio_version_id
+        )
         order = cls.create(
             {
                 "security": SecuritiesRepository().get_by_name(symbol_name),
-                "portfolio_version": PortfolioVersionsRepository().get_by_id(
-                    portfolio_version_id
-                ),
+                "portfolio": portfolio_version.portfolio,
+                "portfolio_version": portfolio_version,
                 "desired_price": desired_price,
-                "status": Order.Created,
-                "type": type,
+                "status": Order.Status.CREATED,
+                "order_type": order_type,
+                "action": action,
             }
         )
         return order
@@ -78,7 +82,7 @@ class OrdersRepository(Repository):
             .switch(Order)
             .join(Security)
             .where(Portfolio.id == portfolio.id)
-            .where(Order.status.in_(Order.NOT_CLOSED_STATUSES))
+            .where(Order.status.in_(list(Order.NotClosedStatus)))
             .where(Security.id == security.id)
             .order_by(Order.created_at.desc())
             .execute()
@@ -90,7 +94,7 @@ class OrdersRepository(Repository):
 
     @classmethod
     def last_successful_order(
-        cls, portfolio: Portfolio, security: Security, type: str
+        cls, portfolio: Portfolio, security: Security, action: str
     ) -> Order:
         found = (
             Order.select()
@@ -99,9 +103,9 @@ class OrdersRepository(Repository):
             .switch(Order)
             .join(Security)
             .where(Portfolio.id == portfolio.id)
-            .where(Order.status.in_(Order.SUCCEED_STATUSES))
+            .where(Order.status.in_(list(Order.SucceedStatus)))
             .where(Security.id == security.id)
-            .where(Order.type == type)
+            .where(Order.action == action)
             .order_by(Order.created_at.desc())
             .limit(1)
             .execute()
