@@ -32,9 +32,14 @@ class PlaceOrdersStep(AbstractStep):
                 contract=contract, order=broker_order
             )
             # TODO handle error
-            order.status = order.__class__.Status.SUBMITTED
-            order.external_id = order_id
-            order.save()
-            order_ids.append(order_id)
+            if order_id is not None:
+                order.status = order.__class__.Status.SUBMITTED
+                order.external_id = order_id
+                order.save()
+                order_ids.append(order_id)
+            else:
+                # TODO Handle error
+                print(f"Error placing order {order.id}")
+                pass
 
         return Ok(orders)

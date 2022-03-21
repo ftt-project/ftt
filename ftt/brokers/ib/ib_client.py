@@ -26,7 +26,7 @@ class IBClient(EClient):
     def __init__(self, wrapper):
         EClient.__init__(self, wrapper)
 
-    def obtain_server_time(self):
+    def server_time(self):
         """
         Requests the current server time from IB then
         returns it if available.
@@ -37,7 +37,7 @@ class IBClient(EClient):
             The server unix timestamp.
         """
         # Instantiate a queue to store the server time
-        time_queue = self.wrapper.time()
+        time_queue = self.wrapper.time_queue()
 
         # Ask IB for the server time using the EClient method
         self.reqCurrentTime()
@@ -59,7 +59,7 @@ class IBClient(EClient):
 
         return server_time
 
-    def obtain_open_positions(self):
+    def open_positions(self):
         """
         Returns open positions
 
@@ -68,7 +68,7 @@ class IBClient(EClient):
         `list` of `Position`
             The open positions for this client.
         """
-        open_positions_done_queue = self.wrapper.open_positions()
+        open_positions_done_queue = self.wrapper.open_positions_queue()
 
         self.reqPositions()
 
@@ -97,7 +97,7 @@ class IBClient(EClient):
         `id`
             The next valid id
         """
-        id_queue = self.wrapper.next_valid_id()
+        id_queue = self.wrapper.next_valid_id_queue()
 
         self.reqIds(n)
 
@@ -149,7 +149,7 @@ class IBClient(EClient):
         return next_order_id
 
     def open_orders(self):
-        open_orders_queue = self.wrapper.open_orders()
+        open_orders_queue = self.wrapper.open_orders_queue()
 
         self.reqOpenOrders()
 

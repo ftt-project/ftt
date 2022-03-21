@@ -64,14 +64,10 @@ class IBWrapper(EWrapper):
         Format the error message with appropriate codes and
         place the error string onto the error queue.
         """
-        error_message = "IB Error ID (%d), Error Code (%d) with " "response '%s'" % (
-            id,
-            errorCode,
-            errorString,
-        )
+        error_message = f"IB Error ID {id}, Error Code {errorCode} with " f"response '{errorString}'"
         self._errors.put(error_message)
 
-    def time(self) -> queue.Queue:
+    def time_queue(self) -> queue.Queue:
         """
         Instantiates a new queue to store the server
         time, assigning it to a 'private' instance
@@ -84,7 +80,7 @@ class IBWrapper(EWrapper):
         """
         return self._time_queue
 
-    def open_positions(self) -> queue.Queue:
+    def open_positions_queue(self) -> queue.Queue:
         """
         Returns a final queue with all open positions that are received asynchronously
         (see `position` and `positionEnd`), and the second queue that returns all received open
@@ -97,7 +93,7 @@ class IBWrapper(EWrapper):
         """
         return self._open_positions_done_queue
 
-    def open_orders(self) -> queue.Queue:
+    def open_orders_queue(self) -> queue.Queue:
         """
         Returns a final queue with all open orders that are received asynchronously
         (see `openOrder` and `openOrderEnd`)
@@ -109,7 +105,7 @@ class IBWrapper(EWrapper):
         """
         return self._open_orders_done_queue
 
-    def next_valid_id(self) -> queue.Queue:
+    def next_valid_id_queue(self) -> queue.Queue:
         """
         Returns queue with the next valid id.
         """
