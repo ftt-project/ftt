@@ -1,5 +1,4 @@
 from ftt.brokers.base_brokerage_factory import BaseBrokerageFactory
-from ftt.brokers.brokerage_service import BrokerageService
 from ftt.brokers.ib.ib_brokerage_service import IBBrokerageService
 
 

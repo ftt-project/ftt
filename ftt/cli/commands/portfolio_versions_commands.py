@@ -29,6 +29,9 @@ from ftt.handlers.portfolio_version_securities_disassociate_handler import (
 from ftt.handlers.portfolio_version_updation_handler import (
     PortfolioVersionUpdationHandler,
 )
+from ftt.handlers.positions_synchronization_handler import (
+    PositionsSynchronizationHandler,
+)
 from ftt.handlers.securities_load_handler import SecuritiesLoadHandler
 from ftt.handlers.weights_list_handler import WeightsListHandler
 from ftt.portfolio_management.allocation_strategies import AllocationStrategyResolver
@@ -459,3 +462,30 @@ class PortfolioVersionsCommands:
             self.context,
             portfolio_version_result.value,
         ).render()
+
+    @command
+    @argument(
+        "portfolio_version_id",
+        description="Portfolio Version ID",
+        positional=True,
+        type=int,
+    )
+    def synchronize_positions(self, portfolio_version_id: int):
+        """
+        Synchronize planned and open positions between local and broker systems
+        """
+        result = PositionsSynchronizationHandler().handle(
+            portfolio_version_id=portfolio_version_id
+        )
+
+        if result.is_ok():
+            self.context.console.print(
+                f"[green]Positions were synchronized for Portfolio Version #{portfolio_version_id}"
+            )
+            self.context.console.print(
+                f"[green]Orders were created for Portfolio Version #{portfolio_version_id}: " 
+                f"{[order.id for order in result.value]}"
+            )
+        else:
+            self.context.console.print("[red]Failed to synchronize positions:")
+            self.context.console.print(result.value)

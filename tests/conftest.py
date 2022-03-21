@@ -23,28 +23,6 @@ def transactional():
 
 
 @pytest.fixture
-def cerebro(portfolio_version, security, weight):
-    def _cerebro(strategies, data):
-        cerebro = bt.Cerebro(live=True, cheat_on_open=True)
-        for strategy in strategies:
-            if type(strategy) == tuple:
-                strategy, opts = strategy
-                cerebro.addstrategy(
-                    strategy, portfolio_version_id=portfolio_version.id, **opts
-                )
-            else:
-                cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
-        cerebro.addsizer(WeightedSizer)
-
-        cerebro.adddata(data, name=security.symbol)
-
-        cerebro.broker.setcash(30000.0)
-        return cerebro
-
-    return _cerebro
-
-
-@pytest.fixture
 def security():
     security = Security.create(
         symbol="AA.XX",
@@ -252,12 +230,14 @@ def weight_factory():
 
 
 @pytest.fixture
-def order(security, portfolio_version):
+def order(security, portfolio_version, portfolio):
     order = Order.create(
         security=security,
+        action="BUY",
+        portfolio=portfolio,
         portfolio_version=portfolio_version,
         status="Created",
-        type="buy",
+        order_type="MARKET",
         desired_price=100,
         updated_at=datetime.now(),
         created_at=datetime.now(),

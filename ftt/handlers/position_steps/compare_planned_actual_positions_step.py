@@ -37,7 +37,9 @@ class ComparePlannedActualPositionsStep(AbstractStep):
             are value objects. Contract contains information about security order
             action that must be applied to a contract.
         """
-        normalized_by_symbol_planned_positions = cls._normalize_positions(open_positions)
+        normalized_by_symbol_planned_positions = cls._normalize_positions(
+            open_positions
+        )
         normalized_by_symbol_weights = cls._normalize_weights(weights)
 
         symbols_collection = list(normalized_by_symbol_planned_positions.keys()) + list(
