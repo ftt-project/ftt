@@ -18,4 +18,4 @@ class IBBrokerageFactory(BaseBrokerageFactory):
         ib_broker = IBBrokerageService(
             self._config.host, self._config.port, self._config.client_id
         )
-        return BrokerageService(ib_broker)
+        return ib_broker

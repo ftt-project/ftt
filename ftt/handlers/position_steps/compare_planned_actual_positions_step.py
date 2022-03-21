@@ -19,14 +19,14 @@ class ComparePlannedActualPositionsStep(AbstractStep):
 
     @classmethod
     def process(
-        cls, weights: List[Weight], positions: List[Position]
+        cls, weights: List[Weight], open_positions: List[Position]
     ) -> Result[list[tuple[BrokerOrder, Contract]], str]:
         """
         Parameters
         ----------
         weights : array_like
             List of Weight models to compare
-        positions : array_like
+        open_positions : array_like
             Lit of Position value objects
 
         Returns
@@ -37,7 +37,7 @@ class ComparePlannedActualPositionsStep(AbstractStep):
             are value objects. Contract contains information about security order
             action that must be applied to a contract.
         """
-        normalized_by_symbol_planned_positions = cls._normalize_positions(positions)
+        normalized_by_symbol_planned_positions = cls._normalize_positions(open_positions)
         normalized_by_symbol_weights = cls._normalize_weights(weights)
 
         symbols_collection = list(normalized_by_symbol_planned_positions.keys()) + list(
@@ -56,6 +56,7 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                             BrokerOrder(
                                 action=BrokerOrder.Action.SELL,
                                 total_quantity=float(position - weight),
+                                order_type=BrokerOrder.OrderType.MARKET,
                             ),
                             Contract(
                                 symbol=symbol,
@@ -68,6 +69,7 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                             BrokerOrder(
                                 action=BrokerOrder.Action.BUY,
                                 total_quantity=float(weight - position),
+                                order_type=BrokerOrder.OrderType.MARKET,
                             ),
                             Contract(
                                 symbol=symbol,
@@ -75,7 +77,7 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                         )
                     )
                 else:
-                    # no action required planned position (in weigths) is equal to actual position (in positions)
+                    # no action required as planned position (in weights) is equal to actual position (in positions)
                     pass
             elif weight and not position:
                 result.append(
@@ -83,6 +85,7 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                         BrokerOrder(
                             action=BrokerOrder.Action.BUY,
                             total_quantity=float(weight),
+                            order_type=BrokerOrder.OrderType.MARKET,
                         ),
                         Contract(
                             symbol=symbol,

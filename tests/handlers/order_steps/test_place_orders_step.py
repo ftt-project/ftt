@@ -35,5 +35,6 @@ class TestPlaceOrdersStep:
         result = subject.process([order])
 
         assert result.is_ok()
-        assert result.value == [1782]
+        assert result.value == [order]
         assert Order.get(order.id).status == Order.Status.SUBMITTED
+        assert Order.get(order.id).external_id == '1782'

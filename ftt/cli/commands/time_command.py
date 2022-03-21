@@ -2,14 +2,8 @@ from datetime import datetime
 
 from nubia import command
 
+from ftt.brokers.ib.ib_config import IBConfig
 from ftt.brokers.utils import build_brokerage_service
-
-
-def config():
-    from collections import namedtuple
-
-    dictionary = {"host": "127.0.0.1", "port": 7497, "client_id": 1234}
-    return namedtuple("Config", dictionary.keys())(*dictionary.values())
 
 
 @command
@@ -33,7 +27,7 @@ def open_position():
     Return open positions in brokerage system
     """
 
-    brokerage_service = build_brokerage_service("Interactive Brokers", config())
+    brokerage_service = build_brokerage_service("Interactive Brokers", IBConfig())
     open_positions = brokerage_service.open_positions()
 
     print(open_positions)

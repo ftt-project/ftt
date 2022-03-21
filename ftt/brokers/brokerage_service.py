@@ -15,7 +15,7 @@ class BrokerageService:
         return self._implementation.provider_name
 
     def open_positions(self):
-        return self._implementation.open_positions()
+        return self._implementation.obtain_open_positions()
 
     def obtain_server_time(self):
         return self._implementation.obtain_server_time()

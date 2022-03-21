@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from result import Result, Ok
 
 from ftt.handlers.handler.abstract_step import AbstractStep
@@ -17,7 +19,9 @@ class CreateOrdersStep(AbstractStep):
     ) -> Result[list[Order], str]:
         securities_by_symbol = cls._securities_by_symbol(weights)
 
+        orders = []
         for broker_order, contract in order_candidates:
+            # TODO use repository
             order = Order.create(
                 action=broker_order.action,
                 order_type=broker_order.order_type,
@@ -25,11 +29,14 @@ class CreateOrdersStep(AbstractStep):
                 portfolio_version=portfolio_version,
                 security=securities_by_symbol.get(contract.symbol),
                 desired_size=broker_order.total_quantity,
-                order_status=Order.Status.CREATED,
+                status=Order.Status.CREATED,
+                updated_at=datetime.now(),
+                created_at=datetime.now(),
             )
             order.save()
+            orders.append(order)
 
-        return Ok(order)
+        return Ok(orders)
 
     @staticmethod
     def _securities_by_symbol(weights: list[Weight]) -> dict[str, Security]:

@@ -33,7 +33,8 @@ class PlaceOrdersStep(AbstractStep):
             )
             # TODO handle error
             order.status = order.__class__.Status.SUBMITTED
+            order.external_id = order_id
             order.save()
             order_ids.append(order_id)
 
-        return Ok(order_ids)
+        return Ok(orders)

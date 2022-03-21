@@ -59,7 +59,7 @@ class IBClient(EClient):
 
         return server_time
 
-    def open_positions(self):
+    def obtain_open_positions(self):
         """
         Returns open positions
 

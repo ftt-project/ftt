@@ -15,6 +15,7 @@ class Order(Base):
     portfolio = peewee.ForeignKeyField(Portfolio, backref="orders")
     portfolio_version = peewee.ForeignKeyField(PortfolioVersion, backref="orders")
     status = peewee.CharField()
+    external_id = peewee.CharField(null=True)
     executed_at = peewee.DateTimeField(null=True)
     desired_size = peewee.DecimalField(null=True)
     desired_price = peewee.DecimalField(null=True)
