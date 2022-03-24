@@ -1,7 +1,8 @@
 from typing import Optional
 
-import yaml
+import yaml  # type: ignore
 from result import Err, Ok, Result
+from yaml.scanner import ScannerError  # type: ignore
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 
@@ -17,5 +18,5 @@ class PortfolioConfigFileReaderStep(AbstractStep):
             return Ok(config)
         except FileNotFoundError as e:
             return Err(e)
-        except yaml.scanner.ScannerError as e:
+        except ScannerError as e:
             return Err(e)

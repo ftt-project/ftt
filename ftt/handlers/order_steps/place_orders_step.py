@@ -12,7 +12,7 @@ class PlaceOrdersStep(AbstractStep):
     key = "placed_orders"
 
     @classmethod
-    def process(cls, orders: list[Order]) -> Result[id, str]:
+    def process(cls, orders: list[Order]) -> Result[list[Order], str]:
         brokerage_service = build_brokerage_service("Interactive Brokers", IBConfig)
 
         order_ids = []

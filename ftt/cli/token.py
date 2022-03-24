@@ -1,5 +1,5 @@
-from pygments.token import Token  # type: ignore
+from pygments.token import Token as PyToken  # type: ignore
 
 
 class Token:
-    Placeholder = Token.Comment
+    Placeholder = PyToken.Comment

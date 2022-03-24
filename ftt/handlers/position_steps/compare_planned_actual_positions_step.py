@@ -1,9 +1,9 @@
-from typing import List
+from typing import List, Iterable
 
 from result import Result, Ok
 
 from ftt.brokers.contract import Contract
-from ftt.brokers.broker_order import BrokerOrder
+from ftt.brokers.broker_order import BrokerOrder, OrderAction, OrderType
 from ftt.brokers.position import Position
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.models import Weight
@@ -42,12 +42,12 @@ class ComparePlannedActualPositionsStep(AbstractStep):
         )
         normalized_by_symbol_weights = cls._normalize_weights(weights)
 
-        symbols_collection = list(normalized_by_symbol_planned_positions.keys()) + list(
+        symbols_collection: Iterable = list(normalized_by_symbol_planned_positions.keys()) + list(
             normalized_by_symbol_weights.keys()
         )
         symbols_collection = set(symbols_collection)
 
-        result = []
+        result: list = []
         for symbol in symbols_collection:
             weight = normalized_by_symbol_weights.get(symbol)
             position = normalized_by_symbol_planned_positions.get(symbol)
@@ -56,9 +56,9 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                     result.append(
                         (
                             BrokerOrder(
-                                action=BrokerOrder.Action.SELL,
+                                action=OrderAction.SELL,
                                 total_quantity=float(position - weight),
-                                order_type=BrokerOrder.OrderType.MARKET,
+                                order_type=OrderType.MARKET,
                             ),
                             Contract(
                                 symbol=symbol,
@@ -70,9 +70,9 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                     result.append(
                         (
                             BrokerOrder(
-                                action=BrokerOrder.Action.BUY,
+                                action=OrderAction.BUY,
                                 total_quantity=float(weight - position),
-                                order_type=BrokerOrder.OrderType.MARKET,
+                                order_type=OrderType.MARKET,
                             ),
                             Contract(
                                 symbol=symbol,
@@ -87,9 +87,9 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                 result.append(
                     (
                         BrokerOrder(
-                            action=BrokerOrder.Action.BUY,
+                            action=OrderAction.BUY,
                             total_quantity=float(weight),
-                            order_type=BrokerOrder.OrderType.MARKET,
+                            order_type=OrderType.MARKET,
                         ),
                         Contract(
                             symbol=symbol,

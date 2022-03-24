@@ -114,7 +114,7 @@ class IBWrapper(EWrapper):
         """
         return self._next_valid_id_queue
 
-    def currentTime(self, server_time) -> str:
+    def currentTime(self, server_time):
         """
         Takes the time received by the server and
         appends it to the class instance time queue.
@@ -126,7 +126,7 @@ class IBWrapper(EWrapper):
         """
         self._time_queue.put(server_time)
 
-    def nextValidId(self, order_id: int) -> None:
+    def nextValidId(self, order_id: int):
         """
         Is callback that stores the next valid id received from the server.
         """
@@ -145,7 +145,7 @@ class IBWrapper(EWrapper):
         print(f"{__name__}::position: {account}, {contract}, {position}, {avg_cost}")
         self._open_positions_queue.put(
             Position(
-                account=account, contract=contract, position=position, avg_cost=avg_cost
+                account=account, contract=contract, position=float(position), avg_cost=avg_cost
             )
         )
 

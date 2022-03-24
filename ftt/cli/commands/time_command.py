@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from nubia import command
+from nubia import command  # type: ignore
 
 from ftt.brokers.ib.ib_config import IBConfig
 from ftt.brokers.utils import build_brokerage_service

@@ -1,4 +1,5 @@
 import abc
+from typing import ClassVar, Type
 
 from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 
@@ -9,7 +10,7 @@ class AbstractOptimizationStrategy(metaclass=abc.ABCMeta):
         return hasattr(subclass, "optimize") and callable(subclass.optimize)
 
 
-class HistoricalOptimizationStrategy:
+class HistoricalOptimizationStrategy(AbstractOptimizationStrategy):
     def __init__(self, returns):
         from riskfolio import Portfolio  # type: ignore
 
@@ -48,7 +49,7 @@ class HistoricalOptimizationStrategy:
         )
 
 
-class RiskParityOptimizationStrategy:
+class RiskParityOptimizationStrategy(AbstractOptimizationStrategy):
     def __init__(self, returns):
         self.returns = returns
         from riskfolio import Portfolio
@@ -95,7 +96,7 @@ class RiskParityOptimizationStrategy:
 
 
 class OptimizationStrategyResolver:
-    _strategies = {
+    _strategies: ClassVar[dict[str, Type[AbstractOptimizationStrategy]]] = {
         "historical": HistoricalOptimizationStrategy,
         "risk_parity": RiskParityOptimizationStrategy,
     }
@@ -105,7 +106,7 @@ class OptimizationStrategyResolver:
         return list(cls._strategies.keys())
 
     @classmethod
-    def resolve(cls, strategy_name: str) -> AbstractOptimizationStrategy:
+    def resolve(cls, strategy_name: str) -> Type[AbstractOptimizationStrategy]:
         try:
             return cls._strategies[strategy_name]
         except KeyError:

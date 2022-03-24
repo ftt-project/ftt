@@ -1,5 +1,5 @@
 import pathlib
-from typing import List, Optional
+from typing import List, Optional, ClassVar
 
 from peewee import Database
 
@@ -12,11 +12,11 @@ class DatabaseNotInitialized(Exception):
 
 
 class Storage:
-    __storage_manager: Optional[StorageManager] = None
+    __storage_manager: ClassVar[StorageManager]
 
     @classmethod
     def storage_manager(cls) -> StorageManager:
-        if not Storage.__storage_manager or not cls.__storage_manager.database:
+        if not Storage.__storage_manager:
             raise DatabaseNotInitialized()
 
         return cls.__storage_manager

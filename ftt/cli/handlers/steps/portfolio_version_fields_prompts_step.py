@@ -72,7 +72,7 @@ class PortfolioVersionFieldsPromptsStep(AbstractStep):
         )
 
     @classmethod
-    def prompt_period(cls, defaults, prompt_message, valid_lower_period) -> str:
+    def prompt_period(cls, defaults, prompt_message, valid_lower_period) -> datetime:
         result = prompt(
             f"{prompt_message}: ",
             validator=cls.period_validator(valid_lower_period),

@@ -1,6 +1,6 @@
 import pytest
 
-from ftt.brokers.broker_order import BrokerOrder
+from ftt.brokers.broker_order import BrokerOrder, OrderAction, OrderType
 from ftt.brokers.contract import Contract
 from ftt.handlers.order_steps.create_orders_step import CreateOrdersStep
 from ftt.storage.models import Order
@@ -24,9 +24,9 @@ class TestCreateOrdersStep:
         return [
             (
                 BrokerOrder(
-                    action=BrokerOrder.Action.SELL,
+                    action=OrderAction.SELL,
                     total_quantity=100,
-                    order_type=BrokerOrder.OrderType.MARKET,
+                    order_type=OrderType.MARKET,
                 ),
                 Contract(
                     symbol=security_1.symbol,
@@ -34,9 +34,9 @@ class TestCreateOrdersStep:
             ),
             (
                 BrokerOrder(
-                    action=BrokerOrder.Action.SELL,
+                    action=OrderAction.SELL,
                     total_quantity=75,
-                    order_type=BrokerOrder.OrderType.MARKET,
+                    order_type=OrderType.MARKET,
                 ),
                 Contract(
                     symbol=security_2.symbol,

@@ -1,4 +1,5 @@
 import queue
+from typing import Union
 
 from ibapi.client import EClient
 from ibapi.wrapper import Contract as IBContract
@@ -115,7 +116,7 @@ class IBClient(EClient):
 
         return next_valid_id
 
-    def place_order(self, contract: Contract, order: BrokerOrder) -> int:
+    def place_order(self, contract: Contract, order: BrokerOrder) -> Union[int, None]:
         """
         Places order asynchronously according to given contact and order
 
