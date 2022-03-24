@@ -42,9 +42,9 @@ class ComparePlannedActualPositionsStep(AbstractStep):
         )
         normalized_by_symbol_weights = cls._normalize_weights(weights)
 
-        symbols_collection: Iterable = list(normalized_by_symbol_planned_positions.keys()) + list(
-            normalized_by_symbol_weights.keys()
-        )
+        symbols_collection: Iterable = list(
+            normalized_by_symbol_planned_positions.keys()
+        ) + list(normalized_by_symbol_weights.keys())
         symbols_collection = set(symbols_collection)
 
         result: list = []

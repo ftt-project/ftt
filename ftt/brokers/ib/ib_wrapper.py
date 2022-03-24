@@ -145,7 +145,10 @@ class IBWrapper(EWrapper):
         print(f"{__name__}::position: {account}, {contract}, {position}, {avg_cost}")
         self._open_positions_queue.put(
             Position(
-                account=account, contract=contract, position=float(position), avg_cost=avg_cost
+                account=account,
+                contract=contract,
+                position=float(position),
+                avg_cost=avg_cost,
             )
         )
 
