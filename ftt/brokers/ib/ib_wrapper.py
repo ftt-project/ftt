@@ -21,7 +21,7 @@ class IBWrapper(EWrapper):
         self._open_positions_done_queue = queue.Queue()
         self._open_orders_queue = queue.Queue()
         self._open_orders_done_queue = queue.Queue()
-        self._next_valid_id = queue.Queue()
+        self._next_valid_id_queue = queue.Queue()
         self._time_queue = queue.Queue()
         self._errors = queue.Queue()
 
@@ -64,7 +64,10 @@ class IBWrapper(EWrapper):
         Format the error message with appropriate codes and
         place the error string onto the error queue.
         """
-        error_message = f"IB Error ID {id}, Error Code {errorCode} with " f"response '{errorString}'"
+        error_message = (
+            f"IB Error ID {id}, Error Code {errorCode} with "
+            f"response '{errorString}'"
+        )
         self._errors.put(error_message)
 
     def time_queue(self) -> queue.Queue:
@@ -109,7 +112,7 @@ class IBWrapper(EWrapper):
         """
         Returns queue with the next valid id.
         """
-        return self._next_valid_id
+        return self._next_valid_id_queue
 
     def currentTime(self, server_time) -> str:
         """
@@ -127,7 +130,8 @@ class IBWrapper(EWrapper):
         """
         Is callback that stores the next valid id received from the server.
         """
-        self._next_valid_id.put(order_id)
+        print(f"{__name__}::nextValidId Next valid order id is {order_id}")
+        self._next_valid_id_queue.put(order_id)
 
     def position(
         self, account: str, contract: IBContract, position: Decimal, avg_cost: float
@@ -138,6 +142,7 @@ class IBWrapper(EWrapper):
 
         See https://interactivebrokers.github.io/tws-api/positions.html
         """
+        print(f"{__name__}::position: {account}, {contract}, {position}, {avg_cost}")
         self._open_positions_queue.put(
             Position(
                 account=account, contract=contract, position=position, avg_cost=avg_cost
@@ -169,3 +174,6 @@ class IBWrapper(EWrapper):
 
     def openOrderEnd(self):
         self._open_orders_done_queue.put(list(self._open_orders_queue.queue))
+
+    def connectionClosed(self):
+        print(f"{__name__}::connectionClosed")

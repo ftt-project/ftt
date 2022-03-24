@@ -62,6 +62,7 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                             ),
                             Contract(
                                 symbol=symbol,
+                                security_type=Contract.SecurityType.STOCK,
                             ),
                         )
                     )
@@ -75,6 +76,7 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                             ),
                             Contract(
                                 symbol=symbol,
+                                security_type=Contract.SecurityType.STOCK,
                             ),
                         )
                     )
@@ -91,6 +93,7 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                         ),
                         Contract(
                             symbol=symbol,
+                            security_type=Contract.SecurityType.STOCK,
                         ),
                     )
                 )

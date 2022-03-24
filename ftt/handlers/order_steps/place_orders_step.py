@@ -19,8 +19,13 @@ class PlaceOrdersStep(AbstractStep):
         for order in orders:
             contract = Contract(
                 symbol=order.security.symbol,
-                security_type=order.security.quote_type,
-                exchange=order.security.exchange,
+                # security_type=order.security.quote_type,
+                # TODO: use security.quote_type instead of hardcoded "STK" value
+                # The problem is that security is "equity",
+                # that is not correct https://www.educba.com/stock-vs-equities/
+                security_type="STK",
+                # exchange=order.security.exchange,
+                exchange="SMART",
                 currency=order.security.currency,
             )
             broker_order = BrokerOrder(
@@ -31,6 +36,7 @@ class PlaceOrdersStep(AbstractStep):
             order_id = brokerage_service.place_order(
                 contract=contract, order=broker_order
             )
+            print(f"{__name__}::process placed order_id={order_id}")
             # TODO handle error
             if order_id is not None:
                 order.status = order.__class__.Status.SUBMITTED

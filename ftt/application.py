@@ -1,7 +1,7 @@
 import sys
 
 from nubia import Nubia, Options  # type: ignore
-from nubia.internal import context
+from nubia.internal import context  # type: ignore
 
 from ftt.cli.handlers.prepare_environment_handler import (
     PrepareEnvironmentHandler,

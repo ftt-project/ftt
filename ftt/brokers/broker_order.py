@@ -19,5 +19,5 @@ class BrokerOrder:
         See https://interactivebrokers.github.io/tws-api/basic_orders.html
         """
 
-        MARKET = "MARKET"
-        LIMIT = "LIMIT"
+        MARKET = "MKT"
+        LIMIT = "LMT"

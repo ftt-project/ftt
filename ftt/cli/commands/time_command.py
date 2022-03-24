@@ -11,8 +11,8 @@ def time():
     """
     Returns time on IB server
     """
-    brokerage_service = build_brokerage_service("Interactive Brokers")
-    server_time = brokerage_service.obtain_server_time()
+    brokerage_service = build_brokerage_service("Interactive Brokers", IBConfig())
+    server_time = brokerage_service.server_time()
 
     server_time_readable = datetime.utcfromtimestamp(server_time).strftime(
         "%Y-%m-%d %H:%M:%S"

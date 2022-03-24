@@ -11,7 +11,7 @@ class AbstractOptimizationStrategy(metaclass=abc.ABCMeta):
 
 class HistoricalOptimizationStrategy:
     def __init__(self, returns):
-        from riskfolio import Portfolio
+        from riskfolio import Portfolio  # type: ignore
 
         self.returns = returns
         self.portfolio = Portfolio(returns=returns)

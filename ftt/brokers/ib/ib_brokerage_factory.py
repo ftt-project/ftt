@@ -8,7 +8,7 @@ class IBBrokerageFactory(BaseBrokerageFactory):
     This class is added to BrokerageFactoryRegistry and must be not used directly.
     """
 
-    provider_name = IBBrokerageService.provider_name
+    provider_name: str = IBBrokerageService.provider_name
 
     def __init__(self, config):
         self._config = config

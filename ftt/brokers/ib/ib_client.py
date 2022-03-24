@@ -48,7 +48,7 @@ class IBClient(EClient):
             server_time = time_queue.get(timeout=IBClient.MAX_WAIT_TIME_SECONDS)
         except queue.Empty:
             print(
-                "Time queue was empty or exceeded maximum timeout of "
+                f"{__name__}::server_time Time queue was empty or exceeded maximum timeout of "
                 "%d seconds" % IBClient.MAX_WAIT_TIME_SECONDS
             )
             server_time = None
@@ -69,7 +69,7 @@ class IBClient(EClient):
             The open positions for this client.
         """
         open_positions_done_queue = self.wrapper.open_positions_queue()
-
+        print(f"open_positions_done_queue: {open_positions_done_queue}")
         self.reqPositions()
 
         try:
@@ -78,13 +78,13 @@ class IBClient(EClient):
             )
         except queue.Empty:
             print(
-                "Time queue was empty or exceeded maximum timeout of "
+                f"{__name__}::open_positions Time queue was empty or exceeded maximum timeout of "
                 "%d seconds" % IBClient.MAX_WAIT_TIME_SECONDS
             )
             positions = None
 
         while self.wrapper.is_error():
-            print(self.get_error())
+            print(f"{__name__}: {self.get_error()}")
 
         return positions
 
@@ -99,19 +99,19 @@ class IBClient(EClient):
         """
         id_queue = self.wrapper.next_valid_id_queue()
 
-        self.reqIds(n)
+        self.reqIds(-1)
 
         try:
             next_valid_id = id_queue.get(timeout=IBClient.MAX_WAIT_TIME_SECONDS)
         except queue.Empty:
             print(
-                "Time queue was empty or exceeded maximum timeout of "
+                f"{__name__}::next_valid_id Time queue was empty or exceeded maximum timeout of "
                 "%d seconds" % IBClient.MAX_WAIT_TIME_SECONDS
             )
             next_valid_id = None
 
         while self.wrapper.is_error():
-            print(self.get_error())
+            print(f"{__name__}: {self.get_error()}")
 
         return next_valid_id
 
@@ -133,6 +133,9 @@ class IBClient(EClient):
         """
         next_order_id = self.next_valid_id()
 
+        if next_order_id is None:
+            return None
+
         ibcontract = IBContract()
         ibcontract.symbol = contract.symbol
         ibcontract.secType = contract.security_type
@@ -140,9 +143,9 @@ class IBClient(EClient):
         ibcontract.currency = contract.currency
 
         iborder = IBOrder()
-        iborder.action = order.action
+        iborder.action = order.action.value
         iborder.totalQuantity = order.total_quantity
-        iborder.orderType = order.order_type
+        iborder.orderType = order.order_type.value
 
         super().placeOrder(next_order_id, ibcontract, iborder)
 
@@ -157,7 +160,7 @@ class IBClient(EClient):
             open_orders = open_orders_queue.get(timeout=IBClient.MAX_WAIT_TIME_SECONDS)
         except queue.Empty:
             print(
-                "Time queue was empty or exceeded maximum timeout of "
+                f"{__name__}::open_orders Time queue was empty or exceeded maximum timeout of "
                 "%d seconds" % IBClient.MAX_WAIT_TIME_SECONDS
             )
             open_orders = None

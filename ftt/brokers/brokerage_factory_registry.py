@@ -3,7 +3,7 @@ class BrokerageFactoryRegistry(type):
     Metaclass that register each concrete Brokerage Service implementation
     """
 
-    REGISTRY = {}
+    REGISTRY: dict[str, type] = {}
 
     def __new__(mcs, name, bases, attrs):
         new_cls = type.__new__(mcs, name, bases, attrs)
