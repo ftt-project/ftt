@@ -46,6 +46,7 @@ class HistoricalOptimizationStrategy(AbstractOptimizationStrategy):
             weights=weights.to_dict()["weights"],
             sharpe_ratio=sharpe,
             cov_matrix=self.portfolio.cov,
+            allocation={},
         )
 
 
@@ -92,6 +93,7 @@ class RiskParityOptimizationStrategy(AbstractOptimizationStrategy):
             weights=weights.to_dict()["weights"],
             sharpe_ratio=sharpe,
             cov_matrix=self.portfolio.cov,
+            allocation={},
         )
 
 

@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from typing import Optional
 
 from result import Result, Ok, Err
@@ -16,7 +16,7 @@ class RootFolderSetupStep(AbstractStep):
     ) -> Result[ApplicationConfigDTO, Optional[str]]:
         if application_config_dto.first_run:
             try:
-                application_config_dto.root_path.mkdir()
+                cls.mkdir(application_config_dto.root_path)
                 return Ok(application_config_dto)
             except FileExistsError:
                 pass
@@ -24,3 +24,7 @@ class RootFolderSetupStep(AbstractStep):
                 return Err(repr(error))
 
         return Ok(application_config_dto)
+
+    @classmethod
+    def mkdir(cls, root_path: Path):
+        root_path.mkdir()

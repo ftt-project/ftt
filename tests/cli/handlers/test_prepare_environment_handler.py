@@ -20,7 +20,7 @@ class TestPrepareEnvironmentHandler:
         manager.create_tables.return_value = True
 
         mkdir = mocker.patch(
-            "ftt.cli.handlers.steps.root_folder_setup_step.os.mkdir",
+            "ftt.cli.handlers.steps.root_folder_setup_step.RootFolderSetupStep.mkdir",
         )
 
         result = subject.handle(environment="production", application_name="test-ftt")

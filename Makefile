@@ -9,6 +9,7 @@ test:
 lint:
 	black ftt tests
 	flake8 ftt
+	mypy ftt
 
 build: clean
 	poetry build

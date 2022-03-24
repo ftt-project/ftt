@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from ftt.brokers.broker_order import BrokerOrder
+from ftt.brokers.broker_order import BrokerOrder, OrderAction, OrderType
 from ftt.handlers.order_steps.place_orders_step import PlaceOrdersStep
 from ftt.storage.models import Order
 
@@ -15,12 +15,12 @@ class TestPlaceOrdersStep:
     @pytest.fixture
     def order(self, security, portfolio, portfolio_version):
         return Order.create(
-            action=BrokerOrder.Action.BUY,
+            action=OrderAction.BUY,
             desired_size=100,
             security=security,
             portfolio=portfolio,
             portfolio_version=portfolio_version,
-            order_type=BrokerOrder.OrderType.MARKET,
+            order_type=OrderType.MARKET,
             status=Order.Status.CREATED,
             updated_at=datetime.now(),
             created_at=datetime.now(),

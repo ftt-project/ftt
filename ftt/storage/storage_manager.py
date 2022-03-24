@@ -1,7 +1,7 @@
 import os
 import pathlib
 from types import TracebackType
-from typing import List, ContextManager, Optional, Protocol, Type
+from typing import List, Optional, Protocol, Type
 
 from peewee import SqliteDatabase  # type: ignore
 

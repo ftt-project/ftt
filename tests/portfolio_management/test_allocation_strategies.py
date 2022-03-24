@@ -25,6 +25,7 @@ class TestDefaultAllocationStrategy:
                 },
                 index=["A", "B", "C"],
             ),
+            allocation={},
         )
 
         latest_prices = {
@@ -59,6 +60,7 @@ class TestDefaultAllocationStrategy:
                 },
                 index=["A", "B", "C"],
             ),
+            allocation={},
         )
 
         latest_prices = {
