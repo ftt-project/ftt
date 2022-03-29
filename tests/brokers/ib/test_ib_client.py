@@ -104,6 +104,18 @@ class TestIBClient:
         assert result == mocker.sentinel.order_id
         placeOrder.assert_called_once()
 
+    def test_place_order_id_with_given_next_order_id(self, subject, wrapper, mocker):
+        mocker.patch(
+            "ftt.brokers.ib.ib_client.IBClient.next_valid_id",
+            return_value=mocker.sentinel.order_id,
+        )
+        placeOrder = mocker.patch("ftt.brokers.ib.ib_client.EClient.placeOrder")
+
+        result = subject.place_order(mocker.MagicMock(), mocker.MagicMock(), 129)
+
+        assert result == 129
+        placeOrder.assert_called_once()
+
     def test_place_order_returns_none_if_next_valid_id_none(
         self, subject, wrapper, mocker
     ):

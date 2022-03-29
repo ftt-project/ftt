@@ -1,10 +1,11 @@
-from result import Result, Ok
+from result import Result, Ok, Err
 
 from ftt.brokers.broker_order import BrokerOrder
 from ftt.brokers.contract import Contract
 from ftt.brokers.ib.ib_config import IBConfig
 from ftt.brokers.utils import build_brokerage_service
 from ftt.handlers.handler.abstract_step import AbstractStep
+from ftt.logger import logger
 from ftt.storage.models import Order
 
 
@@ -16,7 +17,7 @@ class PlaceOrdersStep(AbstractStep):
         brokerage_service = build_brokerage_service("Interactive Brokers", IBConfig)
 
         order_ids = []
-        for order in orders:
+        for idx, order in enumerate(orders):
             contract = Contract(
                 symbol=order.security.symbol,
                 # security_type=order.security.quote_type,
@@ -34,9 +35,11 @@ class PlaceOrdersStep(AbstractStep):
                 order_type=order.order_type,
             )
             order_id = brokerage_service.place_order(
-                contract=contract, order=broker_order
+                contract=contract,
+                order=broker_order,
+                next_order_id=order.id,
             )
-            print(f"{__name__}::process placed order_id={order_id}")
+            logger.info(f"{__name__}::process placed order_id={order_id}")
             # TODO handle error
             if order_id is not None:
                 order.status = order.__class__.Status.SUBMITTED

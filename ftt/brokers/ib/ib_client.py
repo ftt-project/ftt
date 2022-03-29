@@ -1,5 +1,5 @@
 import queue
-from typing import Union
+from typing import Union, Optional
 
 from ibapi.client import EClient
 from ibapi.wrapper import Contract as IBContract
@@ -91,7 +91,7 @@ class IBClient(EClient):
 
         return positions
 
-    def next_valid_id(self, n=1):
+    def next_valid_id(self):
         """
         Requests and returns the next valid id for order that is unique for this client.
 
@@ -119,7 +119,7 @@ class IBClient(EClient):
 
         return next_valid_id
 
-    def place_order(self, contract: Contract, order: BrokerOrder) -> Union[int, None]:
+    def place_order(self, contract: Contract, order: BrokerOrder, next_order_id: Optional[int] = None) -> Union[int, None]:
         """
         Places order asynchronously according to given contact and order
 
@@ -129,13 +129,16 @@ class IBClient(EClient):
             Contract instance
         `order`
             Order instance
+        `next_order_id`
+            Optional order id. If it is not given then the next valid id is requested and used.
 
         Returns
         -------
         `id`
             id of the order
         """
-        next_order_id = self.next_valid_id()
+        if next_order_id is None:
+            next_order_id = self.next_valid_id()
 
         if next_order_id is None:
             logger.error(f"{__name__}::place_order failed to get next valid id")

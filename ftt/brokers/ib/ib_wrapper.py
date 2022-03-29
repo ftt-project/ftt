@@ -7,6 +7,7 @@ from ibapi.order import Order
 from ibapi.order_state import OrderState
 
 from ftt.brokers.position import Position
+from ftt.logger import logger
 
 
 class IBWrapper(EWrapper):
@@ -130,7 +131,7 @@ class IBWrapper(EWrapper):
         """
         Is callback that stores the next valid id received from the server.
         """
-        print(f"{__name__}::nextValidId Next valid order id is {order_id}")
+        logger.info(f"{__name__}::nextValidId Next valid order id is {order_id}")
         self._next_valid_id_queue.put(order_id)
 
     def position(
@@ -142,7 +143,7 @@ class IBWrapper(EWrapper):
 
         See https://interactivebrokers.github.io/tws-api/positions.html
         """
-        print(f"{__name__}::position: {account}, {contract}, {position}, {avg_cost}")
+        logger.info(f"{__name__}::position: {account}, {contract}, {position}, {avg_cost}")
         self._open_positions_queue.put(
             Position(
                 account=account,
@@ -179,4 +180,4 @@ class IBWrapper(EWrapper):
         self._open_orders_done_queue.put(list(self._open_orders_queue.queue))
 
     def connectionClosed(self):
-        print(f"{__name__}::connectionClosed")
+        logger.info(f"{__name__}::connectionClosed")
