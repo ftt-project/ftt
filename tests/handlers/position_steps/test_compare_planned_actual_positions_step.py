@@ -112,13 +112,17 @@ class TestComparePlannedActualPositionsStep:
         assert result.is_ok()
         assert len(result.value) == 2
 
-        assert result.value[0][0].action == OrderAction.SELL
-        assert result.value[0][0].total_quantity == 7.0
-        assert result.value[0][1].symbol == "AA-2"
+        sell_position = list(
+            filter(lambda value: value[0].action == OrderAction.SELL, result.value)
+        )[0]
+        assert sell_position[0].total_quantity == 7.0
+        assert sell_position[1].symbol == "AA-2"
 
-        assert result.value[1][0].action == OrderAction.BUY
-        assert result.value[1][0].total_quantity == 5.0
-        assert result.value[1][1].symbol == "AA-1"
+        buy_position = list(
+            filter(lambda value: value[0].action == OrderAction.BUY, result.value)
+        )[0]
+        assert buy_position[0].total_quantity == 5.0
+        assert buy_position[1].symbol == "AA-1"
 
     def test_returns_no_actions_required_ignores_positions_not_in_portfolio(
         self, subject, weight_factory, portfolio_version, security_factory, position

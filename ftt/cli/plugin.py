@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 
 from nubia import PluginInterface  # type: ignore
-from nubia.internal.io import logger
+from nubia.internal.io import logger  # type: ignore
 
 from ftt.cli.context import Context
 from ftt.cli.prompt import Prompt
@@ -22,7 +22,8 @@ class Plugin(PluginInterface):
     def setup_logging(self, root_logger, args):
         logging_level = logging.INFO
 
-        logfile = Path('~/.ftt/ftt.log').expanduser()
+        # TODO: replace with ftt.logger
+        logfile = Path("~/.ftt/ftt.log").expanduser()
         logfile.touch(exist_ok=True)
         logging_stream = open(logfile, "a")
 

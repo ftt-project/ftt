@@ -7,9 +7,9 @@ test:
 	poetry run pytest tests
 
 lint:
-	black ftt tests
-	flake8 ftt
-	mypy ftt
+	poetry run black ftt tests
+	poetry run flake8 ftt
+	poetry run mypy ftt
 
 build: clean
 	poetry build

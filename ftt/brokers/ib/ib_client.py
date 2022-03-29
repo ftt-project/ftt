@@ -5,6 +5,7 @@ from ibapi.client import EClient
 from ibapi.wrapper import Contract as IBContract
 from ibapi.order import Order as IBOrder
 
+from ftt.logger import logger
 from ftt.brokers.contract import Contract
 from ftt.brokers.broker_order import BrokerOrder
 
@@ -50,17 +51,17 @@ class IBClient(EClient):
         except queue.Empty:
             print(
                 f"{__name__}::server_time Time queue was empty or exceeded maximum timeout of "
-                "%d seconds" % IBClient.MAX_WAIT_TIME_SECONDS
+                f"{IBClient.MAX_WAIT_TIME_SECONDS} seconds"
             )
             server_time = None
 
         # Output all additional errors, if they exist
         while self.wrapper.is_error():
-            print(self.get_error())
+            print(self.wrapper.get_error())
 
         return server_time
 
-    def open_positions(self):
+    def open_positions(self) -> list:
         """
         Returns open positions
 
@@ -70,7 +71,7 @@ class IBClient(EClient):
             The open positions for this client.
         """
         open_positions_done_queue = self.wrapper.open_positions_queue()
-        print(f"open_positions_done_queue: {open_positions_done_queue}")
+
         self.reqPositions()
 
         try:
@@ -78,14 +79,15 @@ class IBClient(EClient):
                 timeout=IBClient.MAX_WAIT_TIME_SECONDS
             )
         except queue.Empty:
-            print(
-                f"{__name__}::open_positions Time queue was empty or exceeded maximum timeout of "
-                "%d seconds" % IBClient.MAX_WAIT_TIME_SECONDS
+            logger.error(
+                f"{__name__}::open_positions queue was empty or exceeded maximum timeout of "
+                f"{IBClient.MAX_WAIT_TIME_SECONDS} seconds"
             )
             positions = None
 
         while self.wrapper.is_error():
-            print(f"{__name__}: {self.get_error()}")
+            logger.error(f"{__name__}::open_positions {self.wrapper.get_error()}")
+            positions = None
 
         return positions
 
@@ -105,14 +107,15 @@ class IBClient(EClient):
         try:
             next_valid_id = id_queue.get(timeout=IBClient.MAX_WAIT_TIME_SECONDS)
         except queue.Empty:
-            print(
-                f"{__name__}::next_valid_id Time queue was empty or exceeded maximum timeout of "
-                "%d seconds" % IBClient.MAX_WAIT_TIME_SECONDS
+            logger.error(
+                f"{__name__}::next_valid_id queue was empty or exceeded maximum timeout of "
+                f"{IBClient.MAX_WAIT_TIME_SECONDS} seconds"
             )
             next_valid_id = None
 
         while self.wrapper.is_error():
-            print(f"{__name__}: {self.get_error()}")
+            logger.error(f"{__name__}::next_valid_id {self.wrapper.get_error()}")
+            return None
 
         return next_valid_id
 
@@ -135,6 +138,7 @@ class IBClient(EClient):
         next_order_id = self.next_valid_id()
 
         if next_order_id is None:
+            logger.error(f"{__name__}::place_order failed to get next valid id")
             return None
 
         ibcontract = IBContract()
@@ -160,13 +164,14 @@ class IBClient(EClient):
         try:
             open_orders = open_orders_queue.get(timeout=IBClient.MAX_WAIT_TIME_SECONDS)
         except queue.Empty:
-            print(
-                f"{__name__}::open_orders Time queue was empty or exceeded maximum timeout of "
-                "%d seconds" % IBClient.MAX_WAIT_TIME_SECONDS
+            logger.error(
+                f"{__name__}::open_orders queue was empty or exceeded maximum timeout of "
+                f"{IBClient.MAX_WAIT_TIME_SECONDS} seconds"
             )
             open_orders = None
 
         while self.wrapper.is_error():
-            print(self.get_error())
+            logger.error(f"{__name__}::open_orders {self.wrapper.get_error()}")
+            open_orders = None
 
         return open_orders
