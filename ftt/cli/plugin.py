@@ -1,6 +1,9 @@
+import logging
+from pathlib import Path
 from typing import Optional
 
 from nubia import PluginInterface  # type: ignore
+from nubia.internal.io import logger
 
 from ftt.cli.context import Context
 from ftt.cli.prompt import Prompt
@@ -16,16 +19,16 @@ class Plugin(PluginInterface):
         self.context = Context()
         return self.context
 
-    def create_usage_logger(self, context):
-        pass
-        # shell_handler = RichHandler()
-        # shell_handler.setLevel(logging.INFO)
-        # fmt_shell = "%(message)s"
-        # shell_formatter = logging.Formatter(fmt_shell)
-        # shell_handler.setFormatter(shell_formatter)
-        # return None
-        # # TODO use canonical logger
-        # return shell_handler
+    def setup_logging(self, root_logger, args):
+        logging_level = logging.INFO
+
+        logfile = Path('~/.ftt/ftt.log').expanduser()
+        logfile.touch(exist_ok=True)
+        logging_stream = open(logfile, "a")
+
+        logger.setup_logger(level=logging_level, stream=logging_stream)
+
+        return True
 
     def get_status_bar(self, context):
         return StatusBar(context)
