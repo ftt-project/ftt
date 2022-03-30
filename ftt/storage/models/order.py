@@ -3,7 +3,7 @@ from enum import Enum
 import peewee
 
 from ftt.storage.models.base import Base
-from ftt.storage.models import Portfolio
+from ftt.storage.models import Portfolio, Weight
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.models.security import Security
 
@@ -14,6 +14,7 @@ class Order(Base):
     order_type = peewee.CharField()
     portfolio = peewee.ForeignKeyField(Portfolio, backref="orders")
     portfolio_version = peewee.ForeignKeyField(PortfolioVersion, backref="orders")
+    weight = peewee.ForeignKeyField(Weight, backref="weight")
     status = peewee.CharField()
     external_id = peewee.CharField(null=True)
     executed_at = peewee.DateTimeField(null=True)
@@ -24,6 +25,7 @@ class Order(Base):
     execution_value = peewee.DecimalField(null=True)
     execution_commission = peewee.DecimalField(null=True)
 
+    # Move from here to a separate class as it creates additional imports when it is not necessary
     class Status(str, Enum):
         CREATED = "Created"
         SUBMITTED = "Submitted"

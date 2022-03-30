@@ -1,4 +1,5 @@
 import queue
+from datetime import datetime
 from decimal import Decimal
 
 from ibapi.wrapper import EWrapper, Contract as IBContract
@@ -7,7 +8,9 @@ from ibapi.order import Order
 from ibapi.order_state import OrderState
 
 from ftt.brokers.position import Position
+from ftt.handlers.order_update_handler import OrderUpdateHandler
 from ftt.logger import logger
+from ftt.storage.data_objects.order_dto import OrderDTO
 
 
 class IBWrapper(EWrapper):
@@ -135,7 +138,7 @@ class IBWrapper(EWrapper):
         self._next_valid_id_queue.put(order_id)
 
     def position(
-        self, account: str, contract: IBContract, position: Decimal, avg_cost: float
+            self, account: str, contract: IBContract, position: Decimal, avg_cost: float
     ) -> None:
         """
         This method receives open positions from IB, maps them into `ib.Position` object, and puts into the
@@ -161,11 +164,11 @@ class IBWrapper(EWrapper):
         self._open_positions_done_queue.put(list(self._open_positions_queue.queue))
 
     def openOrder(
-        self,
-        order_id: OrderId,
-        contract: IBContract,
-        order: Order,
-        order_state: OrderState,
+            self,
+            order_id: OrderId,
+            contract: IBContract,
+            order: Order,
+            order_state: OrderState,
     ):
         self._open_orders_queue.put(
             {
@@ -181,3 +184,36 @@ class IBWrapper(EWrapper):
 
     def connectionClosed(self):
         logger.info(f"{__name__}::connectionClosed")
+
+    def orderStatus(self, order_id: OrderId, status: str, filled: float,
+                    remaining: float, avg_fill_price: float, perm_id: int,
+                    parent_id: int, last_fill_price: float, client_id: int,
+                    why_held: str, mkt_cap_price: float):
+
+        logger.info(
+            f"{__name__}::orderStatus: Received order_id:{order_id} status:{status}"
+            f"filled:{filled} remaining:{remaining} avg_fill_price:{avg_fill_price}"
+            f"perm_id:{perm_id} parent_id:{parent_id} last_fill_price:{last_fill_price}"
+        )
+
+        dto = OrderDTO(
+            status=status,
+            execution_size=filled,
+            execution_price=avg_fill_price,
+            executed_at=datetime.now(),
+        )
+
+        # TODO it must update weights in the portfolio according to the filled size
+        result = OrderUpdateHandler().handle(
+            order_id=order_id,
+            dto=dto
+        )
+
+        if result.is_ok():
+            logger.info(
+                f"{__name__}::orderStatus: updated order_id: {order_id} status: {status}"
+            )
+        else:
+            logger.error(
+                f"{__name__}::orderStatus: failed to update order_id: {order_id} with error: {result.error}"
+            )

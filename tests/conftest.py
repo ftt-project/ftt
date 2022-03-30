@@ -230,12 +230,13 @@ def weight_factory():
 
 
 @pytest.fixture
-def order(security, portfolio_version, portfolio):
+def order(security, portfolio_version, portfolio, weight):
     order = Order.create(
         security=security,
         action="BUY",
         portfolio=portfolio,
         portfolio_version=portfolio_version,
+        weight=weight,
         status="Created",
         order_type="MARKET",
         desired_price=100,

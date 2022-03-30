@@ -6,7 +6,7 @@ from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.models import Order, PortfolioVersion, Portfolio, Weight, Security
 
 
-class CreateOrdersStep(AbstractStep):
+class OrdersCreateStep(AbstractStep):
     key = "orders"
 
     @classmethod
@@ -18,6 +18,7 @@ class CreateOrdersStep(AbstractStep):
         portfolio_version: PortfolioVersion,
     ) -> Result[list[Order], str]:
         securities_by_symbol = cls._securities_by_symbol(weights)
+        weights_by_symbol = cls._weights_by_symbol(weights)
 
         orders = []
         for broker_order, contract in order_candidates:
@@ -27,6 +28,7 @@ class CreateOrdersStep(AbstractStep):
                 order_type=broker_order.order_type,
                 portfolio=portfolio,
                 portfolio_version=portfolio_version,
+                weight=weights_by_symbol.get(contract.symbol),
                 security=securities_by_symbol.get(contract.symbol),
                 desired_size=broker_order.total_quantity,
                 status=Order.Status.CREATED,
@@ -44,3 +46,10 @@ class CreateOrdersStep(AbstractStep):
         for weight in weights:
             securities_by_symbol[weight.security.symbol] = weight.security
         return securities_by_symbol
+
+    @staticmethod
+    def _weights_by_symbol(weights: list[Weight]) -> dict[str, Weight]:
+        weights_by_symbol = {}
+        for weight in weights:
+            weights_by_symbol[weight.security.symbol] = weight
+        return weights_by_symbol

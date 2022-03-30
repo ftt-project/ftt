@@ -9,7 +9,7 @@ from ftt.logger import logger
 from ftt.storage.models import Order
 
 
-class PlaceOrdersStep(AbstractStep):
+class OrdersPlaceStep(AbstractStep):
     key = "placed_orders"
 
     @classmethod

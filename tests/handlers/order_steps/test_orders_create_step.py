@@ -2,14 +2,14 @@ import pytest
 
 from ftt.brokers.broker_order import BrokerOrder, OrderAction, OrderType
 from ftt.brokers.contract import Contract
-from ftt.handlers.order_steps.create_orders_step import CreateOrdersStep
+from ftt.handlers.order_steps.orders_create_step import OrdersCreateStep
 from ftt.storage.models import Order
 
 
 class TestCreateOrdersStep:
     @pytest.fixture
     def subject(self):
-        return CreateOrdersStep
+        return OrdersCreateStep
 
     @pytest.fixture
     def security_1(self, security_factory):

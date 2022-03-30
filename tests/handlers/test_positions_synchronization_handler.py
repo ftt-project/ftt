@@ -14,7 +14,7 @@ class TestPositionsSynchronizationHandler:
     @pytest.fixture(autouse=True)
     def mock_server_request(self, mocker):
         mocked_place_orders = mocker.patch(
-            "ftt.handlers.order_steps.place_orders_step.build_brokerage_service"
+            "ftt.handlers.order_steps.orders_place_step.build_brokerage_service"
         )
         mocked_place_orders.return_value.place_order.return_value = 1782
 

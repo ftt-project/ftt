@@ -31,8 +31,9 @@ class Repository(ABC):
     def _update(cls, instance, data: DTOInterface) -> Base:
         try:
             dict_data = asdict(data)
-            dict_data["updated_at"] = datetime.now()
-            model = update_model_from_dict(instance, dict_data)
+            present_data = {k: v for k, v in dict_data.items() if v is not None}
+            present_data["updated_at"] = datetime.now()
+            model = update_model_from_dict(instance, present_data)
             model.save()
         except (AttributeError, peewee.IntegrityError) as e:
             raise PersistingError(instance, data, str(e))

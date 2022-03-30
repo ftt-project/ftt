@@ -11,12 +11,13 @@ class TestOrdersRepository:
     def subject(self):
         return OrdersRepository
 
-    def test_create(self, subject, security, portfolio_version, portfolio):
+    def test_create(self, subject, security, portfolio_version, portfolio, weight):
         result = subject.create(
             {
                 "security": security,
                 "portfolio": portfolio,
                 "portfolio_version": portfolio_version,
+                "weight": weight,
                 "status": "created",
                 "type": "buy",
                 "desired_price": 100,
@@ -29,10 +30,11 @@ class TestOrdersRepository:
         assert result.id is not None
         result.delete_instance()
 
-    def test_build_and_create(self, subject, security, portfolio_version):
+    def test_build_and_create(self, subject, security, portfolio_version, weight):
         result = subject.build_and_create(
             symbol_name=security.symbol,
             portfolio_version_id=portfolio_version.id,
+            weight_id=weight.id,
             desired_price=1,
             order_type="LIMIT",
             action="BUY",
@@ -64,7 +66,7 @@ class TestOrdersRepository:
         assert "submitted" == subject.get_by_id(order.id).status
 
     def test_last_not_closed_order_when_order_exist(
-        self, subject, order, portfolio, portfolio_version, security
+        self, subject, order, portfolio, portfolio_version, security, weight
     ):
         order_closed = Order.create(
             security=security,
@@ -72,6 +74,7 @@ class TestOrdersRepository:
             action="BUY",
             portfolio=portfolio,
             portfolio_version=portfolio_version,
+            weight=weight,
             status=Order.Status.COMPLETED,
             executed_at=datetime.now(),
             desired_price=10,
@@ -114,3 +117,18 @@ class TestOrdersRepository:
             portfolio=portfolio, security=security, action="SELL"
         )
         assert sell_result is None
+
+    def test_update_returns_success(self, subject, order):
+        from ftt.storage.data_objects.order_dto import OrderDTO
+
+        dto = OrderDTO(
+            status=Order.Status.COMPLETED,
+            execution_size=1
+        )
+
+        result = subject.update(order, dto)
+
+        assert result.id == order.id
+        assert result.status == Order.Status.COMPLETED
+        assert result.execution_size == 1
+

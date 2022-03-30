@@ -1,7 +1,7 @@
 from ftt.handlers.handler.handler import Handler
 from ftt.handlers.handler.return_result import ReturnResult
-from ftt.handlers.order_steps.create_orders_step import CreateOrdersStep
-from ftt.handlers.order_steps.place_orders_step import PlaceOrdersStep
+from ftt.handlers.order_steps.orders_create_step import OrdersCreateStep
+from ftt.handlers.order_steps.orders_place_step import OrdersPlaceStep
 from ftt.handlers.portfolio_version_steps.portfolio_version_load_portfolio_step import (
     PortfolioVersionLoadPortfolioStep,
 )
@@ -31,12 +31,12 @@ class PositionsSynchronizationHandler(Handler):
             RequestOpenPositionsStep.key,
         ),
         (
-            CreateOrdersStep,
+            OrdersCreateStep,
             ComparePlannedActualPositionsStep.key,
             WeightsLoadStep.key,
             PortfolioVersionLoadStep.key,
             PortfolioVersionLoadPortfolioStep.key,
         ),
-        (PlaceOrdersStep, CreateOrdersStep.key),
-        (ReturnResult, PlaceOrdersStep.key),
+        (OrdersPlaceStep, OrdersCreateStep.key),
+        (ReturnResult, OrdersPlaceStep.key),
     ]

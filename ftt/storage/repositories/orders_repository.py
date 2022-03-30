@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List
 
 from ftt.logger import logger
+from ftt.storage.data_objects.order_dto import OrderDTO
 from ftt.storage.models.base import Base
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio
@@ -12,6 +13,7 @@ from ftt.storage.repositories.portfolio_versions_repository import (
 )
 from ftt.storage.repositories.repository import Repository
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
+from ftt.storage.repositories.weights_repository import WeightsRepository
 
 
 class OrdersRepository(Repository):
@@ -34,10 +36,15 @@ class OrdersRepository(Repository):
         return cls.get_by_id(order_id)
 
     @classmethod
+    def update(cls, order: Order, dto: OrderDTO) -> Order:
+        return cls._update(order, dto)
+
+    @classmethod
     def build_and_create(
         cls,
         symbol_name: str,
         portfolio_version_id: int,
+        weight_id: int,
         desired_price: float,
         order_type: str,
         action: str,
@@ -45,11 +52,13 @@ class OrdersRepository(Repository):
         portfolio_version = PortfolioVersionsRepository().get_by_id(
             portfolio_version_id
         )
+        weight = WeightsRepository().get_by_id(weight_id)
         order = cls.create(
             {
                 "security": SecuritiesRepository().get_by_name(symbol_name),
                 "portfolio": portfolio_version.portfolio,
                 "portfolio_version": portfolio_version,
+                "weight": weight,
                 "desired_price": desired_price,
                 "status": Order.Status.CREATED,
                 "order_type": order_type,
