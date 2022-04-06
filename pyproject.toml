@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ftt"
-version = "0.1.0-alpha+001"
+version = "0.1.0-alpha+002"
 description = "Financial Trading Tool (FTT) – is an asset management application that helps to make the right decision on time."
 authors = ["Artem Melnykov <melnykov.artem.v@gmail.com>"]
 classifiers = [
