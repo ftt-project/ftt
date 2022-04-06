@@ -14,9 +14,9 @@ class TestDefineExpectedWorkingDirectoryStep:
         return DefineExpectedWorkingDirectoryStep
 
     def test_process_for_macos_production(self, subject, application_config_dto):
-        from ftt.application import ENVIRONMENT
+        from ftt.application import Environment
 
-        application_config_dto.environment = ENVIRONMENT.production
+        application_config_dto.environment = Environment.PRODUCTION
         application_config_dto.platform = "Darwin"
 
         result = subject.process(application_config_dto=application_config_dto)
@@ -27,9 +27,9 @@ class TestDefineExpectedWorkingDirectoryStep:
         )
 
     def test_process_for_macos_development(self, subject, application_config_dto):
-        from ftt.application import ENVIRONMENT
+        from ftt.application import Environment
 
-        application_config_dto.environment = ENVIRONMENT.development
+        application_config_dto.environment = Environment.DEVELOPMENT
         application_config_dto.platform = "Darwin"
 
         result = subject.process(application_config_dto=application_config_dto)
@@ -38,9 +38,9 @@ class TestDefineExpectedWorkingDirectoryStep:
         assert "/ftt" in str(result.value.root_path)
 
     def test_process_for_macos_test(self, subject, application_config_dto):
-        from ftt.application import ENVIRONMENT
+        from ftt.application import Environment
 
-        application_config_dto.environment = ENVIRONMENT.test
+        application_config_dto.environment = Environment.TEST
         application_config_dto.platform = "Darwin"
 
         result = subject.process(application_config_dto=application_config_dto)
@@ -49,9 +49,9 @@ class TestDefineExpectedWorkingDirectoryStep:
         assert "/ftt/tests" in str(result.value.root_path)
 
     def test_process_for_linux_production(self, subject, application_config_dto):
-        from ftt.application import ENVIRONMENT
+        from ftt.application import Environment
 
-        application_config_dto.environment = ENVIRONMENT.production
+        application_config_dto.environment = Environment.PRODUCTION
         application_config_dto.platform = "Linux"
 
         result = subject.process(application_config_dto=application_config_dto)
@@ -62,9 +62,9 @@ class TestDefineExpectedWorkingDirectoryStep:
         )
 
     def test_process_for_linux_development(self, subject, application_config_dto):
-        from ftt.application import ENVIRONMENT
+        from ftt.application import Environment
 
-        application_config_dto.environment = ENVIRONMENT.development
+        application_config_dto.environment = Environment.DEVELOPMENT
         application_config_dto.platform = "Darwin"
 
         result = subject.process(application_config_dto=application_config_dto)
@@ -73,9 +73,9 @@ class TestDefineExpectedWorkingDirectoryStep:
         assert "/ftt" in str(result.value.root_path)
 
     def test_process_for_linux_test(self, subject, application_config_dto):
-        from ftt.application import ENVIRONMENT
+        from ftt.application import Environment
 
-        application_config_dto.environment = ENVIRONMENT.test
+        application_config_dto.environment = Environment.TEST
         application_config_dto.platform = "Darwin"
 
         result = subject.process(application_config_dto=application_config_dto)

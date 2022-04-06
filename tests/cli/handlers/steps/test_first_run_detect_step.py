@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from ftt.cli.application_config_dto import ApplicationConfigDTO
@@ -14,7 +16,10 @@ class TestInitializeApplicationConfigStep:
         subject,
     ):
         dto = ApplicationConfigDTO(
-            platform="darwin", environment="test", application_name="ftt-test"
+            platform="darwin",
+            environment="test",
+            application_name="ftt-test",
+            root_path=Path("/tmp"),
         )
         result = subject.process(dto)
 
@@ -33,7 +38,10 @@ class TestInitializeApplicationConfigStep:
             return_value=True,
         )
         dto = ApplicationConfigDTO(
-            platform="darwin", environment="test", application_name="ftt-test"
+            platform="darwin",
+            environment="test",
+            application_name="ftt-test",
+            root_path=Path("/tmp"),
         )
         result = subject.process(dto)
 

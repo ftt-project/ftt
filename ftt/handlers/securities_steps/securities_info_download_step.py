@@ -1,7 +1,7 @@
 import math
-import urllib
 from time import sleep
-from typing import List
+from typing import List, Any
+from urllib.error import HTTPError
 
 import yfinance as yf
 from result import Err, Ok, Result
@@ -24,7 +24,7 @@ class SecuritiesInfoDownloadStep(AbstractStep):
             return Err(errors)
 
     @staticmethod
-    def __load_security(security: SecurityDTO) -> Result:
+    def __load_security(security: SecurityDTO) -> Result[Any, str]:
         success = False
         max_retries = 5
         retry_count = 0
@@ -40,7 +40,7 @@ class SecuritiesInfoDownloadStep(AbstractStep):
                 success = True
                 return Ok(info)
 
-            except urllib.error.HTTPError:
+            except HTTPError:
                 if retry_count < max_retries:
                     pause_interval = math.pow(2, retry_count)
 
@@ -50,3 +50,5 @@ class SecuritiesInfoDownloadStep(AbstractStep):
                     return Err(f"Ticker <{security.symbol}> loading exhausted")
             except Exception as e:
                 return Err(f"Failed to load ticker <{security.symbol}>: {e}")
+
+        return Err(f"Failed to load ticker <{security.symbol}>")

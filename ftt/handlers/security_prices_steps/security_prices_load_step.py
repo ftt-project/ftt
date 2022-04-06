@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from result import Ok, Err, Result
@@ -25,12 +26,12 @@ class SecurityPricesLoadStep(AbstractStep):
             )
 
         prices = {}
-        datetime_list = None
+        datetime_list: list[datetime] = []
         for security in securities:
             security_prices = cls.__load_prices(security, portfolio_version)
             prices[security.symbol] = [float(price.close) for price in security_prices]
 
-            if datetime_list is None:
+            if not datetime_list:
                 datetime_list = [price.datetime for price in security_prices]
 
         shapes = {

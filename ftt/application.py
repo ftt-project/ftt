@@ -1,7 +1,8 @@
 import sys
+from enum import Enum
 
 from nubia import Nubia, Options  # type: ignore
-from nubia.internal import context
+from nubia.internal import context  # type: ignore
 
 from ftt.cli.handlers.prepare_environment_handler import (
     PrepareEnvironmentHandler,
@@ -9,10 +10,10 @@ from ftt.cli.handlers.prepare_environment_handler import (
 from ftt.cli.plugin import Plugin
 
 
-class ENVIRONMENT:
-    production = "production"
-    development = "development"
-    test = "test"
+class Environment(str, Enum):
+    PRODUCTION = "production"
+    DEVELOPMENT = "development"
+    TEST = "test"
 
 
 APPLICATION_NAME = "ftt"
@@ -32,16 +33,16 @@ class Application:
                 persistent_history=False, auto_execute_single_suggestions=False
             ),
         )
-        environment = ENVIRONMENT.test
+        environment = Environment.TEST
         if not test_mode:
             opts_parser = plugin.get_opts_parser()
             args, extra = opts_parser.parse_known_args(args=sys.argv)
             if args.dev:
-                environment = ENVIRONMENT.development
+                environment = Environment.DEVELOPMENT
             elif args.test:
-                environment = ENVIRONMENT.test
+                environment = Environment.TEST
             else:
-                environment = ENVIRONMENT.production
+                environment = Environment.PRODUCTION
 
         result = PrepareEnvironmentHandler().handle(
             environment=environment, application_name=APPLICATION_NAME

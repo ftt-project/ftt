@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 import peewee
 from result import Err, Ok, Result
@@ -11,8 +11,8 @@ class SecuritiesLoadStep(AbstractStep):
     key = "securities"
 
     @classmethod
-    def process(cls, security_symbols: List[str]) -> Result[list, Optional[str]]:
-        results = []
+    def process(cls, security_symbols: List[str]) -> Result[list, str]:
+        results: list[Result] = []
         for security_symbol in security_symbols:
             try:
                 result = SecuritiesRepository.get_by_name(security_symbol)

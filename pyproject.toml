@@ -46,6 +46,7 @@ result = "^0.7.0"
 Riskfolio-Lib = "^2.0.0"
 SQLAlchemy = "^1.4.31"
 pyinstrument = "^4.1.1"
+ibapi = "^9.81.1"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.6.0"

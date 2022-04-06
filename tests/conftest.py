@@ -11,6 +11,10 @@ from ftt.storage.models.security import Security
 from ftt.storage.models.security_price import SecurityPrice
 from ftt.storage.models.weight import Weight
 
+from ftt.application import Application
+
+Application.initialize(test_mode=True)
+
 
 @pytest.fixture(autouse=True, scope="function")
 def transactional():
@@ -20,28 +24,6 @@ def transactional():
             yield
         finally:
             transaction.rollback()
-
-
-@pytest.fixture
-def cerebro(portfolio_version, security, weight):
-    def _cerebro(strategies, data):
-        cerebro = bt.Cerebro(live=True, cheat_on_open=True)
-        for strategy in strategies:
-            if type(strategy) == tuple:
-                strategy, opts = strategy
-                cerebro.addstrategy(
-                    strategy, portfolio_version_id=portfolio_version.id, **opts
-                )
-            else:
-                cerebro.addstrategy(strategy, portfolio_version_id=portfolio_version.id)
-        cerebro.addsizer(WeightedSizer)
-
-        cerebro.adddata(data, name=security.symbol)
-
-        cerebro.broker.setcash(30000.0)
-        return cerebro
-
-    return _cerebro
 
 
 @pytest.fixture
@@ -252,12 +234,15 @@ def weight_factory():
 
 
 @pytest.fixture
-def order(security, portfolio_version):
+def order(security, portfolio_version, portfolio, weight):
     order = Order.create(
         security=security,
+        action="BUY",
+        portfolio=portfolio,
         portfolio_version=portfolio_version,
+        weight=weight,
         status="Created",
-        type="buy",
+        order_type="MARKET",
         desired_price=100,
         updated_at=datetime.now(),
         created_at=datetime.now(),

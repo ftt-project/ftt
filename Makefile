@@ -1,14 +1,18 @@
+run:
+	poetry run python -m ftt
+
 clean:
 	rm -rf dist build .mypy_cache .pytest_cache
 	find . -regex ".*/__pycache__" -exec rm -rf {} +
 	find . -regex ".*\.egg-info" -exec rm -rf {} +
 
 test:
-	poetry run pytest tests
+	poetry run pytest -s tests
 
 lint:
-	black ftt tests
-	flake8 ftt
+	poetry run black ftt tests
+	poetry run flake8 ftt
+	poetry run mypy ftt
 
 build: clean
 	poetry build

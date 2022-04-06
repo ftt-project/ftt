@@ -8,5 +8,5 @@ class ApplicationConfigDTO:
     platform: str
     environment: str
     application_name: str
-    root_path: Optional[pathlib.Path] = ""
+    root_path: pathlib.Path
     first_run: Optional[bool] = None

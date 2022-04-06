@@ -296,3 +296,21 @@ class TestPortfolioVersionsCommands:
         subject().details(portfolio_version_id=portfolio_version.id)
 
         assert portfolio_version == mocked.call_args[0][1]
+
+    def test_synchronize_positions_displays_success_message(
+        self, subject, context, portfolio_version, mocker, order
+    ):
+        mocked = mocker.patch(
+            "ftt.cli.commands.portfolio_versions_commands.PositionsSynchronizationHandler"
+        )
+        mocked.return_value.handle.return_value.is_ok.return_value = True
+        mocked.return_value.handle.return_value.value = [order]
+
+        subject().synchronize_positions(portfolio_version_id=portfolio_version.id)
+
+        context.get_context.return_value.console.print.assert_any_call(
+            f"[green]Positions were synchronized for Portfolio Version #{portfolio_version.id}"
+        )
+        context.get_context.return_value.console.print.assert_any_call(
+            f"[green]Orders were created for Portfolio Version #{portfolio_version.id}: [{order.id}]"
+        )

@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import List
 
-from ftt.logger import logger
+from ftt.logger import Logger
+from ftt.storage.data_objects.order_dto import OrderDTO
 from ftt.storage.models.base import Base
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio
@@ -12,6 +13,7 @@ from ftt.storage.repositories.portfolio_versions_repository import (
 )
 from ftt.storage.repositories.repository import Repository
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
+from ftt.storage.repositories.weights_repository import WeightsRepository
 
 
 class OrdersRepository(Repository):
@@ -34,22 +36,33 @@ class OrdersRepository(Repository):
         return cls.get_by_id(order_id)
 
     @classmethod
+    def update(cls, order: Order, dto: OrderDTO) -> Order:
+        return cls._update(order, dto)
+
+    @classmethod
     def build_and_create(
         cls,
         symbol_name: str,
         portfolio_version_id: int,
+        weight_id: int,
         desired_price: float,
-        type: str,
+        order_type: str,
+        action: str,
     ) -> Order:
+        portfolio_version = PortfolioVersionsRepository().get_by_id(
+            portfolio_version_id
+        )
+        weight = WeightsRepository().get_by_id(weight_id)
         order = cls.create(
             {
                 "security": SecuritiesRepository().get_by_name(symbol_name),
-                "portfolio_version": PortfolioVersionsRepository().get_by_id(
-                    portfolio_version_id
-                ),
+                "portfolio": portfolio_version.portfolio,
+                "portfolio_version": portfolio_version,
+                "weight": weight,
                 "desired_price": desired_price,
-                "status": Order.Created,
-                "type": type,
+                "status": Order.Status.CREATED,
+                "order_type": order_type,
+                "action": action,
             }
         )
         return order
@@ -78,19 +91,19 @@ class OrdersRepository(Repository):
             .switch(Order)
             .join(Security)
             .where(Portfolio.id == portfolio.id)
-            .where(Order.status.in_(Order.NOT_CLOSED_STATUSES))
+            .where(Order.status.in_(list(Order.NotClosedStatus)))
             .where(Security.id == security.id)
             .order_by(Order.created_at.desc())
             .execute()
         )
         if len(found) > 1:
-            logger.warning(f"Found multiple unclosed orders for {portfolio}")
+            Logger.warning(f"Found multiple unclosed orders for {portfolio}")
 
         return found[0] if len(found) > 0 else None
 
     @classmethod
     def last_successful_order(
-        cls, portfolio: Portfolio, security: Security, type: str
+        cls, portfolio: Portfolio, security: Security, action: str
     ) -> Order:
         found = (
             Order.select()
@@ -99,9 +112,9 @@ class OrdersRepository(Repository):
             .switch(Order)
             .join(Security)
             .where(Portfolio.id == portfolio.id)
-            .where(Order.status.in_(Order.SUCCEED_STATUSES))
+            .where(Order.status.in_(list(Order.SucceedStatus)))
             .where(Security.id == security.id)
-            .where(Order.type == type)
+            .where(Order.action == action)
             .order_by(Order.created_at.desc())
             .limit(1)
             .execute()

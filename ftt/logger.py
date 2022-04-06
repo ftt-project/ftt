@@ -1,39 +1,80 @@
 import logging
-import os
 
-from rich.logging import RichHandler
+from pathlib import Path
+from typing import Final, Optional, Any
 
-
-def _log_path(file_name):
-    # This could be a system wide logging folder
-    path = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(path, "..", "logs", file_name)
+from nubia.internal.io.logger import ContextFilter  # type: ignore
 
 
-def _setup_sql_logger():
-    file_handler = logging.FileHandler(_log_path("debug.log"))
-    fmt_file = (
-        "%(levelname)s %(asctime)s [%(filename)s:%(funcName)s:%(lineno)d] %(message)s"
-    )
-    file_formatter = logging.Formatter(fmt_file)
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(file_formatter)
-    return file_handler
+class Logger:
+    FMT: Final[
+        str
+    ] = "[%(asctime)-15s] [%(level)6s] [%(logger_name)s] %(thread)s%(message)s"
+    LOGFILE: Final[str] = "ftt.log"
 
+    _instance: Optional[Any] = None
+    _environment: Optional[str] = None
+    _root_path: Optional[Path] = None
+    _name: Optional[str] = None
+    _logger: Optional[logging.Logger] = None
 
-def _setup_app_logger():
-    shell_handler = RichHandler()
-    shell_handler.setLevel(logging.INFO)
-    fmt_shell = "%(message)s"
-    shell_formatter = logging.Formatter(fmt_shell)
-    shell_handler.setFormatter(shell_formatter)
-    return shell_handler
+    def __new__(
+        cls,
+        name: str = "ftt",
+        environment: str = "development",
+        root_path: Path = None,
+    ):
+        if cls._instance is None:
+            cls._instance = super(Logger, cls).__new__(cls)
 
+            cls._instance._environment = environment
+            cls._instance._root_path = root_path
+            cls._instance._name = name
 
-logging.basicConfig(
-    level="DEBUG",
-    format="%(message)s",
-    # datefmt="[%X]",
-    handlers=[_setup_app_logger(), _setup_sql_logger()],
-)
-logger = logging.getLogger("app")
+            logger = logging.getLogger(name)
+            logger.setLevel(logging.INFO)
+            cls._instance._logger = logger
+
+            logfile = cls._instance._root_path.joinpath(cls.LOGFILE).expanduser()  # type: ignore
+            logfile.touch(exist_ok=True)
+            logging_stream = open(logfile, "a")
+
+            file_handler = logging.StreamHandler(logging_stream)
+            file_handler.setLevel(logging.INFO)
+            file_handler.addFilter(ContextFilter())
+            file_handler.setFormatter(logging.Formatter(cls.FMT))
+
+            cls._instance._logger.addHandler(file_handler)
+
+        return cls._instance
+
+    @property
+    def logger(self) -> logging.Logger:
+        if self._logger is None:
+            raise RuntimeError("Logger not initialized")
+        return self._logger
+
+    @classmethod
+    def debug(cls, msg: str):
+        cls._instance.logger.debug(msg)  # type: ignore
+
+    @classmethod
+    def exception(cls, msg: str):
+        cls._instance.logger.exception(msg)  # type: ignore
+        cls._instance.logger.debug(msg)  # type: ignore
+
+    @classmethod
+    def info(cls, msg: str):
+        cls._instance.logger.info(msg)  # type: ignore
+
+    @classmethod
+    def warning(cls, msg: str):
+        cls._instance.logger.warning(msg)  # type: ignore
+
+    @classmethod
+    def error(cls, msg: str):
+        cls._instance.logger.error(msg)  # type: ignore
+
+    @classmethod
+    def critical(cls, msg: str):
+        cls._instance.logger.critical(msg)  # type: ignore

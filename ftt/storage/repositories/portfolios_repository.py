@@ -48,6 +48,8 @@ class PortfoliosRepository(Repository):
         portfolio_version = PortfolioVersionsRepository().get_latest_version(
             portfolio.id
         )
+        if not portfolio_version:
+            return []
         result = (
             Security.select()
             .join(Weight)

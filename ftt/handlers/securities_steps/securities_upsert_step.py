@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from result import Ok, Result
 
@@ -11,9 +11,9 @@ class SecuritiesUpsertStep(AbstractStep):
     key = "securities"
 
     @classmethod
-    def process(
-        cls, securities_info: List[dict]
-    ) -> Result[List[Security], Optional[str]]:
-        results = list(map(SecuritiesRepository.upsert, securities_info))
-        results = [record for record, _ in results]
+    def process(cls, securities_info: List[dict]) -> Result[List[Security], str]:
+        upserted_result: list[tuple[Security, bool]] = list(
+            map(SecuritiesRepository.upsert, securities_info)
+        )
+        results: list[Security] = [record for record, _ in upserted_result]
         return Ok(results)

@@ -1,5 +1,5 @@
 import pathlib
-from typing import List, Optional
+from typing import List
 
 from peewee import Database
 
@@ -12,14 +12,32 @@ class DatabaseNotInitialized(Exception):
 
 
 class Storage:
-    __storage_manager: Optional[StorageManager] = None
+    _instance = None
+
+    def __init__(
+        self, application_name: str, environment: str, root_path: pathlib.Path
+    ):
+        self._storage_manager: StorageManager = StorageManager(
+            application_name, environment, root_path
+        )
+        self._initialized: bool = False
+
+    def initialize(self) -> None:
+        if self._initialized:
+            return
+
+        self._initialized = True
+        self._storage_manager.initialize_database()
+
+    def get_storage_manager(self) -> StorageManager:
+        return self._storage_manager
 
     @classmethod
     def storage_manager(cls) -> StorageManager:
-        if not Storage.__storage_manager or not cls.__storage_manager.database:
+        if not cls._instance:
             raise DatabaseNotInitialized()
 
-        return cls.__storage_manager
+        return cls._instance.get_storage_manager()
 
     @staticmethod
     def get_models() -> List[Base]:
@@ -28,13 +46,10 @@ class Storage:
     @classmethod
     def initialize_database(
         cls, application_name: str, environment: str, root_path: pathlib.Path
-    ) -> None:
-        if Storage.__storage_manager is not None:
-            return
-
-        storage_manager = StorageManager(application_name, environment, root_path)
-        storage_manager.initialize_database()
-        Storage.__storage_manager = storage_manager
+    ):
+        instance = cls(application_name, environment, root_path)
+        instance.initialize()
+        cls._instance = instance
 
     @classmethod
     def get_database(cls) -> Database:
