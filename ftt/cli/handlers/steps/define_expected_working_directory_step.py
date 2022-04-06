@@ -29,17 +29,17 @@ class DefineExpectedWorkingDirectoryStep(AbstractStep):
     @classmethod
     def _environments_system_mapping(cls, env, platform):
         import ftt
-        from ftt.application import ENVIRONMENT, APPLICATION_NAME
+        from ftt.application import Environment, APPLICATION_NAME
         import pathlib
 
         unixlike = {
-            ENVIRONMENT.production: Path(
+            Environment.PRODUCTION: Path(
                 os.path.join((os.path.expanduser("~")), f".{APPLICATION_NAME}")
             ),
-            ENVIRONMENT.development: pathlib.Path.joinpath(
+            Environment.DEVELOPMENT: pathlib.Path.joinpath(
                 Path(ftt.__file__), Path(".."), Path("..")
             ).resolve(),
-            ENVIRONMENT.test: pathlib.Path.joinpath(
+            Environment.TEST: pathlib.Path.joinpath(
                 Path(ftt.__file__), Path(".."), Path(".."), Path("tests")
             ).resolve(),
         }
@@ -48,13 +48,13 @@ class DefineExpectedWorkingDirectoryStep(AbstractStep):
             "Linux": unixlike,
             "Darwin": unixlike,
             "Windows": {
-                ENVIRONMENT.production: Path(
+                Environment.PRODUCTION: Path(
                     os.path.join((os.path.expanduser("~")), f".{APPLICATION_NAME}")
                 ),
-                ENVIRONMENT.development: pathlib.Path.joinpath(
+                Environment.DEVELOPMENT: pathlib.Path.joinpath(
                     Path(ftt.__file__), Path(".."), Path("..")
                 ).resolve(),
-                ENVIRONMENT.test: Path(
+                Environment.TEST: Path(
                     os.path.join((os.path.expanduser("~")), f".{APPLICATION_NAME}")
                 ),
             },

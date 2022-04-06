@@ -1,4 +1,4 @@
-from result import Result, Ok, Err
+from result import Result, Ok
 
 from ftt.brokers.broker_order import BrokerOrder
 from ftt.brokers.contract import Contract

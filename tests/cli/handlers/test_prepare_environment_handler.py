@@ -23,7 +23,7 @@ class TestPrepareEnvironmentHandler:
             "ftt.cli.handlers.steps.root_folder_setup_step.RootFolderSetupStep.mkdir",
         )
 
-        result = subject.handle(environment="production", application_name="test-ftt")
+        result = subject.handle(environment="PRODUCTION", application_name="test-ftt")
 
         assert result.is_ok()
         assert type(result.value) == ApplicationConfigDTO
