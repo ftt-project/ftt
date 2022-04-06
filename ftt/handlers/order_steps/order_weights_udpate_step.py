@@ -7,7 +7,7 @@ from ftt.storage.repositories.weights_repository import WeightsRepository
 
 
 class OrderWeightsUpdateStep(AbstractStep):
-    key = 'order_weight'
+    key = "order_weight"
 
     @classmethod
     def process(cls, order, dto) -> Result[Weight, str]:
@@ -16,8 +16,8 @@ class OrderWeightsUpdateStep(AbstractStep):
             portfolio_version_id=order.portfolio_version_id,
         )
 
-        weight = WeightsRepository.update(weight, WeightDTO(
-            position=dto.execution_size
-        ))
+        weight = WeightsRepository.update(
+            weight, WeightDTO(position=dto.execution_size)
+        )
 
         return Ok(weight)

@@ -119,7 +119,12 @@ class IBClient(EClient):
 
         return next_valid_id
 
-    def place_order(self, contract: Contract, order: BrokerOrder, next_order_id: Optional[int] = None) -> Union[int, None]:
+    def place_order(
+        self,
+        contract: Contract,
+        order: BrokerOrder,
+        next_order_id: Optional[int] = None,
+    ) -> Union[int, None]:
         """
         Places order asynchronously according to given contact and order
 

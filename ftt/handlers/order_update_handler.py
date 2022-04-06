@@ -12,5 +12,5 @@ class OrderUpdateHandler(Handler):
         (OrderLoadStep, "order_id"),
         (OrderUpdateStep, OrderLoadStep.key, "dto"),
         (OrderWeightsUpdateStep, OrderLoadStep.key, "dto"),
-        (ReturnResult, OrderUpdateStep.key)
+        (ReturnResult, OrderUpdateStep.key),
     ]

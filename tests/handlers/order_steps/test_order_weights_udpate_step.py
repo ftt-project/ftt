@@ -10,9 +10,7 @@ class TestOrderWeightsUpdateStep:
         return OrderWeightsUpdateStep
 
     def test_process_returns_updated_weight(self, subject, order, security, weight):
-        dto = OrderDTO(
-            execution_size=78
-        )
+        dto = OrderDTO(execution_size=78)
         result = subject.process(order, dto)
 
         assert result.is_ok()

@@ -138,7 +138,7 @@ class IBWrapper(EWrapper):
         self._next_valid_id_queue.put(order_id)
 
     def position(
-            self, account: str, contract: IBContract, position: Decimal, avg_cost: float
+        self, account: str, contract: IBContract, position: Decimal, avg_cost: float
     ) -> None:
         """
         This method receives open positions from IB, maps them into `ib.Position` object, and puts into the
@@ -146,7 +146,9 @@ class IBWrapper(EWrapper):
 
         See https://interactivebrokers.github.io/tws-api/positions.html
         """
-        logger.info(f"{__name__}::position: {account}, {contract}, {position}, {avg_cost}")
+        logger.info(
+            f"{__name__}::position: {account}, {contract}, {position}, {avg_cost}"
+        )
         self._open_positions_queue.put(
             Position(
                 account=account,
@@ -164,11 +166,11 @@ class IBWrapper(EWrapper):
         self._open_positions_done_queue.put(list(self._open_positions_queue.queue))
 
     def openOrder(
-            self,
-            order_id: OrderId,
-            contract: IBContract,
-            order: Order,
-            order_state: OrderState,
+        self,
+        order_id: OrderId,
+        contract: IBContract,
+        order: Order,
+        order_state: OrderState,
     ):
         self._open_orders_queue.put(
             {
@@ -185,10 +187,20 @@ class IBWrapper(EWrapper):
     def connectionClosed(self):
         logger.info(f"{__name__}::connectionClosed")
 
-    def orderStatus(self, order_id: OrderId, status: str, filled: float,
-                    remaining: float, avg_fill_price: float, perm_id: int,
-                    parent_id: int, last_fill_price: float, client_id: int,
-                    why_held: str, mkt_cap_price: float):
+    def orderStatus(
+        self,
+        order_id: OrderId,
+        status: str,
+        filled: float,
+        remaining: float,
+        avg_fill_price: float,
+        perm_id: int,
+        parent_id: int,
+        last_fill_price: float,
+        client_id: int,
+        why_held: str,
+        mkt_cap_price: float,
+    ):
 
         logger.info(
             f"{__name__}::orderStatus: Received order_id:{order_id} status:{status}"
@@ -204,10 +216,7 @@ class IBWrapper(EWrapper):
         )
 
         # TODO it must update weights in the portfolio according to the filled size
-        result = OrderUpdateHandler().handle(
-            order_id=order_id,
-            dto=dto
-        )
+        result = OrderUpdateHandler().handle(order_id=order_id, dto=dto)
 
         if result.is_ok():
             logger.info(

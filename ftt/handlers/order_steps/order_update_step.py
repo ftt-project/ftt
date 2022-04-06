@@ -7,7 +7,7 @@ from ftt.storage.repositories.orders_repository import OrdersRepository
 
 
 class OrderUpdateStep(AbstractStep):
-    key = 'updated_order'
+    key = "updated_order"
 
     @classmethod
     def process(cls, order: Order, dto: DTOInterface) -> Result[Order, str]:

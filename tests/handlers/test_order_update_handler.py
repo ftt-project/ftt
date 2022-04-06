@@ -16,10 +16,7 @@ class TestOrderUpdateHandler:
             status=Order.Status.COMPLETED,
             execution_size=18,
         )
-        result = subject.handle(
-            order_id=order.id,
-            dto=dto
-        )
+        result = subject.handle(order_id=order.id, dto=dto)
 
         assert result.is_ok()
         assert result.value.status == Order.Status.COMPLETED

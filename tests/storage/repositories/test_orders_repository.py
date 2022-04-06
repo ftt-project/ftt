@@ -121,14 +121,10 @@ class TestOrdersRepository:
     def test_update_returns_success(self, subject, order):
         from ftt.storage.data_objects.order_dto import OrderDTO
 
-        dto = OrderDTO(
-            status=Order.Status.COMPLETED,
-            execution_size=1
-        )
+        dto = OrderDTO(status=Order.Status.COMPLETED, execution_size=1)
 
         result = subject.update(order, dto)
 
         assert result.id == order.id
         assert result.status == Order.Status.COMPLETED
         assert result.execution_size == 1
-
