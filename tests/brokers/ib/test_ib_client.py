@@ -30,7 +30,7 @@ class TestIBClient:
     def test_open_positions_log_error_on_timeout(self, subject, wrapper, mocker):
         wrapper.open_positions_queue.return_value.get.side_effect = queue.Empty
         mocker.patch("ftt.brokers.ib.ib_client.IBClient.reqPositions")
-        logger = mocker.patch("ftt.brokers.ib.ib_client.logger")
+        logger = mocker.patch("ftt.brokers.ib.ib_client.Logger")
 
         result = subject.open_positions()
 
@@ -45,7 +45,7 @@ class TestIBClient:
         wrapper.is_error.side_effect = [True, False]
         wrapper.get_error.return_value = mocker.sentinel.error
 
-        logger = mocker.patch("ftt.brokers.ib.ib_client.logger")
+        logger = mocker.patch("ftt.brokers.ib.ib_client.Logger")
 
         result = subject.open_positions()
 
@@ -68,7 +68,7 @@ class TestIBClient:
     def test_next_valid_id_log_error_on_timeout(self, subject, wrapper, mocker):
         wrapper.next_valid_id_queue.return_value.get.side_effect = queue.Empty
         mocker.patch("ftt.brokers.ib.ib_client.IBClient.reqIds")
-        logger = mocker.patch("ftt.brokers.ib.ib_client.logger")
+        logger = mocker.patch("ftt.brokers.ib.ib_client.Logger")
 
         result = subject.next_valid_id()
 
@@ -83,7 +83,7 @@ class TestIBClient:
         wrapper.is_error.side_effect = [True, False]
         wrapper.get_error.return_value = mocker.sentinel.error
 
-        logger = mocker.patch("ftt.brokers.ib.ib_client.logger")
+        logger = mocker.patch("ftt.brokers.ib.ib_client.Logger")
 
         result = subject.next_valid_id()
 
@@ -123,7 +123,7 @@ class TestIBClient:
             "ftt.brokers.ib.ib_client.IBClient.next_valid_id", return_value=None
         )
         placeOrder = mocker.patch("ftt.brokers.ib.ib_client.EClient.placeOrder")
-        logger = mocker.patch("ftt.brokers.ib.ib_client.logger")
+        logger = mocker.patch("ftt.brokers.ib.ib_client.Logger")
 
         result = subject.place_order(mocker.MagicMock(), mocker.MagicMock())
 
@@ -145,7 +145,7 @@ class TestIBClient:
         wrapper.open_orders_queue.return_value.get.side_effect = queue.Empty
         mocker.patch("ftt.brokers.ib.ib_client.IBClient.reqOpenOrders")
 
-        logger = mocker.patch("ftt.brokers.ib.ib_client.logger")
+        logger = mocker.patch("ftt.brokers.ib.ib_client.Logger")
 
         result = subject.open_orders()
 
@@ -160,7 +160,7 @@ class TestIBClient:
         wrapper.is_error.side_effect = [True, False]
         wrapper.get_error.return_value = mocker.sentinel.error
 
-        logger = mocker.patch("ftt.brokers.ib.ib_client.logger")
+        logger = mocker.patch("ftt.brokers.ib.ib_client.Logger")
 
         result = subject.open_orders()
 

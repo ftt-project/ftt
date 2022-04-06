@@ -5,7 +5,7 @@ from ftt.brokers.contract import Contract
 from ftt.brokers.ib.ib_config import IBConfig
 from ftt.brokers.utils import build_brokerage_service
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.logger import logger
+from ftt.logger import Logger
 from ftt.storage.models import Order
 
 
@@ -39,7 +39,7 @@ class OrdersPlaceStep(AbstractStep):
                 order=broker_order,
                 next_order_id=order.id,
             )
-            logger.info(f"{__name__}::process placed order_id={order_id}")
+            Logger.info(f"{__name__}::process placed order_id={order_id}")
             # TODO handle error
             if order_id is not None:
                 order.status = order.__class__.Status.SUBMITTED

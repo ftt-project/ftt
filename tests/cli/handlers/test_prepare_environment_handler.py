@@ -1,5 +1,6 @@
 import pytest
 
+from ftt.application import Environment
 from ftt.cli.application_config_dto import ApplicationConfigDTO
 from ftt.cli.handlers.prepare_environment_handler import PrepareEnvironmentHandler
 
@@ -23,7 +24,9 @@ class TestPrepareEnvironmentHandler:
             "ftt.cli.handlers.steps.root_folder_setup_step.RootFolderSetupStep.mkdir",
         )
 
-        result = subject.handle(environment="PRODUCTION", application_name="test-ftt")
+        result = subject.handle(
+            environment=Environment.PRODUCTION, application_name="test-ftt"
+        )
 
         assert result.is_ok()
         assert type(result.value) == ApplicationConfigDTO

@@ -11,6 +11,10 @@ from ftt.storage.models.security import Security
 from ftt.storage.models.security_price import SecurityPrice
 from ftt.storage.models.weight import Weight
 
+from ftt.application import Application
+
+Application.initialize(test_mode=True)
+
 
 @pytest.fixture(autouse=True, scope="function")
 def transactional():

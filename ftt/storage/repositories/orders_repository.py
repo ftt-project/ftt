@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from ftt.logger import logger
+from ftt.logger import Logger
 from ftt.storage.data_objects.order_dto import OrderDTO
 from ftt.storage.models.base import Base
 from ftt.storage.models.order import Order
@@ -97,7 +97,7 @@ class OrdersRepository(Repository):
             .execute()
         )
         if len(found) > 1:
-            logger.warning(f"Found multiple unclosed orders for {portfolio}")
+            Logger.warning(f"Found multiple unclosed orders for {portfolio}")
 
         return found[0] if len(found) > 0 else None
 

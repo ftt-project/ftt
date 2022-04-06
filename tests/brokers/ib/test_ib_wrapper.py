@@ -33,7 +33,7 @@ class TestIBWrapper:
         assert o.weight.position == 1
 
     def test_orderStatus_log_success_message(self, subject, order, mocker):
-        logger = mocker.patch("ftt.brokers.ib.ib_wrapper.logger")
+        logger = mocker.patch("ftt.brokers.ib.ib_wrapper.Logger")
         subject.orderStatus(
             order_id=order.id,
             status=Order.Status.ACCEPTED,
@@ -53,7 +53,7 @@ class TestIBWrapper:
         )
 
     def test_orderStatus_log_failure_message(self, subject, order, mocker):
-        logger = mocker.patch("ftt.brokers.ib.ib_wrapper.logger")
+        logger = mocker.patch("ftt.brokers.ib.ib_wrapper.Logger")
         handler = mocker.patch("ftt.brokers.ib.ib_wrapper.OrderUpdateHandler")
         handler.return_value.handle.return_value.is_ok.return_value = False
         handler.return_value.handle.return_value.error = "Error"

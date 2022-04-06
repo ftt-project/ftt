@@ -9,7 +9,7 @@ from ibapi.order_state import OrderState
 
 from ftt.brokers.position import Position
 from ftt.handlers.order_update_handler import OrderUpdateHandler
-from ftt.logger import logger
+from ftt.logger import Logger
 from ftt.storage.data_objects.order_dto import OrderDTO
 
 
@@ -134,7 +134,7 @@ class IBWrapper(EWrapper):
         """
         Is callback that stores the next valid id received from the server.
         """
-        logger.info(f"{__name__}::nextValidId Next valid order id is {order_id}")
+        Logger.info(f"{__name__}::nextValidId Next valid order id is {order_id}")
         self._next_valid_id_queue.put(order_id)
 
     def position(
@@ -146,7 +146,7 @@ class IBWrapper(EWrapper):
 
         See https://interactivebrokers.github.io/tws-api/positions.html
         """
-        logger.info(
+        Logger.info(
             f"{__name__}::position: {account}, {contract}, {position}, {avg_cost}"
         )
         self._open_positions_queue.put(
@@ -185,7 +185,7 @@ class IBWrapper(EWrapper):
         self._open_orders_done_queue.put(list(self._open_orders_queue.queue))
 
     def connectionClosed(self):
-        logger.info(f"{__name__}::connectionClosed")
+        Logger.info(f"{__name__}::connectionClosed")
 
     def orderStatus(
         self,
@@ -202,7 +202,7 @@ class IBWrapper(EWrapper):
         mkt_cap_price: float,
     ):
 
-        logger.info(
+        Logger.info(
             f"{__name__}::orderStatus: Received order_id:{order_id} status:{status}"
             f"filled:{filled} remaining:{remaining} avg_fill_price:{avg_fill_price}"
             f"perm_id:{perm_id} parent_id:{parent_id} last_fill_price:{last_fill_price}"
@@ -219,10 +219,10 @@ class IBWrapper(EWrapper):
         result = OrderUpdateHandler().handle(order_id=order_id, dto=dto)
 
         if result.is_ok():
-            logger.info(
+            Logger.info(
                 f"{__name__}::orderStatus: updated order_id: {order_id} status: {status}"
             )
         else:
-            logger.error(
+            Logger.error(
                 f"{__name__}::orderStatus: failed to update order_id: {order_id} with error: {result.error}"
             )
