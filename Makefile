@@ -5,6 +5,8 @@ clean:
 	rm -rf dist build .mypy_cache .pytest_cache
 	find . -regex ".*/__pycache__" -exec rm -rf {} +
 	find . -regex ".*\.egg-info" -exec rm -rf {} +
+	find . -regex ".*/.coverage" -exec rm -rf {} +
+	find . -regex ".*/.pytest_cache" -exec rm -rf {} +
 
 test:
 	poetry run pytest -s tests

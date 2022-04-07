@@ -1,7 +1,7 @@
 from ftt.handlers.handler.handler import Handler
 from ftt.handlers.handler.return_result import ReturnResult
-from ftt.handlers.portfolio_steps.portfolio_weights_persist_step import (
-    PortfolioWeightsPersistStep,
+from ftt.handlers.portfolio_steps.portfolio_optimization_result_persist_step import (
+    PortfolioOptimizationResultPersistStep,
 )
 from ftt.handlers.portfolio_version_steps.portfolio_version_allocation_step import (
     PortfolioVersionAllocationStep,
@@ -41,9 +41,10 @@ class PortfolioOptimizationHandler(Handler):
             "allocation_strategy_name",
         ),
         (
-            PortfolioWeightsPersistStep,
+            PortfolioOptimizationResultPersistStep,
             PortfolioVersionLoadStep.key,
             PortfolioVersionAllocationStep.key,
+            "optimization_strategy_name",
         ),
-        (ReturnResult, PortfolioWeightsPersistStep.key),
+        (ReturnResult, PortfolioOptimizationResultPersistStep.key),
     ]

@@ -33,6 +33,7 @@ class PortfolioVersion(Base):
         null=True, constraints=[peewee.Check("length(interval) > 0")]
     )
     version = peewee.IntegerField()
+    optimization_strategy_name = peewee.CharField(null=True)
     active = peewee.BooleanField(default=False)
     expected_annual_return = peewee.FloatField(null=True)
     annual_volatility = peewee.FloatField(null=True)
