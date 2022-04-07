@@ -25,6 +25,10 @@ class PortfolioVersionBriefDetails(AbstractRenderer):
             ("[bold magenta]Period start", str(self.portfolio_version.period_start)),
             ("[bold magenta]Period end", str(self.portfolio_version.period_end)),
             ("[bold magenta]Interval", self.portfolio_version.interval),
+            (
+                "[bold magenta]Optimization Strategy Algorithm",
+                str(self.portfolio_version.optimization_strategy_name),
+            ),
         ]
 
         for name, value in rows:
@@ -67,6 +71,10 @@ class PortfolioVersionDetails(AbstractRenderer):
                 str(self.portfolio_version.annual_volatility),
             ),
             ("[bold magenta]Sharpe Ratio", str(self.portfolio_version.sharpe_ratio)),
+            (
+                "[bold magenta]Optimization Strategy Algorithm",
+                str(self.portfolio_version.optimization_strategy_name),
+            ),
         ]
 
         for name, value in rows:
