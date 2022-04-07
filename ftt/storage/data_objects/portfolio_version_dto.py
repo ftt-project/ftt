@@ -12,3 +12,4 @@ class PortfolioVersionDTO(DTOInterface):
     period_end: Optional[datetime] = None
     interval: Optional[str] = None
     value: Optional[Decimal] = None
+    optimization_strategy_name: Optional[str] = None

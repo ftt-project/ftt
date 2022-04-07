@@ -3,6 +3,9 @@ from datetime import datetime
 import peewee
 import pytest
 
+from ftt.portfolio_management.optimization_strategies import (
+    OptimizationStrategyResolver,
+)
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -32,6 +35,7 @@ class TestPortfolioVersion:
                 portfolio=portfolio,
                 version=1,
                 value=-1,
+                optimization_strategy_name=OptimizationStrategyResolver.strategies()[0],
                 updated_at=datetime.now(),
                 created_at=datetime.now(),
             )
