@@ -30,7 +30,7 @@ readme = "README.md"
 
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9.0,<3.11"
 yfinance = "^0.1.54"
 pandas = "^1.4.0"
 pyyaml = "^6.0"
@@ -40,10 +40,12 @@ peewee = "^3.14.0"
 rich = "^11.1"
 pendulum = "^2.1.2"
 cvxopt = "1.2.7"
-pyportfolioopt = "^1.2.7"
+pyportfolioopt = "1.5.3"
 python-nubia = "^0.2b5"
 result = "^0.7.0"
-Riskfolio-Lib = "^2.0.0"
+Riskfolio-Lib = "3.3.0"
+scipy = "1.8.1"  # dep for Riskfolio-Lib
+cvxpy = "1.2.1"  # dep for Riskfolio-Lib
 SQLAlchemy = "^1.4.31"
 pyinstrument = "^4.1.1"
 ibapi = "^9.81.1"

@@ -1,0 +1,9 @@
+name: ftt
+channels:
+  - nodefaults
+  - conda-forge
+dependencies:
+  - pip
+  - conda-lock=1.*
+  - poetry=1.*
+  - cvxpy=1.2.1
