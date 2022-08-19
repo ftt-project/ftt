@@ -7,7 +7,7 @@ FTT_ENV := $(shell conda env list | grep ftt)
 CONDA_ACTIVATE = source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
 
 run:
-	poetry run python -m ftt
+	poetry run python3 -m ftt
 
 prepare-environment:
 ifndef CONDA
@@ -23,6 +23,7 @@ endif
 
 ifndef CONDA_LOCK
 	@echo "conda-lock is not installed. Installing..."
+	pip3 install conda-lock
 	conda install -y -c conda-forge conda-lock
 endif
 
@@ -30,7 +31,7 @@ ifndef FTT_ENV
 	conda create -y -n ftt
 endif
 
-	python -m pip install --upgrade pip
+	python3 -m pip install --upgrade pip
 
 conda-activate:
 	$(CONDA_ACTIVATE) ftt
