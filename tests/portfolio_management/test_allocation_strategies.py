@@ -39,7 +39,7 @@ class TestDefaultAllocationStrategy:
         ).allocate()
 
         assert result == dto
-        assert dto.leftover == 27.0
+        assert round(dto.leftover, 2) == 27.0
         assert dto.allocation == {"A": 44, "B": 81, "C": 11}
         assert round(dto.expected_annual_return, 1) == 142.8
         assert round(dto.annual_volatility, 3) == 2.049
@@ -73,4 +73,4 @@ class TestDefaultAllocationStrategy:
             allocation_dto=dto, value=10005, latest_prices=latest_prices
         ).allocate()
 
-        assert dto.allocation == {"A": 45, "B": 0, "C": 12}
+        assert dto.allocation == {"A": 51, "B": 18, "C": 13}

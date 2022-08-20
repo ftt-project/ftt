@@ -18,8 +18,12 @@ class WeightsRepository(Repository):
 
     @classmethod
     def upsert(cls, data: dict) -> Weight:
-        id = (
-            Weight.insert(
+        weight = WeightsRepository.get_by_security_and_portfolio_version(
+            security_id=data["security"].id,
+            portfolio_version_id=data["portfolio_version"].id,
+        )
+        if weight is None:
+            weight = Weight.create(
                 portfolio_version=data["portfolio_version"],
                 security=data["security"],
                 position=data["position"],
@@ -27,23 +31,13 @@ class WeightsRepository(Repository):
                 created_at=datetime.now(),
                 updated_at=datetime.now(),
             )
-            .on_conflict(
-                conflict_target=(Weight.security, Weight.portfolio_version),
-                update={Weight.planned_position: data["planned_position"]},
-            )
-            .execute()
-        )
-        if id == 0:
-            id = (
-                Weight.select()
-                .where(
-                    Weight.portfolio_version == data["portfolio_version"],
-                    Weight.security == data["security"],
-                )
-                .get()
-                .id
-            )
-        return cls.get_by_id(id)
+        else:
+            weight.position = data["position"]
+            weight.planned_position = data["planned_position"]
+            weight.updated_at = datetime.now()
+            weight.save()
+
+        return cls.get_by_id(weight.id)
 
     @classmethod
     def find_by_security_and_portfolio(
@@ -115,7 +109,7 @@ class WeightsRepository(Repository):
             .join(Security, peewee.JOIN.LEFT_OUTER)
             .where(PortfolioVersion.id == portfolio_version_id)
             .where(Security.id == security_id)
-            .get()
+            .get_or_none()
         )
 
     @classmethod

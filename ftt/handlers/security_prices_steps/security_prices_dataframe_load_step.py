@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import List, Optional
 
 import pandas as pd
@@ -6,13 +5,14 @@ from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage import Storage
+from ftt.storage.models import PortfolioVersion
 from ftt.storage.models.security import Security
 from ftt.storage.models.security_price import SecurityPrice
 
 
 class SecurityPricesDataframeLoadStep(AbstractStep):
     """
-    TODO: deprecate and remove
+    Used to load security prices dataframe from storage.
     """
 
     key = "security_prices"
@@ -20,13 +20,15 @@ class SecurityPricesDataframeLoadStep(AbstractStep):
     @classmethod
     def process(
         cls,
-        securities: List[Security],
-        start_period: datetime,
-        end_period: datetime,
-        interval: str,
+        portfolio_version: PortfolioVersion,  # I don't like that it loads and version and securities, feels redundant
+        portfolio_version_securities: List[Security],
     ) -> Result[pd.DataFrame, Optional[str]]:
+        start_period = portfolio_version.period_start
+        end_period = portfolio_version.period_end
+        interval = portfolio_version.interval
+
         dataframes = []
-        for security in securities:
+        for security in portfolio_version_securities:
             query, params = (
                 SecurityPrice.select(
                     SecurityPrice.datetime,
@@ -47,6 +49,7 @@ class SecurityPricesDataframeLoadStep(AbstractStep):
             )
 
             df = pd.DataFrame({security.symbol: dataframe.close}, index=dataframe.index)
+            df.index = pd.to_datetime(df.index)
             dataframes.append(df)
 
         dataframe = pd.concat(dataframes, axis=1).dropna()

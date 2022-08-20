@@ -1,5 +1,4 @@
 import os
-import pathlib
 from unittest.mock import call
 
 import pytest

@@ -79,7 +79,7 @@ def security_factory():
 def security_price(security):
     price = SecurityPrice.create(
         security=security,
-        datetime=datetime.today(),
+        datetime=datetime(2020, 1, 2),
         open=100,
         high=110,
         low=90,

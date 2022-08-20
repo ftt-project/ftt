@@ -38,6 +38,17 @@ class TestPortfolioOptimizationHandler:
             optimization_strategy_name="historical",
             allocation_strategy_name="default",
         )
+        portfolio_version = reload_record(portfolio_version)
+        securities_weight_dict = {
+            weight.security.symbol: weight.planned_position for weight in result.value
+        }
 
         assert result.is_ok()
-        assert reload_record(weights[0]).planned_position != 0
+        assert securities_weight_dict["A"] == 0
+        assert securities_weight_dict["B"] == 238
+        assert securities_weight_dict["C"] == 238
+        assert securities_weight_dict["D"] == 238
+        assert securities_weight_dict["E"] == 237
+        assert portfolio_version.expected_annual_return == 31.0
+        assert portfolio_version.annual_volatility == 8.82355666907732
+        assert portfolio_version.sharpe_ratio == 1.7857686182618002
