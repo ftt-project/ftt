@@ -6,6 +6,9 @@ from ftt.handlers.backtrade_handler import BacktradeHandler
 @command
 @argument("portfolio_version_id", description="Portfolio ID", positional=True, type=int)
 def backtrade(portfolio_version_id: int) -> None:
+    """
+    Run backtesting for portfolio version
+    """
     ctx = context.get_context()
     result = BacktradeHandler().handle(portfolio_version_id=portfolio_version_id)
     if result.is_err():
