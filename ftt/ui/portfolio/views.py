@@ -145,6 +145,7 @@ class PortfolioPlotView(View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.widget = None
         data = {
             'Python': 11.27,
             'C': 11.16,
@@ -156,8 +157,8 @@ class PortfolioPlotView(View):
         popularity = data.values()
 
         figure = Figure(figsize=(6, 4), dpi=100)
-        figure_canvas = FigureCanvasTkAgg(figure, self)
-        NavigationToolbar2Tk(figure_canvas, self)
+        # figure_canvas = FigureCanvasTkAgg(figure, self)
+        # NavigationToolbar2Tk(figure_canvas, self)
 
         axes = figure.add_subplot()
 
@@ -166,7 +167,18 @@ class PortfolioPlotView(View):
         axes.set_title('Top 5 Programming Languages')
         axes.set_ylabel('Popularity')
 
-        figure_canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+        # figure_canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
 
     def post_initialize(self):
         pass
+
+    def plot(self, axes):
+        if self.widget is not None:
+            self.widget.forget_pack()
+        # figure = Figure(figsize=(6, 4), dpi=100)
+        fig = axes.get_figure()
+        figure_canvas = FigureCanvasTkAgg(fig, self)
+        NavigationToolbar2Tk(figure_canvas, self)
+        fig.add_subplot(axes)
+        self.widget = figure_canvas.get_tk_widget()
+        self.widget.pack(side=TOP, fill=BOTH, expand=1)

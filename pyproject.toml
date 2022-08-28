@@ -48,6 +48,7 @@ cvxpy = "1.2.1"  # dep for Riskfolio-Lib
 SQLAlchemy = "^1.4.31"
 pyinstrument = "^4.1.1"
 ibapi = "^9.81.1"
+bt = "^0.2.0"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.6.0"

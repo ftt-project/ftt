@@ -26,6 +26,7 @@ class PortfolioController(Controller):
         for observer in self._observers:
             self._portfolio_version_weights_controller.attach(observer)
             self._portfolio_versions_controller.attach(observer)
+            self._portfolio_plot_controller.attach(observer)
 
     def initialize_and_render(self):
         self.view.grid(column=1, row=0, sticky=NW)
@@ -140,4 +141,32 @@ class PortfolioPlotController(Controller):
         self.view.grid(column=0, row=3, sticky=NW)
 
     def update(self, event):
-        pass
+        match event:
+            case PortfolioSingleVersionSelectedEvent(version_id=version_id):
+                self.handle_version_selected(version_id)
+
+    def handle_version_selected(self, version_id):
+        from ftt.handlers.security_prices_steps.security_prices_load_step import SecurityPricesLoadStep
+        from pandas import DataFrame
+        import pandas as pd
+        import bt
+
+        portfolio_version_result = PortfolioVersionLoadHandler().handle(portfolio_version_id=version_id)
+
+        prices_result = SecurityPricesLoadStep.process(portfolio_version=portfolio_version_result.value)
+        data = prices_result.value.prices
+        data["Date"] = prices_result.value.datetime_list
+        dataframe = DataFrame.from_dict(prices_result.value.prices)
+        dataframe['Date'] = pd.to_datetime(dataframe['Date'])  # only in case of daily interval
+        dataframe.set_index("Date", inplace=True)
+        # print(dataframe)
+        # print(dataframe.index.dtype)
+        s = bt.Strategy('s1', [bt.algos.RunMonthly(),
+                               bt.algos.SelectAll(),
+                               bt.algos.WeighEqually(),
+                               bt.algos.Rebalance()])
+        test = bt.Backtest(s, dataframe)
+        res = bt.run(test)
+        k = res.plot()
+        self.view.plot(k)
+        res.display()
