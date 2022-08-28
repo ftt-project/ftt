@@ -1,6 +1,28 @@
-from tkinter import ttk, StringVar, NW
+from tkinter import ttk, StringVar, NW, TOP, BOTH
+
+from matplotlib.backends._backend_tk import NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 
 from ftt.ui.view import View
+
+
+class PortfolioView(View):
+    def __init__(self, parent):
+        super().__init__(parent, width=200, height=600)
+
+        self.label_var = StringVar()
+        self.label = ttk.Label(self, textvariable=self.label_var)
+        self.label.grid(column=0, row=0)
+
+    def post_initialize(self):
+        pass
+
+    def show_portfolio(self, portfolio):
+        self.label_var.set(portfolio.name)
+
+    def show_active_version(self, portfolio_version):
+        pass
 
 
 class PortfolioVersionWeightsView(View):
@@ -119,26 +141,32 @@ class PortfolioVersionsView(View):
         self.controller.on_select_version(items)
 
 
-class PortfolioView(View):
-    def __init__(self, parent):
-        super().__init__(parent, width=200, height=600)
+class PortfolioPlotView(View):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        # self._versions_view = PortfolioVersionsView(self)
-        # self._securities_view = PortfolioVersionWeightsView(self)
-        self.label_var = StringVar()
-        self.label = ttk.Label(self, textvariable=self.label_var)
+        data = {
+            'Python': 11.27,
+            'C': 11.16,
+            'Java': 10.46,
+            'C++': 7.5,
+            'C#': 5.26
+        }
+        languages = data.keys()
+        popularity = data.values()
+
+        figure = Figure(figsize=(6, 4), dpi=100)
+        figure_canvas = FigureCanvasTkAgg(figure, self)
+        NavigationToolbar2Tk(figure_canvas, self)
+
+        axes = figure.add_subplot()
+
+        # create the barchart
+        axes.bar(languages, popularity)
+        axes.set_title('Top 5 Programming Languages')
+        axes.set_ylabel('Popularity')
+
+        figure_canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
 
     def post_initialize(self):
-        # self._versions_view.controller = self.controller
-        # self._versions_view.grid(column=0, row=1, sticky=NW)
-
-        # self._securities_view.controller = self.controller
-        # self._securities_view.grid(column=0, row=2, sticky=NW)
-
-        self.label.grid(column=0, row=0)
-
-    def show_portfolio(self, portfolio):
-        self.label_var.set(portfolio.name)
-
-    def show_active_version(self, portfolio_version):
         pass

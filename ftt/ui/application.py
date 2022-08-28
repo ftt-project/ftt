@@ -22,7 +22,7 @@ class Application(tk.Tk):
             environment=Environment.PRODUCTION, application_name=APPLICATION_NAME
         )
 
-        self.title("FTT")
+        self.title("Financial Trading Tools")
         self.geometry("1100x600")
         self.resizable(True, True)
 

@@ -7,3 +7,5 @@ dependencies:
   - conda-lock=1.*
   - poetry=1.*
   - cvxpy=1.2.1
+  - matplotlib=3.5.2
+  - bt=0.2.9
