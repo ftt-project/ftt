@@ -25,6 +25,26 @@ class PortfolioView(View):
         pass
 
 
+class PortfolioVersionsControlBarView(View):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self._backtesting_button = ttk.Button(self, text="Backtest", command=self.backtesting_clicked, state="disabled")
+        self._backtesting_button.grid(column=0, row=0, sticky=NW)
+
+    def backtesting_clicked(self):
+        self.controller.backtesting_clicked()
+
+    def post_initialize(self):
+        pass
+
+    def version_selected(self):
+        self._backtesting_button.config(state="normal")
+
+    def no_version_selected(self):
+        self._backtesting_button.config(state="disabled")
+
+
 class PortfolioVersionWeightsView(View):
     def __init__(self, parent):
         super().__init__(parent)
@@ -145,7 +165,7 @@ class PortfolioPlotView(View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.widget = None
+        self.figure_canvas = None
         data = {
             'Python': 11.27,
             'C': 11.16,
@@ -173,12 +193,11 @@ class PortfolioPlotView(View):
         pass
 
     def plot(self, axes):
-        if self.widget is not None:
-            self.widget.forget_pack()
+        if self.figure_canvas is not None:
+            self.figure_canvas.forget_pack()
         # figure = Figure(figsize=(6, 4), dpi=100)
         fig = axes.get_figure()
-        figure_canvas = FigureCanvasTkAgg(fig, self)
-        NavigationToolbar2Tk(figure_canvas, self)
+        self.figure_canvas = FigureCanvasTkAgg(fig, self)
+        NavigationToolbar2Tk(self.figure_canvas, self)
         fig.add_subplot(axes)
-        self.widget = figure_canvas.get_tk_widget()
-        self.widget.pack(side=TOP, fill=BOTH, expand=1)
+        self.figure_canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)

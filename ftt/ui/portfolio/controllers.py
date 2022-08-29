@@ -1,4 +1,4 @@
-from tkinter import NW
+from tkinter import NW, Button
 
 from result import Err, Ok
 
@@ -8,22 +8,29 @@ from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHa
 from ftt.handlers.weights_list_handler import WeightsListHandler
 from ftt.ui.controller import Controller
 from ftt.ui.events import PortfolioNavigationEvent, PortfolioSingleVersionSelectedEvent, \
-    PortfolioMultipleVersionsSelectedEvent
-from ftt.ui.portfolio.views import PortfolioVersionWeightsView, PortfolioVersionsView, PortfolioPlotView
+    PortfolioMultipleVersionsSelectedEvent, PortfolioVersionBacktestingInitiateEvent, PortfolioBacktestPerformEvent, \
+    PortfolioVersionsDeselectedEvent
+from ftt.ui.portfolio.views import PortfolioVersionWeightsView, PortfolioVersionsView, PortfolioPlotView, \
+    PortfolioVersionsControlBarView
 
 
 class PortfolioController(Controller):
     def __init__(self, model, view):
         super().__init__(model, view)
 
+        self._versions_control_bar = PortfolioVersionsControlBarController(
+            None,
+            PortfolioVersionsControlBarView(self.view)
+        )
         self._portfolio_version_weights_controller = PortfolioVersionWeightsController(
             None,
             PortfolioVersionWeightsView(self.view)
         )
         self._portfolio_versions_controller = PortfolioVersionsController(None, PortfolioVersionsView(self.view))
-        self._portfolio_plot_controller = PortfolioPlotController(None, PortfolioPlotView(self.view))
+        self._portfolio_plot_controller = PortfolioVersionsBacktestingController(None, PortfolioPlotView(self.view))
 
         for observer in self._observers:
+            self._versions_control_bar.attach(observer)
             self._portfolio_version_weights_controller.attach(observer)
             self._portfolio_versions_controller.attach(observer)
             self._portfolio_plot_controller.attach(observer)
@@ -31,6 +38,7 @@ class PortfolioController(Controller):
     def initialize_and_render(self):
         self.view.grid(column=1, row=0, sticky=NW)
 
+        self._versions_control_bar.initialize_and_render()
         self._portfolio_versions_controller.initialize_and_render()
         self._portfolio_version_weights_controller.initialize_and_render()
         self._portfolio_plot_controller.initialize_and_render()
@@ -66,12 +74,15 @@ class PortfolioVersionsController(Controller):
         super().__init__(model, view)
 
         self._versions = None
+        self._active_version_ids = set()
 
     def initialize_and_render(self):
-        self.view.grid(column=0, row=1, sticky=NW)
+        self.view.grid(column=0, row=2, sticky=NW)
 
     def update(self, event):
-        pass
+        match event:
+            case PortfolioVersionBacktestingInitiateEvent():
+                self.notify(PortfolioBacktestPerformEvent(self._active_version_ids))
 
     @property
     def versions(self):
@@ -85,14 +96,34 @@ class PortfolioVersionsController(Controller):
             self.view.add_row(version)
 
     def on_select_version(self, items):
+        self._active_version_ids = items
         match len(items):
             case 0:
-                return
+                self.notify(PortfolioVersionsDeselectedEvent())
             case 1:
                 version_id = int(items[0])
                 self.notify(PortfolioSingleVersionSelectedEvent(version_id=version_id))
             case _:
+
                 self.notify(PortfolioMultipleVersionsSelectedEvent(version_ids=items))
+
+
+class PortfolioVersionsControlBarController(Controller):
+    def __init__(self, model, view):
+        super().__init__(model, view)
+
+    def initialize_and_render(self):
+        self.view.grid(column=0, row=1, sticky=NW)
+
+    def update(self, event):
+        match event:
+            case PortfolioVersionsDeselectedEvent():
+                self.view.no_version_selected()
+            case PortfolioSingleVersionSelectedEvent(version_id=_) | PortfolioMultipleVersionsSelectedEvent(version_ids=_):
+                self.view.version_selected()
+
+    def backtesting_clicked(self):
+        self.notify(PortfolioVersionBacktestingInitiateEvent())
 
 
 class PortfolioVersionWeightsController(Controller):
@@ -101,7 +132,7 @@ class PortfolioVersionWeightsController(Controller):
         self._weights = None
 
     def initialize_and_render(self):
-        self.view.grid(column=0, row=2, sticky=NW)
+        self.view.grid(column=0, row=3, sticky=NW)
 
     @property
     def weights(self):
@@ -136,21 +167,26 @@ class PortfolioVersionWeightsController(Controller):
             print(result_version.error)
 
 
-class PortfolioPlotController(Controller):
+class PortfolioVersionsBacktestingController(Controller):
     def initialize_and_render(self):
-        self.view.grid(column=0, row=3, sticky=NW)
+        self.view.grid(column=0, row=4, sticky=NW)
 
     def update(self, event):
         match event:
-            case PortfolioSingleVersionSelectedEvent(version_id=version_id):
-                self.handle_version_selected(version_id)
+            case PortfolioBacktestPerformEvent(version_ids=version_ids):
+                self.handle_version_selected(version_ids)
 
-    def handle_version_selected(self, version_id):
+    def handle_version_selected(self, version_ids):
+        if len(version_ids) > 1:
+            print('Multiple versions is not support yet')
+            return
+
         from ftt.handlers.security_prices_steps.security_prices_load_step import SecurityPricesLoadStep
         from pandas import DataFrame
         import pandas as pd
         import bt
 
+        version_id = version_ids[0]
         portfolio_version_result = PortfolioVersionLoadHandler().handle(portfolio_version_id=version_id)
 
         prices_result = SecurityPricesLoadStep.process(portfolio_version=portfolio_version_result.value)

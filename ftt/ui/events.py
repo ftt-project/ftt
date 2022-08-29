@@ -11,6 +11,27 @@ class PortfolioNavigationEvent:
 
 
 @dataclass
+class PortfolioVersionBacktestingInitiateEvent:
+    """Event triggered by backtesting button"""
+    def __str__(self):
+        return f"PortfolioVersionBacktestEvent"
+
+
+@dataclass
+class PortfolioBacktestPerformEvent:
+    """Event that triggers backtesting"""
+    version_ids: set[int]
+
+    def __str__(self):
+        return f"PortfolioBacktestPerformEvent"
+
+
+class PortfolioVersionsDeselectedEvent:
+    """Event triggered when no version is selected"""
+    def __str__(self):
+        return f"PortfolioVersionsDeselectedEvent"
+
+@dataclass
 class PortfolioSingleVersionSelectedEvent:
     """Event triggered by version selection"""
     version_id: int

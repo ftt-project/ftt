@@ -22,9 +22,9 @@ class Controller(ABC):
             observer.update(event)
 
     @abstractmethod
-    def update(self, event):
+    def initialize_and_render(self):
         pass
 
     @abstractmethod
-    def initialize_and_render(self):
+    def update(self, event):
         pass
