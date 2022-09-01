@@ -1,25 +1,50 @@
-from tkinter import ttk
+from PyQt6 import QtCore, QtGui
+from PyQt6.QtWidgets import QListView, QItemDelegate, QPushButton
 
-from ftt.ui.view import View
 
-
-class NavigationView(View):
+class NavigationDelegate(QItemDelegate):
     def __init__(self, parent):
-        super().__init__(parent, width=200, height=600)
+        super().__init__(parent)
 
-        self.label = ttk.Label(self, text="FTT")
+    def paint(self, painter: QtGui.QPainter, option: 'QStyleOptionViewItem', index: QtCore.QModelIndex) -> None:
+        if not self.parent().indexWidget(index):
+            button = QPushButton(index.data(), self.parent())
+            button.setMinimumSize(QtCore.QSize(170, 30))
+            button.setMaximumSize(QtCore.QSize(170, 30))
+            button.clicked.connect(lambda: self.parent().portfolio_selected(index))
+            self.parent().setIndexWidget(index, button)
 
-    def post_initialize(self):
-        self.label.grid(column=0, row=0)
 
-    def navigation_clicked(self, portfolio_id):
-        self.controller.navigation_clicked(portfolio_id)
+class NavigationView(QListView):
+    def __init__(self, model, parent=None, delegate=NavigationDelegate, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setModel(model)
+        self.view = delegate(self)
+        # self.setItemDelegate(self.view)
 
-    def add_portfolios(self, portfolios):
-        for i, portfolio in enumerate(portfolios):
-            button = ttk.Button(
-                self,
-                text=portfolio.name,
-                command=lambda o=portfolio: self.navigation_clicked(o.id)
-            )
-            button.grid(column=0, row=i + 1)
+        self.setWordWrap(True)
+        self.setUniformItemSizes(True)
+        self.setSpacing(10)
+        self.setFixedWidth(200)
+        self.setStyleSheet("QListView {background-color: #f5f5f5; border: none;}")
+
+        # self.selectionModel().currentChanged.connect(self.on_current_changed)
+
+    def init_ui(self):
+        pass
+
+    def portfolio_selected(self, index):
+        print("index: ", index)
+        self.select(index)
+
+    def selectionChanged(self, selected: QtCore.QItemSelection, deselected: QtCore.QItemSelection) -> None:
+        print("selected: ", selected, deselected)
+        super().selectionChanged(selected, deselected)
+
+    def select(self, index):
+        print("index: ", index)
+        sm = self.selectionModel()
+        sm.setSelection(index, QtCore.QItemSelectionModel.SelectionFlag.Select)
+
+    def on_current_changed(self, current, previous):
+        print("current: ", current, previous)
