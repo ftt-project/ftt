@@ -1,21 +1,25 @@
-from ftt.ui.view import View
+from PyQt6.QtCore import QSize
+from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
+
+from ftt.ui.central_frame.views import CentralFrameView
+from ftt.ui.navigation.models import NavigationModel
+from ftt.ui.navigation.views import NavigationView
 
 
-class MainView(View):
-    def __init__(self, parent):
-        super().__init__(parent)
+class MainView(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
-        self.grid(row=0, column=0)
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
+        self.setFixedSize(QSize(1200, 800))
 
-    def post_initialize(self):
-        pass
+        self.frame = QWidget(self)
+        self.setCentralWidget(self.frame)
 
-    @property
-    def controller(self):
-        return None
+        self.setWindowTitle("Financial Trading Tools")
+        self.layout = QHBoxLayout(self.frame)
 
-    @controller.setter
-    def controller(self, _):
-        pass
+        self.navigation = NavigationView(parent=self.frame, model=NavigationModel())
+        self.central_space = CentralFrameView(parent=self.frame, model=None)
+
+        self.layout.addWidget(self.navigation)
+        self.layout.addWidget(self.central_space)

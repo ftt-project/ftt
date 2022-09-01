@@ -774,6 +774,34 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "pyqt6"
+version = "6.3.1"
+description = "Python bindings for the Qt cross platform application toolkit"
+category = "main"
+optional = false
+python-versions = ">=3.6.1"
+
+[package.dependencies]
+PyQt6-Qt6 = ">=6.3.0"
+PyQt6-sip = ">=13.4,<14"
+
+[[package]]
+name = "pyqt6-qt6"
+version = "6.3.1"
+description = "The subset of a Qt installation needed by PyQt6."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "pyqt6-sip"
+version = "13.4.0"
+description = "The sip module support for PyQt6"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "pytest"
 version = "6.2.5"
 description = "pytest: simple powerful testing with Python"
@@ -1227,7 +1255,7 @@ requests = ">=2.26"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.9.0,<3.11"
-content-hash = "b084e22af5c9a31b3ea114ce4e2f4d343b7ccdd80b76b1cb04d66a30735b17f0"
+content-hash = "9bf7b005dd6b49e6689f2a88e63a3bdf731c82126157780959069294c6c0cc83"
 
 [metadata.files]
 arch = [
@@ -2019,6 +2047,9 @@ pyportfolioopt = [
     {file = "pyportfolioopt-1.5.3.tar.gz", hash = "sha256:6e52ff150a6ec401c0b329bd344b3e2eacb419c927500279eb11307467f00513"},
 ]
 pyprind = []
+pyqt6 = []
+pyqt6-qt6 = []
+pyqt6-sip = []
 pytest = [
     {file = "pytest-6.2.5-py3-none-any.whl", hash = "sha256:7310f8d27bc79ced999e760ca304d69f6ba6c6649c0b60fb0e04a4a77cacc134"},
     {file = "pytest-6.2.5.tar.gz", hash = "sha256:131b36680866a76e6781d13f101efb86cf674ebb9762eb70d3082b6f29889e89"},
