@@ -1,25 +1,11 @@
-from PyQt6.QtCore import QSize
-from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
-
-from ftt.ui.central_frame.views import CentralFrameView
-from ftt.ui.navigation.models import NavigationModel
-from ftt.ui.navigation.views import NavigationView
+from PySide6.QtQuick import QQuickView
 
 
-class MainView(QMainWindow):
-    def __init__(self):
+class MainView(QQuickView):
+    def __init__(self, model):
         super().__init__()
+        self.setResizeMode(QQuickView.SizeRootObjectToView)
 
-        self.setFixedSize(QSize(1200, 800))
+        self.setInitialProperties({"myModel": model})
 
-        self.frame = QWidget(self)
-        self.setCentralWidget(self.frame)
-
-        self.setWindowTitle("Financial Trading Tools")
-        self.layout = QHBoxLayout(self.frame)
-
-        self.navigation = NavigationView(parent=self.frame, model=NavigationModel())
-        self.central_space = CentralFrameView(parent=self.frame, model=None)
-
-        self.layout.addWidget(self.navigation)
-        self.layout.addWidget(self.central_space)
+        self.setSource("ftt/ui/main/view.qml")
