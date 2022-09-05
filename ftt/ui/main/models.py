@@ -1,8 +1,14 @@
-from PySide6.QtCore import QAbstractListModel, Qt, QByteArray
+from PySide6.QtCore import QAbstractListModel, Qt, QByteArray, Slot, Signal
+from result import Ok, Err
+
+from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
 
 
 class PortfoliosModel(QAbstractListModel):
-    ValueRole = Qt.UserRole + 1
+    selectionChanged = Signal(int)
+
+    IdentifierRole = Qt.UserRole + 1
+    # ValueRole = Qt.UserRole + 1
 
     def __init__(self):
         super().__init__()
@@ -10,7 +16,8 @@ class PortfoliosModel(QAbstractListModel):
 
     def roleNames(self):
         roles = {
-            self.__class__.ValueRole: QByteArray(b'value'),
+            # self.__class__.ValueRole: QByteArray(b'value'),
+            self.__class__.IdentifierRole: QByteArray(b'identifier'),
             Qt.DisplayRole: QByteArray(b'display')
         }
         return roles
@@ -22,14 +29,25 @@ class PortfoliosModel(QAbstractListModel):
         d = self._portfolios[index.row()]
 
         if role == Qt.DisplayRole:
-            return d['name']
-        elif role == Qt.DecorationRole:
-            return Qt.white
-        elif role == self.__class__.ValueRole:
-            return d['value']
+            return d.name
+        elif role == self.__class__.IdentifierRole:
+            return d.id
+        # elif role == Qt.DecorationRole:
+        #     return Qt.white
+        # elif role == self.__class__.ValueRole:
+        #     return d['value']
 
         return None
 
-    def populate(self, data=None):
-        for item in data:
-            self._portfolios.append(item)
+    def load(self):
+        result = PortfoliosListHandler().handle()
+        match result:
+            case Ok(data):
+                self._portfolios = data
+            case Err(error):
+                print(error)
+
+    @Slot(int)
+    def selectPortfolio(self, portfolio_id) -> None:
+        print("selectPortfolio", portfolio_id)
+        self.selectionChanged.emit(portfolio_id)

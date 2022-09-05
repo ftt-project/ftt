@@ -1,8 +1,5 @@
-from PySide6.QtCore import QStringListModel
 from PySide6.QtGui import QGuiApplication
-from PySide6.QtQml import qmlRegisterSingletonType
 from PySide6.QtQuickControls2 import QQuickStyle
-from PySide6.QtWidgets import QApplication
 
 from ftt.application import Environment, APPLICATION_NAME
 from ftt.cli.handlers.prepare_environment_handler import PrepareEnvironmentHandler
@@ -21,15 +18,12 @@ class Application(QGuiApplication):
         )
 
     def run(self):
-
-        data_list = [{"name": "Portfolio 1", "value": "100"}, {"name": "Portfolio 2", "value": "200"}]
-
-        model = PortfoliosModel()
-        model.populate(data_list)
         # qmlRegisterSingletonType(PortfoliosModel, "PortfoliosModel", 1, 0, "PortfoliosModel", lambda eng: model)
 
-        window = MainView(model)
+        model = PortfoliosModel()
+        model.load()
 
+        window = MainView(model)
         window.show()
 
         super().exec()

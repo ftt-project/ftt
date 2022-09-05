@@ -1,14 +1,13 @@
-from PyQt6.QtWidgets import QLabel, QHBoxLayout, QWidget, QVBoxLayout
+from PySide6.QtQuick import QQuickView
+from PySide6.QtQuickWidgets import QQuickWidget
 
 
-class PortfolioView(QWidget):
-    def __init__(self):
+class PortfolioView(QQuickWidget):
+    def __init__(self, model):
         super().__init__()
-        self.label1 = QLabel("Portfolio")
-        self.label2 = QLabel("The best of course")
 
-        layout = QVBoxLayout()
-        layout.addWidget(self.label1)
-        layout.addWidget(self.label2)
+        self.setInitialProperties({"portfolioVersions": model})
 
-        self.setLayout(layout)
+        self.setResizeMode(QQuickView.SizeRootObjectToView)
+        self.setSource("ftt/ui/portfolio/view.qml")
+
