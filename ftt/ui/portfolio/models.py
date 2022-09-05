@@ -1,70 +1,59 @@
-from typing import Dict
-
-from PySide6.QtCore import QAbstractListModel, Signal, Qt, QByteArray, QModelIndex
-from result import Err, Ok
+from PySide6.QtCore import QObject, Signal
+from result import Ok, Err
 
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
+from ftt.handlers.portfolio_version_load_handler import PortfolioVersionLoadHandler
 from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHandler
+from ftt.handlers.weights_list_handler import WeightsListHandler
 
 
-class PortfolioModel(QAbstractListModel):
-    IdentifierRole = Qt.UserRole + 1
+class PortfolioVersionsModel(QObject):
+    portfolioVersionsListChanged = Signal()
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self):
+        super().__init__()
 
-        self._portfolio_versions = []
+        self._current_weights = None
+        self._current_portfolio_version = None
+        self._current_portfolio = None
+        self._current_portfolio_versions = None
 
-    def roleNames(self) -> Dict[int, QByteArray]:
-        roles = {
-            self.__class__.IdentifierRole: QByteArray(b'identifier'),
-            Qt.DisplayRole: QByteArray(b'display')
-        }
-        return roles
-
-    def rowCount(self, index):
-        return len(self._portfolio_versions)
-
-    def data(self, index, role):
-        d = self._portfolio_versions[index.row()]
-
-        if role == Qt.DisplayRole:
-            return d.optimization_strategy_name
-        elif role == self.__class__.IdentifierRole:
-            return d.id
-
-        return None
-
-    def setData(self, index, value, role=Qt.EditRole):
-        if index.isValid() and role == self.__class__.IdentifierRole:
-            self._portfolio_versions[index.row()] = {}
-            self._portfolio_versions[index.row()]['id'] = value
-            self.dataChanged.emit(index, index, self.__class__.IdentifierRole)
-            return True
-        elif index.isValid() and role == Qt.DisplayRole:
-            self._portfolio_versions[index.row()] = {}
-            self._portfolio_versions[index.row()]['name'] = value
-            self.dataChanged.emit(index, index, Qt.DisplayRole)
-            return True
-        return False
-
-    def load(self, portfolio_id):
+    def getPortfolioVersions(self, portfolio_id):
         portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
-        if portfolio_result.is_err():
-            print(portfolio_result.unwrap_err())
-            return
-
-        result = PortfolioVersionsListHandler().handle(portfolio=portfolio_result.unwrap())
-        match result:
-            case Ok(data):
-                self._portfolio_versions = data
-                for index, el in enumerate(data):
-                    self.insertRow(index)
-                    ix = self.index(index, index, QModelIndex())
-                    self.setData(ix, el.id, self.__class__.IdentifierRole)
-                    self.setData(ix, el.optimization_strategy_name, Qt.DisplayRole)
+        match portfolio_result:
+            case Ok(portfolio):
+                self._current_portfolio = portfolio
             case Err(error):
-                self._portfolio_versions = []
-                print(error)
+                print(f"Error: {error}")
+                self._current_portfolio = None
+                return
 
+        portfolio_versions_result = PortfolioVersionsListHandler().handle(portfolio=portfolio)
+        match portfolio_versions_result:
+            case Ok(portfolio_versions):
+                self._current_portfolio_versions = portfolio_versions
 
+            case Err(error):
+                print(f"Error: {error}")
+                return
+
+        return self._current_portfolio_versions
+
+    def getPortfolioVersionWeights(self, portfolio_version_id):
+        version_result = PortfolioVersionLoadHandler().handle(portfolio_version_id=portfolio_version_id)
+        match version_result:
+            case Ok(version):
+                self._current_portfolio_version = version
+            case Err(error):
+                print(f"Error: {error}")
+                return
+
+        weights_result = WeightsListHandler().handle(portfolio_version=self._current_portfolio_version)
+        match weights_result:
+            case Ok(weights):
+                self._current_weights = weights
+            case Err(error):
+                print(f"Error: {error}")
+                return
+
+        return self._current_weights
