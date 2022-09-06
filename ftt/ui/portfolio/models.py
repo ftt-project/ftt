@@ -18,6 +18,15 @@ class PortfolioVersionsModel(QObject):
         self._current_portfolio = None
         self._current_portfolio_versions = None
 
+    def getPortfolio(self, portfolio_id):
+        portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
+        match portfolio_result:
+            case Ok(portfolio):
+                return portfolio
+            case Err(error):
+                print(f"Error: {error}")
+                return None
+
     def getPortfolioVersions(self, portfolio_id):
         portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
         match portfolio_result:

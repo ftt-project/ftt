@@ -1,6 +1,7 @@
 from PySide6.QtCore import Slot, Signal, Qt
+from PySide6.QtGui import QPainter, QBrush, QColor, QPalette
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHeaderView, QTableWidgetItem, QLabel, QToolBar, \
-    QButtonGroup, QPushButton, QHBoxLayout
+    QButtonGroup, QPushButton, QHBoxLayout, QStyle, QGraphicsOpacityEffect, QProgressDialog
 
 from ftt.ui.backtesting.models import BacktestingModel
 from ftt.ui.backtesting.views import BacktestingView
@@ -11,8 +12,9 @@ class PortfolioVersionsTable(QWidget):
     portfolioVersionsBacktestRequest = Signal(list)
 
     BUTTONS = {
-        0: "Backtest",
-        1: "Remove"
+        0: "New Version",
+        1: "Backtest",
+        2: "Remove"
     }
 
     def __init__(self):
@@ -31,11 +33,12 @@ class PortfolioVersionsTable(QWidget):
         self._table = QTableWidget()
         self._table.setMaximumHeight(300)
 
-        self._table.setColumnCount(7)
+        self._table.setColumnCount(9)
         self._table.setHorizontalHeaderLabels([
-            "Optimization Strategy", "Active", "Version",
+            "Optimization Strategy", "Active",
             "Value", "Period Start", "Period End",
-            "Interval"
+            "Interval", "Expected Annual Return", "Annual Volatility",
+            "Sharpe Ratio"
         ])
         self._table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self._table.setEditTriggers(QTableWidget.NoEditTriggers)
@@ -86,18 +89,22 @@ class PortfolioVersionsTable(QWidget):
             optimization_strategy_name = QTableWidgetItem(item.optimization_strategy_name)
             active = QTableWidgetItem("Yes" if item.active else "No")
             version = QTableWidgetItem(f"{item.version}")
-            value = QTableWidgetItem(f"{item.value}")
             period_start = QTableWidgetItem(f"{item.period_start}")
             period_end = QTableWidgetItem(f"{item.period_end}")
             interval = QTableWidgetItem(f"{item.interval}")
+            expected_annual_return = QTableWidgetItem('{0:.4g}'.format(item.expected_annual_return or 0))
+            annual_volatility = QTableWidgetItem('{0:.4g}'.format(item.annual_volatility or 0))
+            sharpe_ratio = QTableWidgetItem("{0:.4g}".format(item.sharpe_ratio or 0))
 
             self._table.setItem(idx, 0, optimization_strategy_name)
             self._table.setItem(idx, 1, active)
             self._table.setItem(idx, 2, version)
-            self._table.setItem(idx, 3, value)
-            self._table.setItem(idx, 4, period_start)
-            self._table.setItem(idx, 5, period_end)
-            self._table.setItem(idx, 6, interval)
+            self._table.setItem(idx, 3, period_start)
+            self._table.setItem(idx, 4, period_end)
+            self._table.setItem(idx, 5, interval)
+            self._table.setItem(idx, 6, expected_annual_return)
+            self._table.setItem(idx, 7, annual_volatility)
+            self._table.setItem(idx, 8, sharpe_ratio)
 
     @Slot()
     def onCellClicked(self, row, _):
@@ -162,6 +169,7 @@ class CentralPortfolioView(QWidget):
     def __init__(self, model):
         super().__init__()
 
+        self._portfolio = None
         self._weights_table = None
         self._versions_table = None
         self._current_portfolio_version_weights = None
@@ -171,12 +179,35 @@ class CentralPortfolioView(QWidget):
         self._layout = QVBoxLayout(self)
         self._layout.setAlignment(Qt.AlignTop)
 
+        self.createTopBar()
         self.createVersionsTable()
         self.createWeightsTable()
 
-    def createVersionsTable(self):
-        # self._layout.addWidget(QLabel("<h4>Portfolio Versions</h4>"), 0, alignment=Qt.AlignTop)
+    def createTopBar(self):
+        self._top_bar = QHBoxLayout()
+        self._top_bar_header = QLabel("")
+        self._top_bar.addWidget(self._top_bar_header)
 
+        self._top_controls_layout = QHBoxLayout()
+        self._top_controls = QButtonGroup()
+        self._top_controls.setExclusive(False)
+        self._top_controls_layout.setAlignment(Qt.AlignRight)
+
+        sync_button = QPushButton("Synchronize with broker")
+        sync_button.setEnabled(True)
+        sync_button.clicked.connect(self.onSyncClicked)
+        self._top_controls.addButton(sync_button, 0)
+        self._top_controls_layout.addWidget(sync_button)
+
+        sync_button_help = QPushButton()
+        sync_button_help.setIcon(sync_button_help.style().standardIcon(QStyle.SP_MessageBoxInformation))
+        self._top_controls.addButton(sync_button_help, 1)
+        self._top_controls_layout.addWidget(sync_button_help)
+
+        self._top_bar.addLayout(self._top_controls_layout)
+        self._layout.addLayout(self._top_bar)
+
+    def createVersionsTable(self):
         self._versions_table = PortfolioVersionsTable()
         self._layout.addWidget(self._versions_table, 0, alignment=Qt.AlignTop)
         self.portfolioVersionsListChanged.connect(
@@ -196,11 +227,19 @@ class CentralPortfolioView(QWidget):
         self.portfolioVersionsListChanged.connect(
             lambda: self._weights_table.updateWeights([])
         )
+
+    @Slot()
+    def onSyncClicked(self):
+        progress = QProgressDialog("Synchronizing with broker system...", "Abort", 0, 0, self)
+        progress.setWindowModality(Qt.WindowModal)
+        progress.show()
         
     @Slot(int)
     def onPortfolioChanged(self, portfolio_id):
         print(f"Portfolio changed: {portfolio_id}")
+        self._portfolio = self._model.getPortfolio(portfolio_id)
         self._portfolio_versions = self._model.getPortfolioVersions(portfolio_id)
+        self._top_bar_header.setText(f"<h3>{self._portfolio.name}</h3>")
         self.portfolioVersionsListChanged.emit()
 
     @Slot(int)

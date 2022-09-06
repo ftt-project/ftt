@@ -69,7 +69,7 @@ class MainWindow(QMainWindow):
 
         self._model = model
         self.setWindowTitle("FTT")
-        self.resize(800, 600)
+        self.resize(1400, 800)
 
         widget = MainWidget(model)
 
