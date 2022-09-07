@@ -8,6 +8,9 @@ from ftt.handlers.weights_list_handler import WeightsListHandler
 
 
 class PortfolioVersionsModel(QObject):
+    """
+    TODO - rename to PortfolioModel
+    """
     portfolioVersionsListChanged = Signal()
 
     def __init__(self):

@@ -6,7 +6,9 @@ from result import Ok
 
 from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
 from ftt.ui.portfolio.models import PortfolioVersionsModel
-from ftt.ui.portfolio.views import CentralPortfolioView
+from ftt.ui.portfolio.views import CentralPortfolioView, MainPortfolioView
+from ftt.ui.portfolio_version.models import PortfolioVersionModel
+from ftt.ui.portfolio_version.view import PortfolioVersionDetailsView
 
 
 class MainWidget(QWidget):
@@ -14,12 +16,12 @@ class MainWidget(QWidget):
 
     def __init__(self, model):
         super().__init__()
+        self._center = None
         self._model = model
 
         self.createLayout()
         self.createLeftSide()
         self.createCenterSide()
-        self.createRightSide()
 
     def createLayout(self):
         self._layout = QHBoxLayout()
@@ -46,6 +48,8 @@ class MainWidget(QWidget):
                     self._left_layout.addWidget(button, 0, alignment=Qt.AlignTop)
         self._left_layout.addStretch()
 
+        self._left_layout.addWidget(QPushButton("New Portfolio"), 0, alignment=Qt.AlignTop)
+
         self._layout.addWidget(self._left)
 
     def onPortfolioClicked(self, portfolio_id):
@@ -53,14 +57,10 @@ class MainWidget(QWidget):
         self.currentPortfolioChanged.emit(portfolio_id)
 
     def createCenterSide(self):
-        model = PortfolioVersionsModel()
-        self._center = CentralPortfolioView(model)
+        self._center = MainPortfolioView()
         self.currentPortfolioChanged.connect(self._center.onPortfolioChanged)
 
         self._layout.addWidget(self._center)
-
-    def createRightSide(self):
-        pass
 
 
 class MainWindow(QMainWindow):
@@ -68,7 +68,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self._model = model
-        self.setWindowTitle("FTT")
+        self.setWindowTitle("Financial Trading Tool")
         self.resize(1400, 800)
 
         widget = MainWidget(model)

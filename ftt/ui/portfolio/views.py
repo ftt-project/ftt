@@ -5,6 +5,9 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHeaderView, Q
 
 from ftt.ui.backtesting.models import BacktestingModel
 from ftt.ui.backtesting.views import BacktestingView
+from ftt.ui.portfolio.models import PortfolioVersionsModel
+from ftt.ui.portfolio_version.models import PortfolioVersionModel
+from ftt.ui.portfolio_version.view import PortfolioVersionDetailsView
 
 
 class PortfolioVersionsTable(QWidget):
@@ -13,7 +16,6 @@ class PortfolioVersionsTable(QWidget):
 
     BUTTONS = {
         0: "New Version",
-        1: "Backtest",
         2: "Remove"
     }
 
@@ -68,12 +70,16 @@ class PortfolioVersionsTable(QWidget):
     def onButtonClicked(self, button_id):
         match button_id:
             case 0:
-                self.onBacktestClicked()
+                self.onNewVersionClicked()
             case 1:
                 self.onRemoveClicked()
 
     def onBacktestClicked(self):
         self.portfolioVersionsBacktestRequest.emit(self._currentTableSelection())
+        pass
+
+    def onNewVersionClicked(self):
+        print("New version clicked not implemented")
         pass
 
     def onRemoveClicked(self):
@@ -169,6 +175,7 @@ class CentralPortfolioView(QWidget):
     def __init__(self, model):
         super().__init__()
 
+        self._right_panel = None
         self._portfolio = None
         self._weights_table = None
         self._versions_table = None
@@ -188,23 +195,6 @@ class CentralPortfolioView(QWidget):
         self._top_bar_header = QLabel("")
         self._top_bar.addWidget(self._top_bar_header)
 
-        self._top_controls_layout = QHBoxLayout()
-        self._top_controls = QButtonGroup()
-        self._top_controls.setExclusive(False)
-        self._top_controls_layout.setAlignment(Qt.AlignRight)
-
-        sync_button = QPushButton("Synchronize with broker")
-        sync_button.setEnabled(True)
-        sync_button.clicked.connect(self.onSyncClicked)
-        self._top_controls.addButton(sync_button, 0)
-        self._top_controls_layout.addWidget(sync_button)
-
-        sync_button_help = QPushButton()
-        sync_button_help.setIcon(sync_button_help.style().standardIcon(QStyle.SP_MessageBoxInformation))
-        self._top_controls.addButton(sync_button_help, 1)
-        self._top_controls_layout.addWidget(sync_button_help)
-
-        self._top_bar.addLayout(self._top_controls_layout)
         self._layout.addLayout(self._top_bar)
 
     def createVersionsTable(self):
@@ -256,3 +246,32 @@ class CentralPortfolioView(QWidget):
         model = BacktestingModel(portfolio_version_ids=portfolio_version_ids)
         self.backtesting_view = BacktestingView(model)
         self.backtesting_view.show()
+
+
+class MainPortfolioView(QWidget):
+    currentPortfolioChanged = Signal(int)
+
+    def __init__(self):
+        super().__init__()
+
+        self._layout = QHBoxLayout(self)
+        self._layout.setAlignment(Qt.AlignTop)
+
+        self._createCentralPanel()
+        self._createRightPanel()
+
+    def _createCentralPanel(self):
+        model = PortfolioVersionsModel()
+        self._central_panel = CentralPortfolioView(model)
+        self.currentPortfolioChanged.connect(self._central_panel.onPortfolioChanged)
+
+        self._layout.addWidget(self._central_panel, 1, alignment=Qt.AlignTop)
+
+    def _createRightPanel(self):
+        model = PortfolioVersionModel()
+        self._right_panel = PortfolioVersionDetailsView(model)
+        self._layout.addWidget(self._right_panel, 0, alignment=Qt.AlignTop)
+
+    @Slot(int)
+    def onPortfolioChanged(self, portfolio_id):
+        self.currentPortfolioChanged.emit(portfolio_id)
