@@ -11,7 +11,7 @@ class PortfolioVersionsModel(QObject):
     """
     TODO - rename to PortfolioModel
     """
-    portfolioVersionsListChanged = Signal()
+    # portfolioVersionsListChanged = Signal()
 
     def __init__(self):
         super().__init__()

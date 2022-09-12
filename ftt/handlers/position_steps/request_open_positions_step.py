@@ -14,4 +14,4 @@ class RequestOpenPositionsStep(AbstractStep):
         brokerage_service = build_brokerage_service("Interactive Brokers", IBConfig)
         open_positions = brokerage_service.open_positions()
         # TODO handle when open_positions is None
-        return Ok(open_positions)
+        return Ok(open_positions or [])

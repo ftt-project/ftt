@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QLabel, QApplication, QHBoxL
 from result import Ok
 
 from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
+from ftt.ui.events import RandomEvent
 from ftt.ui.portfolio.models import PortfolioVersionsModel
 from ftt.ui.portfolio.views import CentralPortfolioView, MainPortfolioView
 from ftt.ui.portfolio_version.models import PortfolioVersionModel

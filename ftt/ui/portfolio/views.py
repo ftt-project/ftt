@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHeaderView, Q
 
 from ftt.ui.backtesting.models import BacktestingModel
 from ftt.ui.backtesting.views import BacktestingView
+from ftt.ui.events import RandomEvent
 from ftt.ui.portfolio.models import PortfolioVersionsModel
 from ftt.ui.portfolio_version.models import PortfolioVersionModel
 from ftt.ui.portfolio_version.view import PortfolioVersionDetailsView
@@ -171,6 +172,7 @@ class PortfolioVersionWeightsTable(QTableWidget):
 class CentralPortfolioView(QWidget):
     portfolioVersionsListChanged = Signal()
     weightsListChanged = Signal()
+    currentPortfolioVersionChanged = Signal(int)
 
     def __init__(self, model):
         super().__init__()
@@ -217,12 +219,6 @@ class CentralPortfolioView(QWidget):
         self.portfolioVersionsListChanged.connect(
             lambda: self._weights_table.updateWeights([])
         )
-
-    @Slot()
-    def onSyncClicked(self):
-        progress = QProgressDialog("Synchronizing with broker system...", "Abort", 0, 0, self)
-        progress.setWindowModality(Qt.WindowModal)
-        progress.show()
         
     @Slot(int)
     def onPortfolioChanged(self, portfolio_id):
@@ -240,6 +236,7 @@ class CentralPortfolioView(QWidget):
         else:
             self._current_portfolio_version_weights = self._model.getPortfolioVersionWeights(portfolio_version_id)
         self.weightsListChanged.emit()
+        self.currentPortfolioVersionChanged.emit(portfolio_version_id)
 
     @Slot(list)
     def onPortfolioVersionsBacktestRequest(self, portfolio_version_ids):
@@ -250,6 +247,7 @@ class CentralPortfolioView(QWidget):
 
 class MainPortfolioView(QWidget):
     currentPortfolioChanged = Signal(int)
+    currentPortfolioVersionChanged = Signal(int)
 
     def __init__(self):
         super().__init__()
@@ -263,6 +261,8 @@ class MainPortfolioView(QWidget):
     def _createCentralPanel(self):
         model = PortfolioVersionsModel()
         self._central_panel = CentralPortfolioView(model)
+        self._central_panel.currentPortfolioVersionChanged.connect(self.currentPortfolioVersionChanged)
+
         self.currentPortfolioChanged.connect(self._central_panel.onPortfolioChanged)
 
         self._layout.addWidget(self._central_panel, 1, alignment=Qt.AlignTop)
@@ -270,7 +270,11 @@ class MainPortfolioView(QWidget):
     def _createRightPanel(self):
         model = PortfolioVersionModel()
         self._right_panel = PortfolioVersionDetailsView(model)
+        self.currentPortfolioChanged.connect(self._right_panel.onPortfolioChanged)
+        self.currentPortfolioVersionChanged.connect(self._right_panel.onPortfolioVersionChanged)
+
         self._layout.addWidget(self._right_panel, 0, alignment=Qt.AlignTop)
+
 
     @Slot(int)
     def onPortfolioChanged(self, portfolio_id):

@@ -48,7 +48,7 @@ class OrdersPlaceStep(AbstractStep):
                 order_ids.append(order_id)
             else:
                 # TODO Handle error
-                print(f"Error placing order {order.id}")
+                Logger.info(f"Error placing order {order.id}")
                 pass
 
         return Ok(orders)
