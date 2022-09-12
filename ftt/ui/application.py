@@ -4,7 +4,6 @@ from PySide6.QtWidgets import QApplication
 
 from ftt.application import Environment, APPLICATION_NAME
 from ftt.cli.handlers.prepare_environment_handler import PrepareEnvironmentHandler
-from ftt.ui.main_window.models import MainApplicationModel
 from ftt.ui.main_window.views import MainWindow
 
 
@@ -18,7 +17,6 @@ class Application(QApplication):
         )
 
     def run(self):
-        model = MainApplicationModel()
-        window = MainWindow(model)
+        window = MainWindow()
         window.show()
         sys.exit(super().exec_())

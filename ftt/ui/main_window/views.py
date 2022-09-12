@@ -1,74 +1,61 @@
-from PySide6.QtCore import Slot, Signal
+from PySide6.QtCore import Slot, Signal, QObject
 from PySide6.QtGui import QAction, Qt
 from PySide6.QtWidgets import QMainWindow, QWidget, QLabel, QApplication, QHBoxLayout, QVBoxLayout, \
     QPushButton
 from result import Ok
 
 from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
-from ftt.ui.portfolio.views import MainPortfolioView
+from ftt.ui.navigation.views import NavigationView
+from ftt.ui.portfolio.views import CentralPortfolioView
+
+
+class MainWindowSignals(QObject):
+    """
+    Defines the signals available for a main window.
+
+    Supported signals are:
+
+    portfolioChanged
+        int portfolio id
+    """
+    portfolioChanged = Signal(int)
 
 
 class MainWidget(QWidget):
     currentPortfolioChanged = Signal(int)
 
-    def __init__(self, model):
+    def __init__(self):
         super().__init__()
+
+        self.signals = MainWindowSignals()
+
+        self._navigation = None
+        self._layout = None
         self._center = None
-        self._model = model
 
-        self.createLayout()
-        self.createLeftSide()
-        self.createCenterSide()
+        self.createUI()
 
-    def createLayout(self):
-        self._layout = QHBoxLayout()
+    def createUI(self):
+        self._layout = QHBoxLayout(self)
         self._layout.setAlignment(Qt.AlignTop)
-        self.setLayout(self._layout)
-        return QHBoxLayout()
 
-    def createLeftSide(self):
-        self._left = QWidget()
-        self._left.setMaximumWidth(300)
-        self._left_layout = QVBoxLayout(self._left)
-        self._left_layout.setAlignment(Qt.AlignTop)
+        self._navigation = NavigationView()
+        self._layout.addWidget(self._navigation)
 
-        label = QLabel("Portfolios")
-        label.setMaximumHeight(40)
-        label.setMinimumHeight(20)
-        self._left_layout.addWidget(label, 0, alignment=Qt.AlignTop)
-        result = PortfoliosListHandler().handle()
-        match result:
-            case Ok(portfolios):
-                for portfolio in portfolios:
-                    button = QPushButton(portfolio.name)
-                    button.clicked.connect(lambda *args, o=portfolio.id: self.onPortfolioClicked(o))
-                    self._left_layout.addWidget(button, 0, alignment=Qt.AlignTop)
-        self._left_layout.addStretch()
-
-        self._left_layout.addWidget(QPushButton("New Portfolio"), 0, alignment=Qt.AlignTop)
-
-        self._layout.addWidget(self._left)
-
-    def onPortfolioClicked(self, portfolio_id):
-        self._model.onPortfolioClicked(portfolio_id)
-        self.currentPortfolioChanged.emit(portfolio_id)
-
-    def createCenterSide(self):
-        self._center = MainPortfolioView()
-        self.currentPortfolioChanged.connect(self._center.onPortfolioChanged)
-
+        self._center = CentralPortfolioView()
         self._layout.addWidget(self._center)
+
+        self._navigation.signals.portfolioRequested.connect(self._center.signals.portfolioChanged)
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, model):
+    def __init__(self):
         super().__init__()
 
-        self._model = model
         self.setWindowTitle("Financial Trading Tool")
         self.resize(1400, 800)
 
-        widget = MainWidget(model)
+        widget = MainWidget()
 
         button_action = QAction("&Create new", self)
         about_action = QAction("&Program", self)

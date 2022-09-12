@@ -1,12 +1,18 @@
-from PySide6.QtCore import Slot, Signal, Qt
+from PySide6.QtCore import Slot, Signal, Qt, QObject
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHeaderView, QTableWidgetItem, QLabel, \
     QButtonGroup, QPushButton, QHBoxLayout
 
 from ftt.ui.backtesting.models import BacktestingModel
 from ftt.ui.backtesting.views import BacktestingView
-from ftt.ui.portfolio.models import PortfolioVersionsModel
+from ftt.ui.portfolio.models import PortfolioModel
 from ftt.ui.portfolio_version.models import PortfolioVersionModel
 from ftt.ui.portfolio_version.view import PortfolioVersionDetailsView
+
+
+class PortfolioSignals(QObject):
+    portfolioChanged = Signal(int)
+    portfolioVersionSelected = Signal(int)
+    # portfolioVersionsBacktestRequest = Signal(list)
 
 
 class PortfolioVersionsTable(QWidget):
@@ -21,16 +27,22 @@ class PortfolioVersionsTable(QWidget):
     def __init__(self):
         super().__init__()
 
-        self._versions = []
+        self.signals = PortfolioSignals()
+        self._model = PortfolioModel()
 
+        self._controls = None
+        self._layout = None
+        self._table = None
+
+        self.createUI()
+
+        self.signals.portfolioChanged.connect(self.onPortfolioChanged)
+
+    def createUI(self):
         self._layout = QVBoxLayout(self)
         self._layout.setAlignment(Qt.AlignTop)
         self._layout.setContentsMargins(0, 0, 0, 0)
 
-        self._createTable()
-        self._createButtonControlls()
-
-    def _createTable(self):
         self._table = QTableWidget()
         self._table.setMaximumHeight(300)
 
@@ -51,31 +63,18 @@ class PortfolioVersionsTable(QWidget):
         self._layout.addWidget(QLabel("<h4>Portfolio Versions</h4>"), 0, alignment=Qt.AlignTop)
         self._layout.addWidget(self._table)
 
-    def _createButtonControlls(self):
-        self._buttons_layout = QHBoxLayout()
+        buttons_layout = QHBoxLayout()
         self._controls = QButtonGroup()
         self._controls.setExclusive(False)
         for key, value in self.BUTTONS.items():
             button = QPushButton(value)
             button.setEnabled(False)
             self._controls.addButton(button, key)
-            self._buttons_layout.addWidget(button)
+            buttons_layout.addWidget(button)
 
         self._controls.idClicked.connect(self.onButtonClicked)
 
-        self._layout.addLayout(self._buttons_layout)
-
-    @Slot(int)
-    def onButtonClicked(self, button_id):
-        match button_id:
-            case 0:
-                self.onNewVersionClicked()
-            case 1:
-                self.onRemoveClicked()
-
-    def onBacktestClicked(self):
-        self.portfolioVersionsBacktestRequest.emit(self._currentTableSelection())
-        pass
+        self._layout.addLayout(buttons_layout)
 
     def onNewVersionClicked(self):
         print("New version clicked not implemented")
@@ -85,9 +84,29 @@ class PortfolioVersionsTable(QWidget):
         print("Remove clicked not implemented")
         pass
 
+    def _currentTableSelection(self):
+        """
+        Returns a list of portfolio version ids currently selected in table
+        """
+        versions = self._model.getPortfolioVersions()
+        return list({versions[idx.row()].id for idx in self._table.selectedIndexes()})
+
+    @Slot(int)
+    def onPortfolioChanged(self, portfolio_id):
+        self._model.currentPortfolioId = portfolio_id
+        self.updateVersionsRows()
+
+    @Slot(int)
+    def onButtonClicked(self, button_id):
+        match button_id:
+            case 0:
+                self.onNewVersionClicked()
+            case 1:
+                self.onRemoveClicked()
+
     @Slot()
-    def updateVersionsRows(self, versions):
-        self._versions = versions
+    def updateVersionsRows(self):
+        versions = self._model.getPortfolioVersions()
         self._table.clearContents()
         self._table.setRowCount(len(versions))
         for idx, item in enumerate(versions):
@@ -117,29 +136,31 @@ class PortfolioVersionsTable(QWidget):
         print(f"Selected: {selected}")
         if len(selected) == 0:
             [button.setEnabled(False) for button in self._controls.buttons()]
-            self.portfolioVersionSelected.emit(-1)
+            self.signals.portfolioVersionSelected.emit(-1)
         elif len(selected) == 1:
             [button.setEnabled(True) for button in self._controls.buttons()]
-            self.portfolioVersionSelected.emit(selected[0])
+            self.signals.portfolioVersionSelected.emit(selected[0])
         else:
             [button.setEnabled(True) for button in self._controls.buttons()]
-            self.portfolioVersionSelected.emit(-1)
+            self.signals.portfolioVersionSelected.emit(-1)
             print("Multiple rows selection is not supported yet")
 
         # self.portfolioVersionSelected.emit([self._versions[idx].id for idx in rows])
-
-    def _currentTableSelection(self):
-        """
-        Returns a list of portfolio version ids currently selected in table
-        """
-        return list({self._versions[idx.row()].id for idx in self._table.selectedIndexes()})
 
 
 class PortfolioVersionWeightsTable(QTableWidget):
     def __init__(self):
         super().__init__()
 
-        self._weights = []
+        self.signals = PortfolioSignals()
+        self._model = PortfolioModel()
+
+        self.createUI()
+
+        self.signals.portfolioChanged.connect(self.onPortfolioChanged)
+        self.signals.portfolioVersionSelected.connect(self.onPortfolioVersionSelected)
+
+    def createUI(self):
         self.setMinimumHeight(300)
         self.setMaximumHeight(500)
 
@@ -150,9 +171,23 @@ class PortfolioVersionWeightsTable(QTableWidget):
         self.setSelectionBehavior(QTableWidget.SelectRows)
         self.verticalHeader().setVisible(False)
 
-    @Slot()
-    def updateWeights(self, weights):
-        self._weights = weights
+    @Slot(int)
+    def onPortfolioChanged(self, portfolio_id):
+        self._model.currentPortfolioId = portfolio_id
+
+    @Slot(int)
+    def onPortfolioVersionSelected(self, portfolio_version_id):
+        print(f"Portfolio version selected: {portfolio_version_id}")
+        return
+
+    @Slot(list)
+    def onPortfolioVersionSelected(self, portfolio_version_ids):
+        print(f"Portfolio version selected: {portfolio_version_ids}")
+        self._model.currentPortfolioVersionId = portfolio_version_ids
+        self.updateWeights()
+
+    def updateWeights(self):
+        weights = self._model.getPortfolioVersionWeights()
         self.clearContents()
         self.setRowCount(len(weights))
         for idx, item in enumerate(weights):
@@ -168,111 +203,51 @@ class PortfolioVersionWeightsTable(QTableWidget):
 
 
 class CentralPortfolioView(QWidget):
-    portfolioVersionsListChanged = Signal()
-    weightsListChanged = Signal()
-    currentPortfolioVersionChanged = Signal(int)
-
-    def __init__(self, model):
-        super().__init__()
-
-        self._right_panel = None
-        self._portfolio = None
-        self._weights_table = None
-        self._versions_table = None
-        self._current_portfolio_version_weights = None
-        self._portfolio_versions = None
-        self._model = model
-
-        self._layout = QVBoxLayout(self)
-        self._layout.setAlignment(Qt.AlignTop)
-
-        self.createTopBar()
-        self.createVersionsTable()
-        self.createWeightsTable()
-
-    def createTopBar(self):
-        self._top_bar = QHBoxLayout()
-        self._top_bar_header = QLabel("")
-        self._top_bar.addWidget(self._top_bar_header)
-
-        self._layout.addLayout(self._top_bar)
-
-    def createVersionsTable(self):
-        self._versions_table = PortfolioVersionsTable()
-        self._layout.addWidget(self._versions_table, 0, alignment=Qt.AlignTop)
-        self.portfolioVersionsListChanged.connect(
-            lambda: self._versions_table.updateVersionsRows(self._portfolio_versions)
-        )
-
-        self._versions_table.portfolioVersionSelected.connect(self.onPortfolioVersionSelected)
-        self._versions_table.portfolioVersionsBacktestRequest.connect(self.onPortfolioVersionsBacktestRequest)
-        
-    def createWeightsTable(self):
-        self._layout.addWidget(QLabel("<h4>Weights</h4>"), 0, alignment=Qt.AlignTop)
-        self._weights_table = PortfolioVersionWeightsTable()
-        self._layout.addWidget(self._weights_table, 0, alignment=Qt.AlignTop)
-        self.weightsListChanged.connect(
-            lambda: self._weights_table.updateWeights(self._current_portfolio_version_weights)
-        )
-        self.portfolioVersionsListChanged.connect(
-            lambda: self._weights_table.updateWeights([])
-        )
-        
-    @Slot(int)
-    def onPortfolioChanged(self, portfolio_id):
-        print(f"Portfolio changed: {portfolio_id}")
-        self._portfolio = self._model.getPortfolio(portfolio_id)
-        self._portfolio_versions = self._model.getPortfolioVersions(portfolio_id)
-        self._top_bar_header.setText(f"<h3>{self._portfolio.name}</h3>")
-        self.portfolioVersionsListChanged.emit()
-
-    @Slot(int)
-    def onPortfolioVersionSelected(self, portfolio_version_id):
-        print(f"Portfolio version selected: {portfolio_version_id}")
-        if portfolio_version_id == -1:
-            self._current_portfolio_version_weights = []
-        else:
-            self._current_portfolio_version_weights = self._model.getPortfolioVersionWeights(portfolio_version_id)
-        self.weightsListChanged.emit()
-        self.currentPortfolioVersionChanged.emit(portfolio_version_id)
-
-    @Slot(list)
-    def onPortfolioVersionsBacktestRequest(self, portfolio_version_ids):
-        model = BacktestingModel(portfolio_version_ids=portfolio_version_ids)
-        self.backtesting_view = BacktestingView(model)
-        self.backtesting_view.show()
-
-
-class MainPortfolioView(QWidget):
     currentPortfolioChanged = Signal(int)
     currentPortfolioVersionChanged = Signal(int)
 
     def __init__(self):
         super().__init__()
 
-        self._layout = QHBoxLayout(self)
-        self._layout.setAlignment(Qt.AlignTop)
+        self._portfolioVersionDetails = None
+        self._portfolioHeaderLabel = None
+        self._portfolioWeightsTable = None
+        self._portfolioVersionsTable = None
+        self.signals = PortfolioSignals()
 
-        self._createCentralPanel()
-        self._createRightPanel()
+        self.createUI()
 
-    def _createCentralPanel(self):
-        model = PortfolioVersionsModel()
-        self._central_panel = CentralPortfolioView(model)
-        self._central_panel.currentPortfolioVersionChanged.connect(self.currentPortfolioVersionChanged)
+    def createUI(self):
+        layout = QHBoxLayout(self)
+        layout.setAlignment(Qt.AlignTop)
+        
+        left_column = QWidget()
+        left_column_layout = QVBoxLayout(left_column)
+        
+        right_column = QWidget()
+        right_column_layout = QHBoxLayout(right_column)
+        
+        self._portfolioHeaderLabel = QLabel("")
+        left_column_layout.addWidget(self._portfolioHeaderLabel)
+        
+        self._portfolioVersionsTable = PortfolioVersionsTable()
+        left_column_layout.addWidget(self._portfolioVersionsTable, 0, alignment=Qt.AlignTop)
+        self.signals.portfolioChanged.connect(self._portfolioVersionsTable.signals.portfolioChanged)
 
-        self.currentPortfolioChanged.connect(self._central_panel.onPortfolioChanged)
+        self._portfolioWeightsTable = PortfolioVersionWeightsTable()
+        left_column_layout.addWidget(QLabel("<h4>Weights</h4>"), 0, alignment=Qt.AlignTop)
+        left_column_layout.addWidget(self._portfolioWeightsTable, 0, alignment=Qt.AlignTop)
+        self.signals.portfolioChanged.connect(self._portfolioWeightsTable.signals.portfolioChanged)
+        self._portfolioVersionsTable.signals.portfolioVersionSelected.connect(
+            self._portfolioWeightsTable.signals.portfolioVersionSelected
+        )
 
-        self._layout.addWidget(self._central_panel, 1, alignment=Qt.AlignTop)
+        self._portfolioVersionDetails = PortfolioVersionDetailsView()
+        right_column_layout.addWidget(self._portfolioVersionDetails, 0, alignment=Qt.AlignTop)
+        # self.signals.portfolioChanged.connect(self._portfolioVersionDetails.signals.portfolioChanged)
 
-    def _createRightPanel(self):
-        model = PortfolioVersionModel()
-        self._right_panel = PortfolioVersionDetailsView(model)
-        self.currentPortfolioChanged.connect(self._right_panel.onPortfolioChanged)
-        self.currentPortfolioVersionChanged.connect(self._right_panel.onPortfolioVersionChanged)
-
-        self._layout.addWidget(self._right_panel, 0, alignment=Qt.AlignTop)
-
+        layout.addWidget(left_column)
+        layout.addWidget(right_column)
 
     @Slot(int)
     def onPortfolioChanged(self, portfolio_id):

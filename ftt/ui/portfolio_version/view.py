@@ -3,14 +3,16 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QStyle, QHBoxLa
 from result import Ok, Err
 
 from ftt.handlers.positions_synchronization_handler import PositionsSynchronizationHandler
+from ftt.ui.portfolio_version.models import PortfolioVersionModel
 
 
 class PortfolioVersionDetailsView(QWidget):
     portfolioAndVersionsChanged = Signal()
 
-    def __init__(self, model):
+    def __init__(self):
         super().__init__()
-        self._model = model
+        self._model = PortfolioVersionModel()
+        self.signals = None
 
         self._layout = QVBoxLayout(self)
         self._layout.setAlignment(Qt.AlignTop)

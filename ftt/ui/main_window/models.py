@@ -5,6 +5,9 @@ from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 
 
 class MainApplicationModel(QObject):
+    """
+    TODO: deprecate and remove
+    """
     currentPortfolioChanged = Signal()
     currentPortfolioVersionsChanged = Signal()
 
