@@ -1,4 +1,4 @@
-from PySide6.QtCore import QObject
+from PySide6.QtCore import QObject, Signal
 from result import Ok, Err
 
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
@@ -26,7 +26,6 @@ class PortfolioModel(QObject):
         self._current_weights = None
         self._current_portfolio_version = None
         self._current_portfolio = None
-        self._current_portfolio_versions = None
 
     @property
     def currentPortfolioId(self):
@@ -40,9 +39,10 @@ class PortfolioModel(QObject):
     def currentPortfolio(self):
         return self._current_portfolio
 
-    @currentPortfolio.setter
-    def currentPortfolio(self, value):
-        self._current_portfolio = value
+    # @currentPortfolio.setter
+    # def currentPortfolio(self, value):
+    #     self.signals.portfolioChanged.emit()
+    #     self._current_portfolio = value
 
     @property
     def currentPortfolioVersionId(self):
@@ -56,9 +56,9 @@ class PortfolioModel(QObject):
     def currentPortfolioVersion(self):
         return self._current_portfolio_version
 
-    @currentPortfolioVersion.setter
-    def currentPortfolioVersion(self, value):
-        self._current_portfolio_version = value
+    # @currentPortfolioVersion.setter
+    # def currentPortfolioVersion(self, value):
+    #     self._current_portfolio_version = value
 
     def getPortfolio(self, portfolio_id):
         portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
@@ -66,39 +66,37 @@ class PortfolioModel(QObject):
             case Ok(portfolio):
                 return portfolio
             case Err(error):
-                print(f"Error: {error}")
+                print(f"getPortfolio: Error: {error}")
                 return None
 
     def getPortfolioVersions(self):
         portfolio_result = PortfolioLoadHandler().handle(portfolio_id=self.currentPortfolioId)
         match portfolio_result:
             case Ok(portfolio):
-                self.currentPortfolio = portfolio
+                self._current_portfolio = portfolio
             case Err(error):
-                print(f"Error: {error}")
-                self.currentPortfolio = None
+                print(f"getPortfolioVersions: Error: {error}")
+                self._current_portfolio = None
                 return
 
         portfolio_versions_result = PortfolioVersionsListHandler().handle(portfolio=self.currentPortfolio)
         match portfolio_versions_result:
             case Ok(portfolio_versions):
-                self._current_portfolio_versions = portfolio_versions
-
+                return portfolio_versions
             case Err(error):
                 print(f"Error: {error}")
                 return
 
-        return self._current_portfolio_versions
-
     def getPortfolioVersionWeights(self):
+        print(__file__, f"{self.currentPortfolioVersionId}")
         version_result = PortfolioVersionLoadHandler().handle(
             portfolio_version_id=self.currentPortfolioVersionId
         )
         match version_result:
             case Ok(version):
-                self.currentPortfolioVersion = version
+                self._current_portfolio_version = version
             case Err(error):
-                print(f"Error: {error}")
+                print(f"getPortfolioVersionWeights: PortfolioVersionLoadHandler: Error: {error}")
                 return
 
         weights_result = WeightsListHandler().handle(portfolio_version=self.currentPortfolioVersion)
@@ -106,6 +104,6 @@ class PortfolioModel(QObject):
             case Ok(weights):
                 self._current_weights = weights
             case Err(error):
-                print(f"Error: {error}")
+                print(f"getPortfolioVersionWeights: WeightsListHandler: Error: {error}")
                 return
         return self._current_weights

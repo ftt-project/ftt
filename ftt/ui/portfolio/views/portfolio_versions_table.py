@@ -1,24 +1,12 @@
-from PySide6.QtCore import Slot, Signal, Qt, QObject
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHeaderView, QTableWidgetItem, QLabel, \
-    QButtonGroup, QPushButton, QHBoxLayout
+from PySide6.QtCore import Slot, Qt
+from PySide6.QtWidgets import QTableWidgetItem, QButtonGroup, QHBoxLayout, QLabel, QTableWidget, QPushButton, \
+    QHeaderView, QVBoxLayout, QWidget
 
-from ftt.ui.backtesting.models import BacktestingModel
-from ftt.ui.backtesting.views import BacktestingView
-from ftt.ui.portfolio.models import PortfolioModel, get_model
-from ftt.ui.portfolio_version.models import PortfolioVersionModel
-from ftt.ui.portfolio_version.view import PortfolioVersionDetailsView
-
-
-class PortfolioSignals(QObject):
-    portfolioChanged = Signal(int)
-    portfolioVersionSelected = Signal(int)
-    # portfolioVersionsBacktestRequest = Signal(list)
+from ftt.ui.portfolio.models import get_model
+from ftt.ui.portfolio.signals import PortfolioSignals
 
 
 class PortfolioVersionsTable(QWidget):
-    portfolioVersionSelected = Signal(int)
-    portfolioVersionsBacktestRequest = Signal(list)
-
     BUTTONS = {
         0: "New Version",
         2: "Remove"
@@ -146,109 +134,3 @@ class PortfolioVersionsTable(QWidget):
             print("Multiple rows selection is not supported yet")
 
         # self.portfolioVersionSelected.emit([self._versions[idx].id for idx in rows])
-
-
-class PortfolioVersionWeightsTable(QTableWidget):
-    def __init__(self):
-        super().__init__()
-
-        self.signals = PortfolioSignals()
-        self._model = get_model()
-
-        self.createUI()
-
-        self.signals.portfolioChanged.connect(self.onPortfolioChanged)
-        self.signals.portfolioVersionSelected.connect(self.onPortfolioVersionSelected)
-
-    def createUI(self):
-        self.setMinimumHeight(300)
-        self.setMaximumHeight(500)
-
-        self.setColumnCount(4)
-        self.setHorizontalHeaderLabels(["Security", "Position", "Planned Position", "Amount"])
-        self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.setEditTriggers(QTableWidget.NoEditTriggers)
-        self.setSelectionBehavior(QTableWidget.SelectRows)
-        self.verticalHeader().setVisible(False)
-
-    @Slot(int)
-    def onPortfolioChanged(self, portfolio_id):
-        self._model.currentPortfolioId = portfolio_id
-
-    @Slot(int)
-    def onPortfolioVersionSelected(self, portfolio_version_id):
-        print(f"Portfolio version selected: {portfolio_version_id}")
-        return
-
-    @Slot(list)
-    def onPortfolioVersionSelected(self, portfolio_version_ids):
-        print(f"Portfolio version selected: {portfolio_version_ids}")
-        self._model.currentPortfolioVersionId = portfolio_version_ids
-        self.updateWeights()
-
-    def updateWeights(self):
-        weights = self._model.getPortfolioVersionWeights()
-        self.clearContents()
-        self.setRowCount(len(weights))
-        for idx, item in enumerate(weights):
-            security = QTableWidgetItem(item.security.symbol)
-            position = QTableWidgetItem(f"{item.position}")
-            planned_position = QTableWidgetItem(f"{item.planned_position}")
-            amount = QTableWidgetItem(f"{item.amount}")
-
-            self.setItem(idx, 0, security)
-            self.setItem(idx, 1, position)
-            self.setItem(idx, 2, planned_position)
-            self.setItem(idx, 3, amount)
-
-
-class CentralPortfolioView(QWidget):
-    currentPortfolioChanged = Signal(int)
-    currentPortfolioVersionChanged = Signal(int)
-
-    def __init__(self):
-        super().__init__()
-
-        self._portfolioVersionDetails = None
-        self._portfolioHeaderLabel = None
-        self._portfolioWeightsTable = None
-        self._portfolioVersionsTable = None
-        self.signals = PortfolioSignals()
-
-        self.createUI()
-
-    def createUI(self):
-        layout = QHBoxLayout(self)
-        layout.setAlignment(Qt.AlignTop)
-        
-        left_column = QWidget()
-        left_column_layout = QVBoxLayout(left_column)
-        
-        right_column = QWidget()
-        right_column_layout = QHBoxLayout(right_column)
-        
-        self._portfolioHeaderLabel = QLabel("")
-        left_column_layout.addWidget(self._portfolioHeaderLabel)
-        
-        self._portfolioVersionsTable = PortfolioVersionsTable()
-        left_column_layout.addWidget(self._portfolioVersionsTable, 0, alignment=Qt.AlignTop)
-        self.signals.portfolioChanged.connect(self._portfolioVersionsTable.signals.portfolioChanged)
-
-        self._portfolioWeightsTable = PortfolioVersionWeightsTable()
-        left_column_layout.addWidget(QLabel("<h4>Weights</h4>"), 0, alignment=Qt.AlignTop)
-        left_column_layout.addWidget(self._portfolioWeightsTable, 0, alignment=Qt.AlignTop)
-        self.signals.portfolioChanged.connect(self._portfolioWeightsTable.signals.portfolioChanged)
-        self._portfolioVersionsTable.signals.portfolioVersionSelected.connect(
-            self._portfolioWeightsTable.signals.portfolioVersionSelected
-        )
-
-        self._portfolioVersionDetails = PortfolioVersionDetailsView()
-        right_column_layout.addWidget(self._portfolioVersionDetails, 0, alignment=Qt.AlignTop)
-        # self.signals.portfolioChanged.connect(self._portfolioVersionDetails.signals.portfolioChanged)
-
-        layout.addWidget(left_column)
-        layout.addWidget(right_column)
-
-    @Slot(int)
-    def onPortfolioChanged(self, portfolio_id):
-        self.currentPortfolioChanged.emit(portfolio_id)

@@ -1,12 +1,9 @@
 from PySide6.QtCore import Slot, Signal, QObject
 from PySide6.QtGui import QAction, Qt
-from PySide6.QtWidgets import QMainWindow, QWidget, QLabel, QApplication, QHBoxLayout, QVBoxLayout, \
-    QPushButton
-from result import Ok
+from PySide6.QtWidgets import QMainWindow, QWidget, QApplication, QHBoxLayout
 
-from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
 from ftt.ui.navigation.views import NavigationView
-from ftt.ui.portfolio.views import CentralPortfolioView
+from ftt.ui.portfolio.view import CentralPortfolioView
 
 
 class MainWindowSignals(QObject):
