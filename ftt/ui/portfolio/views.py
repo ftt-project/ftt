@@ -1,11 +1,9 @@
 from PySide6.QtCore import Slot, Signal, Qt
-from PySide6.QtGui import QPainter, QBrush, QColor, QPalette
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHeaderView, QTableWidgetItem, QLabel, QToolBar, \
-    QButtonGroup, QPushButton, QHBoxLayout, QStyle, QGraphicsOpacityEffect, QProgressDialog
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHeaderView, QTableWidgetItem, QLabel, \
+    QButtonGroup, QPushButton, QHBoxLayout
 
 from ftt.ui.backtesting.models import BacktestingModel
 from ftt.ui.backtesting.views import BacktestingView
-from ftt.ui.events import RandomEvent
 from ftt.ui.portfolio.models import PortfolioVersionsModel
 from ftt.ui.portfolio_version.models import PortfolioVersionModel
 from ftt.ui.portfolio_version.view import PortfolioVersionDetailsView

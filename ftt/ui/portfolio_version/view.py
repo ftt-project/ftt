@@ -3,7 +3,6 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QStyle, QHBoxLa
 from result import Ok, Err
 
 from ftt.handlers.positions_synchronization_handler import PositionsSynchronizationHandler
-from ftt.ui.events import PortfolioVersionsChangedEvent, RandomEvent
 
 
 class PortfolioVersionDetailsView(QWidget):
@@ -56,8 +55,7 @@ class PortfolioVersionDetailsView(QWidget):
 
     @Slot()
     def onRebalanceClicked(self):
-        QApplication.sendEvent(self.parent(), PortfolioVersionsChangedEvent(self._model.getPortfolioId()))
-        QApplication.sendEvent(self.parent(), RandomEvent())
+        pass
 
     @Slot()
     def onSynchronizeClicked(self):

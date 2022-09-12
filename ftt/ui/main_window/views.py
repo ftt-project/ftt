@@ -1,15 +1,11 @@
 from PySide6.QtCore import Slot, Signal
 from PySide6.QtGui import QAction, Qt
-from PySide6.QtWidgets import QMainWindow, QWidget, QLabel, QApplication, QHBoxLayout, QVBoxLayout, QBoxLayout, \
-    QPushButton, QTableWidget, QHeaderView
+from PySide6.QtWidgets import QMainWindow, QWidget, QLabel, QApplication, QHBoxLayout, QVBoxLayout, \
+    QPushButton
 from result import Ok
 
 from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
-from ftt.ui.events import RandomEvent
-from ftt.ui.portfolio.models import PortfolioVersionsModel
-from ftt.ui.portfolio.views import CentralPortfolioView, MainPortfolioView
-from ftt.ui.portfolio_version.models import PortfolioVersionModel
-from ftt.ui.portfolio_version.view import PortfolioVersionDetailsView
+from ftt.ui.portfolio.views import MainPortfolioView
 
 
 class MainWidget(QWidget):
