@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHeaderView, Q
 
 from ftt.ui.backtesting.models import BacktestingModel
 from ftt.ui.backtesting.views import BacktestingView
-from ftt.ui.portfolio.models import PortfolioModel
+from ftt.ui.portfolio.models import PortfolioModel, get_model
 from ftt.ui.portfolio_version.models import PortfolioVersionModel
 from ftt.ui.portfolio_version.view import PortfolioVersionDetailsView
 
@@ -28,7 +28,7 @@ class PortfolioVersionsTable(QWidget):
         super().__init__()
 
         self.signals = PortfolioSignals()
-        self._model = PortfolioModel()
+        self._model = get_model()
 
         self._controls = None
         self._layout = None
@@ -153,7 +153,7 @@ class PortfolioVersionWeightsTable(QTableWidget):
         super().__init__()
 
         self.signals = PortfolioSignals()
-        self._model = PortfolioModel()
+        self._model = get_model()
 
         self.createUI()
 

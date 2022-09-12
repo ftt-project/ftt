@@ -1,4 +1,4 @@
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject
 from result import Ok, Err
 
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
@@ -7,12 +7,17 @@ from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHa
 from ftt.handlers.weights_list_handler import WeightsListHandler
 
 
-class PortfolioModel(QObject):
-    """
-    TODO - rename to PortfolioModel
-    """
-    # portfolioVersionsListChanged = Signal()
+model = None
 
+
+def get_model():
+    global model
+    if model is None:
+        model = PortfolioModel()
+    return model
+
+
+class PortfolioModel(QObject):
     def __init__(self):
         super().__init__()
 
