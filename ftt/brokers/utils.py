@@ -27,8 +27,8 @@ def build_brokerage_service(name: str, config):
     broker_service_creator = BrokerageFactoryRegistry.get(name)
     creator = broker_service_creator(config)
 
-    _brokerage_service = creator.build()
+    brokerage_service = creator.build()
 
-    brokerage_service = BrokerageService(_brokerage_service)
+    _brokerage_service = BrokerageService(brokerage_service)
 
-    return brokerage_service
+    return _brokerage_service
