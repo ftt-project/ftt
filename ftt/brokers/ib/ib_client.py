@@ -1,4 +1,5 @@
 import queue
+import time
 from typing import Union, Optional
 
 from ibapi.client import EClient
@@ -75,20 +76,32 @@ class IBClient(EClient):
         self.reqPositions()
 
         try:
+            print(2, time.time())
             positions = open_positions_done_queue.get(
                 timeout=IBClient.MAX_WAIT_TIME_SECONDS
             )
+            print(3, time.time())
+            # open_positions_done_queue.task_done()
         except queue.Empty:
             Logger.error(
                 f"{__name__}::open_positions queue was empty or exceeded maximum timeout of "
                 f"{IBClient.MAX_WAIT_TIME_SECONDS} seconds"
             )
+            print("queue.Empty")
             positions = None
 
+        error_ids = set()
         while self.wrapper.is_error():
+            error_id, error = self.wrapper.get_error()
+            error_ids.add(error_id)
             Logger.error(f"{__name__}::open_positions {self.wrapper.get_error()}")
+            print(f"{__name__}::open_positions {self.wrapper.get_error()}")
+
+        # TODO why set positions to None?
+        if error_ids != set([-1]):
             positions = None
 
+        print(3.1, time.time())
         return positions
 
     def next_valid_id(self):

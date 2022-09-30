@@ -1,6 +1,4 @@
-import json
-
-from PySide6.QtCore import QRunnable, Slot, Signal, QObject, QThread
+from PySide6.QtCore import Slot, QObject
 
 from ftt.handlers.portfolio_version_load_handler import PortfolioVersionLoadHandler
 from ftt.handlers.security_prices_steps.security_prices_load_step import SecurityPricesLoadStep
@@ -9,30 +7,7 @@ import pandas as pd
 import bt
 
 from ftt.handlers.weights_list_handler import WeightsListHandler
-
-
-class WorkerSignals(QObject):
-    """
-    Defines the signals available from a running worker thread.
-
-    Supported signals are:
-
-    finished
-        No data
-
-    error
-        tuple (exctype, value, traceback.format_exc() )
-
-    result
-        object data returned from processing, anything
-
-    progress
-        int indicating % progress
-    """
-    finished = Signal()
-    error = Signal(tuple)
-    result = Signal(object)
-    progress = Signal(int)
+from ftt.ui.worker_signals import WorkerSignals
 
 
 class BacktestingWorker(QObject):

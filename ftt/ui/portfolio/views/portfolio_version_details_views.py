@@ -5,6 +5,8 @@ from result import Ok, Err
 from ftt.handlers.positions_synchronization_handler import PositionsSynchronizationHandler
 from ftt.ui.portfolio.models import get_model
 from ftt.ui.portfolio.signals import PortfolioSignals
+from ftt.ui.portfolio.views.portfolio_version_synchronization_confirmation_dialog import \
+    PortfolioVersionSynchronizationConfirmationDialog
 
 
 class PortfolioVersionDetailsView(QWidget):
@@ -79,6 +81,13 @@ class PortfolioVersionDetailsView(QWidget):
 
     @Slot()
     def onSynchronizeClicked(self):
+        confirmation_dialog = PortfolioVersionSynchronizationConfirmationDialog()
+        result = confirmation_dialog.exec()
+
+        if result:
+            print("Synchronizing...")
+
+        return
         progress = QProgressDialog("Synchronizing with broker system...", "Abort", 0, 0, self)
         progress.setWindowModality(Qt.WindowModal)
         progress.show()

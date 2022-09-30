@@ -17,10 +17,36 @@ def get_model():
     return model
 
 
+class ChangeCollectionIterator:
+    def __init__(self, changes):
+        self._changes = changes
+        self._index = 0
+
+    def __iter__(self):
+        return self
+
+    def __len__(self):
+        return len(self._changes)
+
+    def __next__(self):
+        if self._index < len(self._changes):
+            change = self._changes[self._index]
+            self._index += 1
+            return {
+                "symbol": change[1].symbol,
+                "delta": change[0].total_quantity,
+                "operation": change[0].action.name,
+                "amount": 0
+            }
+
+        raise StopIteration
+
+
 class PortfolioModel(QObject):
     def __init__(self):
         super().__init__()
 
+        self._current_portfolio_version_changes = None
         self._current_portfolio_version_id = None
         self._current_portfolio_id = None
         self._current_weights = None
@@ -39,11 +65,6 @@ class PortfolioModel(QObject):
     def currentPortfolio(self):
         return self._current_portfolio
 
-    # @currentPortfolio.setter
-    # def currentPortfolio(self, value):
-    #     self.signals.portfolioChanged.emit()
-    #     self._current_portfolio = value
-
     @property
     def currentPortfolioVersionId(self):
         return self._current_portfolio_version_id
@@ -56,9 +77,13 @@ class PortfolioModel(QObject):
     def currentPortfolioVersion(self):
         return self._current_portfolio_version
 
-    # @currentPortfolioVersion.setter
-    # def currentPortfolioVersion(self, value):
-    #     self._current_portfolio_version = value
+    @property
+    def currentPortfolioVersionChanges(self):
+        return self._current_portfolio_version_changes
+
+    @currentPortfolioVersionChanges.setter
+    def currentPortfolioVersionChanges(self, value):
+        self._current_portfolio_version_changes = ChangeCollectionIterator(value)
 
     def getPortfolio(self, portfolio_id):
         portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)

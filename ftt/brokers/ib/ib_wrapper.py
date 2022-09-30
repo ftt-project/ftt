@@ -72,7 +72,7 @@ class IBWrapper(EWrapper):
             f"IB Error ID {id}, Error Code {errorCode} with "
             f"response '{errorString}'"
         )
-        self._errors.put(error_message)
+        self._errors.put((id, error_message))
 
     def time_queue(self) -> queue.Queue:
         """
@@ -149,6 +149,7 @@ class IBWrapper(EWrapper):
         Logger.info(
             f"{__name__}::position: {account}, {contract}, {position}, {avg_cost}"
         )
+        print(f"{__name__}::position: {account}, {contract}, {position}, {avg_cost}")
         self._open_positions_queue.put(
             Position(
                 account=account,
@@ -163,7 +164,9 @@ class IBWrapper(EWrapper):
         See `position` method.
         See https://interactivebrokers.github.io/tws-api/positions.html
         """
-        self._open_positions_done_queue.put(list(self._open_positions_queue.queue))
+        print(f"{__name__}::positionEnd")
+        result = list(self._open_positions_queue.queue)
+        self._open_positions_done_queue.put(result)
 
     def openOrder(
         self,
@@ -183,6 +186,9 @@ class IBWrapper(EWrapper):
 
     def openOrderEnd(self):
         self._open_orders_done_queue.put(list(self._open_orders_queue.queue))
+
+    def connectAck(self):
+        Logger.info(f"{__name__}::connectAck")
 
     def connectionClosed(self):
         Logger.info(f"{__name__}::connectionClosed")

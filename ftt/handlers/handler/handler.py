@@ -3,6 +3,7 @@ from abc import ABCMeta
 from result import Err, Ok
 
 from ftt.handlers.handler.return_result import ReturnResult
+from ftt.logger import Logger
 
 
 class MetaHandler(ABCMeta):
@@ -52,6 +53,7 @@ class Handler(metaclass=MetaHandler):
             if type(last_result) == Err:
                 return last_result
             else:
+                Logger.error(f"ReturnResult is not set in context of {self.__class__}")
                 return Err(last_result)
 
     def __check_given_params(self, input):

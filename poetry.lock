@@ -1271,7 +1271,7 @@ requests = ">=2.26"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.9.0,<3.11"
-content-hash = "1d191aaa460b1dda39ba648c3486a04ee6f810b36503395d524a91815fd5e6af"
+content-hash = "8bde74c0961c629d04d1ed5f2ba15b242a8428345badb1f3fcac5012197d925d"
 
 [metadata.files]
 arch = [

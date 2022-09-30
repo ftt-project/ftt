@@ -28,3 +28,9 @@ class BrokerageService:
 
     def open_orders(self):
         return self._implementation.open_orders()
+
+    def connect(self):
+        self._implementation.establish_connection()
+
+    def disconnect(self):
+        self._implementation.shutdown_and_disconnect()
