@@ -1,31 +1,25 @@
-import threading
-from time import time
+from PySide6.QtCore import Slot, QRunnable
 
 from ftt.brokers.ib.ib_config import IBConfig
 from ftt.brokers.utils import build_brokerage_service
-from ftt.handlers.positions_compare_planned_actual_positions_handler import \
-    PositionsComparePlannedActualPositionsHandler
+from ftt.handlers.position_steps.request_open_positions_step import RequestOpenPositionsStep
 from ftt.ui.worker_signals import WorkerSignals
 
 
-class RequestPortfolioChangesWorker:
+class RequestPortfolioChangesWorker(QRunnable):
     def __init__(self, portfolio_version_id):
+        super().__init__()
         self.signals = WorkerSignals()
         self.portfolio_version_id = portfolio_version_id
-        self.thread = threading.Thread(target=self.__run, daemon=True)
 
+    @Slot()
     def run(self):
-        self.thread.start()
-        return True
-
-    def __run(self):
         brokerage_service = build_brokerage_service("Interactive Brokers", IBConfig)
+        # TODO use context manager
         brokerage_service.connect()
-        print(time())
-        result = PositionsComparePlannedActualPositionsHandler().handle(
-            portfolio_version_id=self.portfolio_version_id,
-            brokerage_service=brokerage_service,
-        )
-        print(time())
+        result = RequestOpenPositionsStep.process(brokerage_service=brokerage_service)
         brokerage_service.disconnect()
+        self.signals.finished.emit()
         self.signals.result.emit(result)
+
+

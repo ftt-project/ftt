@@ -1,4 +1,3 @@
-import faulthandler; faulthandler.enable()
 from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QTableWidget, QHeaderView, \
     QTableWidgetItem
 
@@ -31,7 +30,6 @@ class PortfolioVersionChangesTable(QTableWidget):
         self.clearContents()
         self.setRowCount(len(changes))
         for idx, item in enumerate(changes):
-            print(item)
             security = QTableWidgetItem(item["symbol"])
             delta = QTableWidgetItem(f"{item['delta']}")
             operation = QTableWidgetItem(item["operation"])
@@ -51,9 +49,6 @@ class PortfolioVersionSynchronizationConfirmationDialog(QDialog):
         self._buttons = None
         self._layout = None
         self._model = get_model()
-        worker = RequestPortfolioChangesWorker(self._model.currentPortfolioVersionId)
-        worker.signals.result.connect(self.on_result)
-        worker.run()
 
         self.createUI()
 
@@ -64,17 +59,13 @@ class PortfolioVersionSynchronizationConfirmationDialog(QDialog):
         self._layout.addWidget(QLabel("Are you sure you want to synchronize your portfolio with your broker?"))
 
         self._table = PortfolioVersionChangesTable()
+        self._table.updateChanges()
         self._layout.addWidget(self._table)
 
         self._buttons = QDialogButtonBox(QDialogButtonBox.Yes | QDialogButtonBox.Cancel)
         self._buttons.accepted.connect(self.accept)
         self._buttons.rejected.connect(self.reject)
         self._layout.addWidget(self._buttons)
-
-    def on_result(self, result):
-        self._model.currentPortfolioVersionChanges = result.value
-        print(result.value)
-        self._table.updateChanges()
 
     def accept(self):
         super().accept()

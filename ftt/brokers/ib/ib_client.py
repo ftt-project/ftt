@@ -98,7 +98,7 @@ class IBClient(EClient):
             print(f"{__name__}::open_positions {self.wrapper.get_error()}")
 
         # TODO why set positions to None?
-        if error_ids != set([-1]):
+        if error_ids != {-1}:
             positions = None
 
         print(3.1, time.time())

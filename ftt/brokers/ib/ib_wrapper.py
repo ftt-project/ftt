@@ -149,7 +149,6 @@ class IBWrapper(EWrapper):
         Logger.info(
             f"{__name__}::position: {account}, {contract}, {position}, {avg_cost}"
         )
-        print(f"{__name__}::position: {account}, {contract}, {position}, {avg_cost}")
         self._open_positions_queue.put(
             Position(
                 account=account,
@@ -164,7 +163,6 @@ class IBWrapper(EWrapper):
         See `position` method.
         See https://interactivebrokers.github.io/tws-api/positions.html
         """
-        print(f"{__name__}::positionEnd")
         result = list(self._open_positions_queue.queue)
         self._open_positions_done_queue.put(result)
 

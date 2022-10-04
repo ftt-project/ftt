@@ -4,9 +4,11 @@ from result import Ok, Err
 
 from ftt.handlers.positions_synchronization_handler import PositionsSynchronizationHandler
 from ftt.ui.portfolio.models import get_model
+from ftt.ui.portfolio.portfolio_synchronization_flow import PortfolioSynchronizationFlow
 from ftt.ui.portfolio.signals import PortfolioSignals
 from ftt.ui.portfolio.views.portfolio_version_synchronization_confirmation_dialog import \
     PortfolioVersionSynchronizationConfirmationDialog
+from ftt.ui.portfolio.workers import RequestPortfolioChangesWorker
 
 
 class PortfolioVersionDetailsView(QWidget):
@@ -81,6 +83,15 @@ class PortfolioVersionDetailsView(QWidget):
 
     @Slot()
     def onSynchronizeClicked(self):
+        self.thread = PortfolioSynchronizationFlow(self).run()
+        # self.thread.quit()
+
+        return
+
+        worker = RequestPortfolioChangesWorker(self._model.currentPortfolioVersionId)
+        worker.signals.result.connect(self.on_result)
+        worker.run()
+
         confirmation_dialog = PortfolioVersionSynchronizationConfirmationDialog()
         result = confirmation_dialog.exec()
 
