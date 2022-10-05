@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QProgressDialog, QProgressBar
 
 from ftt.handlers.positions_compare_planned_actual_positions_handler import \
     PositionsComparePlannedActualPositionsHandler
+from ftt.handlers.positions_synchronization_handler import PositionsSynchronizationHandler
 from ftt.ui.portfolio.models import get_model
 from ftt.ui.portfolio.views.portfolio_version_synchronization_confirmation_dialog import \
     PortfolioVersionSynchronizationConfirmationDialog
@@ -45,4 +46,16 @@ class PortfolioSynchronizationFlow:
         self._confirmation_dialog = PortfolioVersionSynchronizationConfirmationDialog()
         self._confirmation_dialog.exec()
 
+        self._confirmation_dialog.accepted.connect(self._on_synchronization_confirmed)
 
+    def _on_synchronization_confirmed(self):
+        self._progress_dialog.show()
+
+        # 1. take result from PositionsComparePlannedActualPositionsHandler as it is the one confirmed by user
+        # 2. using PositionsSynchronizationHandler create local orders
+        # 3. in worker sync orders using OrdersPlaceStep
+        # 4. send signal that local db is updated to refresh UI
+
+        # result = PositionsSynchronizationHandler().handle(
+        #     portfolio_version_id=self._model.currentPortfolioVersionId
+        # )

@@ -2,7 +2,6 @@ from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QT
     QTableWidgetItem
 
 from ftt.ui.portfolio.models import get_model
-from ftt.ui.portfolio.workers import RequestPortfolioChangesWorker
 
 
 class PortfolioVersionChangesTable(QTableWidget):
@@ -66,9 +65,3 @@ class PortfolioVersionSynchronizationConfirmationDialog(QDialog):
         self._buttons.accepted.connect(self.accept)
         self._buttons.rejected.connect(self.reject)
         self._layout.addWidget(self._buttons)
-
-    def accept(self):
-        super().accept()
-
-    def reject(self):
-        super().reject()
