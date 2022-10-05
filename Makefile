@@ -10,6 +10,9 @@ CONDA_ACTIVATE = source $$(conda info --base)/etc/profile.d/conda.sh ; conda act
 run:
 	poetry run python3 -m $(FTT_ENV_NAME)
 
+ui:
+	poetry run python3 -m $(FTT_ENV_NAME).ui
+
 prepare-environment:
 ifndef CONDA
 	@echo "miniconda is not installed. Installing..."
