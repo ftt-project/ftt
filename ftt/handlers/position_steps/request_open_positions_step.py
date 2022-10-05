@@ -1,4 +1,4 @@
-from result import Ok, Result, Err
+from result import Ok, Result
 
 from ftt.brokers.position import Position
 from ftt.handlers.handler.abstract_step import AbstractStep

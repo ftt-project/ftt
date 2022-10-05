@@ -8,11 +8,10 @@ from ftt.ui.main_window.views import MainWindow
 
 
 class Application(QApplication):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        result = PrepareEnvironmentHandler().handle(
+        _ = PrepareEnvironmentHandler().handle(
             environment=Environment.PRODUCTION, application_name=APPLICATION_NAME
         )
 

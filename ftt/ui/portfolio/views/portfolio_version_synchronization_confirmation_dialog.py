@@ -1,5 +1,12 @@
-from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QTableWidget, QHeaderView, \
-    QTableWidgetItem
+from PySide6.QtWidgets import (
+    QDialog,
+    QLabel,
+    QVBoxLayout,
+    QDialogButtonBox,
+    QTableWidget,
+    QHeaderView,
+    QTableWidgetItem,
+)
 
 from ftt.ui.portfolio.models import get_model
 
@@ -55,7 +62,11 @@ class PortfolioVersionSynchronizationConfirmationDialog(QDialog):
         self._layout = QVBoxLayout()
         self.setLayout(self._layout)
 
-        self._layout.addWidget(QLabel("Are you sure you want to synchronize your portfolio with your broker?"))
+        self._layout.addWidget(
+            QLabel(
+                "Are you sure you want to synchronize your portfolio with your broker?"
+            )
+        )
 
         self._table = PortfolioVersionChangesTable()
         self._table.updateChanges()

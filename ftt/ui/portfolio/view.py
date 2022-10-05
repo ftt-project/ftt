@@ -2,8 +2,12 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout
 
 from ftt.ui.portfolio.signals import PortfolioSignals
-from ftt.ui.portfolio.views.portfolio_version_details_views import PortfolioVersionDetailsView
-from ftt.ui.portfolio.views.portfolio_version_weights_table import PortfolioVersionWeightsTable
+from ftt.ui.portfolio.views.portfolio_version_details_views import (
+    PortfolioVersionDetailsView,
+)
+from ftt.ui.portfolio.views.portfolio_version_weights_table import (
+    PortfolioVersionWeightsTable,
+)
 from ftt.ui.portfolio.views.portfolio_versions_table import PortfolioVersionsTable
 
 
@@ -33,24 +37,37 @@ class CentralPortfolioView(QWidget):
         left_column_layout.addWidget(self._portfolioHeaderLabel)
 
         self._portfolioVersionsTable = PortfolioVersionsTable()
-        left_column_layout.addWidget(self._portfolioVersionsTable, 0, alignment=Qt.AlignTop)
-        self.signals.portfolioChanged.connect(self._portfolioVersionsTable.signals.portfolioChanged)
+        left_column_layout.addWidget(
+            self._portfolioVersionsTable, 0, alignment=Qt.AlignTop
+        )
+        self.signals.portfolioChanged.connect(
+            self._portfolioVersionsTable.signals.portfolioChanged
+        )
 
         self._portfolioWeightsTable = PortfolioVersionWeightsTable()
-        left_column_layout.addWidget(QLabel("<h4>Weights</h4>"), 0, alignment=Qt.AlignTop)
-        left_column_layout.addWidget(self._portfolioWeightsTable, 0, alignment=Qt.AlignTop)
-        self.signals.portfolioChanged.connect(self._portfolioWeightsTable.signals.portfolioChanged)
+        left_column_layout.addWidget(
+            QLabel("<h4>Weights</h4>"), 0, alignment=Qt.AlignTop
+        )
+        left_column_layout.addWidget(
+            self._portfolioWeightsTable, 0, alignment=Qt.AlignTop
+        )
+        self.signals.portfolioChanged.connect(
+            self._portfolioWeightsTable.signals.portfolioChanged
+        )
         self._portfolioVersionsTable.signals.portfolioVersionSelected.connect(
             self._portfolioWeightsTable.signals.portfolioVersionSelected
         )
 
         self._portfolioVersionDetails = PortfolioVersionDetailsView()
-        right_column_layout.addWidget(self._portfolioVersionDetails, 0, alignment=Qt.AlignTop)
-        self.signals.portfolioChanged.connect(self._portfolioVersionDetails.signals.portfolioChanged)
+        right_column_layout.addWidget(
+            self._portfolioVersionDetails, 0, alignment=Qt.AlignTop
+        )
+        self.signals.portfolioChanged.connect(
+            self._portfolioVersionDetails.signals.portfolioChanged
+        )
         self._portfolioVersionsTable.signals.portfolioVersionSelected.connect(
             self._portfolioVersionDetails.signals.portfolioVersionSelected
         )
 
         layout.addWidget(left_column)
         layout.addWidget(right_column)
-

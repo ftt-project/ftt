@@ -7,6 +7,7 @@ class PortfoliosListHandler(Handler):
     """
     Returns list of portfolios.
     """
+
     params = ()
 
     handlers = [(PortfoliosListStep,), (ReturnResult, PortfoliosListStep.key)]

@@ -8,6 +8,7 @@ class MainApplicationModel(QObject):
     """
     TODO: deprecate and remove
     """
+
     currentPortfolioChanged = Signal()
     currentPortfolioVersionsChanged = Signal()
 

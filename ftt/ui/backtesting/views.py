@@ -1,12 +1,12 @@
-import matplotlib
+import matplotlib  # type: ignore
 from PySide6.QtCore import QThread
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
-from matplotlib.backends.backend_qt import NavigationToolbar2QT
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt import NavigationToolbar2QT  # type: ignore
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg  # type: ignore
 
 from ftt.ui.backtesting.workers import BacktestingWorker
 
-matplotlib.use('Qt5Agg')
+matplotlib.use("Qt5Agg")
 
 
 class BacktestingView(QWidget):

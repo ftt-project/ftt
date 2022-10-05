@@ -1,4 +1,4 @@
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject
 from result import Ok, Err
 
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
@@ -36,7 +36,7 @@ class ChangeCollectionIterator:
                 "symbol": change[1].symbol,
                 "delta": change[0].total_quantity,
                 "operation": change[0].action.name,
-                "amount": 0
+                "amount": 0,
             }
 
         raise StopIteration
@@ -95,7 +95,9 @@ class PortfolioModel(QObject):
                 return None
 
     def getPortfolioVersions(self):
-        portfolio_result = PortfolioLoadHandler().handle(portfolio_id=self.currentPortfolioId)
+        portfolio_result = PortfolioLoadHandler().handle(
+            portfolio_id=self.currentPortfolioId
+        )
         match portfolio_result:
             case Ok(portfolio):
                 self._current_portfolio = portfolio
@@ -104,7 +106,9 @@ class PortfolioModel(QObject):
                 self._current_portfolio = None
                 return
 
-        portfolio_versions_result = PortfolioVersionsListHandler().handle(portfolio=self.currentPortfolio)
+        portfolio_versions_result = PortfolioVersionsListHandler().handle(
+            portfolio=self.currentPortfolio
+        )
         match portfolio_versions_result:
             case Ok(portfolio_versions):
                 return portfolio_versions
@@ -121,10 +125,14 @@ class PortfolioModel(QObject):
             case Ok(version):
                 self._current_portfolio_version = version
             case Err(error):
-                print(f"getPortfolioVersionWeights: PortfolioVersionLoadHandler: Error: {error}")
+                print(
+                    f"getPortfolioVersionWeights: PortfolioVersionLoadHandler: Error: {error}"
+                )
                 return
 
-        weights_result = WeightsListHandler().handle(portfolio_version=self.currentPortfolioVersion)
+        weights_result = WeightsListHandler().handle(
+            portfolio_version=self.currentPortfolioVersion
+        )
         match weights_result:
             case Ok(weights):
                 self._current_weights = weights

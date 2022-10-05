@@ -21,28 +21,35 @@ class PortfolioVersionWeightsTable(QTableWidget):
         self.setMaximumHeight(500)
 
         self.setColumnCount(4)
-        self.setHorizontalHeaderLabels(["Security", "Position", "Planned Position", "Amount"])
+        self.setHorizontalHeaderLabels(
+            ["Security", "Position", "Planned Position", "Amount"]
+        )
         self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.setEditTriggers(QTableWidget.NoEditTriggers)
         self.setSelectionBehavior(QTableWidget.SelectRows)
         self.verticalHeader().setVisible(False)
 
     @Slot(int)
-    def onPortfolioVersionSelected(self, portfolio_version_id):
+    def onPortfolioVersionSelected(
+        self, portfolio_version_id
+    ):  # noqa: F811  # type: ignore
         print(f"Portfolio version selected: {portfolio_version_id}")
         if portfolio_version_id is None:
             self.updateWeights()
         return
 
     @Slot(list)
-    def onPortfolioVersionSelected(self, portfolio_version_ids):
+    def onPortfolioVersionSelected(self, portfolio_version_ids):  # noqa: F811
         print(f"Portfolio version selected: {portfolio_version_ids}")
         self._model.currentPortfolioVersionId = portfolio_version_ids
         self.updateWeights()
 
     def updateWeights(self):
         self.clearContents()
-        if self._model.currentPortfolioVersionId is None or self._model.currentPortfolioVersionId == -1:
+        if (
+            self._model.currentPortfolioVersionId is None
+            or self._model.currentPortfolioVersionId == -1
+        ):
             return
         weights = self._model.getPortfolioVersionWeights()
         self.setRowCount(len(weights))

@@ -15,6 +15,7 @@ class MainWindowSignals(QObject):
     portfolioChanged
         int portfolio id
     """
+
     portfolioChanged = Signal(int)
 
 
@@ -42,7 +43,9 @@ class MainWidget(QWidget):
         self._center = CentralPortfolioView()
         self._layout.addWidget(self._center)
 
-        self._navigation.signals.portfolioRequested.connect(self._center.signals.portfolioChanged)
+        self._navigation.signals.portfolioRequested.connect(
+            self._center.signals.portfolioChanged
+        )
 
 
 class MainWindow(QMainWindow):

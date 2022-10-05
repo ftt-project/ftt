@@ -2,7 +2,9 @@ from PySide6.QtCore import Slot, QRunnable
 
 from ftt.brokers.ib.ib_config import IBConfig
 from ftt.brokers.utils import build_brokerage_service
-from ftt.handlers.position_steps.request_open_positions_step import RequestOpenPositionsStep
+from ftt.handlers.position_steps.request_open_positions_step import (
+    RequestOpenPositionsStep,
+)
 from ftt.ui.worker_signals import WorkerSignals
 
 
@@ -21,5 +23,3 @@ class RequestPortfolioChangesWorker(QRunnable):
         brokerage_service.disconnect()
         self.signals.finished.emit()
         self.signals.result.emit(result)
-
-

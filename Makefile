@@ -1,13 +1,14 @@
 .ONESHELL:
 
+FTT_ENV_NAME := ftt
+FTT_ENV_CHECK := $(shell conda env list | grep ftt)
 CONDA := $(shell command -v conda 2>/dev/null)
 CONDA_LOCK := $(shell command -v conda-lock 2>/dev/null)
 POETRY := $(shell command -v poetry 2>/dev/null)
-FTT_ENV := $(shell conda env list | grep ftt)
 CONDA_ACTIVATE = source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
 
 run:
-	poetry run python3 -m ftt
+	poetry run python3 -m $(FTT_ENV_NAME)
 
 prepare-environment:
 ifndef CONDA
@@ -27,21 +28,21 @@ ifndef CONDA_LOCK
 	conda install -y -c conda-forge conda-lock
 endif
 
-ifndef FTT_ENV
-	conda create -y -n ftt
+ifndef FTT_ENV_CHECK
+	conda create -y -n $(FTT_ENV_NAME)
 endif
 
 	python3 -m pip install --upgrade pip
 
 conda-activate:
-	$(CONDA_ACTIVATE) ftt
+	$(CONDA_ACTIVATE) $(FTT_ENV_NAME)
 	
 install: prepare-environment conda-activate
-	conda-lock install --name ftt conda-lock.yml
+	conda-lock install --name $(FTT_ENV_NAME) conda-lock.yml
 	poetry install
 
 update: install conda-activate
-	conda env update -n ftt
+	conda env update -n $(FTT_ENV_NAME)
 	poetry update
 
 lock: prepare-environment
@@ -57,7 +58,7 @@ clean:
 
 remove:
 	$(CONDA_ACTIVATE) base
-	conda remove -y -n ftt --all
+	conda remove -y -n $(FTT_ENV_NAME) --all
 
 test:
 	poetry run pytest -s tests

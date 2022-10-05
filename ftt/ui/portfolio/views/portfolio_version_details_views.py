@@ -1,13 +1,24 @@
 from PySide6.QtCore import Qt, Slot
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QProgressDialog, QStyle, QButtonGroup
+from PySide6.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QPushButton,
+    QHBoxLayout,
+    QProgressDialog,
+    QStyle,
+    QButtonGroup,
+)
 from result import Ok, Err
 
-from ftt.handlers.positions_synchronization_handler import PositionsSynchronizationHandler
+from ftt.handlers.positions_synchronization_handler import (
+    PositionsSynchronizationHandler,
+)
 from ftt.ui.portfolio.models import get_model
 from ftt.ui.portfolio.portfolio_synchronization_flow import PortfolioSynchronizationFlow
 from ftt.ui.portfolio.signals import PortfolioSignals
-from ftt.ui.portfolio.views.portfolio_version_synchronization_confirmation_dialog import \
-    PortfolioVersionSynchronizationConfirmationDialog
+from ftt.ui.portfolio.views.portfolio_version_synchronization_confirmation_dialog import (
+    PortfolioVersionSynchronizationConfirmationDialog,
+)
 from ftt.ui.portfolio.workers import RequestPortfolioChangesWorker
 
 
@@ -63,7 +74,9 @@ class PortfolioVersionDetailsView(QWidget):
         self._synch_button.clicked.connect(self.onSynchronizeClicked)
 
         self._sync_button_help = QPushButton()
-        self._sync_button_help.setIcon(self._sync_button_help.style().standardIcon(QStyle.SP_MessageBoxInformation))
+        self._sync_button_help.setIcon(
+            self._sync_button_help.style().standardIcon(QStyle.SP_MessageBoxInformation)
+        )
 
         first_row_layout = QHBoxLayout()
         first_row_layout.addWidget(self._rebalance_button)
@@ -99,7 +112,9 @@ class PortfolioVersionDetailsView(QWidget):
             print("Synchronizing...")
 
         return
-        progress = QProgressDialog("Synchronizing with broker system...", "Abort", 0, 0, self)
+        progress = QProgressDialog(
+            "Synchronizing with broker system...", "Abort", 0, 0, self
+        )
         progress.setWindowModality(Qt.WindowModal)
         progress.show()
 
@@ -119,10 +134,16 @@ class PortfolioVersionDetailsView(QWidget):
     def onPortfolioVersionChanged(self):
         match self._model.currentPortfolioVersionId:
             case -1 | None:
-                print("onPortfolioVersionChanged: -1", self._model.currentPortfolioVersionId)
+                print(
+                    "onPortfolioVersionChanged: -1",
+                    self._model.currentPortfolioVersionId,
+                )
                 for button in self._controls.buttons():
                     button.setEnabled(False)
             case _:
-                print("onPortfolioVersionChanged: _", self._model.currentPortfolioVersionId)
+                print(
+                    "onPortfolioVersionChanged: _",
+                    self._model.currentPortfolioVersionId,
+                )
                 for button in self._controls.buttons():
                     button.setEnabled(True)

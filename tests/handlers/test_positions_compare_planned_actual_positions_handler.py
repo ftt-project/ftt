@@ -1,8 +1,9 @@
 import pytest
 
 from ftt.brokers.broker_order import OrderAction
-from ftt.handlers.positions_compare_planned_actual_positions_handler import \
-    PositionsComparePlannedActualPositionsHandler
+from ftt.handlers.positions_compare_planned_actual_positions_handler import (
+    PositionsComparePlannedActualPositionsHandler,
+)
 
 
 class TestPositionsComparePlannedActualPositionsHandler:
@@ -17,7 +18,9 @@ class TestPositionsComparePlannedActualPositionsHandler:
         )
         mocked_open_positions.return_value.open_positions.return_value = []
 
-    def test_returns_comparison_of_planned_and_actual_positions(self, subject, portfolio_version, weight):
+    def test_returns_comparison_of_planned_and_actual_positions(
+        self, subject, portfolio_version, weight
+    ):
         result = subject.handle(portfolio_version_id=portfolio_version.id)
 
         assert result.is_ok()

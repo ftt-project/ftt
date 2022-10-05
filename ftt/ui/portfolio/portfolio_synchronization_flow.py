@@ -1,15 +1,13 @@
-from threading import Event, Condition
-from time import sleep
+from PySide6.QtCore import Qt, Slot, QThread, QThreadPool
+from PySide6.QtWidgets import QProgressDialog
 
-from PySide6.QtCore import Qt, Slot, QThread, QEventLoop, QBasicTimer, QThreadPool
-from PySide6.QtWidgets import QProgressDialog, QProgressBar
-
-from ftt.handlers.positions_compare_planned_actual_positions_handler import \
-    PositionsComparePlannedActualPositionsHandler
-from ftt.handlers.positions_synchronization_handler import PositionsSynchronizationHandler
+from ftt.handlers.positions_compare_planned_actual_positions_handler import (
+    PositionsComparePlannedActualPositionsHandler,
+)
 from ftt.ui.portfolio.models import get_model
-from ftt.ui.portfolio.views.portfolio_version_synchronization_confirmation_dialog import \
-    PortfolioVersionSynchronizationConfirmationDialog
+from ftt.ui.portfolio.views.portfolio_version_synchronization_confirmation_dialog import (
+    PortfolioVersionSynchronizationConfirmationDialog,
+)
 from ftt.ui.portfolio.workers import RequestPortfolioChangesWorker
 
 
@@ -22,7 +20,9 @@ class PortfolioSynchronizationFlow:
         self.threadpool = QThreadPool.globalInstance()
 
     def run(self):
-        self._progress_dialog = QProgressDialog("Synchronizing...", "Cancel", 0, 0, self._parent_view)
+        self._progress_dialog = QProgressDialog(
+            "Synchronizing...", "Cancel", 0, 0, self._parent_view
+        )
         self._progress_dialog.setWindowModality(Qt.ApplicationModal)
         self._progress_dialog.show()
         worker = RequestPortfolioChangesWorker(self._model.currentPortfolioVersionId)
@@ -38,7 +38,7 @@ class PortfolioSynchronizationFlow:
     def _on_loading_finished(self, result):
         result = PositionsComparePlannedActualPositionsHandler().handle(
             portfolio_version_id=self._model.currentPortfolioVersionId,
-            open_positions=result.value
+            open_positions=result.value,
         )
         self._model.currentPortfolioVersionChanges = result.value
         self._progress_dialog.close()

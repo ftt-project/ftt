@@ -1,16 +1,22 @@
 from PySide6.QtCore import Slot, Qt
-from PySide6.QtWidgets import QTableWidgetItem, QButtonGroup, QHBoxLayout, QLabel, QTableWidget, QPushButton, \
-    QHeaderView, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (
+    QTableWidgetItem,
+    QButtonGroup,
+    QHBoxLayout,
+    QLabel,
+    QTableWidget,
+    QPushButton,
+    QHeaderView,
+    QVBoxLayout,
+    QWidget,
+)
 
 from ftt.ui.portfolio.models import get_model
 from ftt.ui.portfolio.signals import PortfolioSignals
 
 
 class PortfolioVersionsTable(QWidget):
-    BUTTONS = {
-        0: "New Version",
-        2: "Remove"
-    }
+    BUTTONS = {0: "New Version", 2: "Remove"}
 
     def __init__(self):
         super().__init__()
@@ -35,12 +41,19 @@ class PortfolioVersionsTable(QWidget):
         self._table.setMaximumHeight(300)
 
         self._table.setColumnCount(9)
-        self._table.setHorizontalHeaderLabels([
-            "Optimization Strategy", "Active",
-            "Value", "Period Start", "Period End",
-            "Interval", "Expected Annual Return", "Annual Volatility",
-            "Sharpe Ratio"
-        ])
+        self._table.setHorizontalHeaderLabels(
+            [
+                "Optimization Strategy",
+                "Active",
+                "Value",
+                "Period Start",
+                "Period End",
+                "Interval",
+                "Expected Annual Return",
+                "Annual Volatility",
+                "Sharpe Ratio",
+            ]
+        )
         self._table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self._table.setEditTriggers(QTableWidget.NoEditTriggers)
         self._table.setSelectionBehavior(QTableWidget.SelectRows)
@@ -48,7 +61,9 @@ class PortfolioVersionsTable(QWidget):
 
         self._table.cellClicked.connect(self.onCellClicked)
 
-        self._layout.addWidget(QLabel("<h4>Portfolio Versions</h4>"), 0, alignment=Qt.AlignTop)
+        self._layout.addWidget(
+            QLabel("<h4>Portfolio Versions</h4>"), 0, alignment=Qt.AlignTop
+        )
         self._layout.addWidget(self._table)
 
         buttons_layout = QHBoxLayout()
@@ -98,14 +113,20 @@ class PortfolioVersionsTable(QWidget):
         self._table.clearContents()
         self._table.setRowCount(len(versions))
         for idx, item in enumerate(versions):
-            optimization_strategy_name = QTableWidgetItem(item.optimization_strategy_name)
+            optimization_strategy_name = QTableWidgetItem(
+                item.optimization_strategy_name
+            )
             active = QTableWidgetItem("Yes" if item.active else "No")
             version = QTableWidgetItem(f"{item.version}")
             period_start = QTableWidgetItem(f"{item.period_start}")
             period_end = QTableWidgetItem(f"{item.period_end}")
             interval = QTableWidgetItem(f"{item.interval}")
-            expected_annual_return = QTableWidgetItem('{0:.4g}'.format(item.expected_annual_return or 0))
-            annual_volatility = QTableWidgetItem('{0:.4g}'.format(item.annual_volatility or 0))
+            expected_annual_return = QTableWidgetItem(
+                "{0:.4g}".format(item.expected_annual_return or 0)
+            )
+            annual_volatility = QTableWidgetItem(
+                "{0:.4g}".format(item.annual_volatility or 0)
+            )
             sharpe_ratio = QTableWidgetItem("{0:.4g}".format(item.sharpe_ratio or 0))
 
             self._table.setItem(idx, 0, optimization_strategy_name)

@@ -33,7 +33,9 @@ class NavigationView(QWidget):
             case Ok(portfolios):
                 for portfolio in portfolios:
                     button = QPushButton(portfolio.name)
-                    button.clicked.connect(lambda *args, o=portfolio.id: self.onPortfolioClicked(o))
+                    button.clicked.connect(
+                        lambda *args, o=portfolio.id: self.onPortfolioClicked(o)
+                    )
                     layout.addWidget(button, 0, alignment=Qt.AlignTop)
         layout.addStretch()
 
