@@ -10,13 +10,15 @@ CONDA := $(shell command -v conda 2>/dev/null)
 CONDA_LOCK := $(shell command -v conda-lock 2>/dev/null)
 POETRY := $(shell command -v poetry 2>/dev/null)
 
-run:
-	$(CONDA_ACTIVATE) $(FTT_ENV_NAME) && \
-		poetry run python3 -m $(FTT_ENV_NAME)
+.DEFAULT_GOAL := run-ui
 
-ui:
+run-cli:
 	$(CONDA_ACTIVATE) $(FTT_ENV_NAME) && \
-		poetry run python3 -m $(FTT_ENV_NAME).ui
+		poetry run python -m $(FTT_ENV_NAME)
+
+run-ui:
+	$(CONDA_ACTIVATE) $(FTT_ENV_NAME) && \
+		poetry run python -m $(FTT_ENV_NAME).ui
 
 prepare-environment:
 	@echo "Preparing environment..."
