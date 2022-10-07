@@ -1,43 +1,7 @@
 Installation
 ############
 
-Docker version
 
-Quick start
-^^^^^
-
-.. code:: bash
-
-   docker-compose up
-   docker-compose run -e ENV_FILE=.env.test trade python ./bin/db.py create_database
-   docker-compose run -e ENV_FILE=.env.dev trade python ./bin/db.py create_database
-   docker-compose run -e ENV_FILE=.env.test trade python ./bin/db.py create_tables
-   docker-compose run -e ENV_FILE=.env.dev trade python ./bin/db.py create_tables
-   docker-compose run -e ENV_FILE=.env.test trade pytest tests/
-
-Run in host network
-^^^^^^^^^^^^^^^^^^^
-
-.. code:: bash
-
-   docker build --tag trade:v[x] .
-   docker run --rm -it --network host -v "$PWD:/usr/src/app" trade:v[x] run/account.py status
-
-Create database & tables
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code:: bash
-
-    docker-compose --env-file .env.${ENV} up
-    docker-compose run -e ENV_FILE=.env.${ENV} trade python ./bin/db.py create_database
-    docker-compose run -e ENV_FILE=.env.${ENV} trade python ./bin/db.py create_tables
-
-Run tests
-^^^^^^^^^
-
-.. code:: bash
-
-    docker-compose run -e ENV_FILE=.env.test trade pytest tests/
 
 Alternatively possible to run using Makefile
 ^^^^^^^^^^^^^^
