@@ -49,7 +49,7 @@ class NavigationView(QWidget):
         new_portfolio_button.clicked.connect(self.onNewPortfolioClicked)
         self._layout.addWidget(new_portfolio_button, 0, alignment=Qt.AlignTop)
 
-    def portfoliosListToNavigation(self):
+    def portfoliosListToNavigation(self, *_):
         for button in self._portfolios_state_group.buttons():
             self._portfolios_state_group.removeButton(button)
 
@@ -63,18 +63,19 @@ class NavigationView(QWidget):
                 for portfolio in portfolios:
                     button = QPushButton(portfolio.name)
                     button.clicked.connect(
-                        lambda *args, o=portfolio.id: self.onPortfolioClicked(o)
+                        lambda *args, o=portfolio.id: self.displayPortfolioById(o)
                     )
                     self._portfolios_state_group.addButton(button)
                     self._buttons_group.layout().addWidget(button)
             case Err():
                 pass
 
-    def onPortfolioClicked(self, portfolio_id):
+    def displayPortfolioById(self, portfolio_id):
         self._model.currentPortfolioId = portfolio_id
         self.signals.portfolioRequested.emit(portfolio_id)
 
     def onNewPortfolioClicked(self):
         dialog = NewPortfolioDialog()
-        dialog.newPortfolioCreated.connect(self.portfoliosListToNavigation)
+        dialog.signals.newPortfolioCreated.connect(self.portfoliosListToNavigation)
+        dialog.signals.newPortfolioCreated.connect(self.signals.portfolioRequested)
         dialog.exec()

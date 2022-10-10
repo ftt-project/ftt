@@ -1,4 +1,4 @@
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, QObject
 from PySide6.QtGui import QValidator, Qt
 from PySide6.QtWidgets import (
     QDialog,
@@ -24,9 +24,11 @@ class PortfolioNameValidator(QValidator):
             return QValidator.Acceptable
 
 
-class NewPortfolioDialog(QDialog):
-    newPortfolioCreated = Signal()
+class NewPortfolioDialogSignals(QObject):
+    newPortfolioCreated = Signal(int)
 
+
+class NewPortfolioDialog(QDialog):
     def __init__(self):
         super().__init__()
 
@@ -35,6 +37,7 @@ class NewPortfolioDialog(QDialog):
         self._name_field = None
         self._label = None
         self._layout = None
+        self.signals = NewPortfolioDialogSignals()
         self.createUI()
 
     def createUI(self):
@@ -69,7 +72,7 @@ class NewPortfolioDialog(QDialog):
             result = PortfolioCreationHandler().handle(name=name)
             match result:
                 case Ok(portfolio):
-                    self.newPortfolioCreated.emit()
+                    self.signals.newPortfolioCreated.emit(portfolio.id)
                     super().accept()
                 case Err():
                     self._hint_message.setText(result.unwrap_err())
