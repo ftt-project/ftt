@@ -17,7 +17,9 @@ from ftt.handlers.portfolio_associate_securities_hanlder import (
     PortfolioAssociateSecuritiesHandler,
 )
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
-from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
+from ftt.handlers.portfolio_with_version_creation_handler import (
+    PortfolioWithVersionCreationHandler,
+)
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 from ftt.handlers.portfolio_update_handler import PortfolioUpdateHandler
 from ftt.handlers.portfolio_version_load_active_handler import (
@@ -119,7 +121,7 @@ class PortfoliosCommands:
             ctx.console.print(config_result.value)
             return
 
-        portfolio_result = PortfolioCreationHandler().handle(
+        portfolio_result = PortfolioWithVersionCreationHandler().handle(
             name=config_result.value.name,
             value=config_result.value.budget,
             period_start=config_result.value.period_start,
@@ -215,7 +217,7 @@ class PortfoliosCommands:
         portfolio_dto = prompt_result.value["portfolio_dto"]
         portfolio_version_dto = prompt_result.value["portfolio_version_dto"]
         # TODO: refactor to use dto in handler
-        result = PortfolioCreationHandler().handle(
+        result = PortfolioWithVersionCreationHandler().handle(
             name=portfolio_dto.name,
             value=portfolio_version_dto.value,
             period_start=portfolio_version_dto.period_start,

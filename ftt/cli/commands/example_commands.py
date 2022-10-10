@@ -6,7 +6,9 @@ from ftt.handlers.portfolio_associate_securities_hanlder import (
     PortfolioAssociateSecuritiesHandler,
 )
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
-from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
+from ftt.handlers.portfolio_with_version_creation_handler import (
+    PortfolioWithVersionCreationHandler,
+)
 from ftt.handlers.portfolio_optimization_handler import PortfolioOptimizationHandler
 from ftt.handlers.portfolio_stats_handler import PortfoliosStatsHandler
 from ftt.handlers.securities_information_prices_loading_handler import (
@@ -33,7 +35,7 @@ def example():
         ctx.console.print(config_result.unwrap_err())
         return
 
-    result = PortfolioCreationHandler().handle(
+    result = PortfolioWithVersionCreationHandler().handle(
         name=config_result.value.name,
         value=config_result.value.budget,
         period_start=config_result.value.period_start,

@@ -2,7 +2,7 @@ from PySide6.QtCore import Slot, Signal, QObject
 from PySide6.QtGui import QAction, Qt
 from PySide6.QtWidgets import QMainWindow, QWidget, QApplication, QHBoxLayout
 
-from ftt.ui.navigation.views import NavigationView
+from ftt.ui.navigation.view import NavigationView
 from ftt.ui.portfolio.view import CentralPortfolioView
 
 
