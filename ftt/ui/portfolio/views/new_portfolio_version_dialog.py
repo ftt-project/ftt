@@ -41,7 +41,6 @@ class NewPortfolioVersionDialogSignals(QObject):
 class NewPortfolioVersionDialog(QDialog):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("New Portfolio Version")
 
         self._model = get_model()
         self._state = get_state()
@@ -52,6 +51,7 @@ class NewPortfolioVersionDialog(QDialog):
         self.createUI()
 
     def createUI(self):
+        self.setWindowTitle("New Portfolio Version")
         self._layout = QFormLayout()
         self.setLayout(self._layout)
 

@@ -45,6 +45,7 @@ class NewPortfolioDialog(QDialog):
         self.createUI()
 
     def createUI(self):
+        self.setWindowTitle("New Portfolio")
         self._layout = QVBoxLayout()
         self.setLayout(self._layout)
 

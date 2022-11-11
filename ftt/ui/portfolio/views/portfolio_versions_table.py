@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
 
 from ftt.ui.model import get_model
 from ftt.ui.portfolio.data import getPortfolioVersions
+from ftt.ui.portfolio.views.delete_portfolio_version_dialog import DeletePortfolioVersionDialog
 from ftt.ui.portfolio.views.new_portfolio_version_dialog import (
     NewPortfolioVersionDialog,
 )
@@ -34,6 +35,8 @@ class PortfolioVersionsTable(QWidget):
         self.createUI()
 
         self._state.signals.selectedPortfolioChanged.connect(self.updateVersionsRows)
+        # TODO: clears up and redraws the whole table. Which is overkill in case of selection change. \
+        #  I need only change focus.
         self._state.signals.selectedPortfolioVersionChanged.connect(
             self.updateVersionsRows
         )
@@ -76,9 +79,14 @@ class PortfolioVersionsTable(QWidget):
         buttons_layout = QHBoxLayout()
         buttons_layout.setAlignment(Qt.AlignRight)
 
-        dialog = NewPortfolioVersionDialog()
+        new_version_dialog = NewPortfolioVersionDialog()
         self._state.signals.newPortfolioVersionDialogDisplayed.connect(
-            lambda: dialog.exec()
+            lambda: new_version_dialog.exec()
+        )
+
+        delete_version_dialog = DeletePortfolioVersionDialog()
+        self._state.signals.deletePortfolioVersionDialogDisplayed.connect(
+            lambda: delete_version_dialog.exec()
         )
 
         self._buttons = namedtuple(
@@ -94,7 +102,7 @@ class PortfolioVersionsTable(QWidget):
         self._buttons.remove_version = QPushButton("Remove selected")
         self._buttons.remove_version.setEnabled(False)
         self._buttons.remove_version.clicked.connect(
-            lambda: self._state.display_remove_portfolio_version_dialog()
+            lambda: self._state.display_delete_portfolio_version_dialog()
         )
         buttons_layout.addWidget(self._buttons.remove_version, 0)
         self._state.signals.selectedPortfolioVersionChanged.connect(

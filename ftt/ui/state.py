@@ -23,7 +23,7 @@ portfolio_screen_configurations = {
         "portfolio_version_selected",
         "portfolio_version_unselected",
         "new_portfolio_version_screen",
-        "remove_portfolio_version_screen",
+        "delete_portfolio_version_screen",
     ],
     "transitions": [
         {
@@ -57,10 +57,22 @@ portfolio_screen_configurations = {
             "after": "emit_portfolio_version_selected_signal",
         },
         {
-            "trigger": "display_remove_portfolio_version_dialog",
+            "trigger": "display_delete_portfolio_version_dialog",
             "source": "portfolio_version_selected",
-            "dest": "remove_portfolio_version_screen",
+            "dest": "delete_portfolio_version_screen",
+            "after": "emit_delete_portfolio_version_dialog_displayed_signal",
         },
+        {
+            "trigger": "close_delete_portfolio_version_dialog",
+            "source": "delete_portfolio_version_screen",
+            "dest": "portfolio_version_selected",
+        },
+        {
+            "trigger": "confirm_delete_portfolio_version_dialog",
+            "source": "delete_portfolio_version_screen",
+            "dest": "portfolio_version_unselected",
+            "after": "emit_portfolio_version_deleted_signal",
+        }
     ],
     "initial": "portfolio_version_unselected",
 }
@@ -135,3 +147,12 @@ class ApplicationState:
 
     def emit_new_portfolio_version_dialog_displayed_signal(self):
         self.signals.newPortfolioVersionDialogDisplayed.emit()
+
+    def emit_delete_portfolio_version_dialog_displayed_signal(self):
+        self.signals.deletePortfolioVersionDialogDisplayed.emit()
+
+    def emit_portfolio_version_deleted_signal(self):
+        # keep the same portfolio selected but enforce a refresh
+        self.signals.selectedPortfolioChanged.emit(self.model.portfolio_id)
+        self.model.portfolio_version_id = None
+        self.signals.selectedPortfolioVersionChanged.emit(None)

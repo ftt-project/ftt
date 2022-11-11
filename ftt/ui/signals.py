@@ -6,3 +6,4 @@ class ApplicationSignals(QObject):
     selectedPortfolioVersionChanged = Signal(int)
     newPortfolioDialogDisplayed = Signal()
     newPortfolioVersionDialogDisplayed = Signal()
+    deletePortfolioVersionDialogDisplayed = Signal()
