@@ -3,7 +3,6 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QButton
 from result import Ok, Err
 
 from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
-from ftt.ui.navigation.models import NavigationModel
 from ftt.ui.navigation.views.new_portfolio_dialog import NewPortfolioDialog
 from ftt.ui.state import get_state
 
@@ -16,7 +15,6 @@ class NavigationView(QWidget):
         self._buttons_group = None
         self._layout = None
         self._portfolios_group = None
-        self._model = NavigationModel()
         self._state = get_state()
         self.createUI()
 
@@ -55,13 +53,14 @@ class NavigationView(QWidget):
         self._state.signals.newPortfolioDialogDisplayed.connect(lambda: dialog.exec())
 
     def portfoliosListToNavigation(self, *_):
-        # TODO: buttons are rendering on top of each other. Fix it.
         for button in self._portfolios_state_group.buttons():
             self._portfolios_state_group.removeButton(button)
 
         for button in self._buttons_group.children():
             if type(button) == QPushButton:
                 self._buttons_group.layout().removeWidget(button)
+                button.setParent(None)
+                del button
 
         result = PortfoliosListHandler().handle()
         match result:

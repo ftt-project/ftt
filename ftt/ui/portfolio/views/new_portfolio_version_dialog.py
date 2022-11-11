@@ -6,7 +6,6 @@ from PySide6.QtWidgets import (
     QDateTimeEdit,
     QLineEdit,
     QComboBox,
-    QLabel,
 )
 from result import Ok, Err
 
@@ -18,7 +17,7 @@ from ftt.portfolio_management.optimization_strategies import (
 )
 from ftt.storage.models.portfolio_version import ACCEPTABLE_INTERVALS
 from ftt.ui.model import get_model
-from ftt.ui.portfolio.models import getPortfolio
+from ftt.ui.portfolio.data import getPortfolio
 from ftt.ui.state import get_state
 
 

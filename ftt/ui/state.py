@@ -19,8 +19,12 @@ def get_state():
 
 portfolio_screen_configurations = {
     "name": "portfolio_screen",
-    "states": ["portfolio_version_selected", "portfolio_version_unselected", "new_portfolio_version_screen",
-               "remove_portfolio_version_screen"],
+    "states": [
+        "portfolio_version_selected",
+        "portfolio_version_unselected",
+        "new_portfolio_version_screen",
+        "remove_portfolio_version_screen",
+    ],
     "transitions": [
         {
             "trigger": "select_portfolio_version",
@@ -56,7 +60,7 @@ portfolio_screen_configurations = {
             "trigger": "display_remove_portfolio_version_dialog",
             "source": "portfolio_version_selected",
             "dest": "remove_portfolio_version_screen",
-        }
+        },
     ],
     "initial": "portfolio_version_unselected",
 }

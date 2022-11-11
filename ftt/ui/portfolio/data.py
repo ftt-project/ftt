@@ -1,4 +1,3 @@
-from PySide6.QtCore import QObject
 from result import Ok, Err
 
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
@@ -8,9 +7,7 @@ from ftt.handlers.weights_list_handler import WeightsListHandler
 
 
 def getPortfolio(portfolio_id):
-    portfolio_result = PortfolioLoadHandler().handle(
-        portfolio_id=portfolio_id
-    )
+    portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
     match portfolio_result:
         case Ok(portfolio):
             return portfolio
@@ -82,6 +79,7 @@ class ChangeCollectionIterator:
             }
 
         raise StopIteration
+
 
 #
 # class PortfolioModel(QObject):

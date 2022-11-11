@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
 )
 
 from ftt.ui.model import get_model
-from ftt.ui.portfolio.models import getPortfolioVersions
+from ftt.ui.portfolio.data import getPortfolioVersions
 from ftt.ui.portfolio.views.new_portfolio_version_dialog import (
     NewPortfolioVersionDialog,
 )
@@ -34,7 +34,9 @@ class PortfolioVersionsTable(QWidget):
         self.createUI()
 
         self._state.signals.selectedPortfolioChanged.connect(self.updateVersionsRows)
-        self._state.signals.selectedPortfolioVersionChanged.connect(self.updateVersionsRows)
+        self._state.signals.selectedPortfolioVersionChanged.connect(
+            self.updateVersionsRows
+        )
 
     def createUI(self):
         self._layout = QVBoxLayout(self)
@@ -96,7 +98,9 @@ class PortfolioVersionsTable(QWidget):
         )
         buttons_layout.addWidget(self._buttons.remove_version, 0)
         self._state.signals.selectedPortfolioVersionChanged.connect(
-            lambda: self._buttons.remove_version.setEnabled(len(self._currentTableSelection()) > 0)
+            lambda: self._buttons.remove_version.setEnabled(
+                len(self._currentTableSelection()) > 0
+            )
         )
 
         self._layout.addLayout(buttons_layout)

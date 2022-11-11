@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QTableWidget, QHeaderView, QTableWidgetItem
 
 from ftt.ui.model import get_model
-from ftt.ui.portfolio.models import getPortfolioVersionWeights
+from ftt.ui.portfolio.data import getPortfolioVersionWeights
 from ftt.ui.state import get_state
 
 
