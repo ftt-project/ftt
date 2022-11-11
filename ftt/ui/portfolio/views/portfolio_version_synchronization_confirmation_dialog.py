@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
 )
 
-from ftt.ui.portfolio.models import get_model
+from ftt.ui.model import get_model
 
 
 class PortfolioVersionChangesTable(QTableWidget):

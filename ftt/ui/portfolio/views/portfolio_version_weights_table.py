@@ -1,20 +1,25 @@
-from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QTableWidget, QHeaderView, QTableWidgetItem
 
-from ftt.ui.portfolio.models import get_model
-from ftt.ui.portfolio.signals import PortfolioSignals
+from ftt.ui.model import get_model
+from ftt.ui.portfolio.models import getPortfolioVersionWeights
+from ftt.ui.state import get_state
 
 
 class PortfolioVersionWeightsTable(QTableWidget):
     def __init__(self):
         super().__init__()
 
-        self.signals = PortfolioSignals()
         self._model = get_model()
+        self._state = get_state()
 
         self.createUI()
 
-        self.signals.portfolioVersionSelected.connect(self.onPortfolioVersionSelected)
+        self._state.signals.selectedPortfolioChanged.connect(
+            self.onPortfolioVersionSelected
+        )
+        self._state.signals.selectedPortfolioVersionChanged.connect(
+            self.onPortfolioVersionSelected
+        )
 
     def createUI(self):
         self.setMinimumHeight(300)
@@ -29,29 +34,22 @@ class PortfolioVersionWeightsTable(QTableWidget):
         self.setSelectionBehavior(QTableWidget.SelectRows)
         self.verticalHeader().setVisible(False)
 
-    @Slot(int)
-    def onPortfolioVersionSelected(
-        self, portfolio_version_id
-    ):  # noqa: F811  # type: ignore
-        print(f"Portfolio version selected: {portfolio_version_id}")
-        if portfolio_version_id is None:
-            self.updateWeights()
-        return
-
-    @Slot(list)
-    def onPortfolioVersionSelected(self, portfolio_version_ids):  # noqa: F811
+    def onPortfolioVersionSelected(self, portfolio_version_ids):
         print(f"Portfolio version selected: {portfolio_version_ids}")
-        self._model.currentPortfolioVersionId = portfolio_version_ids
+        self.updateWeights()
+
+    def onPortfolioVersionUnselected(self):
         self.updateWeights()
 
     def updateWeights(self):
         self.clearContents()
         if (
-            self._model.currentPortfolioVersionId is None
-            or self._model.currentPortfolioVersionId == -1
+            self._model.portfolio_version_id is None
+            or self._model.portfolio_version_id == -1
         ):
             return
-        weights = self._model.getPortfolioVersionWeights()
+        print(self._model)
+        weights = getPortfolioVersionWeights(self._model.portfolio_version_id)
         self.setRowCount(len(weights))
         for idx, item in enumerate(weights):
             security = QTableWidgetItem(item.security.symbol)

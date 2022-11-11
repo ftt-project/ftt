@@ -12,6 +12,8 @@ from PySide6.QtWidgets import (
 from result import Ok, Err
 
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
+from ftt.ui.model import get_model
+from ftt.ui.state import get_state
 
 
 class PortfolioNameValidator(QValidator):
@@ -32,6 +34,8 @@ class NewPortfolioDialog(QDialog):
     def __init__(self):
         super().__init__()
 
+        self._state = get_state()
+        self._model = get_model()
         self._hint_message = None
         self._buttons = None
         self._name_field = None
@@ -72,7 +76,7 @@ class NewPortfolioDialog(QDialog):
             result = PortfolioCreationHandler().handle(name=name)
             match result:
                 case Ok(portfolio):
-                    self.signals.newPortfolioCreated.emit(portfolio.id)
+                    self._state.close_new_portfolio_dialog(portfolio.id)
                     super().accept()
                 case Err():
                     self._hint_message.setText(result.unwrap_err())
@@ -82,4 +86,5 @@ class NewPortfolioDialog(QDialog):
             self._hint_message.show()
 
     def reject(self) -> None:
+        self._state.close_new_portfolio_dialog(self._model.portfolio_id)
         super().reject()

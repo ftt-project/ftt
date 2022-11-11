@@ -1,35 +1,44 @@
-from PySide6.QtCore import Slot, Signal, QObject
+from PySide6.QtCore import Slot
 from PySide6.QtGui import QAction, Qt
-from PySide6.QtWidgets import QMainWindow, QWidget, QApplication, QHBoxLayout
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QWidget,
+    QApplication,
+    QHBoxLayout,
+    QLabel,
+    QStackedWidget,
+)
 
 from ftt.ui.navigation.view import NavigationView
 from ftt.ui.portfolio.view import CentralPortfolioView
+from ftt.ui.state import get_state
 
 
-class MainWindowSignals(QObject):
-    """
-    Defines the signals available for a main window.
+class WelcomeWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self._label = None
+        self._layout = None
 
-    Supported signals are:
+        self.createUI()
 
-    portfolioChanged
-        int portfolio id
-    """
+    def createUI(self):
+        self._layout = QHBoxLayout(self)
+        self._layout.setAlignment(Qt.AlignTop)
 
-    portfolioChanged = Signal(int)
+        self._label = QLabel("Welcome to FTT")
+
+        self._layout.addWidget(self._label)
 
 
 class MainWidget(QWidget):
-    currentPortfolioChanged = Signal(int)
-
     def __init__(self):
         super().__init__()
-
-        self.signals = MainWindowSignals()
 
         self._navigation = None
         self._layout = None
         self._center = None
+        self._state = get_state()
 
         self.createUI()
 
@@ -40,11 +49,15 @@ class MainWidget(QWidget):
         self._navigation = NavigationView()
         self._layout.addWidget(self._navigation)
 
-        self._center = CentralPortfolioView()
+        self._center = QStackedWidget()
+        self._center.addWidget(WelcomeWidget())
+        self._center.addWidget(CentralPortfolioView())
+        self._center.setCurrentIndex(0)
+
         self._layout.addWidget(self._center)
 
-        self._navigation.signals.portfolioRequested.connect(
-            self._center.signals.portfolioChanged
+        self._state.signals.selectedPortfolioChanged.connect(
+            lambda _: self._center.setCurrentIndex(1)
         )
 
 

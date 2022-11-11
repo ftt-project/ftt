@@ -1,11 +1,25 @@
 from PySide6.QtCore import QObject, Signal
-from PySide6.QtWidgets import QDialog, QFormLayout, QDialogButtonBox, QDateTimeEdit, QLineEdit, QComboBox, QLabel
+from PySide6.QtWidgets import (
+    QDialog,
+    QFormLayout,
+    QDialogButtonBox,
+    QDateTimeEdit,
+    QLineEdit,
+    QComboBox,
+    QLabel,
+)
 from result import Ok, Err
 
-from ftt.handlers.portfolio_version_creation_handler import PortfolioVersionCreationHandler
-from ftt.portfolio_management.optimization_strategies import OptimizationStrategyResolver
+from ftt.handlers.portfolio_version_creation_handler import (
+    PortfolioVersionCreationHandler,
+)
+from ftt.portfolio_management.optimization_strategies import (
+    OptimizationStrategyResolver,
+)
 from ftt.storage.models.portfolio_version import ACCEPTABLE_INTERVALS
-from ftt.ui.portfolio.models import get_model
+from ftt.ui.model import get_model
+from ftt.ui.portfolio.models import getPortfolio
+from ftt.ui.state import get_state
 
 
 class NewVersionFormFields:
@@ -31,6 +45,7 @@ class NewPortfolioVersionDialog(QDialog):
         self.setWindowTitle("New Portfolio Version")
 
         self._model = get_model()
+        self._state = get_state()
         self._buttons = None
         self._layout = None
         self.signals = NewPortfolioVersionDialogSignals()
@@ -54,7 +69,7 @@ class NewPortfolioVersionDialog(QDialog):
 
     def accept(self) -> None:
         result = PortfolioVersionCreationHandler().handle(
-            portfolio=self._model.currentPortfolio,
+            portfolio=getPortfolio(self._model.portfolio_id),
             value=int(self._form_fields.value_input.text()),
             interval=self._form_fields.interval_input.currentText(),
             period_start=str(self._form_fields.period_from_input.dateTime().toPython()),
@@ -62,8 +77,11 @@ class NewPortfolioVersionDialog(QDialog):
         )
         match result:
             case Ok(version):
-                self.signals.newPortfolioVersionCreated.emit(version.id)
+                self._state.close_new_portfolio_version_dialog(version.id)
                 super().accept()
             case Err(value):
                 print(value)
 
+    def reject(self) -> None:
+        self._state.close_new_portfolio_version_dialog(self._model.portfolio_version_id)
+        super().reject()

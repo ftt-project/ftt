@@ -1,14 +1,11 @@
-from PySide6.QtCore import Qt, QObject, Signal
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QButtonGroup
 from result import Ok, Err
 
 from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
 from ftt.ui.navigation.models import NavigationModel
 from ftt.ui.navigation.views.new_portfolio_dialog import NewPortfolioDialog
-
-
-class NavigationSignals(QObject):
-    portfolioRequested = Signal(int)
+from ftt.ui.state import get_state
 
 
 class NavigationView(QWidget):
@@ -20,7 +17,7 @@ class NavigationView(QWidget):
         self._layout = None
         self._portfolios_group = None
         self._model = NavigationModel()
-        self.signals = NavigationSignals()
+        self._state = get_state()
         self.createUI()
 
     def createUI(self):
@@ -42,14 +39,23 @@ class NavigationView(QWidget):
         self._layout.addWidget(self._buttons_group)
 
         self.portfoliosListToNavigation()
+        self._state.signals.selectedPortfolioChanged.connect(
+            self.portfoliosListToNavigation
+        )
 
         self._layout.addStretch()
 
         new_portfolio_button = QPushButton("New Portfolio")
-        new_portfolio_button.clicked.connect(self.onNewPortfolioClicked)
+        new_portfolio_button.clicked.connect(
+            lambda _: self._state.display_new_portfolio_dialog()
+        )
         self._layout.addWidget(new_portfolio_button, 0, alignment=Qt.AlignTop)
 
+        dialog = NewPortfolioDialog()
+        self._state.signals.newPortfolioDialogDisplayed.connect(lambda: dialog.exec())
+
     def portfoliosListToNavigation(self, *_):
+        # TODO: buttons are rendering on top of each other. Fix it.
         for button in self._portfolios_state_group.buttons():
             self._portfolios_state_group.removeButton(button)
 
@@ -63,19 +69,9 @@ class NavigationView(QWidget):
                 for portfolio in portfolios:
                     button = QPushButton(portfolio.name)
                     button.clicked.connect(
-                        lambda *args, o=portfolio.id: self.displayPortfolioById(o)
+                        lambda *args, o=portfolio.id: self._state.display_portfolio(o)
                     )
                     self._portfolios_state_group.addButton(button)
                     self._buttons_group.layout().addWidget(button)
             case Err():
                 pass
-
-    def displayPortfolioById(self, portfolio_id):
-        self._model.currentPortfolioId = portfolio_id
-        self.signals.portfolioRequested.emit(portfolio_id)
-
-    def onNewPortfolioClicked(self):
-        dialog = NewPortfolioDialog()
-        dialog.signals.newPortfolioCreated.connect(self.portfoliosListToNavigation)
-        dialog.signals.newPortfolioCreated.connect(self.signals.portfolioRequested)
-        dialog.exec()
