@@ -75,7 +75,6 @@ class PortfolioVersionsTable(QWidget):
         buttons_layout.setAlignment(Qt.AlignRight)
 
         dialog = NewPortfolioVersionDialog()
-        # dialog.signals.newPortfolioVersionCreated.connect(self.onPortfolioListChanged)
         self._state.signals.newPortfolioVersionDialogDisplayed.connect(
             lambda: dialog.exec()
         )
@@ -85,7 +84,6 @@ class PortfolioVersionsTable(QWidget):
         )  # Ugly, really using comma?
 
         self._buttons.new_version = QPushButton("New Version")
-        # self._buttons.new_version.clicked.connect(self.onNewVersionClicked)
         self._buttons.new_version.clicked.connect(
             lambda: self._state.display_new_portfolio_version_dialog()
         )
@@ -93,14 +91,15 @@ class PortfolioVersionsTable(QWidget):
 
         self._buttons.remove_version = QPushButton("Remove selected")
         self._buttons.remove_version.setEnabled(False)
-        self._buttons.remove_version.clicked.connect(self.onRemoveClicked)
+        self._buttons.remove_version.clicked.connect(
+            lambda: self._state.display_remove_portfolio_version_dialog()
+        )
         buttons_layout.addWidget(self._buttons.remove_version, 0)
+        self._state.signals.selectedPortfolioVersionChanged.connect(
+            lambda: self._buttons.remove_version.setEnabled(len(self._currentTableSelection()) > 0)
+        )
 
         self._layout.addLayout(buttons_layout)
-
-    def onRemoveClicked(self):
-        print("Remove clicked not implemented")
-        pass
 
     def _currentTableSelection(self):
         """
@@ -114,8 +113,6 @@ class PortfolioVersionsTable(QWidget):
         versions = getPortfolioVersions(self._model.portfolio_id)
         self._table.clearContents()
         self._table.setRowCount(len(versions))
-        row_to_focus = None
-        item_scroll_to = None
         for idx, item in enumerate(versions):
             optimization_strategy_name = QTableWidgetItem(
                 item.optimization_strategy_name
@@ -153,17 +150,12 @@ class PortfolioVersionsTable(QWidget):
     def onPortfolioVersionFocusChanged(self, *_):
         # TODO on portfolio change "remove selected" is not disabled
         selected = self._currentTableSelection()
-        print(f"Selected: {selected}")
         if len(selected) == 0:
             self._buttons.remove_version.setEnabled(False)
-            # self.signals.portfolioVersionSelected.emit(-1)
             self._state.unselect_portfolio_version()
         elif len(selected) == 1:
             self._state.select_portfolio_version(selected[0])
-            # self._buttons.remove_version.setEnabled(True)
-            # self.signals.portfolioVersionSelected.emit(selected[0])
         else:
             self._buttons.remove_version.setEnabled(True)
-            # self.signals.portfolioVersionSelected.emit(-1)
             self._state.unselect_portfolio_version()
             print("Multiple rows selection is not supported yet")

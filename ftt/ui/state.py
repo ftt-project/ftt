@@ -19,7 +19,8 @@ def get_state():
 
 portfolio_screen_configurations = {
     "name": "portfolio_screen",
-    "states": ["portfolio_version_selected", "portfolio_version_unselected", "new_portfolio_version_screen",],
+    "states": ["portfolio_version_selected", "portfolio_version_unselected", "new_portfolio_version_screen",
+               "remove_portfolio_version_screen"],
     "transitions": [
         {
             "trigger": "select_portfolio_version",
@@ -51,6 +52,11 @@ portfolio_screen_configurations = {
             "dest": "portfolio_version_selected",
             "after": "emit_portfolio_version_selected_signal",
         },
+        {
+            "trigger": "display_remove_portfolio_version_dialog",
+            "source": "portfolio_version_selected",
+            "dest": "remove_portfolio_version_screen",
+        }
     ],
     "initial": "portfolio_version_unselected",
 }
@@ -108,8 +114,9 @@ class ApplicationState:
 
     def emit_portfolio_selected_signal(self, portfolio_id):
         self.model.portfolio_id = portfolio_id
-        self.model.portfolio_version_id = None
         self.signals.selectedPortfolioChanged.emit(portfolio_id)
+        self.model.portfolio_version_id = None
+        self.signals.selectedPortfolioVersionChanged.emit(None)
 
     def emit_portfolio_version_selected_signal(self, portfolio_version_id):
         self.model.portfolio_version_id = portfolio_version_id

@@ -53,3 +53,9 @@ $> pip install ftt
 $> ftt
 ftt> example
 ```
+
+## Principles
+- UI actions don't change data.
+- UI actions change global state of the application.
+- UI actions don't send signals to another components.
+- The only reason for UI component to change is a global state change.
