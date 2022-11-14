@@ -34,14 +34,14 @@ class PortfolioVersionsRepository(Repository):
         """
         TODO: use model instead of ID
         """
-        versions = PortfolioVersion.select().where(
+        versions = PortfolioVersion.select_all().where(
             PortfolioVersion.portfolio_id == portfolio_id
         )
         if len(versions) == 0:
             return None
 
         return (
-            PortfolioVersion.select()
+            PortfolioVersion.select_all()
             .where(PortfolioVersion.portfolio_id == portfolio_id)
             .order_by(PortfolioVersion.version.desc())
             .get()

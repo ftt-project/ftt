@@ -153,6 +153,6 @@ class ApplicationState:
 
     def emit_portfolio_version_deleted_signal(self):
         # keep the same portfolio selected but enforce a refresh
-        self.signals.selectedPortfolioChanged.emit(self.model.portfolio_id)
         self.model.portfolio_version_id = None
+        self.signals.selectedPortfolioChanged.emit(self.model.portfolio_id)
         self.signals.selectedPortfolioVersionChanged.emit(None)

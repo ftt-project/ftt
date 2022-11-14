@@ -67,6 +67,8 @@ class NewPortfolioVersionDialog(QDialog):
         self._layout.addWidget(self._buttons)
 
     def accept(self) -> None:
+        # TODO: self._form_fields.strategy_input is not saved
+        # TODO: reset fields after creation
         result = PortfolioVersionCreationHandler().handle(
             portfolio=getPortfolio(self._model.portfolio_id),
             value=int(self._form_fields.value_input.text()),
