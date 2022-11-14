@@ -74,3 +74,9 @@ class PortfolioVersionsRepository(Repository):
         cls, portfolio_version: PortfolioVersion, dto: PortfolioVersionDTO
     ) -> PortfolioVersion:
         return cls._update(portfolio_version, dto)
+
+    @classmethod
+    def delete(
+        cls, portfolio_version: PortfolioVersion, soft_delete: bool = True
+    ) -> bool:
+        return cls._delete(portfolio_version, soft_delete)

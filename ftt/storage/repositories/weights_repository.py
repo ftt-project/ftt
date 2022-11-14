@@ -148,6 +148,5 @@ class WeightsRepository(Repository):
         return cls.get_by_id(weight.id)
 
     @classmethod
-    def delete(cls, weight: Weight) -> bool:
-        result = weight.delete_instance()
-        return result == 1
+    def delete(cls, weight: Weight, soft_delete: bool = True) -> bool:
+        return cls._delete(weight, soft_delete)
