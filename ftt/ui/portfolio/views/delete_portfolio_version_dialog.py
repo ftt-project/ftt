@@ -15,7 +15,10 @@ class DeletePortfolioVersionDialog(QDialog):
 
     def createUI(self):
         self.setWindowTitle("Confirm Portfolio Version deletion")
-        if self._model.portfolio_version_id and len(self._model.portfolio_version_id) > 1:
+        if (
+            self._model.portfolio_version_id
+            and len(self._model.portfolio_version_id) > 1
+        ):
             prompt_text = f"Are you sure you want to delete {len(self._model.portfolio_version_id)} portfolio versions?"
         else:
             prompt_text = "Are you sure you want to delete this portfolio version?"

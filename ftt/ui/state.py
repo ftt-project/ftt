@@ -72,7 +72,7 @@ portfolio_screen_configurations = {
             "source": "delete_portfolio_version_screen",
             "dest": "portfolio_version_unselected",
             "after": "emit_portfolio_version_deleted_signal",
-        }
+        },
     ],
     "initial": "portfolio_version_unselected",
 }

@@ -14,7 +14,9 @@ from PySide6.QtWidgets import (
 
 from ftt.ui.model import get_model
 from ftt.ui.portfolio.data import getPortfolioVersions
-from ftt.ui.portfolio.views.delete_portfolio_version_dialog import DeletePortfolioVersionDialog
+from ftt.ui.portfolio.views.delete_portfolio_version_dialog import (
+    DeletePortfolioVersionDialog,
+)
 from ftt.ui.portfolio.views.new_portfolio_version_dialog import (
     NewPortfolioVersionDialog,
 )
