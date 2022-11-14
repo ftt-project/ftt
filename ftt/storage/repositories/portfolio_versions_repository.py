@@ -34,14 +34,14 @@ class PortfolioVersionsRepository(Repository):
         """
         TODO: use model instead of ID
         """
-        versions = PortfolioVersion.select().where(
+        versions = PortfolioVersion.select_all().where(
             PortfolioVersion.portfolio_id == portfolio_id
         )
         if len(versions) == 0:
             return None
 
         return (
-            PortfolioVersion.select()
+            PortfolioVersion.select_all()
             .where(PortfolioVersion.portfolio_id == portfolio_id)
             .order_by(PortfolioVersion.version.desc())
             .get()
@@ -74,3 +74,9 @@ class PortfolioVersionsRepository(Repository):
         cls, portfolio_version: PortfolioVersion, dto: PortfolioVersionDTO
     ) -> PortfolioVersion:
         return cls._update(portfolio_version, dto)
+
+    @classmethod
+    def delete(
+        cls, portfolio_version: PortfolioVersion, soft_delete: bool = True
+    ) -> bool:
+        return cls._delete(portfolio_version, soft_delete)

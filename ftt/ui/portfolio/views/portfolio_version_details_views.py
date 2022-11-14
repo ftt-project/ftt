@@ -13,13 +13,13 @@ from result import Ok, Err
 from ftt.handlers.positions_synchronization_handler import (
     PositionsSynchronizationHandler,
 )
-from ftt.ui.portfolio.models import get_model
+from ftt.ui.model import get_model
 from ftt.ui.portfolio.portfolio_synchronization_flow import PortfolioSynchronizationFlow
-from ftt.ui.portfolio.signals import PortfolioSignals
 from ftt.ui.portfolio.views.portfolio_version_synchronization_confirmation_dialog import (
     PortfolioVersionSynchronizationConfirmationDialog,
 )
 from ftt.ui.portfolio.workers import RequestPortfolioChangesWorker
+from ftt.ui.state import get_state
 
 
 class PortfolioVersionDetailsView(QWidget):
@@ -27,7 +27,7 @@ class PortfolioVersionDetailsView(QWidget):
         super().__init__()
 
         self._model = get_model()
-        self.signals = PortfolioSignals()
+        self._state = get_state()
 
         self._controls = None
         self._sync_button_help = None
@@ -39,7 +39,9 @@ class PortfolioVersionDetailsView(QWidget):
 
         self.createUI()
 
-        self.signals.portfolioVersionSelected.connect(self.onPortfolioVersionChanged)
+        self._state.signals.selectedPortfolioVersionChanged.connect(
+            self.onPortfolioVersionChanged
+        )
 
     def createUI(self):
         layout = QVBoxLayout(self)
@@ -132,18 +134,18 @@ class PortfolioVersionDetailsView(QWidget):
 
     @Slot(int)
     def onPortfolioVersionChanged(self):
-        match self._model.currentPortfolioVersionId:
+        match self._model.portfolio_version_id:
             case -1 | None:
                 print(
                     "onPortfolioVersionChanged: -1",
-                    self._model.currentPortfolioVersionId,
+                    self._model.portfolio_version_id,
                 )
                 for button in self._controls.buttons():
                     button.setEnabled(False)
             case _:
                 print(
                     "onPortfolioVersionChanged: _",
-                    self._model.currentPortfolioVersionId,
+                    self._model.portfolio_version_id,
                 )
                 for button in self._controls.buttons():
                     button.setEnabled(True)

@@ -39,3 +39,12 @@ class Repository(ABC):
             raise PersistingError(instance, data, str(e))
 
         return model
+
+    @classmethod
+    def _delete(cls, instance, soft_delete: bool = True) -> bool:
+        if soft_delete:
+            instance.deleted_at = datetime.now()
+            result = instance.save()
+        else:
+            result = instance.delete_instance()
+        return result == 1

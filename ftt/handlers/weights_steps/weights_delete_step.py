@@ -1,10 +1,9 @@
 from typing import Optional
 
-import peewee
 from result import Ok, Err, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.models import PortfolioVersion, Security
+from ftt.storage.models import PortfolioVersion, Security, Weight
 from ftt.storage.repositories.weights_repository import WeightsRepository
 
 
@@ -23,7 +22,7 @@ class WeightsDeleteStep(AbstractStep):
                 )
                 WeightsRepository.delete(result)
             # TODO: move exception handler to repository level
-            except peewee.DoesNotExist:
+            except Weight.DoesNotExist:
                 results.append(
                     Err(
                         f"Weight {security.symbol} associated with portfolio version #{portfolio_version.id} not found"

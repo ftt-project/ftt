@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QProgressDialog
 from ftt.handlers.positions_compare_planned_actual_positions_handler import (
     PositionsComparePlannedActualPositionsHandler,
 )
-from ftt.ui.portfolio.models import get_model
+from ftt.ui.model import get_model
 from ftt.ui.portfolio.views.portfolio_version_synchronization_confirmation_dialog import (
     PortfolioVersionSynchronizationConfirmationDialog,
 )

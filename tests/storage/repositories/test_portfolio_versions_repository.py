@@ -83,3 +83,29 @@ class TestPortfolioVersionsRepository:
 
         assert "Failed to persist `PortfolioVersion` with params" in str(exc.value)
         assert "CHECK constraint failed" in str(exc.value)
+
+    def test_delete_returns_true_with_soft_delete_flag_on(
+        self, subject, portfolio_version
+    ):
+        result = subject.delete(portfolio_version)
+
+        assert result is True
+        assert not PortfolioVersion.select().exists()
+        assert PortfolioVersion.select_deleted().exists()
+
+    def test_delete_not_persisted_record_returns_false_with_soft_delete_flag_on(
+        self, subject, portfolio_version
+    ):
+        subject.delete(portfolio_version, soft_delete=False)
+        result = subject.delete(portfolio_version)
+
+        assert result is False
+
+    def test_delete_returns_true_with_soft_delete_flag_off(
+        self, subject, portfolio_version
+    ):
+        result = subject.delete(portfolio_version, soft_delete=False)
+
+        assert result is True
+        assert not PortfolioVersion.select().exists()
+        assert not PortfolioVersion.select_deleted().exists()

@@ -1,7 +1,8 @@
+from collections import namedtuple
+
 from PySide6.QtCore import Slot, Qt
 from PySide6.QtWidgets import (
     QTableWidgetItem,
-    QButtonGroup,
     QHBoxLayout,
     QLabel,
     QTableWidget,
@@ -11,26 +12,36 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from ftt.ui.portfolio.models import get_model
-from ftt.ui.portfolio.signals import PortfolioSignals
+from ftt.ui.model import get_model
+from ftt.ui.portfolio.data import getPortfolioVersions
+from ftt.ui.portfolio.views.delete_portfolio_version_dialog import (
+    DeletePortfolioVersionDialog,
+)
+from ftt.ui.portfolio.views.new_portfolio_version_dialog import (
+    NewPortfolioVersionDialog,
+)
+from ftt.ui.state import get_state
 
 
 class PortfolioVersionsTable(QWidget):
-    BUTTONS = {0: "New Version", 2: "Remove"}
-
     def __init__(self):
         super().__init__()
 
-        self.signals = PortfolioSignals()
         self._model = get_model()
 
-        self._controls = None
+        self._buttons = None
         self._layout = None
         self._table = None
+        self._state = get_state()
 
         self.createUI()
 
-        self.signals.portfolioChanged.connect(self.onPortfolioChanged)
+        self._state.signals.selectedPortfolioChanged.connect(self.updateVersionsRows)
+        # TODO: clears up and redraws the whole table. Which is overkill in case of selection change. \
+        #  I need only change focus.
+        self._state.signals.selectedPortfolioVersionChanged.connect(
+            self.updateVersionsRows
+        )
 
     def createUI(self):
         self._layout = QVBoxLayout(self)
@@ -39,6 +50,7 @@ class PortfolioVersionsTable(QWidget):
 
         self._table = QTableWidget()
         self._table.setMaximumHeight(300)
+        self._table.setMinimumWidth(1000)
 
         self._table.setColumnCount(9)
         self._table.setHorizontalHeaderLabels(
@@ -59,7 +71,7 @@ class PortfolioVersionsTable(QWidget):
         self._table.setSelectionBehavior(QTableWidget.SelectRows)
         self._table.verticalHeader().setVisible(False)
 
-        self._table.cellClicked.connect(self.onCellClicked)
+        self._table.cellClicked.connect(self.onPortfolioVersionFocusChanged)
 
         self._layout.addWidget(
             QLabel("<h4>Portfolio Versions</h4>"), 0, alignment=Qt.AlignTop
@@ -67,49 +79,52 @@ class PortfolioVersionsTable(QWidget):
         self._layout.addWidget(self._table)
 
         buttons_layout = QHBoxLayout()
-        self._controls = QButtonGroup()
-        self._controls.setExclusive(False)
-        for key, value in self.BUTTONS.items():
-            button = QPushButton(value)
-            button.setEnabled(False)
-            self._controls.addButton(button, key)
-            buttons_layout.addWidget(button)
+        buttons_layout.setAlignment(Qt.AlignRight)
 
-        self._controls.idClicked.connect(self.onButtonClicked)
+        new_version_dialog = NewPortfolioVersionDialog()
+        self._state.signals.newPortfolioVersionDialogDisplayed.connect(
+            lambda: new_version_dialog.exec()
+        )
+
+        delete_version_dialog = DeletePortfolioVersionDialog()
+        self._state.signals.deletePortfolioVersionDialogDisplayed.connect(
+            lambda: delete_version_dialog.exec()
+        )
+
+        self._buttons = namedtuple(
+            "Buttons", "new_version, remove_version"
+        )  # Ugly, really using comma?
+
+        self._buttons.new_version = QPushButton("New Version")
+        self._buttons.new_version.clicked.connect(
+            lambda: self._state.display_new_portfolio_version_dialog()
+        )
+        buttons_layout.addWidget(self._buttons.new_version, 0)
+
+        self._buttons.remove_version = QPushButton("Remove selected")
+        self._buttons.remove_version.setEnabled(False)
+        self._buttons.remove_version.clicked.connect(
+            lambda: self._state.display_delete_portfolio_version_dialog()
+        )
+        buttons_layout.addWidget(self._buttons.remove_version, 0)
+        self._state.signals.selectedPortfolioVersionChanged.connect(
+            lambda: self._buttons.remove_version.setEnabled(
+                len(self._currentTableSelection()) > 0
+            )
+        )
 
         self._layout.addLayout(buttons_layout)
-
-    def onNewVersionClicked(self):
-        print("New version clicked not implemented")
-        pass
-
-    def onRemoveClicked(self):
-        print("Remove clicked not implemented")
-        pass
 
     def _currentTableSelection(self):
         """
         Returns a list of portfolio version ids currently selected in table
         """
-        versions = self._model.getPortfolioVersions()
+        versions = getPortfolioVersions(self._model.portfolio_id)
         return list({versions[idx.row()].id for idx in self._table.selectedIndexes()})
-
-    @Slot(int)
-    def onPortfolioChanged(self, portfolio_id):
-        self._model.currentPortfolioId = portfolio_id
-        self.updateVersionsRows()
-
-    @Slot(int)
-    def onButtonClicked(self, button_id):
-        match button_id:
-            case 0:
-                self.onNewVersionClicked()
-            case 1:
-                self.onRemoveClicked()
 
     @Slot()
     def updateVersionsRows(self):
-        versions = self._model.getPortfolioVersions()
+        versions = getPortfolioVersions(self._model.portfolio_id)
         self._table.clearContents()
         self._table.setRowCount(len(versions))
         for idx, item in enumerate(versions):
@@ -117,7 +132,7 @@ class PortfolioVersionsTable(QWidget):
                 item.optimization_strategy_name
             )
             active = QTableWidgetItem("Yes" if item.active else "No")
-            version = QTableWidgetItem(f"{item.version}")
+            value = QTableWidgetItem(f"{item.value}")
             period_start = QTableWidgetItem(f"{item.period_start}")
             period_end = QTableWidgetItem(f"{item.period_end}")
             interval = QTableWidgetItem(f"{item.interval}")
@@ -131,7 +146,7 @@ class PortfolioVersionsTable(QWidget):
 
             self._table.setItem(idx, 0, optimization_strategy_name)
             self._table.setItem(idx, 1, active)
-            self._table.setItem(idx, 2, version)
+            self._table.setItem(idx, 2, value)
             self._table.setItem(idx, 3, period_start)
             self._table.setItem(idx, 4, period_end)
             self._table.setItem(idx, 5, interval)
@@ -139,19 +154,22 @@ class PortfolioVersionsTable(QWidget):
             self._table.setItem(idx, 7, annual_volatility)
             self._table.setItem(idx, 8, sharpe_ratio)
 
-    @Slot()
-    def onCellClicked(self, row, _):
-        selected = self._currentTableSelection()
-        print(f"Selected: {selected}")
-        if len(selected) == 0:
-            [button.setEnabled(False) for button in self._controls.buttons()]
-            self.signals.portfolioVersionSelected.emit(-1)
-        elif len(selected) == 1:
-            [button.setEnabled(True) for button in self._controls.buttons()]
-            self.signals.portfolioVersionSelected.emit(selected[0])
-        else:
-            [button.setEnabled(True) for button in self._controls.buttons()]
-            self.signals.portfolioVersionSelected.emit(-1)
-            print("Multiple rows selection is not supported yet")
+            if item.id == self._model.portfolio_version_id:
+                row_to_focus = idx
+                item_scroll_to = optimization_strategy_name
+                self._table.selectRow(row_to_focus)
+                self._table.scrollToItem(item_scroll_to)
 
-        # self.portfolioVersionSelected.emit([self._versions[idx].id for idx in rows])
+    @Slot()
+    def onPortfolioVersionFocusChanged(self, *_):
+        # TODO on portfolio change "remove selected" is not disabled
+        selected = self._currentTableSelection()
+        if len(selected) == 0:
+            self._buttons.remove_version.setEnabled(False)
+            self._state.unselect_portfolio_version()
+        elif len(selected) == 1:
+            self._state.select_portfolio_version(selected[0])
+        else:
+            self._buttons.remove_version.setEnabled(True)
+            self._state.unselect_portfolio_version()
+            print("Multiple rows selection is not supported yet")

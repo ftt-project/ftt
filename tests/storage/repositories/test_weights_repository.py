@@ -99,10 +99,11 @@ class TestWeightsRepository:
         result = subject.delete(weight)
 
         assert result is True
-        assert not Weight.select().where(weight.id).exists()
+        assert not Weight.select().exists()
+        assert Weight.select_deleted().exists()
 
     def test_delete_not_persisted_record_returns_false(self, subject, weight):
-        subject.delete(weight)
+        subject.delete(weight, soft_delete=False)
         result = subject.delete(weight)
 
         assert result is False
