@@ -43,9 +43,6 @@ class CentralPortfolioView(QWidget):
 
         self._portfolioWeightsTable = PortfolioVersionWeightsTable()
         left_column_layout.addWidget(
-            QLabel("<h4>Weights</h4>"), 0, alignment=Qt.AlignTop
-        )
-        left_column_layout.addWidget(
             self._portfolioWeightsTable, 0, alignment=Qt.AlignTop
         )
 

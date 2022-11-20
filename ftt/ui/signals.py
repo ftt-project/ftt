@@ -7,3 +7,6 @@ class ApplicationSignals(QObject):
     newPortfolioDialogDisplayed = Signal()
     newPortfolioVersionDialogDisplayed = Signal()
     deletePortfolioVersionDialogDisplayed = Signal()
+    addSecurityDialogDisplayed = Signal()
+    selectedPortfolioVersionSecuritiesChanged = Signal()
+    addSecurityDialogClosed = Signal()

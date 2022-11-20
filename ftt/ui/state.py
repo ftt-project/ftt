@@ -24,6 +24,7 @@ portfolio_screen_configurations = {
         "portfolio_version_unselected",
         "new_portfolio_version_screen",
         "delete_portfolio_version_screen",
+        "add_security_screen",
     ],
     "transitions": [
         {
@@ -73,6 +74,24 @@ portfolio_screen_configurations = {
             "dest": "portfolio_version_unselected",
             "after": "emit_portfolio_version_deleted_signal",
         },
+        {
+            "trigger": "display_add_security_dialog",
+            "source": "portfolio_version_selected",
+            "dest": "add_security_screen",
+            "after": "emit_add_security_dialog_displayed_signal",
+        },
+        {
+            "trigger": "close_add_security_dialog",
+            "source": "add_security_screen",
+            "dest": "portfolio_version_selected",
+            "after": "emit_add_security_dialog_closed_signal",
+        },
+        {
+            "trigger": "confirm_add_security_dialog",
+            "source": "add_security_screen",
+            "dest": "portfolio_version_selected",
+            "after": "emit_add_security_dialog_confirmed_signal",
+        }
     ],
     "initial": "portfolio_version_unselected",
 }
@@ -156,3 +175,12 @@ class ApplicationState:
         self.model.portfolio_version_id = None
         self.signals.selectedPortfolioChanged.emit(self.model.portfolio_id)
         self.signals.selectedPortfolioVersionChanged.emit(None)
+
+    def emit_add_security_dialog_displayed_signal(self):
+        self.signals.addSecurityDialogDisplayed.emit()
+
+    def emit_add_security_dialog_confirmed_signal(self):
+        self.signals.selectedPortfolioVersionSecuritiesChanged.emit()
+
+    def emit_add_security_dialog_closed_signal(self):
+        self.signals.addSecurityDialogClosed.emit()
