@@ -19,7 +19,7 @@ from ftt.portfolio_management.allocation_strategies import AllocationStrategyRes
 from ftt.portfolio_management.optimization_strategies import (
     OptimizationStrategyResolver,
 )
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage.data_objects.security_dto import SecurityValueObject
 
 
 @command
@@ -48,7 +48,7 @@ def example():
     PortfolioDetails(ctx, portfolio).render()
 
     security_dtos = [
-        SecurityDTO(symbol=symbol) for symbol in config_result.value.symbols
+        SecurityValueObject(symbol=symbol) for symbol in config_result.value.symbols
     ]
 
     with ctx.console.status("[bold green]Loading securities information") as _:

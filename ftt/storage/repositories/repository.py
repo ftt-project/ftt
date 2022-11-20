@@ -5,7 +5,7 @@ from datetime import datetime
 import peewee
 from playhouse.shortcuts import update_model_from_dict  # type: ignore
 
-from ftt.storage.data_objects import DTOInterface
+from ftt.storage.data_objects import ValueObjectInterface
 from ftt.storage.errors import PersistingError
 from ftt.storage.models.base import Base
 
@@ -28,7 +28,7 @@ class Repository(ABC):
         return result
 
     @classmethod
-    def _update(cls, instance, data: DTOInterface) -> Base:
+    def _update(cls, instance, data: ValueObjectInterface) -> Base:
         try:
             dict_data = asdict(data)
             present_data = {k: v for k, v in dict_data.items() if v is not None}

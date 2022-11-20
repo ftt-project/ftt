@@ -31,8 +31,8 @@ from ftt.handlers.securities_information_prices_loading_handler import (
     SecuritiesInformationPricesLoadingHandler,
 )
 from ftt.handlers.weights_list_handler import WeightsListHandler
-from ftt.storage.data_objects.portfolio_dto import PortfolioDTO
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage.data_objects.portfolio_dto import PortfolioValueObject
+from ftt.storage.data_objects.security_dto import SecurityValueObject
 
 
 @command("portfolios")
@@ -142,7 +142,7 @@ class PortfoliosCommands:
             # TODO why both?
             securities_result = SecuritiesInformationPricesLoadingHandler().handle(
                 securities=[
-                    SecurityDTO(symbol=symbol) for symbol in config_result.value.symbols
+                    SecurityValueObject(symbol=symbol) for symbol in config_result.value.symbols
                 ],
                 portfolio_version=portfolio_result.value.versions[0],
             )
@@ -155,7 +155,7 @@ class PortfoliosCommands:
 
         association_result = PortfolioAssociateSecuritiesHandler().handle(
             securities=[
-                SecurityDTO(symbol=symbol) for symbol in config_result.value.symbols
+                SecurityValueObject(symbol=symbol) for symbol in config_result.value.symbols
             ],
             portfolio_version=portfolio_result.value.versions[0],
         )
@@ -192,7 +192,7 @@ class PortfoliosCommands:
             ctx.console.print("[green]Nothing to update")
             return
 
-        dto = PortfolioDTO(**params)
+        dto = PortfolioValueObject(**params)
         result = PortfolioUpdateHandler().handle(
             portfolio=portfolio_result.value, dto=dto
         )

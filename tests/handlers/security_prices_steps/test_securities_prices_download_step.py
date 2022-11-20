@@ -6,7 +6,7 @@ from pandas import DataFrame
 from ftt.handlers.security_prices_steps.securities_prices_download_step import (
     SecurityPricesDownloadStep,
 )
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
 
 
 class TestSecurityPricesDownloadStep:
@@ -16,7 +16,7 @@ class TestSecurityPricesDownloadStep:
 
     @pytest.fixture
     def portfolio_version_dto(self):
-        return PortfolioVersionDTO(
+        return PortfolioVersionValueObject(
             period_start=datetime.today(),
             period_end=datetime.today(),
             interval="1d",

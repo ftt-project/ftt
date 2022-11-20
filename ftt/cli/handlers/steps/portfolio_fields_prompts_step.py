@@ -7,16 +7,16 @@ from result import Ok, Result
 
 from ftt.cli.token import Token
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.data_objects.portfolio_dto import PortfolioDTO
+from ftt.storage.data_objects.portfolio_dto import PortfolioValueObject
 
 
 class PortfolioFieldsPromptsStep(AbstractStep):
     key = "portfolio_dto"
 
     @classmethod
-    def process(cls) -> Result[PortfolioDTO, Optional[str]]:
+    def process(cls) -> Result[PortfolioValueObject, Optional[str]]:
         name = cls.prompt_name()
-        dto = PortfolioDTO(
+        dto = PortfolioValueObject(
             name=name,
         )
 

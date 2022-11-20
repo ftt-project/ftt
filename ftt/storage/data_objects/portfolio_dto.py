@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from ftt.storage.data_objects import DTOInterface
+from ftt.storage.data_objects import ValueObjectInterface
 
 
 @dataclass
-class PortfolioDTO(DTOInterface):
+class PortfolioValueObject(ValueObjectInterface):
     name: str

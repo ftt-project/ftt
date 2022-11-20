@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from ftt.storage.data_objects import DTOInterface
+from ftt.storage.data_objects import ValueObjectInterface
 
 
 @dataclass
-class OrderDTO(DTOInterface):
+class OrderValueObject(ValueObjectInterface):
     status: Optional[str] = None
     execution_size: Optional[float] = None
     execution_price: Optional[float] = None

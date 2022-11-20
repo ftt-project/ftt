@@ -6,8 +6,8 @@ import pytest
 
 import ftt
 from ftt.cli.commands.portfolios_commands import PortfoliosCommands
-from ftt.storage.data_objects.portfolio_dto import PortfolioDTO
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
+from ftt.storage.data_objects.portfolio_dto import PortfolioValueObject
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
 from ftt.storage.models import Portfolio
 
 
@@ -198,8 +198,8 @@ class TestPortfoliosCommands:
         )
         prompt_mocker.return_value.handle.return_value.is_err.return_value = False
         prompt_mocker.return_value.handle.return_value.value = {
-            "portfolio_dto": PortfolioDTO(name="Utilities"),
-            "portfolio_version_dto": PortfolioVersionDTO(
+            "portfolio_dto": PortfolioValueObject(name="Utilities"),
+            "portfolio_version_dto": PortfolioVersionValueObject(
                 value=113.0,
                 period_start="2019-01-01",
                 period_end="2019-12-31",

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from ftt.storage.data_objects.portfolio_dto import PortfolioDTO
+from ftt.storage.data_objects.portfolio_dto import PortfolioValueObject
 from ftt.storage.errors import PersistingError
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.repositories.portfolios_repository import PortfoliosRepository
@@ -45,7 +45,7 @@ class TestPortfoliosRepository:
         assert Portfolio.get(portfolio.id).name == "New name"
 
     def test_update(self, subject, portfolio):
-        dto = PortfolioDTO(name="New name")
+        dto = PortfolioValueObject(name="New name")
         result = subject.update(portfolio, dto)
 
         assert result == portfolio
@@ -53,7 +53,7 @@ class TestPortfoliosRepository:
 
     def test_update_unknown_fields(self, subject, portfolio):
         @dataclass
-        class FakeDTO(PortfolioDTO):
+        class FakeDTO(PortfolioValueObject):
             field: str = "value"
 
         dto = FakeDTO(name="New name")
@@ -63,7 +63,7 @@ class TestPortfoliosRepository:
         assert "Failed to persist `Portfolio` with params" in str(exc.value)
 
     def test_update_missing_field(self, subject, portfolio):
-        dto = PortfolioDTO(name="")
+        dto = PortfolioValueObject(name="")
         with pytest.raises(PersistingError) as exc:
             subject.update(portfolio=portfolio, dto=dto)
 

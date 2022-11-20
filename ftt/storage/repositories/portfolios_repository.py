@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from ftt.storage.data_objects import DTOInterface
+from ftt.storage.data_objects import ValueObjectInterface
 from ftt.storage.models.base import Base
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -59,5 +59,5 @@ class PortfoliosRepository(Repository):
         return list(result)
 
     @classmethod
-    def update(cls, portfolio: Portfolio, dto: DTOInterface) -> Portfolio:
+    def update(cls, portfolio: Portfolio, dto: ValueObjectInterface) -> Portfolio:
         return cls._update(portfolio, dto)

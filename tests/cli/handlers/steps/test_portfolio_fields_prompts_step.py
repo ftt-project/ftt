@@ -5,7 +5,7 @@ import pytest
 from ftt.cli.handlers.steps.portfolio_fields_prompts_step import (
     PortfolioFieldsPromptsStep,
 )
-from ftt.storage.data_objects.portfolio_dto import PortfolioDTO
+from ftt.storage.data_objects.portfolio_dto import PortfolioValueObject
 
 
 class TestPortfolioFieldsPromptsStep:
@@ -31,5 +31,5 @@ class TestPortfolioFieldsPromptsStep:
     def test_process_returns_dto(self, subject, prompt_mock):
         result = subject.process()
 
-        assert type(result.value) == PortfolioDTO
+        assert type(result.value) == PortfolioValueObject
         assert result.value.name == "Utilities"

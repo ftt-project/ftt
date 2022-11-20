@@ -4,7 +4,7 @@ from result import Ok, Err
 from ftt.handlers.securities_steps.securities_info_download_step import (
     SecuritiesInfoDownloadStep,
 )
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage.data_objects.security_dto import SecurityValueObject
 
 
 class TestSecuritiesInfoDownloadStep:
@@ -14,7 +14,7 @@ class TestSecuritiesInfoDownloadStep:
 
     @pytest.fixture
     def security_dto(self):
-        return SecurityDTO(
+        return SecurityValueObject(
             symbol="AAAA",
         )
 

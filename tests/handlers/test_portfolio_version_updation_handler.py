@@ -3,7 +3,7 @@ import pytest
 from ftt.handlers.portfolio_version_updation_handler import (
     PortfolioVersionUpdationHandler,
 )
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
 
 
 class TestPortfolioVersionUpdateHandler:
@@ -13,7 +13,7 @@ class TestPortfolioVersionUpdateHandler:
 
     @pytest.fixture
     def dto(self):
-        return PortfolioVersionDTO(
+        return PortfolioVersionValueObject(
             value=110,
             period_start="2019-01-01",
             period_end="2019-01-31",

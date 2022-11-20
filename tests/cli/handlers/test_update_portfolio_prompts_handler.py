@@ -5,7 +5,7 @@ import pytest
 from ftt.cli.handlers.update_portfolio_prompts_handler import (
     UpdatePortfolioPromptsHandler,
 )
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
 
 
 class TestUpdatePortfolioPromptsHandler:
@@ -23,7 +23,7 @@ class TestUpdatePortfolioPromptsHandler:
         return mock
 
     def test_prompts_single_field(self, subject, prompt_mock):
-        result = subject.handle(defaults=PortfolioVersionDTO())
+        result = subject.handle(defaults=PortfolioVersionValueObject())
 
         assert result.is_ok()
         assert result.value.value == 101.10

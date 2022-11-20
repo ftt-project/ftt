@@ -4,7 +4,7 @@ from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.portfolio_management.dtos import PortfolioAllocationDTO
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage.data_objects.security_dto import SecurityValueObject
 
 
 class PortfolioPrepareEmptyWeightsStep(AbstractStep):
@@ -12,7 +12,7 @@ class PortfolioPrepareEmptyWeightsStep(AbstractStep):
 
     @classmethod
     def process(
-        cls, securities: List[SecurityDTO]
+        cls, securities: List[SecurityValueObject]
     ) -> Result[PortfolioAllocationDTO, Optional[str]]:
         result = dict(
             zip([security.symbol for security in securities], [0.0 for _ in securities])

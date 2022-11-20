@@ -170,12 +170,23 @@ class AddSecuritiesDialog(QDialog):
         SearchSecurityFormElement(self.model).createUI(self)
         SecuritiesTable(self.model).createUI(self)
 
-        buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Save)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         self._layout.addWidget(buttons)
 
     def accept(self) -> None:
+        # Similarly to PortfolioVersionSecuritiesAddingHandler, we need to
+        # load securities information from yfinance
+        # 1. in the case of successful retrieving basic information do nothing and wait for "save" button
+        # when "save" clicked
+        #      upsert a new security,
+        #      associate with portfolio version
+        #      emit a signal to update the table, and close the dialog
+        # 2. in the case of failure,
+        #      show a message box with the error under the search input
+        #      and leave the dialog open
+        # Additionally, keep the "add button" disabled and replace text to "Loading ..."
         self._state.confirm_add_security_dialog()
         super().accept()
 

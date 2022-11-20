@@ -3,7 +3,7 @@ from unittest.mock import call
 import pytest
 
 from ftt.cli.commands.portfolio_versions_commands import PortfolioVersionsCommands
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
+from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
 
 
 class TestPortfolioVersionsCommands:
@@ -150,7 +150,7 @@ class TestPortfolioVersionsCommands:
         prompt_mocker = mocker.patch(
             "ftt.cli.commands.portfolio_versions_commands.UpdatePortfolioPromptsHandler"
         )
-        prompt_mocker.return_value.handle.return_value.value = PortfolioVersionDTO(
+        prompt_mocker.return_value.handle.return_value.value = PortfolioVersionValueObject(
             value=100,
             period_start="2021-01-01",
             period_end="2021-04-20",

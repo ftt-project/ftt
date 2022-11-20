@@ -4,7 +4,7 @@ from pandas import DataFrame
 from ftt.handlers.portfolio_version_securities_adding_handler import (
     PortfolioVersionSecuritiesAddingHandler,
 )
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage.data_objects.security_dto import SecurityValueObject
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 
 
@@ -16,7 +16,7 @@ class TestPortfolioVersionSecuritiesAddingHandler:
     @pytest.fixture
     def securities_dtos_list(self):
         return [
-            SecurityDTO(
+            SecurityValueObject(
                 symbol="AAPL",
                 quote_type="EQUITY",
                 sector="Technology",

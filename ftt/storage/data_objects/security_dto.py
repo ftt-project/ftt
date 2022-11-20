@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from ftt.storage.data_objects import DTOInterface
+from ftt.storage.data_objects import ValueObjectInterface
 
 
 @dataclass
-class SecurityDTO(DTOInterface):
+class SecurityValueObject(ValueObjectInterface):
     symbol: str
     quote_type: Optional[str] = None
     sector: Optional[str] = None

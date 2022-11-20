@@ -3,11 +3,11 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from ftt.storage.data_objects import DTOInterface
+from ftt.storage.data_objects import ValueObjectInterface
 
 
 @dataclass
-class PortfolioVersionDTO(DTOInterface):
+class PortfolioVersionValueObject(ValueObjectInterface):
     period_start: Optional[datetime] = None
     period_end: Optional[datetime] = None
     interval: Optional[str] = None

@@ -3,7 +3,7 @@ import pytest
 from ftt.handlers.portfolio_associate_securities_hanlder import (
     PortfolioAssociateSecuritiesHandler,
 )
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage.data_objects.security_dto import SecurityValueObject
 
 
 class TestPortfolioAssociateSecuritiesHandler:
@@ -15,7 +15,7 @@ class TestPortfolioAssociateSecuritiesHandler:
         self, subject, portfolio, portfolio_version, security
     ):
         result = subject.handle(
-            securities=[SecurityDTO(symbol=security.symbol)],
+            securities=[SecurityValueObject(symbol=security.symbol)],
             portfolio_version=portfolio_version,
         )
 
