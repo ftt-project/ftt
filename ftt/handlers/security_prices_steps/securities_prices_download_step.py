@@ -5,7 +5,7 @@ from pandas_datareader import data as pdr
 from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
+from ftt.storage.value_objects import PortfolioVersionValueObject
 from ftt.storage.models import PortfolioVersion
 from ftt.storage.models.security import Security
 

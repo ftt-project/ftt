@@ -6,7 +6,7 @@ import pytest
 from ftt.handlers.securities_information_prices_loading_handler import (
     SecuritiesInformationPricesLoadingHandler,
 )
-from ftt.storage.data_objects.security_dto import SecurityValueObject
+from ftt.storage.value_objects import SecurityValueObject
 from ftt.storage.models.security import Security
 
 

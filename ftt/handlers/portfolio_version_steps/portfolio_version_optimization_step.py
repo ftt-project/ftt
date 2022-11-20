@@ -8,9 +8,7 @@ from ftt.portfolio_management.optimization_strategies import (
     OptimizationStrategyResolver,
     AbstractOptimizationStrategy,
 )
-from ftt.storage.data_objects.portfolio_security_prices_range_dto import (
-    PortfolioSecurityPricesRangeValueObject,
-)
+from ftt.storage.value_objects import PortfolioSecurityPricesRangeValueObject
 from ftt.storage.models import PortfolioVersion
 
 

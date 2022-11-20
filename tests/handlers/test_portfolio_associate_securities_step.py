@@ -3,7 +3,7 @@ import pytest
 from ftt.handlers.portfolio_associate_securities_hanlder import (
     PortfolioAssociateSecuritiesHandler,
 )
-from ftt.storage.data_objects.security_dto import SecurityValueObject
+from ftt.storage.value_objects import SecurityValueObject
 
 
 class TestPortfolioAssociateSecuritiesHandler:

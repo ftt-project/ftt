@@ -1,7 +1,7 @@
 from result import Result, Ok
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.data_objects.order_dto import OrderValueObject
+from ftt.storage.value_objects import OrderValueObject
 from ftt.storage.models import Order
 from ftt.storage.repositories.orders_repository import OrdersRepository
 

@@ -6,7 +6,7 @@ from pandas import DataFrame
 from ftt.handlers.security_prices_steps.securities_prices_download_step import (
     SecurityPricesDownloadStep,
 )
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
+from ftt.storage.value_objects import PortfolioVersionValueObject
 
 
 class TestSecurityPricesDownloadStep:

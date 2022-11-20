@@ -31,8 +31,7 @@ from ftt.handlers.securities_information_prices_loading_handler import (
     SecuritiesInformationPricesLoadingHandler,
 )
 from ftt.handlers.weights_list_handler import WeightsListHandler
-from ftt.storage.data_objects.portfolio_dto import PortfolioValueObject
-from ftt.storage.data_objects.security_dto import SecurityValueObject
+from ftt.storage.value_objects import PortfolioValueObject, SecurityValueObject
 
 
 @command("portfolios")

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from ftt.storage.data_objects.portfolio_dto import PortfolioValueObject
+from ftt.storage.value_objects import PortfolioValueObject
 from ftt.storage.errors import PersistingError
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.repositories.portfolios_repository import PortfoliosRepository

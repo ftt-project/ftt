@@ -1,7 +1,7 @@
 import pytest
 
 from ftt.handlers.order_update_handler import OrderUpdateHandler
-from ftt.storage.data_objects.order_dto import OrderValueObject
+from ftt.storage.value_objects import OrderValueObject
 from ftt.storage.models import Order
 from tests.helpers import reload_record
 

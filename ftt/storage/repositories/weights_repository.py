@@ -3,7 +3,7 @@ from typing import List
 
 import peewee
 
-from ftt.storage.data_objects import ValueObjectInterface
+from ftt.storage.value_objects import ValueObjectInterface
 from ftt.storage.models.base import Base
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.models.security import Security

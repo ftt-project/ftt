@@ -4,7 +4,7 @@ from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.portfolio_management.dtos import PortfolioAllocationDTO
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
+from ftt.storage.value_objects import PortfolioVersionValueObject
 from ftt.storage.models import Weight
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.repositories.portfolio_versions_repository import (

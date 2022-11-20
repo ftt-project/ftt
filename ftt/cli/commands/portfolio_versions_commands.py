@@ -38,9 +38,7 @@ from ftt.portfolio_management.allocation_strategies import AllocationStrategyRes
 from ftt.portfolio_management.optimization_strategies import (
     OptimizationStrategyResolver,
 )
-from ftt.storage.data_objects import is_empty
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
-from ftt.storage.data_objects.security_dto import SecurityValueObject
+from ftt.storage.value_objects import PortfolioVersionValueObject, SecurityValueObject, is_empty
 
 
 @command("portfolio-versions")

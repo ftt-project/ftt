@@ -1,7 +1,7 @@
 from result import Result, Ok
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.data_objects.weight_dto import WeightValueObject
+from ftt.storage.value_objects import WeightValueObject
 from ftt.storage.models import Weight
 from ftt.storage.repositories.weights_repository import WeightsRepository
 

@@ -6,8 +6,7 @@ import pytest
 
 import ftt
 from ftt.cli.commands.portfolios_commands import PortfoliosCommands
-from ftt.storage.data_objects.portfolio_dto import PortfolioValueObject
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
+from ftt.storage.value_objects import PortfolioValueObject, PortfolioVersionValueObject
 from ftt.storage.models import Portfolio
 
 

@@ -4,7 +4,7 @@ import pytest
 from ftt.handlers.security_prices_steps.security_prices_upsert_step import (
     SecurityPricesUpsertStep,
 )
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
+from ftt.storage.value_objects import PortfolioVersionValueObject
 
 
 class TestSecurityPricesUpsertStep:

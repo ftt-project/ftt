@@ -4,8 +4,8 @@ import pytest
 
 from ftt.cli.handlers.steps.portfolio_version_fields_prompts_step import (
     PortfolioVersionFieldsPromptsStep,
-    PortfolioVersionValueObject,
 )
+from ftt.storage.value_objects import PortfolioVersionValueObject
 
 
 class TestPortfolioVersionFieldsPromptsStep:

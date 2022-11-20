@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 
 import peewee
 
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
+from ftt.storage.value_objects import PortfolioVersionValueObject
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.repositories.repository import Repository

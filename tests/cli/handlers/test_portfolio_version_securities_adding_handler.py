@@ -4,7 +4,7 @@ from pandas import DataFrame
 from ftt.handlers.portfolio_version_securities_adding_handler import (
     PortfolioVersionSecuritiesAddingHandler,
 )
-from ftt.storage.data_objects.security_dto import SecurityValueObject
+from ftt.storage.value_objects import SecurityValueObject
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 
 

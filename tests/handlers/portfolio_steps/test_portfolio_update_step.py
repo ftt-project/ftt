@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import pytest
 
 from ftt.handlers.portfolio_steps.portfolio_update_step import PortfolioUpdateStep
-from ftt.storage.data_objects.portfolio_dto import PortfolioValueObject
+from ftt.storage.value_objects import PortfolioValueObject
 
 
 class TestPortfolioUpdateStep:

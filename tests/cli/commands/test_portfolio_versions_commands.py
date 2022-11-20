@@ -3,7 +3,7 @@ from unittest.mock import call
 import pytest
 
 from ftt.cli.commands.portfolio_versions_commands import PortfolioVersionsCommands
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
+from ftt.storage.value_objects import PortfolioVersionValueObject
 
 
 class TestPortfolioVersionsCommands:

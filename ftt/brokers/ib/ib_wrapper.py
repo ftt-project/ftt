@@ -10,7 +10,7 @@ from ibapi.order_state import OrderState
 from ftt.brokers.position import Position
 from ftt.handlers.order_update_handler import OrderUpdateHandler
 from ftt.logger import Logger
-from ftt.storage.data_objects.order_dto import OrderValueObject
+from ftt.storage.value_objects import OrderValueObject
 
 
 class IBWrapper(EWrapper):

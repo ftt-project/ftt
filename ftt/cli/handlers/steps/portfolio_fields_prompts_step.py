@@ -7,7 +7,7 @@ from result import Ok, Result
 
 from ftt.cli.token import Token
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.data_objects.portfolio_dto import PortfolioValueObject
+from ftt.storage.value_objects import PortfolioValueObject
 
 
 class PortfolioFieldsPromptsStep(AbstractStep):

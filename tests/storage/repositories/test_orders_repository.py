@@ -119,7 +119,7 @@ class TestOrdersRepository:
         assert sell_result is None
 
     def test_update_returns_success(self, subject, order):
-        from ftt.storage.data_objects.order_dto import OrderValueObject
+        from ftt.storage.value_objects import OrderValueObject
 
         dto = OrderValueObject(status=Order.Status.COMPLETED, execution_size=1)
 

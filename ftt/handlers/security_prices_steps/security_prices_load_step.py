@@ -4,9 +4,7 @@ from typing import Optional
 from result import Ok, Err, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.data_objects.portfolio_security_prices_range_dto import (
-    PortfolioSecurityPricesRangeValueObject,
-)
+from ftt.storage.value_objects import PortfolioSecurityPricesRangeValueObject
 from ftt.storage.models import PortfolioVersion
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 from ftt.storage.repositories.security_prices_repository import SecurityPricesRepository

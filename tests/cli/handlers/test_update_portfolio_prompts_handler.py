@@ -5,7 +5,7 @@ import pytest
 from ftt.cli.handlers.update_portfolio_prompts_handler import (
     UpdatePortfolioPromptsHandler,
 )
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
+from ftt.storage.value_objects import PortfolioVersionValueObject
 
 
 class TestUpdatePortfolioPromptsHandler:

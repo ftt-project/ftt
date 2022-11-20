@@ -4,7 +4,7 @@ from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.portfolio_management.dtos import PortfolioAllocationDTO
-from ftt.storage.data_objects.security_dto import SecurityValueObject
+from ftt.storage.value_objects import SecurityValueObject
 
 
 class PortfolioPrepareEmptyWeightsStep(AbstractStep):

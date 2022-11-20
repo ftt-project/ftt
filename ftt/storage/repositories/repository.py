@@ -5,7 +5,7 @@ from datetime import datetime
 import peewee
 from playhouse.shortcuts import update_model_from_dict  # type: ignore
 
-from ftt.storage.data_objects import ValueObjectInterface
+from ftt.storage.value_objects import ValueObjectInterface
 from ftt.storage.errors import PersistingError
 from ftt.storage.models.base import Base
 

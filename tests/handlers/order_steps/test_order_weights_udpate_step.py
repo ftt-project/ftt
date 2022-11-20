@@ -1,7 +1,7 @@
 import pytest
 
 from ftt.handlers.order_steps.order_weights_udpate_step import OrderWeightsUpdateStep
-from ftt.storage.data_objects.order_dto import OrderValueObject
+from ftt.storage.value_objects import OrderValueObject
 
 
 class TestOrderWeightsUpdateStep:

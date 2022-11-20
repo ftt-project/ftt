@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from ftt.storage.data_objects import ValueObjectInterface
+from ftt.storage.value_objects import ValueObjectInterface
 from ftt.storage.models.base import Base
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion

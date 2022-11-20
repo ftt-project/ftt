@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List
 
 from ftt.logger import Logger
-from ftt.storage.data_objects.order_dto import OrderValueObject
+from ftt.storage.value_objects import OrderValueObject
 from ftt.storage.models.base import Base
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio

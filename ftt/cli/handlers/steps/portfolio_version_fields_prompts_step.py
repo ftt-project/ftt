@@ -9,7 +9,7 @@ from result import Ok, Result
 
 from ftt.cli.token import Token
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
+from ftt.storage.value_objects import PortfolioVersionValueObject
 from ftt.storage.models.portfolio_version import ACCEPTABLE_INTERVALS
 
 

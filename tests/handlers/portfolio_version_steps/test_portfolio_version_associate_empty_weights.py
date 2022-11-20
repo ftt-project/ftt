@@ -3,7 +3,7 @@ import pytest
 from ftt.handlers.portfolio_version_steps.portfolio_version_associate_empty_weights_step import (
     PortfolioVersionAssociateEmptyWeightsStep,
 )
-from ftt.storage.data_objects.security_dto import SecurityValueObject
+from ftt.storage.value_objects import SecurityValueObject
 
 
 class TestPortfolioVersionAssociateEmptyWeights:

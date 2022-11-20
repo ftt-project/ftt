@@ -5,7 +5,7 @@ import pytest
 from ftt.handlers.portfolio_version_steps.portfolio_version_update_step import (
     PortfolioVersionUpdateStep,
 )
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
+from ftt.storage.value_objects import PortfolioVersionValueObject
 
 
 class TestPortfolioVersionUpdateStep:

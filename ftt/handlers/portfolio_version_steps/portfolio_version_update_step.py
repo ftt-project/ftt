@@ -3,7 +3,7 @@ from typing import Optional
 from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionValueObject
+from ftt.storage.value_objects import PortfolioVersionValueObject
 from ftt.storage.errors import PersistingError
 from ftt.storage.models import PortfolioVersion
 from ftt.storage.repositories.portfolio_versions_repository import (
