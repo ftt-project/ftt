@@ -1,7 +1,7 @@
 from ftt.storage.models.security_price import SecurityPrice
 
 
-class TestTickerReturn:
+class TestSecurityPrice:
     def test_table(self):
         assert SecurityPrice._meta.table_name == "security_prices"
 
