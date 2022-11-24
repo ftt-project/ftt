@@ -1,5 +1,5 @@
-from PySide6.QtCore import Slot
-from PySide6.QtGui import QAction, Qt
+from PySide6.QtCore import Slot, Qt
+from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QMainWindow,
     QWidget,
@@ -57,7 +57,10 @@ class MainWidget(QWidget):
         self._layout.addWidget(self._center)
 
         self._state.signals.selectedPortfolioChanged.connect(
-            lambda _: self._center.setCurrentIndex(1)
+            lambda: self._center.setCurrentIndex(1)
+        )
+        self._state.signals.welcomeScreenDisplayed.connect(
+            lambda: self._center.setCurrentIndex(0)
         )
 
 

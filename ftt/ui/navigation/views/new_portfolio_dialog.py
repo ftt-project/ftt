@@ -1,15 +1,13 @@
 from enum import Enum
 from typing import Union, Any
 
-from PySide6.QtCore import QAbstractTableModel, QPersistentModelIndex, QModelIndex, QMetaObject, Slot
-from PySide6.QtGui import QValidator, Qt, QColor
+from PySide6.QtCore import QAbstractTableModel, QPersistentModelIndex, QModelIndex, Slot
+from PySide6.QtGui import QValidator, Qt
 from PySide6.QtWidgets import (
     QDialog,
-    QHBoxLayout,
     QLineEdit,
     QLabel,
     QDialogButtonBox,
-    QVBoxLayout,
     QWidget, QCompleter, QPushButton, QTableView, QHeaderView, QSizePolicy, QFormLayout,
 )
 from result import Ok, Err
@@ -24,6 +22,16 @@ class PortfolioNameValidator(QValidator):
         if len(text) < 2:
             return QValidator.Intermediate
         elif len(text) >= 30:
+            return QValidator.Invalid
+        else:
+            return QValidator.Acceptable
+
+
+class SecuritySymbolValidator(QValidator):
+    def validate(self, text, pos):
+        if len(text) == 0:
+            return QValidator.Intermediate
+        elif len(text) >= 10:
             return QValidator.Invalid
         else:
             return QValidator.Acceptable
@@ -79,44 +87,36 @@ class SecuritiesModel(QAbstractTableModel):
         return True
 
 
-class SearchSecurityFormElement(QWidget):
+class SearchSecurityFormElementBuilder(QWidget):
     def __init__(self, model: SecuritiesModel):
         super().__init__()
-        self.confirm_button = None
+        self.lookup_confirm_button = None
         self.search_input = None
         self.model = model
         self._state = get_state()
         self.completer = QCompleter(self.model)
 
     def createUI(self, dialog: QDialog):
-        layout = QHBoxLayout(self)
-        layout.addWidget(QLabel("Security Name"))
         self.search_input = QLineEdit()
+        self.search_input.setMinimumWidth(300)
         self.search_input.setObjectName("search_input")
         self.search_input.setCompleter(self.completer)
-        layout.addWidget(self.search_input)
+        self.search_input.setValidator(SecuritySymbolValidator())
+        self.search_input.textChanged.connect(self.on_search_input_text_changed)
+        dialog.layout().addRow("Security Name", self.search_input)
 
-        self.confirm_button = QPushButton("Look up and add")
-        self.confirm_button.setObjectName("confirm_button")
-        layout.addWidget(self.confirm_button)
-
-        QMetaObject.connectSlotsByName(self)
-
-        dialog.layout().addWidget(self)
-
-        self._state.signals.selectedPortfolioVersionSecuritiesChanged.connect(
-            lambda: self.search_input.clear()
-        )
-        self._state.signals.addSecurityDialogClosed.connect(
-            lambda: self.search_input.clear()
-        )
+        self.lookup_confirm_button = QPushButton("Look up and add")
+        self.lookup_confirm_button.setObjectName("confirm_button")
+        self.lookup_confirm_button.setEnabled(False)
+        self.lookup_confirm_button.clicked.connect(self.on_confirm_button_clicked)
+        dialog.layout().addRow("", self.lookup_confirm_button)
 
     def validate(self):
-        return True
+        return self.search_input.hasAcceptableInput()
 
     @Slot()
-    def on_search_input_textChanged(self):
-        pass
+    def on_search_input_text_changed(self):
+        self.lookup_confirm_button.setEnabled(self.validate())
 
     @Slot()
     def on_confirm_button_clicked(self):
@@ -129,7 +129,7 @@ class SearchSecurityFormElement(QWidget):
         self.search_input.clear()
 
 
-class SecuritiesTableFormElement(QWidget):
+class SecuritiesTableFormElementBuilder(QWidget):
     def __init__(self, model: SecuritiesModel):
         super().__init__()
         self._state = get_state()
@@ -137,8 +137,6 @@ class SecuritiesTableFormElement(QWidget):
         self.model = model
 
     def createUI(self, dialog: QDialog):
-        layout = QHBoxLayout(self)
-
         self.table = QTableView()
         self.table.setModel(self.model)
 
@@ -155,8 +153,7 @@ class SecuritiesTableFormElement(QWidget):
         size.setHorizontalStretch(1)
         self.table.setSizePolicy(size)
 
-        layout.addWidget(self.table)
-        dialog.layout().addWidget(self)
+        dialog.layout().addRow(self.table)
 
         self._state.signals.selectedPortfolioVersionSecuritiesChanged.connect(
             lambda: self.model.removeRows(0, self.model.rowCount(), QModelIndex())
@@ -172,7 +169,7 @@ class SecuritiesTableFormElement(QWidget):
         self.model.removeRows(0, self.model.rowCount(), QModelIndex())
 
 
-class PortfolioNameFormElement(QWidget):
+class PortfolioNameFormElementBuilder(QWidget):
     def __init__(self):
         super().__init__()
         self.validation_message = None
@@ -180,33 +177,23 @@ class PortfolioNameFormElement(QWidget):
         self.name_field = None
 
     def createUI(self, dialog: QDialog):
-        self.main_layout = QVBoxLayout(self)
-
-        layout = QHBoxLayout()
-        layout.addWidget(QLabel("Portfolio Name"))
         self.name_field = QLineEdit()
         self.name_field.setMinimumWidth(300)
         self.name_field.setObjectName("name_input")
         self.name_field.setValidator(PortfolioNameValidator())
-        layout.addWidget(self.name_field)
+        self.name_field.textChanged.connect(self.on_name_field_text_changed)
+        dialog.layout().addRow("Portfolio Name", self.name_field)
 
-        validation_message_layout = QVBoxLayout()
         self.validation_message = QLabel(
             "- Portfolio name must be unique longer than 2 symbols<br>"
             "- Portfolio name must shorter than 30 symbols"
         )
         self.validation_message.setVisible(False)
-        validation_message_layout.addWidget(self.validation_message)
-
-        self.main_layout.addLayout(layout)
-        self.main_layout.addLayout(validation_message_layout)
-
-        QMetaObject.connectSlotsByName(self)
-        dialog.layout().addWidget(self)
+        dialog.layout().addRow("", self.validation_message)
 
     @Slot()
-    def on_name_input_textChanged(self):
-        pass
+    def on_name_field_text_changed(self):
+        self.validate()
 
     def validate(self) -> bool:
         if self.name_field.hasAcceptableInput():
@@ -253,12 +240,12 @@ class NewPortfolioDialog(QDialog):
 
     def createUI(self):
         self.setWindowTitle("New Portfolio")
-        self._layout = QVBoxLayout(self)
+        self._layout = QFormLayout(self)
 
         self._form_elements = FormElements(
-            PortfolioNameFormElement(),
-            SearchSecurityFormElement(self._securities_model),
-            SecuritiesTableFormElement(self._securities_model),
+            PortfolioNameFormElementBuilder(),
+            SearchSecurityFormElementBuilder(self._securities_model),
+            SecuritiesTableFormElementBuilder(self._securities_model),
         )
         self._form_elements.createUI(self)
 

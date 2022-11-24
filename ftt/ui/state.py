@@ -133,6 +133,14 @@ application_states_configuration = {
             "source": "new_portfolio_screen",
             "dest": "portfolio_screen",
             "after": "emit_portfolio_selected_signal",
+            "conditions": "is_portfolio_selected",
+        },
+        {
+            "trigger": "close_new_portfolio_dialog",
+            "source": "new_portfolio_screen",
+            "dest": "welcome_screen",
+            "after": "emit_welcome_screen_displayed_signal",
+            "conditions": "is_portfolio_not_selected",
         },
     ],
     "initial": "welcome_screen",
@@ -146,6 +154,12 @@ class ApplicationState:
         self.machine = HierarchicalMachine(
             **application_states_configuration, model=self
         )
+
+    def is_portfolio_selected(self, _):
+        return self.model.portfolio_id is not None
+
+    def is_portfolio_not_selected(self, _):
+        return self.model.portfolio_id is None
 
     def emit_portfolio_selected_signal(self, portfolio_id):
         self.model.portfolio_id = portfolio_id
@@ -184,3 +198,6 @@ class ApplicationState:
 
     def emit_add_security_dialog_closed_signal(self):
         self.signals.addSecurityDialogClosed.emit()
+
+    def emit_welcome_screen_displayed_signal(self, _):
+        self.signals.welcomeScreenDisplayed.emit()
