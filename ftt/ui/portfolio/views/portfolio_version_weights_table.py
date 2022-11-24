@@ -74,10 +74,10 @@ class PortfolioVersionWeightsTable(QWidget):
 
         self._layout.addLayout(buttons_layout)
 
-        add_security_dialog = AddSecuritiesDialog()
-        self._state.signals.addSecurityDialogDisplayed.connect(
-            lambda: add_security_dialog.exec()
-        )
+        # add_security_dialog = AddSecuritiesDialog()
+        # self._state.signals.addSecurityDialogDisplayed.connect(
+        #     lambda: add_security_dialog.exec()
+        # )
 
     def onPortfolioVersionSelected(self, portfolio_version_ids):
         print(f"Portfolio version selected: {portfolio_version_ids}")
