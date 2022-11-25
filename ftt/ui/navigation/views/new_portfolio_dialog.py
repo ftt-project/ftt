@@ -1,14 +1,14 @@
 from enum import Enum
 from typing import Union, Any
 
-from PySide6.QtCore import QAbstractTableModel, QPersistentModelIndex, QModelIndex, Slot
-from PySide6.QtGui import QValidator, Qt
+from PySide6.QtCore import QAbstractTableModel, QPersistentModelIndex, QModelIndex, Slot, QDate
+from PySide6.QtGui import QValidator, Qt, QIntValidator
 from PySide6.QtWidgets import (
     QDialog,
     QLineEdit,
     QLabel,
     QDialogButtonBox,
-    QWidget, QCompleter, QPushButton, QTableView, QHeaderView, QSizePolicy, QFormLayout,
+    QWidget, QCompleter, QPushButton, QTableView, QHeaderView, QSizePolicy, QFormLayout, QDateEdit,
 )
 from result import Ok, Err
 
@@ -169,10 +169,12 @@ class SecuritiesTableFormElementBuilder(QWidget):
         self.model.removeRows(0, self.model.rowCount(), QModelIndex())
 
 
-class PortfolioNameFormElementBuilder(QWidget):
+class PortfolioDetailsFormElementBuilder(QWidget):
     def __init__(self):
         super().__init__()
-        self.validation_message = None
+        self.value_field_validation_message = None
+        self.value_field = None
+        self.name_field_validation_message = None
         self.main_layout = None
         self.name_field = None
 
@@ -181,30 +183,134 @@ class PortfolioNameFormElementBuilder(QWidget):
         self.name_field.setMinimumWidth(300)
         self.name_field.setObjectName("name_input")
         self.name_field.setValidator(PortfolioNameValidator())
-        self.name_field.textChanged.connect(self.on_name_field_text_changed)
+        self.name_field.textChanged.connect(self.name_field_validate)
         dialog.layout().addRow("Portfolio Name", self.name_field)
 
-        self.validation_message = QLabel(
+        self.name_field_validation_message = QLabel(
             "- Portfolio name must be unique longer than 2 symbols<br>"
             "- Portfolio name must shorter than 30 symbols"
+        )
+        self.name_field_validation_message.setVisible(False)
+        dialog.layout().addRow("", self.name_field_validation_message)
+
+        self.value_field = QLineEdit()
+        self.name_field.setMinimumWidth(300)
+        self.value_field.setObjectName("value_input")
+        self.value_field.setValidator(QIntValidator(1, 1000000000))
+        self.value_field.setPlaceholderText("$1000")
+        self.value_field.textChanged.connect(self.value_field_validate)
+        dialog.layout().addRow("Portfolio Value", self.value_field)
+
+        self.value_field_validation_message = QLabel(
+            "- Portfolio value must be a number"
+        )
+        self.value_field_validation_message.setVisible(False)
+        dialog.layout().addRow("", self.value_field_validation_message)
+
+    @Slot()
+    def name_field_validate(self):
+        if self.name_field.hasAcceptableInput():
+            self.name_field.setStyleSheet("")
+            self.name_field_validation_message.setVisible(False)
+            return True
+        else:
+            self.name_field.setStyleSheet("border: 1px solid red;")
+            self.name_field_validation_message.setVisible(True)
+            return False
+
+    @Slot()
+    def value_field_validate(self):
+        if self.value_field.hasAcceptableInput():
+            self.value_field.setStyleSheet("")
+            self.value_field_validation_message.setVisible(False)
+            return True
+        else:
+            self.value_field.setStyleSheet("border: 1px solid red")
+            self.value_field_validation_message.setVisible(True)
+            return False
+
+    def validate(self) -> bool:
+        return all([
+            self.name_field_validate(),
+            self.value_field_validate()
+        ])
+
+    def reset(self):
+        self.name_field.clear()
+        self.value_field.clear()
+        self.name_field_validation_message.setVisible(False)
+        self.value_field_validation_message.setVisible(False)
+
+
+class PortfolioDateRangeFormElementBuilder(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.validation_message = None
+        self.main_layout = None
+        self.start_date_field = None
+        self.end_date_field = None
+
+    def createUI(self, dialog: QDialog):
+        self.start_date_field = QDateEdit()
+        self.start_date_field.setMinimumWidth(300)
+        self.start_date_field.setObjectName("start_date_input")
+        self.start_date_field.setCalendarPopup(True)
+        self.start_date_field.setDisplayFormat("yyyy-MM-dd")
+        self.start_date_field.setDate(QDate.currentDate().addYears(-2))
+        self.start_date_field.setMaximumDate(QDate.currentDate())
+        self.start_date_field.dateChanged.connect(self.start_date_field_validate)
+        dialog.layout().addRow("Start Date", self.start_date_field)
+
+        self.end_date_field = QDateEdit()
+        self.end_date_field.setMinimumWidth(300)
+        self.end_date_field.setObjectName("end_date_input")
+        self.end_date_field.setCalendarPopup(True)
+        self.end_date_field.setDisplayFormat("yyyy-MM-dd")
+        self.end_date_field.setDate(QDate.currentDate())
+        self.end_date_field.setMaximumDate(QDate.currentDate())
+        self.end_date_field.dateChanged.connect(self.end_date_field_validate)
+        dialog.layout().addRow("End Date", self.end_date_field)
+
+        self.validation_message = QLabel(
+            "- Start date must be before end date<br>"
+            "- Start date must be before today<br>"
+            "- End date must be before today"
         )
         self.validation_message.setVisible(False)
         dialog.layout().addRow("", self.validation_message)
 
     @Slot()
-    def on_name_field_text_changed(self):
-        self.validate()
-
-    def validate(self) -> bool:
-        if self.name_field.hasAcceptableInput():
+    def start_date_field_validate(self):
+        if self.start_date_field.date() < self.end_date_field.date() and \
+                self.start_date_field.date() < QDate.currentDate():
             self.validation_message.setVisible(False)
+            self.start_date_field.setStyleSheet("")
             return True
         else:
             self.validation_message.setVisible(True)
+            self.start_date_field.setStyleSheet("border: 1px solid red")
             return False
 
+    @Slot()
+    def end_date_field_validate(self):
+        if self.end_date_field.date() <= QDate.currentDate():
+            self.validation_message.setVisible(False)
+            self.end_date_field.setStyleSheet("")
+            return True
+        else:
+            self.validation_message.setVisible(True)
+            self.end_date_field.setStyleSheet("border: 1px solid red")
+            return False
+
+    def validate(self) -> bool:
+        return all([
+            self.start_date_field_validate(),
+            self.end_date_field_validate()
+        ])
+
     def reset(self):
-        self.name_field.clear()
+        self.start_date_field.setDate(QDate.currentDate().addYears(-2))
+        self.end_date_field.setDate(QDate.currentDate())
         self.validation_message.setVisible(False)
 
 
@@ -243,7 +349,8 @@ class NewPortfolioDialog(QDialog):
         self._layout = QFormLayout(self)
 
         self._form_elements = FormElements(
-            PortfolioNameFormElementBuilder(),
+            PortfolioDetailsFormElementBuilder(),
+            PortfolioDateRangeFormElementBuilder(),
             SearchSecurityFormElementBuilder(self._securities_model),
             SecuritiesTableFormElementBuilder(self._securities_model),
         )
