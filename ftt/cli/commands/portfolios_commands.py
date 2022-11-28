@@ -13,8 +13,8 @@ from ftt.cli.renderers.portfolio_versions.portfolio_versions_list import (
 )
 from ftt.cli.renderers.portfolios.portfolio_details import PortfolioDetails
 from ftt.cli.renderers.weights.weights_list import WeightsList
-from ftt.handlers.portfolio_associate_securities_hanlder import (
-    PortfolioAssociateSecuritiesHandler,
+from ftt.handlers.portfolio_version_associate_securities_hanlder import (
+    PortfolioVersionAssociateSecuritiesHandler,
 )
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
 from ftt.handlers.portfolio_with_version_creation_handler import (
@@ -152,7 +152,7 @@ class PortfoliosCommands:
                 ctx.console.print(securities_result.value)
                 return
 
-        association_result = PortfolioAssociateSecuritiesHandler().handle(
+        association_result = PortfolioVersionAssociateSecuritiesHandler().handle(
             securities=[
                 SecurityValueObject(symbol=symbol) for symbol in config_result.value.symbols
             ],

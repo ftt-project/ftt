@@ -3,6 +3,7 @@ from datetime import datetime
 import pandas as pd
 from pytest import fixture
 
+from ftt.storage import schemas
 from ftt.storage.models.security import Security
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 
@@ -29,18 +30,15 @@ class TestSecuritiesRepository:
             "currency": "USD",
         }
 
-    # @fixture
-    # def security(self, data):
-    #     data["updated_at"] = datetime.now()
-    #     data["created_at"] = datetime.now()
-    #     security = Security.create(**data)
-    #     yield security
-    #     security.delete_instance()
-    #     return security
-
     def test_get_by_name(self, security, subject):
         found = subject.get_by_name(security.symbol)
+
         assert security.id == found.id
+        assert type(found) == schemas.Security
+
+    def test_get_by_name_not_found(self, subject):
+        result = subject.get_by_name("random-symbol")
+        assert result is None
 
     def test_save(self, security, subject):
         security.symbol = "BB.YY"

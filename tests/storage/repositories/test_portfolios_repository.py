@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
+from ftt.storage import schemas
 from ftt.storage.value_objects import PortfolioValueObject
 from ftt.storage.errors import PersistingError
 from ftt.storage.models.portfolio import Portfolio
@@ -23,11 +24,13 @@ class TestPortfoliosRepository:
         found = subject.get_by_name(portfolio.name)
         assert found.id == portfolio.id
 
-    def test_creates_portfolio(self, data, subject):
-        result = subject.create(**data)
+    def test_create(self, schema_portfolio, subject):
+        assert schema_portfolio.id is None
+
+        result = subject.create(schema_portfolio)
 
         assert type(result) == Portfolio
-        Portfolio.delete().execute()
+        assert result.id is not None
 
     def test_get_securities_for_latest_version(
         self, subject, portfolio, weight, security

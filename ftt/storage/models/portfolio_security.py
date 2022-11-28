@@ -5,8 +5,8 @@ from ftt.storage.models.base import Base
 
 
 class PortfolioSecurity(Base):
-    portfolio = peewee.ForeignKeyField(Portfolio, backref="securities")
-    security = peewee.ForeignKeyField(Security, backref="portfolio")
+    portfolio = peewee.ForeignKeyField(Portfolio, backref="portfolio_securities")
+    security = peewee.ForeignKeyField(Security, backref="portfolio_securities")
 
     class Meta:
         indexes = ((("portfolio", "security"), True),)

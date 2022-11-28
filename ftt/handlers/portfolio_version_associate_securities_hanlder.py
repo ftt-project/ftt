@@ -5,7 +5,15 @@ from ftt.handlers.portfolio_version_steps.portfolio_version_associate_empty_weig
 )
 
 
-class PortfolioAssociateSecuritiesHandler(Handler):
+class PortfolioVersionAssociateSecuritiesHandler(Handler):
+    """
+    Associate securities with portfolio version.
+
+    At the moment of writing this handler the way to associate securities with portfolio is to
+    associate portfolio through weights with portfolio version model.
+
+    The new approach is to associate securities with portfolio version through portfolio securities HBTM model.
+    """
     params = ("securities", "portfolio_version")
 
     handlers = [

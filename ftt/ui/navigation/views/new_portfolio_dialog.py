@@ -47,6 +47,9 @@ class SecuritiesModel(QAbstractTableModel):
         super().__init__(*args, **kwargs)
         self.securities: list[dict] = securities or []
 
+    def get_securities(self):
+        return self.securities
+
     def data(self, index: Union[QModelIndex, QPersistentModelIndex], role: Qt.ItemDataRole.DisplayRole) -> Any:
         if role == Qt.DisplayRole:
             return self.securities[index.row()][list(self.Headers)[index.column()].value]
@@ -366,6 +369,10 @@ class NewPortfolioDialog(QDialog):
             return None
 
         name = self.findChild(QLineEdit, "name_input").text()
+        value = self.findChild(QLineEdit, "value_input").text()
+        start_date = self.findChild(QDateEdit, "start_date_input").date().toPyDate()
+        end_date = self.findChild(QDateEdit, "end_date_input").date().toPyDate()
+        securities = self._securities_model.get_securities()
         result = PortfolioCreationHandler().handle(name=name)
         match result:
             case Ok(portfolio):

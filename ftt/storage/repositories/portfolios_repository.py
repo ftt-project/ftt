@@ -1,6 +1,7 @@
 from datetime import datetime
-from typing import List
+from typing import List, Type
 
+from ftt.storage import schemas
 from ftt.storage.value_objects import ValueObjectInterface
 from ftt.storage.models.base import Base
 from ftt.storage.models.portfolio import Portfolio
@@ -33,8 +34,19 @@ class PortfoliosRepository(Repository):
         return Portfolio.get(Portfolio.name == name)
 
     @classmethod
-    def create(cls, **data: str) -> Base:
-        return cls._create(Portfolio, data)
+    def create(cls, portfolio: schemas.Portfolio) -> schemas.Portfolio:
+        """
+        Creates a new portfolio in the database.
+
+        Parameters:
+        ----------
+            portfolio (schemas.Portfolio): Portfolio data
+
+        Returns:
+        -------
+            schemas.Portfolio: Created portfolio with id
+        """
+        return cls._create(Portfolio, portfolio.dict())
 
     @classmethod
     def list(cls) -> List[Portfolio]:

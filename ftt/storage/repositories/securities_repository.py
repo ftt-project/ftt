@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List, Tuple
 
+from ftt.storage import schemas
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.models.security import Security
 from ftt.storage.models.weight import Weight
@@ -9,8 +10,13 @@ from ftt.storage.repositories.repository import Repository
 
 class SecuritiesRepository(Repository):
     @classmethod
-    def get_by_name(cls, name: str) -> Security:
-        return Security.get(Security.symbol == name)
+    def get_by_name(cls, name: str) -> schemas.Security | None:
+        try:
+            model = Security.get(Security.symbol == name)
+        except Security.DoesNotExist:
+            return None
+
+        return schemas.Security.from_orm(model)
 
     @classmethod
     def get_by_id(cls, id: int) -> Security:

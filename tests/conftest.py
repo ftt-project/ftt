@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from pandas import DataFrame, DatetimeIndex
 
-from ftt.storage import Storage
+from ftt.storage import Storage, schemas
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -27,22 +27,32 @@ def transactional():
 
 
 @pytest.fixture
-def security():
+def data_security():
+    return {
+        "symbol": "AA.XX",
+        "exchange": "SYD",
+        "company_name": "Company AAXX",
+        "exchange_name": "SYD",
+        "quote_type": "Stock",
+        "type_display": "Stock",
+        "industry": "Technologies",
+        "sector": "Technology",
+        "country": "US",
+        "short_name": "Short name",
+        "long_name": "Long name",
+        "currency": "USD",
+    }
+
+
+@pytest.fixture
+def schema_security(data_security):
+    return schemas.Security(**data_security)
+
+
+@pytest.fixture
+def security(data_security):
     security = Security.create(
-        symbol="AA.XX",
-        exchange="SYD",
-        company_name="Company AAXX",
-        exchange_name="SYD",
-        quote_type="Stock",
-        type_display="Stock",
-        industry="Technologies",
-        sector="Technology",
-        country="US",
-        short_name="Short name",
-        long_name="Long name",
-        currency="USD",
-        updated_at=datetime.now(),
-        created_at=datetime.now(),
+        **(data_security | {"created_at": datetime.now(), "updated_at": datetime.now()})
     )
     try:
         yield security
@@ -100,14 +110,14 @@ def security_price(security):
 @pytest.fixture
 def security_price_factory():
     def _security_price(
-        security,
-        dt=None,
-        open=100,
-        high=110,
-        low=90,
-        close=100,
-        volume=1000,
-        interval="5m",
+            security,
+            dt=None,
+            open=100,
+            high=110,
+            low=90,
+            close=100,
+            volume=1000,
+            interval="5m",
     ):
         return SecurityPrice.create(
             security=security,
@@ -127,6 +137,26 @@ def security_price_factory():
     yield _security_price
 
     SecurityPrice.delete().execute()
+
+
+@pytest.fixture
+def data_portfolio():
+    return {
+        "name": "Test portfolio",
+        "description": "Test portfolio description",
+        "period_start": datetime.now(),
+        "period_end": datetime.now(),
+        "value": 1000.50,
+        "interval": "5m",
+        "securities": [],
+    }
+
+
+@pytest.fixture
+def schema_portfolio(data_portfolio):
+    return schemas.Portfolio(
+        **data_portfolio
+    )
 
 
 @pytest.fixture
@@ -177,12 +207,12 @@ def portfolio_version(portfolio):
 @pytest.fixture
 def portfolio_version_factory(portfolio):
     def _portfolio_version(
-        value=30000.0,
-        portfolio=portfolio,
-        version=1,
-        interval="1mo",
-        period_start=datetime(2020, 1, 1),
-        period_end=datetime(2020, 10, 5),
+            value=30000.0,
+            portfolio=portfolio,
+            version=1,
+            interval="1mo",
+            period_start=datetime(2020, 1, 1),
+            period_end=datetime(2020, 10, 5),
     ):
         return PortfolioVersion.create(
             portfolio=portfolio,
@@ -294,7 +324,7 @@ def mock_external_historic_data_requests(mocker):
 
 @pytest.fixture
 def securities_weights_list_factory(
-    security_factory, weight_factory, security_price_factory
+        security_factory, weight_factory, security_price_factory
 ):
     def _securities_weights_list(portfolio_version, date_range, interval, n=11):
         fixture_data = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
