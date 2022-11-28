@@ -1,8 +1,16 @@
 from collections import namedtuple
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QTableWidget, QHeaderView, QTableWidgetItem, QWidget, QVBoxLayout, QLabel, QPushButton, \
-    QHBoxLayout
+from PySide6.QtWidgets import (
+    QTableWidget,
+    QHeaderView,
+    QTableWidgetItem,
+    QWidget,
+    QVBoxLayout,
+    QLabel,
+    QPushButton,
+    QHBoxLayout,
+)
 
 from ftt.ui.model import get_model
 from ftt.ui.portfolio.data import getPortfolioVersionWeights
@@ -61,7 +69,9 @@ class PortfolioVersionWeightsTable(QWidget):
             lambda: self._state.display_add_security_dialog()
         )
         self._state.signals.selectedPortfolioVersionChanged.connect(
-            lambda: self._buttons.add.setEnabled(self._model.portfolio_version_id is not None)
+            lambda: self._buttons.add.setEnabled(
+                self._model.portfolio_version_id is not None
+            )
         )
         buttons_layout.addWidget(self._buttons.add)
 

@@ -141,7 +141,8 @@ class PortfoliosCommands:
             # TODO why both?
             securities_result = SecuritiesInformationPricesLoadingHandler().handle(
                 securities=[
-                    SecurityValueObject(symbol=symbol) for symbol in config_result.value.symbols
+                    SecurityValueObject(symbol=symbol)
+                    for symbol in config_result.value.symbols
                 ],
                 portfolio_version=portfolio_result.value.versions[0],
             )
@@ -154,7 +155,8 @@ class PortfoliosCommands:
 
         association_result = PortfolioVersionAssociateSecuritiesHandler().handle(
             securities=[
-                SecurityValueObject(symbol=symbol) for symbol in config_result.value.symbols
+                SecurityValueObject(symbol=symbol)
+                for symbol in config_result.value.symbols
             ],
             portfolio_version=portfolio_result.value.versions[0],
         )

@@ -1,11 +1,29 @@
 from enum import Enum
 from typing import Union, Any
 
-from PySide6.QtCore import Qt, QMetaObject, Slot, QModelIndex, QPersistentModelIndex, \
-    QAbstractTableModel
+from PySide6.QtCore import (
+    Qt,
+    QMetaObject,
+    Slot,
+    QModelIndex,
+    QPersistentModelIndex,
+    QAbstractTableModel,
+)
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QDialogButtonBox, QWidget, QHBoxLayout, QLineEdit, \
-    QPushButton, QCompleter, QTableView, QHeaderView, QSizePolicy
+from PySide6.QtWidgets import (
+    QDialog,
+    QVBoxLayout,
+    QLabel,
+    QDialogButtonBox,
+    QWidget,
+    QHBoxLayout,
+    QLineEdit,
+    QPushButton,
+    QCompleter,
+    QTableView,
+    QHeaderView,
+    QSizePolicy,
+)
 
 from ftt.ui.state import get_state
 
@@ -18,6 +36,7 @@ from ftt.ui.state import get_state
 #
 # Search is possible by using IBKR' API, more details https://interactivebrokers.github.io/tws-api/matching_symbols.html
 
+
 class SecuritiesModel(QAbstractTableModel):
     class Headers(str, Enum):
         SYMBOL = "Symbol"
@@ -28,9 +47,15 @@ class SecuritiesModel(QAbstractTableModel):
         super().__init__(*args, **kwargs)
         self.securities: list[dict] = securities or []
 
-    def data(self, index: Union[QModelIndex, QPersistentModelIndex], role: Qt.ItemDataRole.DisplayRole) -> Any:
+    def data(
+        self,
+        index: Union[QModelIndex, QPersistentModelIndex],
+        role: Qt.ItemDataRole.DisplayRole,
+    ) -> Any:
         if role == Qt.DisplayRole:
-            return self.securities[index.row()][list(self.Headers)[index.column()].value]
+            return self.securities[index.row()][
+                list(self.Headers)[index.column()].value
+            ]
         elif role == Qt.BackgroundRole:
             return QColor(Qt.white)
         elif role == Qt.TextAlignmentRole:
@@ -42,7 +67,12 @@ class SecuritiesModel(QAbstractTableModel):
         self.endInsertRows()
         return True
 
-    def setData(self, index: Union[QModelIndex, QPersistentModelIndex], value: Any, role: int = Qt.EditRole) -> bool:
+    def setData(
+        self,
+        index: Union[QModelIndex, QPersistentModelIndex],
+        value: Any,
+        role: int = Qt.EditRole,
+    ) -> bool:
         if not index.isValid() or role != Qt.EditRole:
             return False
 
@@ -62,9 +92,9 @@ class SecuritiesModel(QAbstractTableModel):
         return len(self.Headers)
 
     def removeRows(self, position, rows, index):
-        self.beginRemoveRows(index, position, position+rows-1)
+        self.beginRemoveRows(index, position, position + rows - 1)
         for i in range(rows):
-            del(self.securities[position])
+            del self.securities[position]
         self.endRemoveRows()
         self.layoutChanged.emit()
         return True
@@ -130,9 +160,7 @@ class SecuritiesTable(QWidget):
         self.table.setModel(self.model)
 
         horizontal_header = self.table.horizontalHeader()
-        horizontal_header.setSectionResizeMode(
-            QHeaderView.ResizeToContents
-        )
+        horizontal_header.setSectionResizeMode(QHeaderView.ResizeToContents)
         horizontal_header.setStretchLastSection(True)
 
         vertical_header = self.table.verticalHeader()
@@ -193,6 +221,8 @@ class AddSecuritiesDialog(QDialog):
     def reject(self) -> None:
         self._state.close_add_security_dialog()
         super().reject()
+
+
 #
 #
 # class Ui_AddSecuritiesDialog:

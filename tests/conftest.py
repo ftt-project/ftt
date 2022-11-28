@@ -110,14 +110,14 @@ def security_price(security):
 @pytest.fixture
 def security_price_factory():
     def _security_price(
-            security,
-            dt=None,
-            open=100,
-            high=110,
-            low=90,
-            close=100,
-            volume=1000,
-            interval="5m",
+        security,
+        dt=None,
+        open=100,
+        high=110,
+        low=90,
+        close=100,
+        volume=1000,
+        interval="5m",
     ):
         return SecurityPrice.create(
             security=security,
@@ -154,9 +154,7 @@ def data_portfolio():
 
 @pytest.fixture
 def schema_portfolio(data_portfolio):
-    return schemas.Portfolio(
-        **data_portfolio
-    )
+    return schemas.Portfolio(**data_portfolio)
 
 
 @pytest.fixture
@@ -207,12 +205,12 @@ def portfolio_version(portfolio):
 @pytest.fixture
 def portfolio_version_factory(portfolio):
     def _portfolio_version(
-            value=30000.0,
-            portfolio=portfolio,
-            version=1,
-            interval="1mo",
-            period_start=datetime(2020, 1, 1),
-            period_end=datetime(2020, 10, 5),
+        value=30000.0,
+        portfolio=portfolio,
+        version=1,
+        interval="1mo",
+        period_start=datetime(2020, 1, 1),
+        period_end=datetime(2020, 10, 5),
     ):
         return PortfolioVersion.create(
             portfolio=portfolio,
@@ -324,7 +322,7 @@ def mock_external_historic_data_requests(mocker):
 
 @pytest.fixture
 def securities_weights_list_factory(
-        security_factory, weight_factory, security_price_factory
+    security_factory, weight_factory, security_price_factory
 ):
     def _securities_weights_list(portfolio_version, date_range, interval, n=11):
         fixture_data = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]

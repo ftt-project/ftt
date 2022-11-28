@@ -1,7 +1,9 @@
 import pytest
 
 from ftt.storage import schemas
-from ftt.storage.repositories.portfolio_security_repository import PortfolioSecurityRepository
+from ftt.storage.repositories.portfolio_security_repository import (
+    PortfolioSecurityRepository,
+)
 
 
 class TestPortfolioSecurityRepository:
@@ -10,7 +12,9 @@ class TestPortfolioSecurityRepository:
         return PortfolioSecurityRepository
 
     def test_associate(self, subject, portfolio, security):
-        result = subject.associate(schemas.Portfolio.from_orm(portfolio), schemas.Security.from_orm(security))
+        result = subject.associate(
+            schemas.Portfolio.from_orm(portfolio), schemas.Security.from_orm(security)
+        )
 
         assert type(result) == schemas.PortfolioSecurity
         assert result.id is not None

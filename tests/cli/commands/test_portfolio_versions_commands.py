@@ -150,11 +150,13 @@ class TestPortfolioVersionsCommands:
         prompt_mocker = mocker.patch(
             "ftt.cli.commands.portfolio_versions_commands.UpdatePortfolioPromptsHandler"
         )
-        prompt_mocker.return_value.handle.return_value.value = PortfolioVersionValueObject(
-            value=100,
-            period_start="2021-01-01",
-            period_end="2021-04-20",
-            interval="1d",
+        prompt_mocker.return_value.handle.return_value.value = (
+            PortfolioVersionValueObject(
+                value=100,
+                period_start="2021-01-01",
+                period_end="2021-04-20",
+                interval="1d",
+            )
         )
 
         subject().update(portfolio_version_id=portfolio_version.id)

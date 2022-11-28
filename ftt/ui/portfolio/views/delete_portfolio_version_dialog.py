@@ -1,7 +1,9 @@
 from PySide6.QtWidgets import QDialogButtonBox, QDialog, QVBoxLayout, QLabel
 from result import Ok, Err
 
-from ftt.handlers.portfolio_version_deletion_handler import PortfolioVersionDeletionHandler
+from ftt.handlers.portfolio_version_deletion_handler import (
+    PortfolioVersionDeletionHandler,
+)
 from ftt.ui.model import get_model
 from ftt.ui.state import get_state
 
@@ -36,7 +38,9 @@ class DeletePortfolioVersionDialog(QDialog):
         self._layout.addWidget(buttons)
 
     def accept(self) -> None:
-        result = PortfolioVersionDeletionHandler().handle(portfolio_version_id=self._model.portfolio_version_id)
+        result = PortfolioVersionDeletionHandler().handle(
+            portfolio_version_id=self._model.portfolio_version_id
+        )
         match result:
             case Ok(_):
                 self._state.confirm_delete_portfolio_version_dialog()

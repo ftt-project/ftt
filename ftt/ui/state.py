@@ -91,7 +91,7 @@ portfolio_screen_configurations = {
             "source": "add_security_screen",
             "dest": "portfolio_version_selected",
             "after": "emit_add_security_dialog_confirmed_signal",
-        }
+        },
     ],
     "initial": "portfolio_version_unselected",
 }

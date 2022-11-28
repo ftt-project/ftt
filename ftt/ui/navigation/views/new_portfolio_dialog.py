@@ -1,18 +1,33 @@
+from datetime import datetime
 from enum import Enum
 from typing import Union, Any
 
-from PySide6.QtCore import QAbstractTableModel, QPersistentModelIndex, QModelIndex, Slot, QDate
+from PySide6.QtCore import (
+    QAbstractTableModel,
+    QPersistentModelIndex,
+    QModelIndex,
+    Slot,
+    QDate,
+)
 from PySide6.QtGui import QValidator, Qt, QIntValidator
 from PySide6.QtWidgets import (
     QDialog,
     QLineEdit,
     QLabel,
     QDialogButtonBox,
-    QWidget, QCompleter, QPushButton, QTableView, QHeaderView, QSizePolicy, QFormLayout, QDateEdit,
+    QWidget,
+    QCompleter,
+    QPushButton,
+    QTableView,
+    QHeaderView,
+    QSizePolicy,
+    QFormLayout,
+    QDateEdit,
 )
 from result import Ok, Err
 
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
+from ftt.storage import schemas
 from ftt.ui.model import get_model
 from ftt.ui.state import get_state
 
@@ -50,9 +65,15 @@ class SecuritiesModel(QAbstractTableModel):
     def get_securities(self):
         return self.securities
 
-    def data(self, index: Union[QModelIndex, QPersistentModelIndex], role: Qt.ItemDataRole.DisplayRole) -> Any:
+    def data(
+        self,
+        index: Union[QModelIndex, QPersistentModelIndex],
+        role: Qt.ItemDataRole.DisplayRole,
+    ) -> Any:
         if role == Qt.DisplayRole:
-            return self.securities[index.row()][list(self.Headers)[index.column()].value]
+            return self.securities[index.row()][
+                list(self.Headers)[index.column()].value
+            ]
         elif role == Qt.TextAlignmentRole:
             return Qt.AlignVCenter
 
@@ -62,7 +83,12 @@ class SecuritiesModel(QAbstractTableModel):
         self.endInsertRows()
         return True
 
-    def setData(self, index: Union[QModelIndex, QPersistentModelIndex], value: Any, role: int = Qt.EditRole) -> bool:
+    def setData(
+        self,
+        index: Union[QModelIndex, QPersistentModelIndex],
+        value: Any,
+        role: int = Qt.EditRole,
+    ) -> bool:
         if not index.isValid() or role != Qt.EditRole:
             return False
 
@@ -84,7 +110,7 @@ class SecuritiesModel(QAbstractTableModel):
     def removeRows(self, position, rows, index):
         self.beginRemoveRows(index, position, position + rows - 1)
         for i in range(rows):
-            del (self.securities[position])
+            del self.securities[position]
         self.endRemoveRows()
         self.layoutChanged.emit()
         return True
@@ -144,9 +170,7 @@ class SecuritiesTableFormElementBuilder(QWidget):
         self.table.setModel(self.model)
 
         horizontal_header = self.table.horizontalHeader()
-        horizontal_header.setSectionResizeMode(
-            QHeaderView.ResizeToContents
-        )
+        horizontal_header.setSectionResizeMode(QHeaderView.ResizeToContents)
         horizontal_header.setStretchLastSection(True)
 
         vertical_header = self.table.verticalHeader()
@@ -233,10 +257,7 @@ class PortfolioDetailsFormElementBuilder(QWidget):
             return False
 
     def validate(self) -> bool:
-        return all([
-            self.name_field_validate(),
-            self.value_field_validate()
-        ])
+        return all([self.name_field_validate(), self.value_field_validate()])
 
     def reset(self):
         self.name_field.clear()
@@ -284,8 +305,10 @@ class PortfolioDateRangeFormElementBuilder(QWidget):
 
     @Slot()
     def start_date_field_validate(self):
-        if self.start_date_field.date() < self.end_date_field.date() and \
-                self.start_date_field.date() < QDate.currentDate():
+        if (
+            self.start_date_field.date() < self.end_date_field.date()
+            and self.start_date_field.date() < QDate.currentDate()
+        ):
             self.validation_message.setVisible(False)
             self.start_date_field.setStyleSheet("")
             return True
@@ -306,10 +329,7 @@ class PortfolioDateRangeFormElementBuilder(QWidget):
             return False
 
     def validate(self) -> bool:
-        return all([
-            self.start_date_field_validate(),
-            self.end_date_field_validate()
-        ])
+        return all([self.start_date_field_validate(), self.end_date_field_validate()])
 
     def reset(self):
         self.start_date_field.setDate(QDate.currentDate().addYears(-2))
@@ -359,7 +379,9 @@ class NewPortfolioDialog(QDialog):
         )
         self._form_elements.createUI(self)
 
-        self._buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Save)
+        self._buttons = QDialogButtonBox(
+            QDialogButtonBox.Cancel | QDialogButtonBox.Save
+        )
         self._buttons.accepted.connect(self.accept)
         self._buttons.rejected.connect(self.reject)
         self._layout.addWidget(self._buttons)
@@ -368,12 +390,21 @@ class NewPortfolioDialog(QDialog):
         if not self._form_elements.validate():
             return None
 
-        name = self.findChild(QLineEdit, "name_input").text()
-        value = self.findChild(QLineEdit, "value_input").text()
-        start_date = self.findChild(QDateEdit, "start_date_input").date().toPyDate()
-        end_date = self.findChild(QDateEdit, "end_date_input").date().toPyDate()
-        securities = self._securities_model.get_securities()
-        result = PortfolioCreationHandler().handle(name=name)
+        portfolio = schemas.Portfolio(
+            name=self.findChild(QLineEdit, "name_input").text(),
+            value=self.findChild(QLineEdit, "value_input").text(),
+            start_date=self.findChild(QDateEdit, "start_date_input").date().toPyDate(),
+            end_date=self.findChild(QDateEdit, "end_date_input").date().toPyDate(),
+            securities=[],
+        )
+        securities = [
+            schemas.Security(symbol=security["symbol"])
+            for security in self._securities_model.get_securities()
+        ]
+
+        result = PortfolioCreationHandler().handle(
+            portfolio=portfolio, securities=securities
+        )
         match result:
             case Ok(portfolio):
                 self._state.close_new_portfolio_dialog(portfolio.id)

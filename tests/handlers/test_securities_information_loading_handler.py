@@ -1,6 +1,8 @@
 import pytest
 
-from ftt.handlers.securities_information_loading_handler import SecuritiesInformationLoadingHandler
+from ftt.handlers.securities_information_loading_handler import (
+    SecuritiesInformationLoadingHandler,
+)
 from ftt.storage.value_objects import SecurityValueObject
 
 

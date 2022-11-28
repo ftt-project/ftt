@@ -7,12 +7,15 @@ from ftt.storage.repositories.repository import Repository
 
 class PortfolioSecurityRepository(Repository):
     @classmethod
-    def associate(cls, portfolio: schemas.Portfolio, security: schemas.Security) -> schemas.PortfolioSecurity:
+    def associate(
+        cls, portfolio: schemas.Portfolio, security: schemas.Security
+    ) -> schemas.PortfolioSecurity:
         portfolio_model = models.Portfolio.get_by_id(portfolio.id)
         security_model = models.Security.get_by_id(security.id)
         result, created = PortfolioSecurity.get_or_create(
-            portfolio=portfolio_model, security=security_model,
-            defaults={"updated_at": datetime.now(), "created_at": datetime.now()}
+            portfolio=portfolio_model,
+            security=security_model,
+            defaults={"updated_at": datetime.now(), "created_at": datetime.now()},
         )
         return schemas.PortfolioSecurity.from_orm(result)
 

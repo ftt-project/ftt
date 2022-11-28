@@ -34,7 +34,7 @@ class Portfolio(BaseModel):
     class Config:
         orm_mode = True
         getter_dict = PeeweeGetterDict
-        fields = {'securities': {'exclude': True}}
+        fields = {"securities": {"exclude": True}}
 
 
 class PortfolioSecurity(BaseModel):

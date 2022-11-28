@@ -26,10 +26,13 @@ class Portfolio(Base):
     def securities(self):
         from ftt.storage.models import PortfolioSecurity
         from ftt.storage.models import Security
-        return (Security.select().
-                join(PortfolioSecurity).
-                join(Portfolio).
-                where(PortfolioSecurity.portfolio == self))
+
+        return (
+            Security.select()
+            .join(PortfolioSecurity)
+            .join(Portfolio)
+            .where(PortfolioSecurity.portfolio == self)
+        )
 
     class Meta:
         indexes = ((("name",), True),)

@@ -28,7 +28,9 @@ class MetaHandler(ABCMeta):
             raise MetaHandler.HandlerParamsAreMissing(f"{x} must define `params`")
 
         if x.__name__ != "Handler" and (
-            type(x.params) != list and type(x.params) != tuple and type(x.params) != dict
+            type(x.params) != list
+            and type(x.params) != tuple
+            and type(x.params) != dict
         ):
             raise ValueError(f"`{x}.params` must be type of list, tuple, or dict")
 
@@ -59,12 +61,20 @@ class Handler(metaclass=MetaHandler):
                 return Err(last_result)
 
     def __normalize_input(self, input):
-        if "model" in input.keys() and issubclass(type(input["model"]), pydantic.BaseModel):
+        if "model" in input.keys() and issubclass(
+            type(input["model"]), pydantic.BaseModel
+        ):
             input_dict = input["model"].dict()
-            input = {key: input_dict[key] for key in input_dict.keys() if key in self.__class__.params}
+            input = {
+                key: input_dict[key]
+                for key in input_dict.keys()
+                if key in self.__class__.params
+            }
 
         if type(self.__class__.params) == tuple:
-            difference = set(self.__class__.params).symmetric_difference(set(input.keys()))
+            difference = set(self.__class__.params).symmetric_difference(
+                set(input.keys())
+            )
             if len(difference) > 0:
                 raise ValueError(
                     f"Given params {input.keys()} are not equal to required params. "
@@ -73,9 +83,13 @@ class Handler(metaclass=MetaHandler):
         elif type(self.__class__.params) == dict:
             for key, value in self.__class__.params.items():
                 if key not in input.keys():
-                    raise ValueError(f"Given params {input.keys()} are not equal to required params. Missing {key}")
+                    raise ValueError(
+                        f"Given params {input.keys()} are not equal to required params. Missing {key}"
+                    )
                 if check_type(input[key], input[key], value):
-                    raise ValueError(f"Given params {input.keys()} are not equal to required params. {key} must be {value}")
+                    raise ValueError(
+                        f"Given params {input.keys()} are not equal to required params. {key} must be {value}"
+                    )
         return input
 
     def __handle_processor(self, handle):

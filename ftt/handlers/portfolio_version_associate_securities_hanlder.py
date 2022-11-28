@@ -14,6 +14,7 @@ class PortfolioVersionAssociateSecuritiesHandler(Handler):
 
     The new approach is to associate securities with portfolio version through portfolio securities HBTM model.
     """
+
     params = ("securities", "portfolio_version")
 
     handlers = [

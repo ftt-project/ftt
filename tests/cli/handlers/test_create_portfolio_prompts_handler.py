@@ -32,7 +32,9 @@ class TestCreatePortfolioPromptsHandler:
         assert type(result.value) == dict
         assert type(result.value["portfolio_dto"]) == PortfolioValueObject
         assert result.value["portfolio_dto"].name == "Utilities"
-        assert type(result.value["portfolio_version_dto"]) == PortfolioVersionValueObject
+        assert (
+            type(result.value["portfolio_version_dto"]) == PortfolioVersionValueObject
+        )
         assert result.value["portfolio_version_dto"].value == 101.10
         assert result.value["portfolio_version_dto"].period_start == datetime(
             2020, 1, 1
