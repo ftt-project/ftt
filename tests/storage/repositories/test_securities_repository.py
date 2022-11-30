@@ -48,15 +48,13 @@ class TestSecuritiesRepository:
         assert type(result) is Security
         assert found.symbol == "BB.YY"
 
-    def test_upsert_new_record(self, data, subject):
-        result, created = subject.upsert(data)
+    def test_upsert_new_record(self, schema_security, subject):
+        result, created = subject.upsert(schema_security)
 
         assert type(result) == Security
         assert result.id is not None
-        assert result.symbol == data["symbol"]
-        assert result.exchange == data["exchange"]
-        assert result.updated_at is not None
-        assert result.created_at is not None
+        assert result.symbol == schema_security.symbol
+        assert result.exchange == schema_security.exchange
         assert created
 
     def test_upsert_existing_record(self, data, subject, security):

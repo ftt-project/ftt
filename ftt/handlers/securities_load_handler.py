@@ -4,6 +4,10 @@ from ftt.handlers.securities_steps.securities_load_step import SecuritiesLoadSte
 
 
 class SecuritiesLoadHandler(Handler):
+    """
+    Handler for loading securities from database
+    """
+
     params = ("security_symbols",)
 
     handlers = [

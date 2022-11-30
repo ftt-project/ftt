@@ -15,7 +15,7 @@ from ftt.handlers.portfolio_version_creation_handler import (
 from ftt.portfolio_management.optimization_strategies import (
     OptimizationStrategyResolver,
 )
-from ftt.storage.models.portfolio_version import ACCEPTABLE_INTERVALS
+from ftt.storage.schemas import ACCEPTABLE_INTERVALS
 from ftt.ui.model import get_model
 from ftt.ui.portfolio.data import getPortfolio
 from ftt.ui.state import get_state

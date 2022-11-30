@@ -1,4 +1,3 @@
-from datetime import datetime
 from enum import Enum
 from typing import Union, Any
 
@@ -8,8 +7,9 @@ from PySide6.QtCore import (
     QModelIndex,
     Slot,
     QDate,
+    Qt,
 )
-from PySide6.QtGui import QValidator, Qt, QIntValidator
+from PySide6.QtGui import QValidator, QIntValidator
 from PySide6.QtWidgets import (
     QDialog,
     QLineEdit,
@@ -23,18 +23,23 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QFormLayout,
     QDateEdit,
+    QComboBox,
 )
 from result import Ok, Err
 
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
+from ftt.handlers.securities_information_loading_handler import (
+    SecuritiesInformationLoadingHandler,
+)
 from ftt.storage import schemas
+from ftt.storage.schemas import ACCEPTABLE_INTERVALS
 from ftt.ui.model import get_model
 from ftt.ui.state import get_state
 
 
 class PortfolioNameValidator(QValidator):
     def validate(self, text, pos):
-        if len(text) < 2:
+        if len(text) < 1:
             return QValidator.Intermediate
         elif len(text) >= 30:
             return QValidator.Invalid
@@ -53,14 +58,15 @@ class SecuritySymbolValidator(QValidator):
 
 
 class SecuritiesModel(QAbstractTableModel):
-    class Headers(str, Enum):
-        SYMBOL = "Symbol"
-        STOCK_EXCHANGE = "Stock Exchange"
-        CURRENCY = "Currency"
+    HEADERS = {
+        "symbol": "Symbol",
+        "currency": "Currency",
+        "exchange": "Stock Exchange",
+    }
 
-    def __init__(self, *args, securities=None, **kwargs):
+    def __init__(self, *args, securities: list[schemas.Security] = None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.securities: list[dict] = securities or []
+        self.securities: list[schemas.Security | None] = securities or []
 
     def get_securities(self):
         return self.securities
@@ -71,41 +77,44 @@ class SecuritiesModel(QAbstractTableModel):
         role: Qt.ItemDataRole.DisplayRole,
     ) -> Any:
         if role == Qt.DisplayRole:
-            return self.securities[index.row()][
-                list(self.Headers)[index.column()].value
-            ]
+            if self.securities[index.row()] is None:
+                return ""
+            header = [*self.HEADERS.keys()][
+                index.column()
+            ]  # list(self.Headers)[index.column()]
+            return self.securities[index.row()].dict()[header]
         elif role == Qt.TextAlignmentRole:
             return Qt.AlignVCenter
 
     def insertRow(self, row, parent=QModelIndex()):
         self.beginInsertRows(parent, row, row)
-        self.securities.insert(row, {i.value: "" for i in self.Headers})
+        self.securities.insert(row, None)
         self.endInsertRows()
         return True
 
     def setData(
         self,
         index: Union[QModelIndex, QPersistentModelIndex],
-        value: Any,
+        value: schemas.Security,
         role: int = Qt.EditRole,
     ) -> bool:
         if not index.isValid() or role != Qt.EditRole:
             return False
 
-        self.securities[index.row()][list(self.Headers)[index.column()].value] = value
+        self.securities[index.row()] = value
         self.dataChanged.emit(index, index, [role])
         return True
 
     def headerData(self, section, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return list(self.Headers)[section].value
+            return [*self.HEADERS.values()][section]
         return super().headerData(section, orientation, role)
 
     def rowCount(self, index=None):
         return len(self.securities)
 
     def columnCount(self, parent=QModelIndex()):
-        return len(self.Headers)
+        return len(self.HEADERS)
 
     def removeRows(self, position, rows, index):
         self.beginRemoveRows(index, position, position + rows - 1)
@@ -119,6 +128,7 @@ class SecuritiesModel(QAbstractTableModel):
 class SearchSecurityFormElementBuilder(QWidget):
     def __init__(self, model: SecuritiesModel):
         super().__init__()
+        self.validation_message = None
         self.lookup_confirm_button = None
         self.search_input = None
         self.model = model
@@ -134,6 +144,11 @@ class SearchSecurityFormElementBuilder(QWidget):
         self.search_input.textChanged.connect(self.on_search_input_text_changed)
         dialog.layout().addRow("Security Name", self.search_input)
 
+        self.validation_message = QLabel("")
+        self.validation_message.setObjectName("validation_message")
+        self.validation_message.setVisible(False)
+        dialog.layout().addRow("", self.validation_message)
+
         self.lookup_confirm_button = QPushButton("Look up and add")
         self.lookup_confirm_button.setObjectName("confirm_button")
         self.lookup_confirm_button.setEnabled(False)
@@ -141,21 +156,47 @@ class SearchSecurityFormElementBuilder(QWidget):
         dialog.layout().addRow("", self.lookup_confirm_button)
 
     def validate(self):
-        return self.search_input.hasAcceptableInput()
+        return True
+
+    def show_validation_message(self, message):
+        self.validation_message.setText(message)
+        self.validation_message.setVisible(True)
+        self.search_input.setStyleSheet("border: 1px solid red;")
+
+    def hide_validation_message(self):
+        self.validation_message.setVisible(False)
+        self.search_input.setStyleSheet("")
 
     @Slot()
     def on_search_input_text_changed(self):
-        self.lookup_confirm_button.setEnabled(self.validate())
+        self.lookup_confirm_button.setEnabled(self.search_input.hasAcceptableInput())
 
     @Slot()
     def on_confirm_button_clicked(self):
+        self.hide_validation_message()
         last = self.model.rowCount()
-        self.model.insertRow(last)
-        self.model.setData(self.model.index(last, 0), self.search_input.text())
+
+        security = schemas.Security(
+            symbol=self.search_input.text(),
+        )
+
+        # TODO: load securities in the background and block the button with loader icon
+
+        result = SecuritiesInformationLoadingHandler().handle(securities=[security])
+        match result:
+            case Ok(securities):
+                self.model.insertRow(last)
+                self.model.setData(self.model.index(last, 0), securities[0])
+            case Err(error):
+                self.show_validation_message("".join([f"- {e}" for e in error]))
+                return
+
+        self.model.setData(self.model.index(last, 0), security)
         self.search_input.clear()
 
     def reset(self):
         self.search_input.clear()
+        self.search_input.setStyleSheet("")
 
 
 class SecuritiesTableFormElementBuilder(QWidget):
@@ -261,7 +302,9 @@ class PortfolioDetailsFormElementBuilder(QWidget):
 
     def reset(self):
         self.name_field.clear()
+        self.name_field.setStyleSheet("")
         self.value_field.clear()
+        self.value_field.setStyleSheet("")
         self.name_field_validation_message.setVisible(False)
         self.value_field_validation_message.setVisible(False)
 
@@ -269,12 +312,18 @@ class PortfolioDetailsFormElementBuilder(QWidget):
 class PortfolioDateRangeFormElementBuilder(QWidget):
     def __init__(self):
         super().__init__()
+        self.interval_field = None
         self.validation_message = None
         self.main_layout = None
         self.start_date_field = None
         self.end_date_field = None
 
     def createUI(self, dialog: QDialog):
+        self.interval_field = QComboBox()
+        self.interval_field.setObjectName("interval_input")
+        self.interval_field.addItems(ACCEPTABLE_INTERVALS)
+        dialog.layout().addRow("Interval", self.interval_field)
+
         self.start_date_field = QDateEdit()
         self.start_date_field.setMinimumWidth(300)
         self.start_date_field.setObjectName("start_date_input")
@@ -333,7 +382,9 @@ class PortfolioDateRangeFormElementBuilder(QWidget):
 
     def reset(self):
         self.start_date_field.setDate(QDate.currentDate().addYears(-2))
+        self.start_date_field.setStyleSheet("")
         self.end_date_field.setDate(QDate.currentDate())
+        self.end_date_field.setStyleSheet("")
         self.validation_message.setVisible(False)
 
 
@@ -379,6 +430,7 @@ class NewPortfolioDialog(QDialog):
         )
         self._form_elements.createUI(self)
 
+        self._layout.addRow("", self._hint_message)
         self._buttons = QDialogButtonBox(
             QDialogButtonBox.Cancel | QDialogButtonBox.Save
         )
@@ -393,17 +445,16 @@ class NewPortfolioDialog(QDialog):
         portfolio = schemas.Portfolio(
             name=self.findChild(QLineEdit, "name_input").text(),
             value=self.findChild(QLineEdit, "value_input").text(),
-            start_date=self.findChild(QDateEdit, "start_date_input").date().toPyDate(),
-            end_date=self.findChild(QDateEdit, "end_date_input").date().toPyDate(),
+            period_start=self.findChild(QDateEdit, "start_date_input")
+            .date()
+            .toPython(),
+            period_end=self.findChild(QDateEdit, "end_date_input").date().toPython(),
+            interval=self.findChild(QComboBox, "interval_input").currentText(),
             securities=[],
         )
-        securities = [
-            schemas.Security(symbol=security["symbol"])
-            for security in self._securities_model.get_securities()
-        ]
 
         result = PortfolioCreationHandler().handle(
-            portfolio=portfolio, securities=securities
+            portfolio=portfolio, securities=self._securities_model.get_securities()
         )
         match result:
             case Ok(portfolio):

@@ -10,7 +10,7 @@ from result import Ok, Result
 from ftt.cli.token import Token
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.value_objects import PortfolioVersionValueObject
-from ftt.storage.models.portfolio_version import ACCEPTABLE_INTERVALS
+from ftt.storage.schemas import ACCEPTABLE_INTERVALS
 
 
 class PortfolioVersionFieldsPromptsStep(AbstractStep):

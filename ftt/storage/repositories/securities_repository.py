@@ -29,13 +29,14 @@ class SecuritiesRepository(Repository):
         return record
 
     @classmethod
-    def upsert(cls, data: dict) -> Tuple[Security, bool]:
+    def upsert(cls, schema_model: schemas.Security) -> Tuple[schemas.Security, bool]:
+        data = schema_model.dict()
         data["updated_at"] = datetime.now()
         data["created_at"] = datetime.now()
         result = Security.get_or_create(
             symbol=data["symbol"], exchange=data["exchange"], defaults=data
         )
-        return result
+        return schemas.Security.from_orm(result[0]), result[1]
 
     @classmethod
     def exist(cls, name: str) -> int:

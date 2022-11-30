@@ -287,6 +287,10 @@ def mock_external_info_requests(mocker):
     mock.return_value.info = {
         "symbol": "AAPL",
         "exchange": "NMS",
+        "sector": "Technology",
+        "country": "Canada",
+        "industry": "Software—Application",
+        "currency": "USD",
         "quoteType": "stock",
         "shortName": "Apple Inc.",
         "longName": "Apple Inc.",
