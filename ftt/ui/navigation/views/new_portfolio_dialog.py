@@ -7,7 +7,7 @@ from PySide6.QtCore import (
     QModelIndex,
     Slot,
     QDate,
-    Qt,
+    Qt, QThreadPool,
 )
 from PySide6.QtGui import QValidator, QIntValidator
 from PySide6.QtWidgets import (
@@ -28,13 +28,15 @@ from PySide6.QtWidgets import (
 from result import Ok, Err
 
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
-from ftt.handlers.securities_information_loading_handler import (
-    SecuritiesInformationLoadingHandler,
+from ftt.handlers.securities_external_information_loading_handler import (
+    SecuritiesExternalInformationLoadingHandler,
 )
+from ftt.handlers.securities_external_information_upsert_handler import SecuritiesExternalInformationUpsertHandler
 from ftt.storage import schemas
 from ftt.storage.schemas import ACCEPTABLE_INTERVALS
 from ftt.ui.model import get_model
 from ftt.ui.state import get_state
+from ftt.ui.workers import SecuritiesInformationLoadingWorker
 
 
 class PortfolioNameValidator(QValidator):
@@ -72,9 +74,9 @@ class SecuritiesModel(QAbstractTableModel):
         return self.securities
 
     def data(
-        self,
-        index: Union[QModelIndex, QPersistentModelIndex],
-        role: Qt.ItemDataRole.DisplayRole,
+            self,
+            index: Union[QModelIndex, QPersistentModelIndex],
+            role: Qt.ItemDataRole.DisplayRole,
     ) -> Any:
         if role == Qt.DisplayRole:
             if self.securities[index.row()] is None:
@@ -93,10 +95,10 @@ class SecuritiesModel(QAbstractTableModel):
         return True
 
     def setData(
-        self,
-        index: Union[QModelIndex, QPersistentModelIndex],
-        value: schemas.Security,
-        role: int = Qt.EditRole,
+            self,
+            index: Union[QModelIndex, QPersistentModelIndex],
+            value: schemas.Security,
+            role: int = Qt.EditRole,
     ) -> bool:
         if not index.isValid() or role != Qt.EditRole:
             return False
@@ -149,9 +151,9 @@ class SearchSecurityFormElementBuilder(QWidget):
         self.validation_message.setVisible(False)
         dialog.layout().addRow("", self.validation_message)
 
-        self.lookup_confirm_button = QPushButton("Look up and add")
+        self.lookup_confirm_button = QPushButton("")
+        self.search_button_is_ready()
         self.lookup_confirm_button.setObjectName("confirm_button")
-        self.lookup_confirm_button.setEnabled(False)
         self.lookup_confirm_button.clicked.connect(self.on_confirm_button_clicked)
         dialog.layout().addRow("", self.lookup_confirm_button)
 
@@ -167,32 +169,44 @@ class SearchSecurityFormElementBuilder(QWidget):
         self.validation_message.setVisible(False)
         self.search_input.setStyleSheet("")
 
+    def search_button_is_loading_mode(self):
+        self.lookup_confirm_button.setText("Loading...")
+        self.lookup_confirm_button.setEnabled(False)
+
+    def search_button_is_ready(self):
+        self.lookup_confirm_button.setText("Look up and add")
+        self.lookup_confirm_button.setEnabled(True)
+
     @Slot()
     def on_search_input_text_changed(self):
+        self.hide_validation_message()
         self.lookup_confirm_button.setEnabled(self.search_input.hasAcceptableInput())
 
     @Slot()
     def on_confirm_button_clicked(self):
-        self.hide_validation_message()
-        last = self.model.rowCount()
-
         security = schemas.Security(
             symbol=self.search_input.text(),
         )
 
-        # TODO: load securities in the background and block the button with loader icon
+        self.search_button_is_loading_mode()
+        SecuritiesInformationLoadingWorker.perform(
+            [security],
+            success_callback=lambda x: self.on_securities_information_loaded(x),
+            failure_callback=lambda x: self.on_securities_information_load_error(x),
+            complete_callback=lambda: self.search_button_is_ready(),
+        )
 
-        result = SecuritiesInformationLoadingHandler().handle(securities=[security])
-        match result:
-            case Ok(securities):
-                self.model.insertRow(last)
-                self.model.setData(self.model.index(last, 0), securities[0])
-            case Err(error):
-                self.show_validation_message("".join([f"- {e}" for e in error]))
-                return
-
-        self.model.setData(self.model.index(last, 0), security)
         self.search_input.clear()
+
+    @Slot()
+    def on_securities_information_loaded(self, securities: list[schemas.Security]):
+        last = self.model.rowCount()
+        self.model.insertRow(last)
+        self.model.setData(self.model.index(last, 0), securities[0])
+
+    @Slot()
+    def on_securities_information_load_error(self, error: list[str]):
+        self.show_validation_message("".join([f"- {e}" for e in error]))
 
     def reset(self):
         self.search_input.clear()
@@ -355,8 +369,8 @@ class PortfolioDateRangeFormElementBuilder(QWidget):
     @Slot()
     def start_date_field_validate(self):
         if (
-            self.start_date_field.date() < self.end_date_field.date()
-            and self.start_date_field.date() < QDate.currentDate()
+                self.start_date_field.date() < self.end_date_field.date()
+                and self.start_date_field.date() < QDate.currentDate()
         ):
             self.validation_message.setVisible(False)
             self.start_date_field.setStyleSheet("")
@@ -442,19 +456,26 @@ class NewPortfolioDialog(QDialog):
         if not self._form_elements.validate():
             return None
 
+        securities_upsert_result = SecuritiesExternalInformationUpsertHandler().handle(
+            securities=self._securities_model.get_securities()
+        )
+        match securities_upsert_result:
+            case Err(error):
+                self._hint_message.setText(error.unwrap_error())
+                self._hint_message.show()
+                return None
+
         portfolio = schemas.Portfolio(
             name=self.findChild(QLineEdit, "name_input").text(),
             value=self.findChild(QLineEdit, "value_input").text(),
-            period_start=self.findChild(QDateEdit, "start_date_input")
-            .date()
-            .toPython(),
+            period_start=self.findChild(QDateEdit, "start_date_input").date().toPython(),
             period_end=self.findChild(QDateEdit, "end_date_input").date().toPython(),
             interval=self.findChild(QComboBox, "interval_input").currentText(),
             securities=[],
         )
 
         result = PortfolioCreationHandler().handle(
-            portfolio=portfolio, securities=self._securities_model.get_securities()
+            portfolio=portfolio, securities=securities_upsert_result.unwrap()
         )
         match result:
             case Ok(portfolio):
