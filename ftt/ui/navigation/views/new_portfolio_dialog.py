@@ -152,7 +152,8 @@ class SearchSecurityFormElementBuilder(QWidget):
         dialog.layout().addRow("", self.validation_message)
 
         self.lookup_confirm_button = QPushButton("")
-        self.search_button_is_ready()
+        self.lookup_confirm_button.setText("Look up and add")
+        self.lookup_confirm_button.setEnabled(False)
         self.lookup_confirm_button.setObjectName("confirm_button")
         self.lookup_confirm_button.clicked.connect(self.on_confirm_button_clicked)
         dialog.layout().addRow("", self.lookup_confirm_button)
@@ -479,7 +480,7 @@ class NewPortfolioDialog(QDialog):
         )
         match result:
             case Ok(portfolio):
-                self._state.close_new_portfolio_dialog(portfolio.id)
+                self._state.confirm_new_portfolio_dialog(portfolio.id)
                 self._form_elements.reset()
                 super().accept()
             case Err():

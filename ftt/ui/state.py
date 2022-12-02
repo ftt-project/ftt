@@ -142,6 +142,12 @@ application_states_configuration = {
             "after": "emit_welcome_screen_displayed_signal",
             "conditions": "is_portfolio_not_selected",
         },
+        {
+            "trigger": "confirm_new_portfolio_dialog",
+            "source": "new_portfolio_screen",
+            "dest": "portfolio_screen",
+            "after": "emit_portfolio_selected_signal",
+        }
     ],
     "initial": "welcome_screen",
 }
