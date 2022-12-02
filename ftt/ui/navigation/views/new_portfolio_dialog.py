@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Union, Any
 
 from PySide6.QtCore import (
@@ -7,7 +6,7 @@ from PySide6.QtCore import (
     QModelIndex,
     Slot,
     QDate,
-    Qt, QThreadPool,
+    Qt,
 )
 from PySide6.QtGui import QValidator, QIntValidator
 from PySide6.QtWidgets import (
@@ -28,10 +27,9 @@ from PySide6.QtWidgets import (
 from result import Ok, Err
 
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
-from ftt.handlers.securities_external_information_loading_handler import (
-    SecuritiesExternalInformationLoadingHandler,
+from ftt.handlers.securities_external_information_upsert_handler import (
+    SecuritiesExternalInformationUpsertHandler,
 )
-from ftt.handlers.securities_external_information_upsert_handler import SecuritiesExternalInformationUpsertHandler
 from ftt.storage import schemas
 from ftt.storage.schemas import ACCEPTABLE_INTERVALS
 from ftt.ui.model import get_model
@@ -74,9 +72,9 @@ class SecuritiesModel(QAbstractTableModel):
         return self.securities
 
     def data(
-            self,
-            index: Union[QModelIndex, QPersistentModelIndex],
-            role: Qt.ItemDataRole.DisplayRole,
+        self,
+        index: Union[QModelIndex, QPersistentModelIndex],
+        role: Qt.ItemDataRole.DisplayRole,
     ) -> Any:
         if role == Qt.DisplayRole:
             if self.securities[index.row()] is None:
@@ -95,10 +93,10 @@ class SecuritiesModel(QAbstractTableModel):
         return True
 
     def setData(
-            self,
-            index: Union[QModelIndex, QPersistentModelIndex],
-            value: schemas.Security,
-            role: int = Qt.EditRole,
+        self,
+        index: Union[QModelIndex, QPersistentModelIndex],
+        value: schemas.Security,
+        role: int = Qt.EditRole,
     ) -> bool:
         if not index.isValid() or role != Qt.EditRole:
             return False
@@ -370,8 +368,8 @@ class PortfolioDateRangeFormElementBuilder(QWidget):
     @Slot()
     def start_date_field_validate(self):
         if (
-                self.start_date_field.date() < self.end_date_field.date()
-                and self.start_date_field.date() < QDate.currentDate()
+            self.start_date_field.date() < self.end_date_field.date()
+            and self.start_date_field.date() < QDate.currentDate()
         ):
             self.validation_message.setVisible(False)
             self.start_date_field.setStyleSheet("")
@@ -469,7 +467,9 @@ class NewPortfolioDialog(QDialog):
         portfolio = schemas.Portfolio(
             name=self.findChild(QLineEdit, "name_input").text(),
             value=self.findChild(QLineEdit, "value_input").text(),
-            period_start=self.findChild(QDateEdit, "start_date_input").date().toPython(),
+            period_start=self.findChild(QDateEdit, "start_date_input")
+            .date()
+            .toPython(),
             period_end=self.findChild(QDateEdit, "end_date_input").date().toPython(),
             interval=self.findChild(QComboBox, "interval_input").currentText(),
             securities=[],

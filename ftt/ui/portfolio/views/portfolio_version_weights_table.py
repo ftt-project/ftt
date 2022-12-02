@@ -14,7 +14,6 @@ from PySide6.QtWidgets import (
 
 from ftt.ui.model import get_model
 from ftt.ui.portfolio.data import getPortfolioVersionWeights
-from ftt.ui.portfolio.views.add_securties_dialog import AddSecuritiesDialog
 from ftt.ui.state import get_state
 
 

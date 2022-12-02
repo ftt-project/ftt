@@ -1,12 +1,10 @@
 from abc import ABC
 from dataclasses import asdict
 from datetime import datetime
-from typing import Type
 
 import peewee
 from playhouse.shortcuts import update_model_from_dict  # type: ignore
 
-from ftt.storage import schemas, models
 from ftt.storage.value_objects import ValueObjectInterface
 from ftt.storage.errors import PersistingError
 from ftt.storage.models.base import Base

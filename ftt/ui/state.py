@@ -147,7 +147,7 @@ application_states_configuration = {
             "source": "new_portfolio_screen",
             "dest": "portfolio_screen",
             "after": "emit_portfolio_selected_signal",
-        }
+        },
     ],
     "initial": "welcome_screen",
 }

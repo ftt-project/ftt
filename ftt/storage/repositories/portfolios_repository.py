@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Type
+from typing import List
 
 from ftt.storage import schemas
 from ftt.storage.value_objects import ValueObjectInterface

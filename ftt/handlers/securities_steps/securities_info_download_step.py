@@ -1,6 +1,5 @@
 import math
 from time import sleep
-from typing import List, Any
 from urllib.error import HTTPError
 
 import yfinance as yf
@@ -8,7 +7,6 @@ from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage import schemas
-from ftt.storage.value_objects import SecurityValueObject
 
 
 class SecuritiesInfoDownloadStep(AbstractStep):

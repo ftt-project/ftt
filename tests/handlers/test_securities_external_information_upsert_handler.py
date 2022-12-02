@@ -1,6 +1,8 @@
 import pytest
 
-from ftt.handlers.securities_external_information_upsert_handler import SecuritiesExternalInformationUpsertHandler
+from ftt.handlers.securities_external_information_upsert_handler import (
+    SecuritiesExternalInformationUpsertHandler,
+)
 from ftt.storage import schemas
 
 
