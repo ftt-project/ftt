@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
     QLabel,
-    QStackedWidget,
+    QStackedWidget, QStyleFactory,
 )
 
 from ftt.ui.navigation.view import NavigationView
@@ -67,6 +67,7 @@ class MainWidget(QWidget):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        QApplication.setStyle(QStyleFactory.create("Fusion"))
 
         self.setWindowTitle("Financial Trading Tool")
         self.resize(1400, 800)
