@@ -6,7 +6,8 @@ from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
     QLabel,
-    QStackedWidget, QStyleFactory,
+    QStackedWidget,
+    QStyleFactory,
 )
 
 from ftt.ui.navigation.view import NavigationView

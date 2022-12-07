@@ -7,6 +7,7 @@ from PySide6.QtCore import (
     Slot,
     QDate,
     Qt,
+    QItemSelection,
 )
 from PySide6.QtGui import QValidator, QIntValidator
 from PySide6.QtWidgets import (
@@ -23,8 +24,12 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QDateEdit,
     QComboBox,
+    QToolBar,
+    QHBoxLayout,
+    QAbstractItemView,
 )
 from result import Ok, Err
+import qtawesome as qta
 
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from ftt.handlers.securities_external_information_upsert_handler import (
@@ -38,26 +43,40 @@ from ftt.ui.workers import SecuritiesInformationLoadingWorker
 
 
 class PortfolioNameValidator(QValidator):
-    def validate(self, text, pos):
+    def validate(self, text: str, pos: int) -> QValidator.State:
         if len(text) < 1:
-            return QValidator.Intermediate
+            return QValidator.State.Intermediate
         elif len(text) >= 30:
-            return QValidator.Invalid
+            return QValidator.State.Invalid
         else:
-            return QValidator.Acceptable
+            return QValidator.State.Acceptable
 
 
 class SecuritySymbolValidator(QValidator):
-    def validate(self, text, pos):
+    def validate(self, text: str, pos: int) -> QValidator.State:
         if len(text) == 0:
-            return QValidator.Intermediate
+            return QValidator.State.Intermediate
         elif len(text) >= 10:
-            return QValidator.Invalid
+            return QValidator.State.Invalid
         else:
-            return QValidator.Acceptable
+            return QValidator.State.Acceptable
+
+    def validate_uniquness(
+        self, text: str, added_securities: list[str]
+    ) -> QValidator.State:
+        if text in added_securities:
+            return QValidator.State.Invalid
+
+        return QValidator.State.Acceptable
 
 
 class SecuritiesModel(QAbstractTableModel):
+    """
+    Used as an example
+    https://github.com/pyside/Examples/blob/master/examples/itemviews/addressbook/tablemodel.py
+    https://doc.qt.io/qtforpython-6.2/tutorials/datavisualize/add_tableview.html
+    """
+
     HEADERS = {
         "symbol": "Symbol",
         "currency": "Currency",
@@ -74,14 +93,12 @@ class SecuritiesModel(QAbstractTableModel):
     def data(
         self,
         index: Union[QModelIndex, QPersistentModelIndex],
-        role: Qt.ItemDataRole.DisplayRole,
+        role: Qt.ItemDataRole.DisplayRole = Qt.DisplayRole,
     ) -> Any:
         if role == Qt.DisplayRole:
             if self.securities[index.row()] is None:
                 return ""
-            header = [*self.HEADERS.keys()][
-                index.column()
-            ]  # list(self.Headers)[index.column()]
+            header = [*self.HEADERS.keys()][index.column()]
             return self.securities[index.row()].dict()[header]
         elif role == Qt.TextAlignmentRole:
             return Qt.AlignVCenter
@@ -105,7 +122,12 @@ class SecuritiesModel(QAbstractTableModel):
         self.dataChanged.emit(index, index, [role])
         return True
 
-    def headerData(self, section, orientation, role):
+    def headerData(
+        self,
+        section: int,
+        orientation: Qt.Orientation,
+        role: Qt.DisplayRole = Qt.DisplayRole,
+    ):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return [*self.HEADERS.values()][section]
         return super().headerData(section, orientation, role)
@@ -116,7 +138,9 @@ class SecuritiesModel(QAbstractTableModel):
     def columnCount(self, parent=QModelIndex()):
         return len(self.HEADERS)
 
-    def removeRows(self, position, rows, index):
+    def removeRows(
+        self, position: int, rows: int = 1, index: QModelIndex = QModelIndex()
+    ):
         self.beginRemoveRows(index, position, position + rows - 1)
         for i in range(rows):
             del self.securities[position]
@@ -153,7 +177,7 @@ class SearchSecurityFormElementBuilder(QWidget):
         self.lookup_confirm_button.setText("Look up and add")
         self.lookup_confirm_button.setEnabled(False)
         self.lookup_confirm_button.setObjectName("confirm_button")
-        self.lookup_confirm_button.clicked.connect(self.on_confirm_button_clicked)
+        self.lookup_confirm_button.clicked.connect(self.on_confirm_search_event)
         dialog.layout().addRow("", self.lookup_confirm_button)
 
     def validate(self):
@@ -169,10 +193,12 @@ class SearchSecurityFormElementBuilder(QWidget):
         self.search_input.setStyleSheet("")
 
     def search_button_is_loading_mode(self):
+        self.search_input.setEnabled(False)
         self.lookup_confirm_button.setText("Loading...")
         self.lookup_confirm_button.setEnabled(False)
 
     def search_button_is_ready(self):
+        self.search_input.setEnabled(True)
         self.lookup_confirm_button.setText("Look up and add")
         self.lookup_confirm_button.setEnabled(True)
 
@@ -182,7 +208,19 @@ class SearchSecurityFormElementBuilder(QWidget):
         self.lookup_confirm_button.setEnabled(self.search_input.hasAcceptableInput())
 
     @Slot()
-    def on_confirm_button_clicked(self):
+    def on_confirm_search_event(self):
+        validator = self.search_input.validator()
+        state = validator.validate_uniquness(
+            self.search_input.text(),
+            [record.symbol for record in self.model.get_securities()],
+        )
+        if state == QValidator.State.Invalid:
+            self.show_validation_message(
+                "- Symbol must be shorter than 10 characters\n"
+                "- Symbol must be unique"
+            )
+            return
+
         security = schemas.Security(
             symbol=self.search_input.text(),
         )
@@ -215,13 +253,28 @@ class SearchSecurityFormElementBuilder(QWidget):
 class SecuritiesTableFormElementBuilder(QWidget):
     def __init__(self, model: SecuritiesModel):
         super().__init__()
+        self.remove_action = None
         self._state = get_state()
         self.table = None
         self.model = model
 
     def createUI(self, dialog: QDialog):
         self.table = QTableView()
+        self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table.setModel(self.model)
+        self.table.selectionModel().selectionChanged.connect(
+            lambda selected, deselected: self.on_selection_changed(selected, deselected)
+        )
+
+        toolbar = QToolBar()
+        toolbar.setMovable(False)
+        toolbar.setFloatable(False)
+        toolbar.setOrientation(Qt.Vertical)
+        self.remove_action = QPushButton(qta.icon("ri.delete-bin-2-line"), "")
+        self.remove_action.clicked.connect(self.remove_selected_securities)
+        self.remove_action.setEnabled(False)
+        toolbar.addWidget(self.remove_action)
 
         horizontal_header = self.table.horizontalHeader()
         horizontal_header.setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -234,7 +287,11 @@ class SecuritiesTableFormElementBuilder(QWidget):
         size.setHorizontalStretch(1)
         self.table.setSizePolicy(size)
 
-        dialog.layout().addRow(self.table)
+        w = QWidget()
+        w.setLayout(QHBoxLayout())
+        w.layout().addWidget(self.table)
+        w.layout().addWidget(toolbar)
+        dialog.layout().addRow(w)
 
         self._state.signals.selectedPortfolioVersionSecuritiesChanged.connect(
             lambda: self.model.removeRows(0, self.model.rowCount(), QModelIndex())
@@ -248,6 +305,17 @@ class SecuritiesTableFormElementBuilder(QWidget):
 
     def reset(self):
         self.model.removeRows(0, self.model.rowCount(), QModelIndex())
+
+    def on_selection_changed(self, selected: QItemSelection, _):
+        if selected.count() > 0:
+            self.remove_action.setEnabled(True)
+        else:
+            self.remove_action.setEnabled(False)
+
+    def remove_selected_securities(self):
+        selected_rows = self.table.selectionModel().selectedRows()
+        for row in selected_rows:
+            self.model.removeRows(row.row())
 
 
 class PortfolioDetailsFormElementBuilder(QWidget):

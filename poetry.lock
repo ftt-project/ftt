@@ -1293,6 +1293,31 @@ numpy = ">=1.7"
 scipy = ">=0.13.2"
 
 [[package]]
+name = "qtawesome"
+version = "1.2.1"
+description = "FontAwesome icons in PyQt and PySide applications"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+qtpy = "*"
+
+[[package]]
+name = "qtpy"
+version = "2.3.0"
+description = "Provides an abstraction layer on top of the various Qt bindings (PyQt5/6 and PySide2/6)."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+packaging = "*"
+
+[package.extras]
+test = ["pytest (>=6,!=7.0.0,!=7.0.1)", "pytest-cov (>=3.0.0)", "pytest-qt"]
+
+[[package]]
 name = "requests"
 version = "2.28.1"
 description = "Python HTTP for Humans."
@@ -1768,7 +1793,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "3.10.4"
-content-hash = "63c97d92fa52214d546f70e9c0c6f50cac0abf52ad444f660c0c81168ec8a119"
+content-hash = "f77d0ba8506d6e50e1eb104db1e92188990e721adc3a08b342659464d4fece9f"
 
 [metadata.files]
 appdirs = [
@@ -3195,6 +3220,14 @@ qdldl = [
     {file = "qdldl-0.1.5.post2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:15d0fbff31aa19195b135ca934cf75025d46a275d915eebb7c11a7d16e148096"},
     {file = "qdldl-0.1.5.post2-cp39-cp39-win_amd64.whl", hash = "sha256:5269f40521b12941f1334a162f8f06375df6a89f0f90d8a758ae3b83b8931b18"},
     {file = "qdldl-0.1.5.post2.tar.gz", hash = "sha256:7daf7ad1bfff1da71da06e82d5147bdb1ac866581617d8f06cc4eeda48e2a149"},
+]
+qtawesome = [
+    {file = "QtAwesome-1.2.1-py3-none-any.whl", hash = "sha256:abc465da18158a4f2973406ae0ecd6c1daf87ddcd950e3a46497b708dd9674b3"},
+    {file = "QtAwesome-1.2.1.tar.gz", hash = "sha256:f440dcab3d4fc8acfa5875c8c565d7bd58e537967a703679484c5c567be3f120"},
+]
+qtpy = [
+    {file = "QtPy-2.3.0-py3-none-any.whl", hash = "sha256:8d6d544fc20facd27360ea189592e6135c614785f0dec0b4f083289de6beb408"},
+    {file = "QtPy-2.3.0.tar.gz", hash = "sha256:0603c9c83ccc035a4717a12908bf6bc6cb22509827ea2ec0e94c2da7c9ed57c5"},
 ]
 requests = [
     {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},
