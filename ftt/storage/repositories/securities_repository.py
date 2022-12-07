@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List, Tuple
 
+from ftt.storage import schemas
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.models.security import Security
 from ftt.storage.models.weight import Weight
@@ -9,8 +10,13 @@ from ftt.storage.repositories.repository import Repository
 
 class SecuritiesRepository(Repository):
     @classmethod
-    def get_by_name(cls, name: str) -> Security:
-        return Security.get(Security.symbol == name)
+    def get_by_name(cls, name: str) -> schemas.Security | None:
+        try:
+            model = Security.get(Security.symbol == name)
+        except Security.DoesNotExist:
+            return None
+
+        return schemas.Security.from_orm(model)
 
     @classmethod
     def get_by_id(cls, id: int) -> Security:
@@ -23,13 +29,14 @@ class SecuritiesRepository(Repository):
         return record
 
     @classmethod
-    def upsert(cls, data: dict) -> Tuple[Security, bool]:
+    def upsert(cls, schema_model: schemas.Security) -> Tuple[schemas.Security, bool]:
+        data = schema_model.dict()
         data["updated_at"] = datetime.now()
         data["created_at"] = datetime.now()
         result = Security.get_or_create(
             symbol=data["symbol"], exchange=data["exchange"], defaults=data
         )
-        return result
+        return schemas.Security.from_orm(result[0]), result[1]
 
     @classmethod
     def exist(cls, name: str) -> int:

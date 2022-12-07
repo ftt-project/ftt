@@ -38,9 +38,11 @@ from ftt.portfolio_management.allocation_strategies import AllocationStrategyRes
 from ftt.portfolio_management.optimization_strategies import (
     OptimizationStrategyResolver,
 )
-from ftt.storage.data_objects import is_empty
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage.value_objects import (
+    PortfolioVersionValueObject,
+    SecurityValueObject,
+    is_empty,
+)
 
 
 @command("portfolio-versions")
@@ -198,7 +200,7 @@ class PortfolioVersionsCommands:
             return
 
         prompt_result = UpdatePortfolioPromptsHandler().handle(
-            defaults=PortfolioVersionDTO(
+            defaults=PortfolioVersionValueObject(
                 value=portfolio_version_result.value.value,
                 period_start=portfolio_version_result.value.period_start,
                 period_end=portfolio_version_result.value.period_end,
@@ -353,7 +355,7 @@ class PortfolioVersionsCommands:
         Provide list of securities to be added to the indicated portfolio version
         """
         securities_dto = [
-            SecurityDTO(symbol=security) for security in securities.split(" ")
+            SecurityValueObject(symbol=security) for security in securities.split(" ")
         ]
 
         with self.context.console.status("[green]Loading securities information") as _:

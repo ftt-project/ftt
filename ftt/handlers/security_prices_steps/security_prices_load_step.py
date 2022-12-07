@@ -4,9 +4,7 @@ from typing import Optional
 from result import Ok, Err, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.data_objects.portfolio_security_prices_range_dto import (
-    PortfolioSecurityPricesRangeDTO,
-)
+from ftt.storage.value_objects import PortfolioSecurityPricesRangeValueObject
 from ftt.storage.models import PortfolioVersion
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 from ftt.storage.repositories.security_prices_repository import SecurityPricesRepository
@@ -18,7 +16,7 @@ class SecurityPricesLoadStep(AbstractStep):
     @classmethod
     def process(
         cls, portfolio_version: PortfolioVersion
-    ) -> Result[PortfolioSecurityPricesRangeDTO, Optional[str]]:
+    ) -> Result[PortfolioSecurityPricesRangeValueObject, Optional[str]]:
         securities = cls.__load_securities(portfolio_version)
         if len(securities) == 0:
             return Err(
@@ -40,7 +38,7 @@ class SecurityPricesLoadStep(AbstractStep):
         if len(set(shapes.values())) > 1:
             return Err(f"Data points shapes do not match: {shapes}")
 
-        dto = PortfolioSecurityPricesRangeDTO(
+        dto = PortfolioSecurityPricesRangeValueObject(
             prices=prices, datetime_list=datetime_list
         )
 

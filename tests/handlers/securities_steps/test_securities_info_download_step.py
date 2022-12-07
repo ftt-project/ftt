@@ -4,7 +4,8 @@ from result import Ok, Err
 from ftt.handlers.securities_steps.securities_info_download_step import (
     SecuritiesInfoDownloadStep,
 )
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage import schemas
+from ftt.storage.value_objects import SecurityValueObject
 
 
 class TestSecuritiesInfoDownloadStep:
@@ -12,32 +13,27 @@ class TestSecuritiesInfoDownloadStep:
     def subject(self):
         return SecuritiesInfoDownloadStep
 
-    @pytest.fixture
-    def security_dto(self):
-        return SecurityDTO(
-            symbol="AAAA",
-        )
-
     def test_returns_collection(
-        self, subject, security_dto, mock_external_info_requests
+        self, subject, mock_external_info_requests, schema_security
     ):
-        result = subject().process([security_dto])
+        result = subject().process([schema_security])
 
-        mock_external_info_requests.assert_called_once_with("AAAA")
-        assert isinstance(result, Ok)
+        mock_external_info_requests.assert_called_once_with(schema_security.symbol)
+        assert result.is_ok()
         assert isinstance(result.value, list)
+        assert isinstance(result.value[0], schemas.Security)
 
     def test_error_on_download(
-        self, subject, mocker, security_dto, mock_external_info_requests
+        self, subject, schema_security, mock_external_info_requests
     ):
         mock_external_info_requests.side_effect = Exception(
             "failed to load because of reason"
         )
 
-        result = subject().process([security_dto])
+        result = subject().process([schema_security])
 
-        assert isinstance(result, Err)
+        assert result.is_err()
         assert (
             result.err()[0]
-            == "Failed to load ticker <AAAA>: failed to load because of reason"
+            == "Failed to load ticker <AA.XX>: failed to load because of reason"
         )

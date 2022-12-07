@@ -1,21 +1,21 @@
 import pytest
 
-from ftt.handlers.portfolio_associate_securities_hanlder import (
-    PortfolioAssociateSecuritiesHandler,
+from ftt.handlers.portfolio_version_associate_securities_hanlder import (
+    PortfolioVersionAssociateSecuritiesHandler,
 )
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage.value_objects import SecurityValueObject
 
 
-class TestPortfolioAssociateSecuritiesHandler:
+class TestPortfolioVersionAssociateSecuritiesHandler:
     @pytest.fixture
     def subject(self):
-        return PortfolioAssociateSecuritiesHandler()
+        return PortfolioVersionAssociateSecuritiesHandler()
 
     def test_associates_portfolio_with_securities(
         self, subject, portfolio, portfolio_version, security
     ):
         result = subject.handle(
-            securities=[SecurityDTO(symbol=security.symbol)],
+            securities=[SecurityValueObject(symbol=security.symbol)],
             portfolio_version=portfolio_version,
         )
 

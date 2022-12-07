@@ -125,6 +125,9 @@ class PortfolioVersionsTable(QWidget):
     @Slot()
     def updateVersionsRows(self):
         versions = getPortfolioVersions(self._model.portfolio_id)
+        if versions is None:
+            return
+
         self._table.clearContents()
         self._table.setRowCount(len(versions))
         for idx, item in enumerate(versions):

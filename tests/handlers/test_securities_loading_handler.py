@@ -6,7 +6,7 @@ import pytest
 from ftt.handlers.securities_information_prices_loading_handler import (
     SecuritiesInformationPricesLoadingHandler,
 )
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage.value_objects import SecurityValueObject
 from ftt.storage.models.security import Security
 
 
@@ -51,7 +51,7 @@ class TestSecuritiesLoadingHandler:
 
     def test_persists_loaded_securities(self, subject, portfolio_version):
         result = subject().handle(
-            securities=[SecurityDTO(symbol="AAAA")],
+            securities=[SecurityValueObject(symbol="AAAA")],
             portfolio_version=portfolio_version,
         )
 
@@ -63,7 +63,7 @@ class TestSecuritiesLoadingHandler:
 
     def test_persist_historical_prices(self, subject, portfolio_version):
         result = subject().handle(
-            securities=[SecurityDTO(symbol="AAAA")],
+            securities=[SecurityValueObject(symbol="AAAA")],
             portfolio_version=portfolio_version,
         )
 

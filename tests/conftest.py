@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from pandas import DataFrame, DatetimeIndex
 
-from ftt.storage import Storage
+from ftt.storage import Storage, schemas
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -27,22 +27,32 @@ def transactional():
 
 
 @pytest.fixture
-def security():
+def data_security():
+    return {
+        "symbol": "AA.XX",
+        "exchange": "SYD",
+        "company_name": "Company AAXX",
+        "exchange_name": "SYD",
+        "quote_type": "Stock",
+        "type_display": "Stock",
+        "industry": "Technologies",
+        "sector": "Technology",
+        "country": "US",
+        "short_name": "Short name",
+        "long_name": "Long name",
+        "currency": "USD",
+    }
+
+
+@pytest.fixture
+def schema_security(data_security):
+    return schemas.Security(**data_security)
+
+
+@pytest.fixture
+def security(data_security):
     security = Security.create(
-        symbol="AA.XX",
-        exchange="SYD",
-        company_name="Company AAXX",
-        exchange_name="SYD",
-        quote_type="Stock",
-        type_display="Stock",
-        industry="Technologies",
-        sector="Technology",
-        country="US",
-        short_name="Short name",
-        long_name="Long name",
-        currency="USD",
-        updated_at=datetime.now(),
-        created_at=datetime.now(),
+        **(data_security | {"created_at": datetime.now(), "updated_at": datetime.now()})
     )
     try:
         yield security
@@ -127,6 +137,24 @@ def security_price_factory():
     yield _security_price
 
     SecurityPrice.delete().execute()
+
+
+@pytest.fixture
+def data_portfolio():
+    return {
+        "name": "Test portfolio",
+        "description": "Test portfolio description",
+        "period_start": datetime.now(),
+        "period_end": datetime.now(),
+        "value": 1000.50,
+        "interval": "5m",
+        "securities": [],
+    }
+
+
+@pytest.fixture
+def schema_portfolio(data_portfolio):
+    return schemas.Portfolio(**data_portfolio)
 
 
 @pytest.fixture
@@ -259,6 +287,10 @@ def mock_external_info_requests(mocker):
     mock.return_value.info = {
         "symbol": "AAPL",
         "exchange": "NMS",
+        "sector": "Technology",
+        "country": "Canada",
+        "industry": "Software—Application",
+        "currency": "USD",
         "quoteType": "stock",
         "shortName": "Apple Inc.",
         "longName": "Apple Inc.",

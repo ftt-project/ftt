@@ -22,5 +22,7 @@ class WorkerSignals(QObject):
 
     finished = Signal()
     error = Signal(tuple)
-    result = Signal(object)
+    result = Signal(object)  # deprecated
+    success = Signal(object)
+    failed = Signal(object)
     progress = Signal(int)

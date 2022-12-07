@@ -8,9 +8,7 @@ from ftt.portfolio_management.optimization_strategies import (
     OptimizationStrategyResolver,
     AbstractOptimizationStrategy,
 )
-from ftt.storage.data_objects.portfolio_security_prices_range_dto import (
-    PortfolioSecurityPricesRangeDTO,
-)
+from ftt.storage.value_objects import PortfolioSecurityPricesRangeValueObject
 from ftt.storage.models import PortfolioVersion
 
 
@@ -22,7 +20,7 @@ class PortfolioVersionOptimizationStep(AbstractStep):
         cls,
         optimization_strategy_name: str,
         portfolio_version: PortfolioVersion,
-        security_prices: PortfolioSecurityPricesRangeDTO,
+        security_prices: PortfolioSecurityPricesRangeValueObject,
     ) -> Result[AbstractOptimizationStrategy, Optional[str]]:
         returns = pd.DataFrame(
             data=security_prices.prices,

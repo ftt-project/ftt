@@ -4,8 +4,8 @@ import pytest
 
 from ftt.cli.handlers.steps.portfolio_version_fields_prompts_step import (
     PortfolioVersionFieldsPromptsStep,
-    PortfolioVersionDTO,
 )
+from ftt.storage.value_objects import PortfolioVersionValueObject
 
 
 class TestPortfolioVersionFieldsPromptsStep:
@@ -24,7 +24,7 @@ class TestPortfolioVersionFieldsPromptsStep:
 
     @pytest.fixture
     def portfolio_version_defaults(self):
-        return PortfolioVersionDTO(
+        return PortfolioVersionValueObject(
             **{
                 "value": 456.10,
                 "period_start": "2021-01-01",

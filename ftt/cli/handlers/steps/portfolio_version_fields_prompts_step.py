@@ -9,8 +9,8 @@ from result import Ok, Result
 
 from ftt.cli.token import Token
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
-from ftt.storage.models.portfolio_version import ACCEPTABLE_INTERVALS
+from ftt.storage.value_objects import PortfolioVersionValueObject
+from ftt.storage.schemas import ACCEPTABLE_INTERVALS
 
 
 class PortfolioVersionFieldsPromptsStep(AbstractStep):
@@ -18,8 +18,8 @@ class PortfolioVersionFieldsPromptsStep(AbstractStep):
 
     @classmethod
     def process(
-        cls, defaults: PortfolioVersionDTO = PortfolioVersionDTO()
-    ) -> Result[PortfolioVersionDTO, Optional[str]]:
+        cls, defaults: PortfolioVersionValueObject = PortfolioVersionValueObject()
+    ) -> Result[PortfolioVersionValueObject, Optional[str]]:
         value = cls.prompt_value(defaults)
         period_start = cls.prompt_period(
             defaults.period_start, "Period start", datetime(1950, 1, 1)
@@ -27,7 +27,7 @@ class PortfolioVersionFieldsPromptsStep(AbstractStep):
         period_end = cls.prompt_period(defaults.period_end, "Period end", period_start)
         interval = cls.prompt_interval(defaults)
 
-        dto = PortfolioVersionDTO(
+        dto = PortfolioVersionValueObject(
             value=value,
             period_start=period_start,
             period_end=period_end,

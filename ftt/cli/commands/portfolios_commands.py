@@ -13,8 +13,8 @@ from ftt.cli.renderers.portfolio_versions.portfolio_versions_list import (
 )
 from ftt.cli.renderers.portfolios.portfolio_details import PortfolioDetails
 from ftt.cli.renderers.weights.weights_list import WeightsList
-from ftt.handlers.portfolio_associate_securities_hanlder import (
-    PortfolioAssociateSecuritiesHandler,
+from ftt.handlers.portfolio_version_associate_securities_hanlder import (
+    PortfolioVersionAssociateSecuritiesHandler,
 )
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
 from ftt.handlers.portfolio_with_version_creation_handler import (
@@ -31,8 +31,7 @@ from ftt.handlers.securities_information_prices_loading_handler import (
     SecuritiesInformationPricesLoadingHandler,
 )
 from ftt.handlers.weights_list_handler import WeightsListHandler
-from ftt.storage.data_objects.portfolio_dto import PortfolioDTO
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage.value_objects import PortfolioValueObject, SecurityValueObject
 
 
 @command("portfolios")
@@ -142,7 +141,8 @@ class PortfoliosCommands:
             # TODO why both?
             securities_result = SecuritiesInformationPricesLoadingHandler().handle(
                 securities=[
-                    SecurityDTO(symbol=symbol) for symbol in config_result.value.symbols
+                    SecurityValueObject(symbol=symbol)
+                    for symbol in config_result.value.symbols
                 ],
                 portfolio_version=portfolio_result.value.versions[0],
             )
@@ -153,9 +153,10 @@ class PortfoliosCommands:
                 ctx.console.print(securities_result.value)
                 return
 
-        association_result = PortfolioAssociateSecuritiesHandler().handle(
+        association_result = PortfolioVersionAssociateSecuritiesHandler().handle(
             securities=[
-                SecurityDTO(symbol=symbol) for symbol in config_result.value.symbols
+                SecurityValueObject(symbol=symbol)
+                for symbol in config_result.value.symbols
             ],
             portfolio_version=portfolio_result.value.versions[0],
         )
@@ -192,7 +193,7 @@ class PortfoliosCommands:
             ctx.console.print("[green]Nothing to update")
             return
 
-        dto = PortfolioDTO(**params)
+        dto = PortfolioValueObject(**params)
         result = PortfolioUpdateHandler().handle(
             portfolio=portfolio_result.value, dto=dto
         )

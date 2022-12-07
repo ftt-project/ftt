@@ -10,9 +10,9 @@ class TestOrderUpdateStep:
         return OrderUpdateStep
 
     def test_process_updates_order(self, subject, order):
-        from ftt.storage.data_objects.order_dto import OrderDTO
+        from ftt.storage.value_objects import OrderValueObject
 
-        dto = OrderDTO(
+        dto = OrderValueObject(
             status=Order.Status.PARTIAL,
         )
         result = subject.process(order, dto)

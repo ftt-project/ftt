@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import pytest
 
 from ftt.handlers.portfolio_steps.portfolio_update_step import PortfolioUpdateStep
-from ftt.storage.data_objects.portfolio_dto import PortfolioDTO
+from ftt.storage.value_objects import PortfolioValueObject
 
 
 class TestPortfolioUpdateStep:
@@ -13,7 +13,7 @@ class TestPortfolioUpdateStep:
 
     @pytest.fixture
     def portfolio_dto(self):
-        return PortfolioDTO(
+        return PortfolioValueObject(
             name="New portfolio name",
         )
 
@@ -25,7 +25,7 @@ class TestPortfolioUpdateStep:
 
     def test_process_returns_error_if_unknown_fields(self, subject, portfolio):
         @dataclass
-        class FakeDTO(PortfolioDTO):
+        class FakeDTO(PortfolioValueObject):
             wrong_field: str
 
         fake_dto = FakeDTO(wrong_field="value", name="Name")
@@ -38,7 +38,7 @@ class TestPortfolioUpdateStep:
         )
 
     def test_process_returns_error_if_missing_field(self, subject, portfolio):
-        result = subject.process(portfolio=portfolio, dto=PortfolioDTO(name=""))
+        result = subject.process(portfolio=portfolio, dto=PortfolioValueObject(name=""))
 
         assert result.is_err()
         assert "Failed to persist `Portfolio`" in result.value

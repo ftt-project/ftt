@@ -5,7 +5,8 @@ from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.models.portfolio import Portfolio
-from ftt.storage.models.portfolio_version import ACCEPTABLE_INTERVALS, PortfolioVersion
+from ftt.storage.models.portfolio_version import PortfolioVersion
+from ftt.storage.schemas import ACCEPTABLE_INTERVALS
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )

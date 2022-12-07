@@ -3,6 +3,7 @@ from datetime import datetime
 import pandas as pd
 from pytest import fixture
 
+from ftt.storage import schemas
 from ftt.storage.models.security import Security
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 
@@ -29,18 +30,15 @@ class TestSecuritiesRepository:
             "currency": "USD",
         }
 
-    # @fixture
-    # def security(self, data):
-    #     data["updated_at"] = datetime.now()
-    #     data["created_at"] = datetime.now()
-    #     security = Security.create(**data)
-    #     yield security
-    #     security.delete_instance()
-    #     return security
-
     def test_get_by_name(self, security, subject):
         found = subject.get_by_name(security.symbol)
+
         assert security.id == found.id
+        assert type(found) == schemas.Security
+
+    def test_get_by_name_not_found(self, subject):
+        result = subject.get_by_name("random-symbol")
+        assert result is None
 
     def test_save(self, security, subject):
         security.symbol = "BB.YY"
@@ -50,15 +48,13 @@ class TestSecuritiesRepository:
         assert type(result) is Security
         assert found.symbol == "BB.YY"
 
-    def test_upsert_new_record(self, data, subject):
-        result, created = subject.upsert(data)
+    def test_upsert_new_record(self, schema_security, subject):
+        result, created = subject.upsert(schema_security)
 
         assert type(result) == Security
         assert result.id is not None
-        assert result.symbol == data["symbol"]
-        assert result.exchange == data["exchange"]
-        assert result.updated_at is not None
-        assert result.created_at is not None
+        assert result.symbol == schema_security.symbol
+        assert result.exchange == schema_security.exchange
         assert created
 
     def test_upsert_existing_record(self, data, subject, security):

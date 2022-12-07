@@ -1,5 +1,5 @@
-from PySide6.QtCore import Slot
-from PySide6.QtGui import QAction, Qt
+from PySide6.QtCore import Slot, Qt
+from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QMainWindow,
     QWidget,
@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QStackedWidget,
+    QStyleFactory,
 )
 
 from ftt.ui.navigation.view import NavigationView
@@ -57,13 +58,17 @@ class MainWidget(QWidget):
         self._layout.addWidget(self._center)
 
         self._state.signals.selectedPortfolioChanged.connect(
-            lambda _: self._center.setCurrentIndex(1)
+            lambda: self._center.setCurrentIndex(1)
+        )
+        self._state.signals.welcomeScreenDisplayed.connect(
+            lambda: self._center.setCurrentIndex(0)
         )
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        QApplication.setStyle(QStyleFactory.create("Fusion"))
 
         self.setWindowTitle("Financial Trading Tool")
         self.resize(1400, 800)

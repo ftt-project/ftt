@@ -4,7 +4,7 @@ import pytest
 from ftt.handlers.security_prices_steps.security_prices_upsert_step import (
     SecurityPricesUpsertStep,
 )
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
+from ftt.storage.value_objects import PortfolioVersionValueObject
 
 
 class TestSecurityPricesUpsertStep:
@@ -36,7 +36,7 @@ class TestSecurityPricesUpsertStep:
 
     @pytest.fixture
     def portfolio_version_dto(self):
-        return PortfolioVersionDTO(interval="5m")
+        return PortfolioVersionValueObject(interval="5m")
 
     def test_persists_historical_prices(
         self, subject, data, security, security_price, portfolio_version_dto

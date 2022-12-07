@@ -1,7 +1,7 @@
 from result import Ok
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage.value_objects import SecurityValueObject
 from ftt.storage.models import PortfolioVersion
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 from ftt.storage.repositories.weights_repository import WeightsRepository
@@ -14,7 +14,7 @@ class PortfolioVersionAssociateEmptyWeightsStep(AbstractStep):
     def process(
         cls,
         portfolio_version: PortfolioVersion,
-        securities: list[SecurityDTO],
+        securities: list[SecurityValueObject],
     ):
         result = []
 

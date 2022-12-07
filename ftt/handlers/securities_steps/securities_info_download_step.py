@@ -1,20 +1,21 @@
 import math
 from time import sleep
-from typing import List, Any
 from urllib.error import HTTPError
 
 import yfinance as yf
 from result import Err, Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage import schemas
 
 
 class SecuritiesInfoDownloadStep(AbstractStep):
     key = "securities_info"
 
     @classmethod
-    def process(cls, securities: List[SecurityDTO]) -> Result[list, list]:
+    def process(
+        cls, securities: list[schemas.Security]
+    ) -> Result[list[schemas.Security], list[str]]:
         results = [cls.__load_security(security) for security in securities]
         if all([result.is_ok() for result in results]):
             securities_info = [result.value for result in results]
@@ -24,7 +25,7 @@ class SecuritiesInfoDownloadStep(AbstractStep):
             return Err(errors)
 
     @staticmethod
-    def __load_security(security: SecurityDTO) -> Result[Any, str]:
+    def __load_security(security: schemas.Security) -> Result[schemas.Security, str]:
         success = False
         max_retries = 5
         retry_count = 0
@@ -33,12 +34,17 @@ class SecuritiesInfoDownloadStep(AbstractStep):
             try:
                 ticker_object = yf.Ticker(security.symbol)
                 info = ticker_object.info.copy()
-                # TODO move me to mapper
-                info["quote_type"] = info.pop("quoteType")
-                info["short_name"] = info.pop("shortName")
-                info["long_name"] = info.pop("longName")
+                security.quote_type = info["quoteType"]
+                security.sector = info["sector"]
+                security.country = info["country"]
+                security.currency = info["currency"]
+                security.exchange = info["exchange"]
+                security.industry = info["industry"]
+                security.short_name = info["shortName"]
+                security.long_name = info["longName"]
                 success = True
-                return Ok(info)
+
+                return Ok(security)
 
             except HTTPError:
                 if retry_count < max_retries:

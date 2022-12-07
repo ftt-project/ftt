@@ -5,8 +5,7 @@ import pytest
 from ftt.cli.handlers.create_portfolio_prompts_handler import (
     CreatePortfolioPromptsHandler,
 )
-from ftt.storage.data_objects.portfolio_dto import PortfolioDTO
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
+from ftt.storage.value_objects import PortfolioValueObject, PortfolioVersionValueObject
 
 
 class TestCreatePortfolioPromptsHandler:
@@ -31,9 +30,11 @@ class TestCreatePortfolioPromptsHandler:
 
         assert result.is_ok()
         assert type(result.value) == dict
-        assert type(result.value["portfolio_dto"]) == PortfolioDTO
+        assert type(result.value["portfolio_dto"]) == PortfolioValueObject
         assert result.value["portfolio_dto"].name == "Utilities"
-        assert type(result.value["portfolio_version_dto"]) == PortfolioVersionDTO
+        assert (
+            type(result.value["portfolio_version_dto"]) == PortfolioVersionValueObject
+        )
         assert result.value["portfolio_version_dto"].value == 101.10
         assert result.value["portfolio_version_dto"].period_start == datetime(
             2020, 1, 1

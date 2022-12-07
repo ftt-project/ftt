@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List
 
 from ftt.logger import Logger
-from ftt.storage.data_objects.order_dto import OrderDTO
+from ftt.storage.value_objects import OrderValueObject
 from ftt.storage.models.base import Base
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio
@@ -36,7 +36,7 @@ class OrdersRepository(Repository):
         return cls.get_by_id(order_id)
 
     @classmethod
-    def update(cls, order: Order, dto: OrderDTO) -> Order:
+    def update(cls, order: Order, dto: OrderValueObject) -> Order:
         return cls._update(order, dto)
 
     @classmethod

@@ -5,7 +5,7 @@ import pytest
 from ftt.handlers.portfolio_version_steps.portfolio_version_update_step import (
     PortfolioVersionUpdateStep,
 )
-from ftt.storage.data_objects.portfolio_version_dto import PortfolioVersionDTO
+from ftt.storage.value_objects import PortfolioVersionValueObject
 
 
 class TestPortfolioVersionUpdateStep:
@@ -15,7 +15,7 @@ class TestPortfolioVersionUpdateStep:
 
     @pytest.fixture
     def portfolio_version_dto(self):
-        return PortfolioVersionDTO(value=1033)
+        return PortfolioVersionValueObject(value=1033)
 
     def test_process_updates_portfolio_version(
         self, subject, portfolio_version, portfolio_version_dto
@@ -29,7 +29,7 @@ class TestPortfolioVersionUpdateStep:
 
     def test_process_returns_error_if_unknown_fields(self, subject, portfolio_version):
         @dataclass
-        class UnknownDTO(PortfolioVersionDTO):
+        class UnknownDTO(PortfolioVersionValueObject):
             unknown_field: int = 9
 
         dto = UnknownDTO(unknown_field="value")
@@ -44,7 +44,7 @@ class TestPortfolioVersionUpdateStep:
     def test_process_returns_error_if_missing_field(self, subject, portfolio_version):
         result = subject.process(
             portfolio_version=portfolio_version,
-            dto=PortfolioVersionDTO(interval="", value=1),
+            dto=PortfolioVersionValueObject(interval="", value=1),
         )
 
         assert result.is_err()

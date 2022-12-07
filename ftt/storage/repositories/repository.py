@@ -5,7 +5,7 @@ from datetime import datetime
 import peewee
 from playhouse.shortcuts import update_model_from_dict  # type: ignore
 
-from ftt.storage.data_objects import DTOInterface
+from ftt.storage.value_objects import ValueObjectInterface
 from ftt.storage.errors import PersistingError
 from ftt.storage.models.base import Base
 
@@ -13,13 +13,31 @@ from ftt.storage.models.base import Base
 class Repository(ABC):
     @classmethod
     def _create(cls, model_class, data) -> Base:
+        """
+        Generic method of creating a new record in the database.
+        Creates a model based on a given class and data dictionary.
+
+        Parameters:
+        ----------
+            model_class (Base): Model class
+            data (dict): Data dictionary
+
+        Raises:
+        ------
+            ValueError: If the model class is not a subclass of Base
+
+        Returns:
+        -------
+            Base: Model instance
+
+        Deprecated way of creating models.
+        """
         data["created_at"] = datetime.now()
         data["updated_at"] = datetime.now()
 
         # TODO move protected method to base class
         fields = model_class.fields()
         difference = set(list(data.keys()) + ["id"]) - set(fields)
-        # difference = set(fields).symmetric_difference(set(list(data.keys()) + ["id"]))
         if len(difference) > 0:
             raise ValueError(
                 f"The following fields are not in the {model_class} definition: {difference}"
@@ -28,7 +46,7 @@ class Repository(ABC):
         return result
 
     @classmethod
-    def _update(cls, instance, data: DTOInterface) -> Base:
+    def _update(cls, instance, data: ValueObjectInterface) -> Base:
         try:
             dict_data = asdict(data)
             present_data = {k: v for k, v in dict_data.items() if v is not None}

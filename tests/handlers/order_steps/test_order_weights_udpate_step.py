@@ -1,7 +1,7 @@
 import pytest
 
 from ftt.handlers.order_steps.order_weights_udpate_step import OrderWeightsUpdateStep
-from ftt.storage.data_objects.order_dto import OrderDTO
+from ftt.storage.value_objects import OrderValueObject
 
 
 class TestOrderWeightsUpdateStep:
@@ -10,7 +10,7 @@ class TestOrderWeightsUpdateStep:
         return OrderWeightsUpdateStep
 
     def test_process_returns_updated_weight(self, subject, order, security, weight):
-        dto = OrderDTO(execution_size=78)
+        dto = OrderValueObject(execution_size=78)
         result = subject.process(order, dto)
 
         assert result.is_ok()

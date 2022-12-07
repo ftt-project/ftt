@@ -10,3 +10,5 @@ dependencies:
   - cvxpy=1.2.1
   - matplotlib=3.5.2
   - bt=0.2.9
+platforms:
+  - osx-64

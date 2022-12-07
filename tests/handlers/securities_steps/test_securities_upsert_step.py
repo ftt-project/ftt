@@ -1,8 +1,7 @@
-import pandas as pd
 import pytest
 
 from ftt.handlers.securities_steps.securities_upsert_step import SecuritiesUpsertStep
-from ftt.storage.models.security import Security
+from ftt.storage import schemas
 
 
 class TestSecuritiesUpsertStep:
@@ -10,24 +9,13 @@ class TestSecuritiesUpsertStep:
     def subject(self):
         return SecuritiesUpsertStep
 
-    @pytest.fixture
-    def input(self):
-        return {
-            "symbol": "AAPL",
-            "quote_type": "EQUITY",
-            "sector": "Technology",
-            "country": "United States",
-            "industry": "Consumer Electronics",
-            "currency": "USD",
-            "exchange": "NMS",
-            "short_name": "Apple Inc.",
-            "long_name": "Apple Inc.",
-        }
+    def test_persists_new_ticker(self, subject, schema_security):
+        assert schema_security.id is None
 
-    def test_persists_new_ticker(self, subject, input):
-        result = subject.process([input])
+        result = subject.process([schema_security])
 
         assert result.is_ok()
-        assert result.value[0].symbol == "AAPL"
-        assert result.value[0].exchange == "NMS"
-        assert isinstance(result.value[0], Security)
+        assert result.value[0].id is not None
+        assert result.value[0].symbol == schema_security.symbol
+        assert result.value[0].exchange == schema_security.exchange
+        assert isinstance(result.value[0], schemas.Security)

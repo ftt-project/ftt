@@ -24,6 +24,7 @@ portfolio_screen_configurations = {
         "portfolio_version_unselected",
         "new_portfolio_version_screen",
         "delete_portfolio_version_screen",
+        "add_security_screen",
     ],
     "transitions": [
         {
@@ -73,6 +74,24 @@ portfolio_screen_configurations = {
             "dest": "portfolio_version_unselected",
             "after": "emit_portfolio_version_deleted_signal",
         },
+        {
+            "trigger": "display_add_security_dialog",
+            "source": "portfolio_version_selected",
+            "dest": "add_security_screen",
+            "after": "emit_add_security_dialog_displayed_signal",
+        },
+        {
+            "trigger": "close_add_security_dialog",
+            "source": "add_security_screen",
+            "dest": "portfolio_version_selected",
+            "after": "emit_add_security_dialog_closed_signal",
+        },
+        {
+            "trigger": "confirm_add_security_dialog",
+            "source": "add_security_screen",
+            "dest": "portfolio_version_selected",
+            "after": "emit_add_security_dialog_confirmed_signal",
+        },
     ],
     "initial": "portfolio_version_unselected",
 }
@@ -114,6 +133,20 @@ application_states_configuration = {
             "source": "new_portfolio_screen",
             "dest": "portfolio_screen",
             "after": "emit_portfolio_selected_signal",
+            "conditions": "is_portfolio_selected",
+        },
+        {
+            "trigger": "close_new_portfolio_dialog",
+            "source": "new_portfolio_screen",
+            "dest": "welcome_screen",
+            "after": "emit_welcome_screen_displayed_signal",
+            "conditions": "is_portfolio_not_selected",
+        },
+        {
+            "trigger": "confirm_new_portfolio_dialog",
+            "source": "new_portfolio_screen",
+            "dest": "portfolio_screen",
+            "after": "emit_portfolio_selected_signal",
         },
     ],
     "initial": "welcome_screen",
@@ -127,6 +160,12 @@ class ApplicationState:
         self.machine = HierarchicalMachine(
             **application_states_configuration, model=self
         )
+
+    def is_portfolio_selected(self, _):
+        return self.model.portfolio_id is not None
+
+    def is_portfolio_not_selected(self, _):
+        return self.model.portfolio_id is None
 
     def emit_portfolio_selected_signal(self, portfolio_id):
         self.model.portfolio_id = portfolio_id
@@ -156,3 +195,15 @@ class ApplicationState:
         self.model.portfolio_version_id = None
         self.signals.selectedPortfolioChanged.emit(self.model.portfolio_id)
         self.signals.selectedPortfolioVersionChanged.emit(None)
+
+    def emit_add_security_dialog_displayed_signal(self):
+        self.signals.addSecurityDialogDisplayed.emit()
+
+    def emit_add_security_dialog_confirmed_signal(self):
+        self.signals.selectedPortfolioVersionSecuritiesChanged.emit()
+
+    def emit_add_security_dialog_closed_signal(self):
+        self.signals.addSecurityDialogClosed.emit()
+
+    def emit_welcome_screen_displayed_signal(self, _):
+        self.signals.welcomeScreenDisplayed.emit()

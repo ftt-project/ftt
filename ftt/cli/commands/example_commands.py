@@ -2,8 +2,8 @@ from nubia import command, context  # type: ignore
 
 from ftt.cli.renderers.portfolios.portfolio_details import PortfolioDetails
 from ftt.cli.renderers.weights.weights_list import WeightsList
-from ftt.handlers.portfolio_associate_securities_hanlder import (
-    PortfolioAssociateSecuritiesHandler,
+from ftt.handlers.portfolio_version_associate_securities_hanlder import (
+    PortfolioVersionAssociateSecuritiesHandler,
 )
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
 from ftt.handlers.portfolio_with_version_creation_handler import (
@@ -19,7 +19,7 @@ from ftt.portfolio_management.allocation_strategies import AllocationStrategyRes
 from ftt.portfolio_management.optimization_strategies import (
     OptimizationStrategyResolver,
 )
-from ftt.storage.data_objects.security_dto import SecurityDTO
+from ftt.storage.value_objects import SecurityValueObject
 
 
 @command
@@ -48,7 +48,7 @@ def example():
     PortfolioDetails(ctx, portfolio).render()
 
     security_dtos = [
-        SecurityDTO(symbol=symbol) for symbol in config_result.value.symbols
+        SecurityValueObject(symbol=symbol) for symbol in config_result.value.symbols
     ]
 
     with ctx.console.status("[bold green]Loading securities information") as _:
@@ -64,7 +64,7 @@ def example():
     with ctx.console.status(
         "[bold green]Portfolio successfully associated with securities"
     ) as _:
-        _ = PortfolioAssociateSecuritiesHandler().handle(
+        _ = PortfolioVersionAssociateSecuritiesHandler().handle(
             securities=security_dtos, portfolio_version=portfolio.versions[0]
         )
 

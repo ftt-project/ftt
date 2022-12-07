@@ -1,7 +1,7 @@
 import pytest
 
 from ftt.handlers.order_update_handler import OrderUpdateHandler
-from ftt.storage.data_objects.order_dto import OrderDTO
+from ftt.storage.value_objects import OrderValueObject
 from ftt.storage.models import Order
 from tests.helpers import reload_record
 
@@ -12,7 +12,7 @@ class TestOrderUpdateHandler:
         return OrderUpdateHandler()
 
     def test_handle_returns_updated_order(self, subject, order):
-        dto = OrderDTO(
+        dto = OrderValueObject(
             status=Order.Status.COMPLETED,
             execution_size=18,
         )

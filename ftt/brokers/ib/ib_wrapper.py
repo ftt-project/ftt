@@ -10,7 +10,7 @@ from ibapi.order_state import OrderState
 from ftt.brokers.position import Position
 from ftt.handlers.order_update_handler import OrderUpdateHandler
 from ftt.logger import Logger
-from ftt.storage.data_objects.order_dto import OrderDTO
+from ftt.storage.value_objects import OrderValueObject
 
 
 class IBWrapper(EWrapper):
@@ -212,7 +212,7 @@ class IBWrapper(EWrapper):
             f"perm_id:{perm_id} parent_id:{parent_id} last_fill_price:{last_fill_price}"
         )
 
-        dto = OrderDTO(
+        dto = OrderValueObject(
             status=status,
             execution_size=filled,
             execution_price=avg_fill_price,
