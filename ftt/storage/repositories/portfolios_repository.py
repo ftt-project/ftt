@@ -23,8 +23,13 @@ class PortfoliosRepository(Repository):
         return model
 
     @classmethod
-    def get_by_id(cls, id: int):
-        return Portfolio.get(id)
+    def get_by_id(cls, portfolio: schemas.Portfolio) -> schemas.Portfolio | None:
+        try:
+            record = Portfolio.get(portfolio.id)
+        except Portfolio.DoesNotExist:
+            return None
+
+        return schemas.Portfolio.from_orm(record)
 
     @classmethod
     def get_by_name(cls, name: str) -> Base:

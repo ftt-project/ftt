@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
+from ftt.storage import schemas
 from ftt.storage.value_objects import PortfolioVersionValueObject
 from ftt.storage.errors import PersistingError
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -26,17 +27,19 @@ class TestPortfolioVersionsRepository:
         assert result == portfolio
 
     def test_get_all_by_portfolio(self, subject, portfolio, portfolio_version):
-        result = subject.get_all_by_portfolio(portfolio)
+        result = subject.get_all_by_portfolio(schemas.Portfolio.from_orm(portfolio))
 
         assert type(result) == list
-        assert result[0] == portfolio_version
+        assert type(result[0]) == schemas.PortfolioVersion
+        assert result[0].id == portfolio_version.id
 
     def test_save(self, subject, portfolio_version):
         portfolio_version.version = "10011"
-        result = subject.save(portfolio_version)
+        result = subject.save(schemas.PortfolioVersion.from_orm(portfolio_version))
 
-        assert result == portfolio_version
+        assert result.id == portfolio_version.id
         assert result.version == "10011"
+        assert isinstance(result, schemas.PortfolioVersion)
 
     def test_get_active_version_when_exists(
         self, subject, portfolio, portfolio_version
@@ -46,7 +49,7 @@ class TestPortfolioVersionsRepository:
 
         result = subject.get_active_version(portfolio)
 
-        assert result == portfolio_version
+        assert result.id == portfolio_version.id
 
     def test_get_active_version_returns_none(
         self, subject, portfolio, portfolio_version

@@ -66,3 +66,7 @@ class Repository(ABC):
         else:
             result = instance.delete_instance()
         return result == 1
+
+    @classmethod
+    def _get_by_id(cls, model_class, id: int) -> Base:
+        return model_class.get(id)

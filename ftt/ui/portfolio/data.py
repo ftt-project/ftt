@@ -4,6 +4,7 @@ from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 from ftt.handlers.portfolio_version_load_handler import PortfolioVersionLoadHandler
 from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHandler
 from ftt.handlers.weights_list_handler import WeightsListHandler
+from ftt.storage import schemas
 
 
 def getPortfolio(portfolio_id):
@@ -13,24 +14,6 @@ def getPortfolio(portfolio_id):
             return portfolio
         case Err(error):
             print(f"getPortfolioVersions: Error: {error}")
-            return
-
-
-def getPortfolioVersions(portfolio_id):
-    portfolio_result = PortfolioLoadHandler().handle(portfolio_id=portfolio_id)
-    match portfolio_result:
-        case Err(error):
-            print(f"getPortfolioVersions: Error: {error}")
-            return
-
-    portfolio_versions_result = PortfolioVersionsListHandler().handle(
-        portfolio=portfolio_result.unwrap()
-    )
-    match portfolio_versions_result:
-        case Ok(portfolio_versions):
-            return portfolio_versions
-        case Err(error):
-            print(f"Error: {error}")
             return
 
 

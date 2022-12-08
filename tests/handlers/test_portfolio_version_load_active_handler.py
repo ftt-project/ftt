@@ -3,6 +3,7 @@ import pytest
 from ftt.handlers.portfolio_version_load_active_handler import (
     PortfolioVersionLoadActiveHandler,
 )
+from ftt.storage import schemas
 
 
 class TestPortfolioVersionLoadActiveHandler:
@@ -20,7 +21,7 @@ class TestPortfolioVersionLoadActiveHandler:
         active_portfolio_version.save()
         _ = portfolio_version_factory(portfolio=portfolio, version=2)
 
-        result = subject.handle(portfolio_id=portfolio.id)
+        result = subject.handle(portfolio=schemas.Portfolio(id=portfolio.id))
 
         assert result.is_ok()
         assert result.value == active_portfolio_version

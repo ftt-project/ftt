@@ -4,13 +4,14 @@ from ftt.handlers.portfolio_steps.portfolio_load_step import PortfolioLoadStep
 from ftt.handlers.portfolio_version_steps.portfolio_version_load_active_step import (
     PortfolioVersionLoadActiveStep,
 )
+from ftt.storage import schemas
 
 
 class PortfolioVersionLoadActiveHandler(Handler):
-    params = ("portfolio_id",)
+    params = {"portfolio": schemas.Portfolio}
 
     handlers = [
-        (PortfolioLoadStep, "portfolio_id"),
+        (PortfolioLoadStep, "portfolio"),
         (PortfolioVersionLoadActiveStep, PortfolioLoadStep.key),
         (ReturnResult, PortfolioVersionLoadActiveStep.key),
     ]

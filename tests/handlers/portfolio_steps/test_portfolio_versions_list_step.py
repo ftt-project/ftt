@@ -3,6 +3,7 @@ import pytest
 from ftt.handlers.portfolio_steps.portfolio_versions_list_step import (
     PortfolioVersionsListStep,
 )
+from ftt.storage import schemas
 
 
 class TestPortfolioVersionsListStep:
@@ -13,7 +14,7 @@ class TestPortfolioVersionsListStep:
     def test_returns_list_of_portfolio_versions(
         self, subject, portfolio, portfolio_version
     ):
-        result = subject.process(portfolio)
+        result = subject.process(schemas.Portfolio.from_orm(portfolio))
 
         assert result.is_ok()
-        assert result.value[0] == portfolio_version
+        assert result.value[0].id == portfolio_version.id

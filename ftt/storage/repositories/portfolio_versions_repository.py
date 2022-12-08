@@ -3,6 +3,7 @@ from typing import List, Optional, Union
 
 import peewee
 
+from ftt.storage import schemas
 from ftt.storage.value_objects import PortfolioVersionValueObject
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -11,11 +12,18 @@ from ftt.storage.repositories.repository import Repository
 
 class PortfolioVersionsRepository(Repository):
     @classmethod
-    def save(cls, model: PortfolioVersion) -> PortfolioVersion:
-        model.updated_at = datetime.now()
-        model.save()
+    def save(cls, model: schemas.PortfolioVersion) -> Union[schemas.PortfolioVersion, None]:
+        record = cls._get_by_id(PortfolioVersion, model.id)
+        fields = model.dict(exclude_unset=True, exclude={"portfolio"})
+        fields["updated_at"] = datetime.now()
+        updated = record.update(**fields).execute()
 
-        return model
+        # it always returns 1 because updated_at is always updated
+        # there were no cases where it returned 0 so far, but this situation is possible
+        if updated == 0:
+            return None
+        else:
+            return model
 
     @classmethod
     def create(cls, **data) -> PortfolioVersion:
@@ -48,12 +56,12 @@ class PortfolioVersionsRepository(Repository):
         )
 
     @classmethod
-    def get_active_version(cls, portfolio: Portfolio) -> Optional[PortfolioVersion]:
+    def get_active_version(cls, portfolio: schemas.Portfolio) -> Optional[schemas.PortfolioVersion]:
         try:
             return (
                 PortfolioVersion.select()
                 .join(Portfolio)
-                .where(Portfolio.id == portfolio)
+                .where(Portfolio.id == portfolio.id)
                 .where(PortfolioVersion.active == True)  # noqa: E712
                 .get()
             )
@@ -61,8 +69,17 @@ class PortfolioVersionsRepository(Repository):
             return None
 
     @classmethod
-    def get_all_by_portfolio(cls, portfolio: Portfolio) -> List[PortfolioVersion]:
-        return list(portfolio.versions)
+    def get_all_by_portfolio(cls, portfolio: schemas.Portfolio) -> List[schemas.PortfolioVersion]:
+        from ftt.storage.repositories.portfolios_repository import PortfoliosRepository
+        portfolio_model = PortfoliosRepository.get_by_id(portfolio)
+        portfolio_version_records = (PortfolioVersion.select()
+            .join(Portfolio)
+            .where(Portfolio.id == portfolio_model.id))
+        return [schemas.PortfolioVersion.from_orm(model) for model in portfolio_version_records]
+
+    # @classmethod
+    # def get_all_by_portfolio_id(cls, portfolio_id: int) -> List[schemas.PortfolioVersion]:
+    #     return [schemas.PortfolioVersion.from_orm(model) for model in PortfolioVersion.select_all().where(PortfolioVersion.portfolio_id == portfolio_id)]
 
     @classmethod
     def get_portfolio(cls, portfolio_version_id) -> Portfolio:

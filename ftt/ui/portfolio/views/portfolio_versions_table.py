@@ -11,9 +11,11 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from result import Err, Ok
 
+from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHandler
+from ftt.storage import schemas
 from ftt.ui.model import get_model
-from ftt.ui.portfolio.data import getPortfolioVersions
 from ftt.ui.portfolio.views.delete_portfolio_version_dialog import (
     DeletePortfolioVersionDialog,
 )
@@ -109,7 +111,7 @@ class PortfolioVersionsTable(QWidget):
         buttons_layout.addWidget(self._buttons.remove_version, 0)
         self._state.signals.selectedPortfolioVersionChanged.connect(
             lambda: self._buttons.remove_version.setEnabled(
-                len(self._currentTableSelection()) > 0
+                len(self._table.selectedIndexes()) > 0
             )
         )
 
@@ -118,14 +120,31 @@ class PortfolioVersionsTable(QWidget):
     def _currentTableSelection(self):
         """
         Returns a list of portfolio version ids currently selected in table
+        # TODO: this will brake the moment I introduce sorting
         """
-        versions = getPortfolioVersions(self._model.portfolio_id)
-        return list({versions[idx.row()].id for idx in self._table.selectedIndexes()})
+        portfolio_versions_result = PortfolioVersionsListHandler().handle(
+            portfolio=schemas.Portfolio(id=self._model.portfolio_id)
+        )
+        match portfolio_versions_result:
+            case Ok(versions):
+                return list({versions[idx.row()].id for idx in self._table.selectedIndexes()})
+            case Err(error):
+                print(f"Error: {error}")
+                return
 
     @Slot()
     def updateVersionsRows(self):
-        versions = getPortfolioVersions(self._model.portfolio_id)
-        if versions is None:
+        portfolio_versions_result = PortfolioVersionsListHandler().handle(
+            portfolio=schemas.Portfolio(id=self._model.portfolio_id)
+        )
+        match portfolio_versions_result:
+            case Err(error):
+                # TODO display error
+                print(f"Error: {error}")
+                return
+
+        versions = portfolio_versions_result.unwrap()
+        if len(versions) is None:
             return
 
         self._table.clearContents()

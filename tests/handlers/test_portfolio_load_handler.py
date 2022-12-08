@@ -1,6 +1,7 @@
 import pytest
 
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
+from ftt.storage import schemas
 
 
 class TestPortfolioLoadHandler:
@@ -9,6 +10,6 @@ class TestPortfolioLoadHandler:
         return PortfolioLoadHandler()
 
     def test_loads_portfolio_by_id(self, subject, portfolio):
-        result = subject.handle(portfolio_id=portfolio.id)
+        result = subject.handle(portfolio=schemas.Portfolio(id=portfolio.id))
 
-        assert result.value == portfolio
+        assert result.value.id == portfolio.id

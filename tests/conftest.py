@@ -158,9 +158,14 @@ def schema_portfolio(data_portfolio):
 
 
 @pytest.fixture
-def portfolio():
+def portfolio(data_portfolio):
     portfolio = Portfolio.create(
-        name="Portfolio TEST 1",
+        name=data_portfolio["name"],
+        description=data_portfolio["description"],
+        period_start=data_portfolio["period_start"],
+        period_end=data_portfolio["period_end"],
+        value=data_portfolio["value"],
+        interval=data_portfolio["interval"],
         updated_at=datetime.now(),
         created_at=datetime.now(),
     )
@@ -185,14 +190,28 @@ def portfolio_factory():
 
 
 @pytest.fixture
-def portfolio_version(portfolio):
+def data_portfolio_version(portfolio):
+    return {
+        "portfolio": portfolio,
+        "version": 1,
+        "active": True,
+        "optimization_strategy_name": "Test strategy",
+        "expected_annual_return": None,
+        "annual_volatility": None,
+        "sharpe_ratio": None,
+    }
+
+
+@pytest.fixture
+def portfolio_version(portfolio, data_portfolio_version):
     portfolio_version = PortfolioVersion.create(
         portfolio=portfolio,
-        version=1,
-        value=30000.0,
-        period_start=datetime(2020, 1, 1),
-        period_end=datetime(2020, 10, 5),
-        interval="1mo",
+        version=data_portfolio_version["version"],
+        active=data_portfolio_version["active"],
+        optimization_strategy_name=data_portfolio_version["optimization_strategy_name"],
+        expected_annual_return=data_portfolio_version["expected_annual_return"],
+        annual_volatility=data_portfolio_version["annual_volatility"],
+        sharpe_ratio=data_portfolio_version["sharpe_ratio"],
         updated_at=datetime.now(),
         created_at=datetime.now(),
     )

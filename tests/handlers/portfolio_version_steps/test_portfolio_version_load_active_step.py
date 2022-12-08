@@ -3,6 +3,7 @@ import pytest
 from ftt.handlers.portfolio_version_steps.portfolio_version_load_active_step import (
     PortfolioVersionLoadActiveStep,
 )
+from ftt.storage import schemas
 
 
 class TestPortfolioVersionLoadActiveStep:
@@ -11,11 +12,10 @@ class TestPortfolioVersionLoadActiveStep:
         return PortfolioVersionLoadActiveStep
 
     def test_returns_active_version(self, subject, portfolio, portfolio_version):
-        # TODO Move to factory
         portfolio_version.active = True
         portfolio_version.save()
 
-        result = subject.process(portfolio=portfolio)
+        result = subject.process(portfolio=schemas.Portfolio.from_orm(portfolio))
 
         assert result.is_ok()
         assert result.value == portfolio_version
