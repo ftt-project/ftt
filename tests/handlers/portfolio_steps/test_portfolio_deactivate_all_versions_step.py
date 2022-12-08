@@ -22,4 +22,3 @@ class TestPortfolioDeactivateAllVersionsStep:
 
         assert result.is_ok()
         assert not result.value[0].active
-

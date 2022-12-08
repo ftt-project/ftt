@@ -2,9 +2,7 @@ from result import Ok, Err
 
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 from ftt.handlers.portfolio_version_load_handler import PortfolioVersionLoadHandler
-from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHandler
 from ftt.handlers.weights_list_handler import WeightsListHandler
-from ftt.storage import schemas
 
 
 def getPortfolio(portfolio_id):

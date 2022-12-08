@@ -8,6 +8,7 @@ class PortfolioLoadHandler(Handler):
     """
     Returns a portfolio schema model with all properties loaded from DB based on the portfolio ID.
     """
+
     params = {"portfolio": schemas.Portfolio}
 
     handlers = [

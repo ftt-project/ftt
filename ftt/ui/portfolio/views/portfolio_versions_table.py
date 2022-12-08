@@ -127,7 +127,9 @@ class PortfolioVersionsTable(QWidget):
         )
         match portfolio_versions_result:
             case Ok(versions):
-                return list({versions[idx.row()].id for idx in self._table.selectedIndexes()})
+                return list(
+                    {versions[idx.row()].id for idx in self._table.selectedIndexes()}
+                )
             case Err(error):
                 print(f"Error: {error}")
                 return

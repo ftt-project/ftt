@@ -4,7 +4,6 @@ from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage import schemas
-from ftt.storage.models import Portfolio, PortfolioVersion
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )
