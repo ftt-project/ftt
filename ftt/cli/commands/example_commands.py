@@ -6,9 +6,6 @@ from ftt.handlers.portfolio_version_associate_securities_hanlder import (
     PortfolioVersionAssociateSecuritiesHandler,
 )
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
-from ftt.handlers.portfolio_with_version_creation_handler import (
-    PortfolioWithVersionCreationHandler,
-)
 from ftt.handlers.portfolio_optimization_handler import PortfolioOptimizationHandler
 from ftt.handlers.portfolio_stats_handler import PortfoliosStatsHandler
 from ftt.handlers.securities_information_prices_loading_handler import (
@@ -35,14 +32,14 @@ def example():
         ctx.console.print(config_result.unwrap_err())
         return
 
-    result = PortfolioWithVersionCreationHandler().handle(
-        name=config_result.value.name,
-        value=config_result.value.budget,
-        period_start=config_result.value.period_start,
-        period_end=config_result.value.period_end,
-        interval=config_result.value.interval,
-    )
-    portfolio = result.value
+    # result = PortfolioWithVersionCreationHandler().handle(
+    #     name=config_result.value.name,
+    #     value=config_result.value.budget,
+    #     period_start=config_result.value.period_start,
+    #     period_end=config_result.value.period_end,
+    #     interval=config_result.value.interval,
+    # )
+    portfolio = None  # result.value
 
     ctx.console.print("Portfolio successfully created", style="bold green")
     PortfolioDetails(ctx, portfolio).render()
@@ -72,7 +69,7 @@ def example():
         _ = PortfolioOptimizationHandler().handle(
             portfolio_version_id=portfolio.versions[0].id,
             optimization_strategy_name=OptimizationStrategyResolver.strategies()[0],
-            allocation_strategy_name=AllocationStrategyResolver.strategies[0],
+            allocation_strategy_name=AllocationStrategyResolver._strategies[0],
         )
 
     result = PortfoliosStatsHandler().handle(portfolio_version=portfolio.versions[0])

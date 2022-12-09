@@ -41,6 +41,16 @@ class TestPortfolioVersionsRepository:
         assert result.version == "10011"
         assert isinstance(result, schemas.PortfolioVersion)
 
+    def test_create(self, subject, schema_portfolio_version, portfolio):
+        schema_portfolio_version.portfolio = schemas.Portfolio(id=portfolio.id)
+        schema_portfolio_version.version = 1
+        result = subject.create(schema_portfolio_version)
+
+        assert result.is_ok()
+        assert isinstance(result.value, schemas.PortfolioVersion)
+        assert result.value.version == 1
+        assert result.value.portfolio.id == portfolio.id
+
     def test_get_active_version_when_exists(
         self, subject, portfolio, portfolio_version
     ):

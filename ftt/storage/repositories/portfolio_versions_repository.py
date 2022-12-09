@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Optional, Union
 
 import peewee
+from result import Err, Result, Ok
 
 from ftt.storage import schemas
 from ftt.storage.value_objects import PortfolioVersionValueObject
@@ -28,8 +29,16 @@ class PortfolioVersionsRepository(Repository):
             return model
 
     @classmethod
-    def create(cls, **data) -> PortfolioVersion:
-        return cls._create(PortfolioVersion, data)
+    def create(
+        cls, portfolio_version: schemas.PortfolioVersion
+    ) -> Result[schemas.PortfolioVersion, str]:
+        fields = portfolio_version.dict(exclude_unset=True, exclude={"portfolio"})
+        fields["portfolio_id"] = portfolio_version.portfolio.id
+        try:
+            record = cls._create(PortfolioVersion, fields)
+            return Ok(schemas.PortfolioVersion.from_orm(record))
+        except ValueError as e:
+            return Err(str(e))
 
     @classmethod
     def get_by_id(cls, id: int) -> PortfolioVersion:

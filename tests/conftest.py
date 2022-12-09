@@ -196,10 +196,16 @@ def data_portfolio_version(portfolio):
         "version": 1,
         "active": True,
         "optimization_strategy_name": "Test strategy",
+        "allocation_strategy_name": "Test allocation strategy",
         "expected_annual_return": None,
         "annual_volatility": None,
         "sharpe_ratio": None,
     }
+
+
+@pytest.fixture
+def schema_portfolio_version(data_portfolio_version):
+    return schemas.PortfolioVersion(**data_portfolio_version)
 
 
 @pytest.fixture

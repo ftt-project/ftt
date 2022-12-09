@@ -73,12 +73,14 @@ class PortfolioSecurity(BaseModel):
 
 class PortfolioVersion(BaseModel):
     id: int | None
-    portfolio: Portfolio = ...
-    version: str | None = ...
-    active: bool | None = ...
-    expected_annual_return: float | None = ...
-    annual_volatility: float | None = ...
-    sharpe_ratio: float | None = ...
+    portfolio: Portfolio
+    version: int | None
+    active: bool | None
+    optimization_strategy_name: str | None
+    allocation_strategy_name: str | None
+    expected_annual_return: float | None
+    annual_volatility: float | None
+    sharpe_ratio: float | None
 
     class Config:
         orm_mode = True

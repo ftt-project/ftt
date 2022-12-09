@@ -72,7 +72,7 @@ class PortfolioVersionsCommands:
         "allocation_strategy",
         description="Allocation strategy",
         type=str,
-        choices=AllocationStrategyResolver.strategies,
+        choices=AllocationStrategyResolver._strategies,
     )
     def optimize(
         self,

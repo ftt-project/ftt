@@ -81,7 +81,11 @@ class DefaultAllocationStrategy:
 
 
 class AllocationStrategyResolver:
-    strategies = ["default"]
+    _strategies = ["default"]
+
+    @classmethod
+    def strategies(cls) -> list[str]:
+        return cls._strategies
 
     @classmethod
     def resolve(cls, strategy_name: str):

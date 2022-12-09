@@ -7,22 +7,19 @@ from ftt.handlers.portfolio_steps.portfolio_version_create_step import (
 from ftt.handlers.portfolio_version_steps.portfolio_version_next_version_calculation_step import (
     PortfolioVersionNextVersionCalculationStep,
 )
+from ftt.storage import schemas
 
 
 class PortfolioVersionCreationHandler(Handler):
-    params = ("portfolio", "value", "period_start", "period_end", "interval")
+    params = {"portfolio_version": schemas.PortfolioVersion}
 
     handlers = [
-        (PortfolioVersionNextVersionCalculationStep, "portfolio"),
+        (PortfolioVersionNextVersionCalculationStep, "portfolio_version"),
         Context(rename=PortfolioVersionNextVersionCalculationStep.key, to="version"),
         (
             PortfolioVersionCreateStep,
-            "portfolio",
+            "portfolio_version",
             "version",
-            "value",
-            "period_start",
-            "period_end",
-            "interval",
         ),
         (ReturnResult, PortfolioVersionCreateStep.key),
     ]

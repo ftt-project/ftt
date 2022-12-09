@@ -54,20 +54,16 @@ class PortfolioVersionsTable(QWidget):
         self._table.setMaximumHeight(300)
         self._table.setMinimumWidth(1000)
 
-        self._table.setColumnCount(9)
-        self._table.setHorizontalHeaderLabels(
-            [
-                "Optimization Strategy",
-                "Active",
-                "Value",
-                "Period Start",
-                "Period End",
-                "Interval",
-                "Expected Annual Return",
-                "Annual Volatility",
-                "Sharpe Ratio",
-            ]
-        )
+        headers = [
+            "Optimization Strategy",
+            "Allocation Strategy",
+            "Active",
+            "Expected Annual Return",
+            "Annual Volatility",
+            "Sharpe Ratio",
+        ]
+        self._table.setColumnCount(len(headers))
+        self._table.setHorizontalHeaderLabels(headers)
         self._table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self._table.setEditTriggers(QTableWidget.NoEditTriggers)
         self._table.setSelectionBehavior(QTableWidget.SelectRows)
@@ -155,11 +151,8 @@ class PortfolioVersionsTable(QWidget):
             optimization_strategy_name = QTableWidgetItem(
                 item.optimization_strategy_name
             )
+            allocation_strategy_name = QTableWidgetItem(item.allocation_strategy_name)
             active = QTableWidgetItem("Yes" if item.active else "No")
-            value = QTableWidgetItem(f"{item.value}")
-            period_start = QTableWidgetItem(f"{item.period_start}")
-            period_end = QTableWidgetItem(f"{item.period_end}")
-            interval = QTableWidgetItem(f"{item.interval}")
             expected_annual_return = QTableWidgetItem(
                 "{0:.4g}".format(item.expected_annual_return or 0)
             )
@@ -169,14 +162,11 @@ class PortfolioVersionsTable(QWidget):
             sharpe_ratio = QTableWidgetItem("{0:.4g}".format(item.sharpe_ratio or 0))
 
             self._table.setItem(idx, 0, optimization_strategy_name)
-            self._table.setItem(idx, 1, active)
-            self._table.setItem(idx, 2, value)
-            self._table.setItem(idx, 3, period_start)
-            self._table.setItem(idx, 4, period_end)
-            self._table.setItem(idx, 5, interval)
-            self._table.setItem(idx, 6, expected_annual_return)
-            self._table.setItem(idx, 7, annual_volatility)
-            self._table.setItem(idx, 8, sharpe_ratio)
+            self._table.setItem(idx, 1, allocation_strategy_name)
+            self._table.setItem(idx, 2, active)
+            self._table.setItem(idx, 3, expected_annual_return)
+            self._table.setItem(idx, 4, annual_volatility)
+            self._table.setItem(idx, 5, sharpe_ratio)
 
             if item.id == self._model.portfolio_version_id:
                 row_to_focus = idx

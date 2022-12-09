@@ -1,5 +1,6 @@
 from nubia import argument, command, context  # type: ignore
 from prompt_toolkit import prompt
+from result import Err
 
 from ftt.cli.handlers.create_portfolio_prompts_handler import (
     CreatePortfolioPromptsHandler,
@@ -17,9 +18,6 @@ from ftt.handlers.portfolio_version_associate_securities_hanlder import (
     PortfolioVersionAssociateSecuritiesHandler,
 )
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
-from ftt.handlers.portfolio_with_version_creation_handler import (
-    PortfolioWithVersionCreationHandler,
-)
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 from ftt.handlers.portfolio_update_handler import PortfolioUpdateHandler
 from ftt.handlers.portfolio_version_load_active_handler import (
@@ -120,13 +118,14 @@ class PortfoliosCommands:
             ctx.console.print(config_result.value)
             return
 
-        portfolio_result = PortfolioWithVersionCreationHandler().handle(
-            name=config_result.value.name,
-            value=config_result.value.budget,
-            period_start=config_result.value.period_start,
-            period_end=config_result.value.period_end,
-            interval=config_result.value.interval,
-        )
+        # portfolio_result = PortfolioWithVersionCreationHandler().handle(
+        #     name=config_result.value.name,
+        #     value=config_result.value.budget,
+        #     period_start=config_result.value.period_start,
+        #     period_end=config_result.value.period_end,
+        #     interval=config_result.value.interval,
+        # )
+        portfolio_result = Err("Not implemented yet")
         if portfolio_result.is_ok():
             ctx.console.print("[green]Portfolio successfully created")
         else:
@@ -215,16 +214,18 @@ class PortfoliosCommands:
             self.context.console.print(prompt_result.value)
             return
 
-        portfolio_dto = prompt_result.value["portfolio_dto"]
-        portfolio_version_dto = prompt_result.value["portfolio_version_dto"]
+        # portfolio_dto = prompt_result.value["portfolio_dto"]
+        # portfolio_version_dto = prompt_result.value["portfolio_version_dto"]
         # TODO: refactor to use dto in handler
-        result = PortfolioWithVersionCreationHandler().handle(
-            name=portfolio_dto.name,
-            value=portfolio_version_dto.value,
-            period_start=portfolio_version_dto.period_start,
-            period_end=portfolio_version_dto.period_end,
-            interval=portfolio_version_dto.interval,
-        )
+        # result = PortfolioWithVersionCreationHandler().handle(
+        #     name=portfolio_dto.name,
+        #     value=portfolio_version_dto.value,
+        #     period_start=portfolio_version_dto.period_start,
+        #     period_end=portfolio_version_dto.period_end,
+        #     interval=portfolio_version_dto.interval,
+        # )
+
+        result = Err("Not implemented yet")
 
         if result.is_ok():
             self.context.console.print("[green]Portfolio successfully created")
