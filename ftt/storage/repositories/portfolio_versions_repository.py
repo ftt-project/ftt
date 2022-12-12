@@ -31,14 +31,12 @@ class PortfolioVersionsRepository(Repository):
     @classmethod
     def create(
         cls, portfolio_version: schemas.PortfolioVersion
-    ) -> Result[schemas.PortfolioVersion, str]:
+    ) -> schemas.PortfolioVersion:
         fields = portfolio_version.dict(exclude_unset=True, exclude={"portfolio"})
         fields["portfolio_id"] = portfolio_version.portfolio.id
-        try:
-            record = cls._create(PortfolioVersion, fields)
-            return Ok(schemas.PortfolioVersion.from_orm(record))
-        except ValueError as e:
-            return Err(str(e))
+
+        record = cls._create(PortfolioVersion, fields)
+        return schemas.PortfolioVersion.from_orm(record)
 
     @classmethod
     def get_by_id(cls, id: int) -> PortfolioVersion:

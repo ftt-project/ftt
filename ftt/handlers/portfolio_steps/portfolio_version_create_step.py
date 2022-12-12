@@ -1,4 +1,4 @@
-from result import Result
+from result import Result, as_result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage import schemas
@@ -18,5 +18,6 @@ class PortfolioVersionCreateStep(AbstractStep):
         portfolio_version: schemas.PortfolioVersion,
     ) -> Result[PortfolioVersion, str]:
         portfolio_version.version = version
-        result = PortfolioVersionsRepository.create(portfolio_version=portfolio_version)
+        create = as_result(Exception)(PortfolioVersionsRepository.create)
+        result = create(portfolio_version=portfolio_version)
         return result
