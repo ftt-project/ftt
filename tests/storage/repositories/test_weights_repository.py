@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pytest import fixture
 
+from ftt.storage import schemas
 from ftt.storage.models.weight import Weight
 from ftt.storage.repositories.weights_repository import WeightsRepository
 
@@ -91,9 +92,13 @@ class TestWeightsRepository:
     def test_get_by_portfolio_version_returns_list_of_weights(
         self, subject, portfolio_version, weight
     ):
-        result = subject.get_by_portfolio_version(portfolio_version)
+        result = subject.get_by_portfolio_version(
+            schemas.PortfolioVersion(id=portfolio_version.id)
+        )
 
-        assert result[0] == weight
+        assert isinstance(result, list)
+        assert isinstance(result[0], schemas.Weight)
+        assert result[0].id == weight.id
 
     def test_delete_returns_true(self, subject, weight):
         result = subject.delete(weight)

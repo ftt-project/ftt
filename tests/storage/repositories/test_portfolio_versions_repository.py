@@ -17,6 +17,11 @@ class TestPortfolioVersionsRepository:
     def subject(self):
         return PortfolioVersionsRepository
 
+    def test_get_by_id(self, subject, portfolio_version):
+        result = subject.get_by_id(schemas.PortfolioVersion(id=portfolio_version.id))
+
+        assert result.id == portfolio_version.id
+
     def test_get_latest_version(self, subject, portfolio, portfolio_version):
         found = subject.get_latest_version(portfolio_id=portfolio.id)
         assert type(found) == PortfolioVersion

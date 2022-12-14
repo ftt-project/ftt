@@ -73,7 +73,7 @@ class PortfolioSecurity(BaseModel):
 
 class PortfolioVersion(BaseModel):
     id: int | None
-    portfolio: Portfolio
+    portfolio: Portfolio | None
     version: int | None
     active: bool | None
     optimization_strategy_name: str | None
@@ -81,6 +81,50 @@ class PortfolioVersion(BaseModel):
     expected_annual_return: float | None
     annual_volatility: float | None
     sharpe_ratio: float | None
+
+    class Config:
+        orm_mode = True
+        getter_dict = PeeweeGetterDict
+
+
+class Weight(BaseModel):
+    """
+    Entity for Weight
+    """
+
+    id: int | None
+    portfolio_version: PortfolioVersion | None
+    security: Security | None
+    position: float | None
+    planned_position: float | None
+    amount: float | None
+
+    class Config:
+        orm_mode = True
+        getter_dict = PeeweeGetterDict
+
+
+class WeightedSecurity(BaseModel):
+    """
+    Value object for Security that could be weighted
+    for a given portfolio and its version
+    """
+
+    symbol: str | None
+    portfolio: Portfolio | None
+    portfolio_version: PortfolioVersion | None
+    security: Security | None
+    position: float | None
+    planned_position: float | None
+    amount: float | None
+    weighted: bool | None
+    discarded: bool | None
+
+    def __hash__(self):
+        return hash((type(self),) + (self.symbol, self.portfolio.id))
+
+    def __eq__(self, other):
+        return self.symbol == other.symbol and self.portfolio.id == other.portfolio.id
 
     class Config:
         orm_mode = True

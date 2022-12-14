@@ -3,6 +3,7 @@ from typing import List
 
 import peewee
 
+from ftt.storage import schemas
 from ftt.storage.value_objects import ValueObjectInterface
 from ftt.storage.models.base import Base
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -120,9 +121,15 @@ class WeightsRepository(Repository):
 
     @classmethod
     def get_by_portfolio_version(
-        cls, portfolio_version: PortfolioVersion
-    ) -> List[Weight]:
-        return list(portfolio_version.weights)
+        cls, portfolio_version: schemas.PortfolioVersion
+    ) -> List[schemas.Weight]:
+        portfolio_version_record = cls._get_by_id(
+            PortfolioVersion, portfolio_version.id
+        )
+        return [
+            schemas.Weight.from_orm(weight)
+            for weight in portfolio_version_record.weights
+        ]
 
     @classmethod
     def lock_weight(cls, weight: Weight, locked_at_amount: float) -> Weight:

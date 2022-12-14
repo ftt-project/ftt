@@ -4,6 +4,7 @@ import pytest
 from pandas import DataFrame, DatetimeIndex
 
 from ftt.storage import Storage, schemas
+from ftt.storage.models import PortfolioSecurity
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -190,6 +191,20 @@ def portfolio_factory():
 
 
 @pytest.fixture
+def portfolio_security(portfolio, security) -> PortfolioSecurity:
+    portfolio_security = PortfolioSecurity.create(
+        portfolio=portfolio,
+        security=security,
+        updated_at=datetime.now(),
+        created_at=datetime.now(),
+    )
+    try:
+        yield portfolio_security
+    finally:
+        portfolio_security.delete_instance()
+
+
+@pytest.fixture
 def data_portfolio_version(portfolio):
     return {
         "portfolio": portfolio,
@@ -284,6 +299,29 @@ def weight_factory():
     yield _weight
 
     Weight.delete().execute()
+
+
+@pytest.fixture
+def weighted_security_factory():
+    def _weighted_security_factory(
+        security,
+        portfolio_version,
+        portfolio,
+        position=0,
+        planned_position=100,
+        amount=0,
+    ):
+        return schemas.WeightedSecurity(
+            symbol=security.symbol,
+            portfolio=schemas.Portfolio.from_orm(portfolio),
+            portfolio_version=schemas.PortfolioVersion.from_orm(portfolio_version),
+            security=schemas.Security.from_orm(security),
+            position=position,
+            planned_position=planned_position,
+            amount=amount,
+        )
+
+    yield _weighted_security_factory
 
 
 @pytest.fixture

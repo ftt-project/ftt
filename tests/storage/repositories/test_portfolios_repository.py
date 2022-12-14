@@ -82,3 +82,11 @@ class TestPortfoliosRepository:
 
         assert "Failed to persist `Portfolio` with params" in str(exc.value)
         assert "CHECK constraint failed" in str(exc.value)
+
+    def test_find_by_portfolio_version(self, subject, portfolio_version):
+        result = subject.find_by_portfolio_version(
+            schemas.PortfolioVersion(id=portfolio_version.id)
+        )
+
+        assert isinstance(result, schemas.Portfolio)
+        assert result.id == portfolio_version.portfolio_id

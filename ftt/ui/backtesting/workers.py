@@ -8,7 +8,7 @@ from pandas import DataFrame
 import pandas as pd
 import bt  # type: ignore
 
-from ftt.handlers.weights_list_handler import WeightsListHandler
+from ftt.handlers.weights_list_load_handler import WeightsListLoadHandler
 from ftt.ui.worker_signals import WorkerSignals
 
 
@@ -24,7 +24,7 @@ class BacktestingWorker(QObject):
             portfolio_version_id=self.portfolio_version_id
         )
 
-        weights_result = WeightsListHandler().handle(
+        weights_result = WeightsListLoadHandler().handle(
             portfolio_version=portfolio_version_result.value
         )
         weights_mapping = {

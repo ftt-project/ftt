@@ -2,7 +2,7 @@ from result import Ok, Err
 
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
 from ftt.handlers.portfolio_version_load_handler import PortfolioVersionLoadHandler
-from ftt.handlers.weights_list_handler import WeightsListHandler
+from ftt.handlers.weights_list_load_handler import WeightsListLoadHandler
 
 
 def getPortfolio(portfolio_id):
@@ -26,7 +26,7 @@ def getPortfolioVersionWeights(portfolio_version_id):
             )
             return
 
-    weights_result = WeightsListHandler().handle(
+    weights_result = WeightsListLoadHandler().handle(
         portfolio_version=version_result.unwrap()
     )
     match weights_result:
@@ -60,48 +60,3 @@ class ChangeCollectionIterator:
             }
 
         raise StopIteration
-
-
-#
-# class PortfolioModel(QObject):
-#     def __init__(self):
-#         super().__init__()
-#
-#         self._current_portfolio_version_changes = None
-#         self._current_portfolio_version_id = None
-#         self._current_portfolio_id = None
-#         self._current_weights = None
-#         self._current_portfolio_version = None
-#         self._current_portfolio = None
-#
-#     # @property
-#     # def currentPortfolioId(self):
-#     #     return self._current_portfolio_id
-#     #
-#     # @currentPortfolioId.setter
-#     # def currentPortfolioId(self, value):
-#     #     self._current_portfolio_id = value
-#
-#     # @property
-#     # def currentPortfolio(self):
-#     #     return self._current_portfolio
-#
-#     @property
-#     def currentPortfolioVersionId(self):
-#         return self._current_portfolio_version_id
-#
-#     @currentPortfolioVersionId.setter
-#     def currentPortfolioVersionId(self, value):
-#         self._current_portfolio_version_id = value
-#
-#     @property
-#     def currentPortfolioVersion(self):
-#         return self._current_portfolio_version
-#
-#     @property
-#     def currentPortfolioVersionChanges(self):
-#         return self._current_portfolio_version_changes
-#
-#     @currentPortfolioVersionChanges.setter
-#     def currentPortfolioVersionChanges(self, value):
-#         self._current_portfolio_version_changes = ChangeCollectionIterator(value)

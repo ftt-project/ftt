@@ -78,3 +78,15 @@ class PortfoliosRepository(Repository):
     @classmethod
     def update(cls, portfolio: Portfolio, dto: ValueObjectInterface) -> Portfolio:
         return cls._update(portfolio, dto)
+
+    @classmethod
+    def find_by_portfolio_version(
+        cls, portfolio_version: schemas.PortfolioVersion
+    ) -> schemas.Portfolio:
+        portfolio_record = (
+            Portfolio.select()
+            .join(PortfolioVersion)
+            .where(PortfolioVersion.id == portfolio_version.id)
+            .get()
+        )
+        return schemas.Portfolio.from_orm(portfolio_record)

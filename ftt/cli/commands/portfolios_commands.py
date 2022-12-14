@@ -28,7 +28,7 @@ from ftt.handlers.portfolios_list_handler import PortfoliosListHandler
 from ftt.handlers.securities_information_prices_loading_handler import (
     SecuritiesInformationPricesLoadingHandler,
 )
-from ftt.handlers.weights_list_handler import WeightsListHandler
+from ftt.handlers.weights_list_load_handler import WeightsListLoadHandler
 from ftt.storage.value_objects import PortfolioValueObject, SecurityValueObject
 
 
@@ -85,7 +85,7 @@ class PortfoliosCommands:
                 ctx, active_portfolio_version_result.value
             ).render()
 
-            result = WeightsListHandler().handle(
+            result = WeightsListLoadHandler().handle(
                 portfolio_version=active_portfolio_version_result.value
             )
 

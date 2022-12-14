@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import List, Optional, Union
 
 import peewee
-from result import Err, Result, Ok
 
 from ftt.storage import schemas
 from ftt.storage.value_objects import PortfolioVersionValueObject
@@ -39,7 +38,15 @@ class PortfolioVersionsRepository(Repository):
         return schemas.PortfolioVersion.from_orm(record)
 
     @classmethod
-    def get_by_id(cls, id: int) -> PortfolioVersion:
+    def get_by_id(
+        cls, portfolio_version: schemas.PortfolioVersion
+    ) -> schemas.PortfolioVersion:
+        return schemas.PortfolioVersion.from_orm(
+            PortfolioVersion.get(portfolio_version.id)
+        )
+
+    @classmethod
+    def get_by_id_(cls, id: int) -> PortfolioVersion:
         return PortfolioVersion.get(id)
 
     @classmethod
@@ -98,6 +105,10 @@ class PortfolioVersionsRepository(Repository):
 
     @classmethod
     def get_portfolio(cls, portfolio_version_id) -> Portfolio:
+        """
+        Deprecated
+        Use PortfolioRepository.find_by_portfolio_version instead
+        """
         portfolio_versions = PortfolioVersion.get_by_id(portfolio_version_id)
         return portfolio_versions.portfolio
 

@@ -1,18 +1,20 @@
 import pytest
 
-from ftt.handlers.weights_steps.weights_load_step import WeightsLoadStep
+from ftt.handlers.weights_list_load_handler import WeightsListLoadHandler
 from ftt.storage import schemas
 
 
-class TestWeightsLoadStep:
+class TestWeightsListLoadHandler:
     @pytest.fixture
     def subject(self):
-        return WeightsLoadStep
+        return WeightsListLoadHandler()
 
     def test_returns_list_of_weights_by_portfolio_version(
-        self, subject, portfolio_version, weight, security
+        self, subject, portfolio_version, weight
     ):
-        result = subject.process(schemas.PortfolioVersion(id=portfolio_version.id))
+        result = subject.handle(
+            portfolio_version=schemas.PortfolioVersion(id=portfolio_version.id)
+        )
 
         assert result.is_ok()
         assert isinstance(result.value, list)

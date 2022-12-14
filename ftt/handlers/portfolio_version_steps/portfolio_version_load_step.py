@@ -1,5 +1,3 @@
-from typing import Optional
-
 import peewee
 from result import Err, Ok, Result
 
@@ -18,12 +16,11 @@ class PortfolioVersionLoadStep(AbstractStep):
     key = "portfolio_version"
 
     @classmethod
-    def process(
-        cls, portfolio_version_id: int
-    ) -> Result[PortfolioVersion, Optional[str]]:
+    def process(cls, portfolio_version_id: int) -> Result[PortfolioVersion, str]:
         try:
             # TODO: peewee exception handling must be moved to the repository level
-            found = PortfolioVersionsRepository.get_by_id(portfolio_version_id)
+            # TODO: refactor to use schema
+            found = PortfolioVersionsRepository.get_by_id_(portfolio_version_id)
         except peewee.DoesNotExist:
             return Err(
                 f"Portfolio Version with ID {portfolio_version_id} does not exist"

@@ -33,7 +33,7 @@ from ftt.handlers.positions_synchronization_handler import (
     PositionsSynchronizationHandler,
 )
 from ftt.handlers.securities_load_handler import SecuritiesLoadHandler
-from ftt.handlers.weights_list_handler import WeightsListHandler
+from ftt.handlers.weights_list_load_handler import WeightsListLoadHandler
 from ftt.portfolio_management.allocation_strategies import AllocationStrategyResolver
 from ftt.portfolio_management.optimization_strategies import (
     OptimizationStrategyResolver,
@@ -107,7 +107,7 @@ class PortfolioVersionsCommands:
             )
             return
 
-        result = WeightsListHandler().handle(
+        result = WeightsListLoadHandler().handle(
             portfolio_version=portfolio_version_result.value
         )
         WeightsList(
@@ -430,7 +430,7 @@ class PortfolioVersionsCommands:
             self.context.console.print(portfolio_version_result.unwrap_err())
             return
 
-        weights_result = WeightsListHandler().handle(
+        weights_result = WeightsListLoadHandler().handle(
             portfolio_version=portfolio_version_result.value
         )
 

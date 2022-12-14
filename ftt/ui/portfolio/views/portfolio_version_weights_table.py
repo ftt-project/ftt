@@ -1,6 +1,7 @@
 from collections import namedtuple
+from typing import Union, Any
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QAbstractTableModel, QModelIndex, QPersistentModelIndex
 from PySide6.QtWidgets import (
     QTableWidget,
     QHeaderView,
@@ -11,10 +12,74 @@ from PySide6.QtWidgets import (
     QPushButton,
     QHBoxLayout,
 )
+from result import Err
 
+from ftt.handlers.weights_list_load_handler import WeightsListLoadHandler
+from ftt.storage import schemas
+from ftt.storage.schemas import WeightedSecurity
 from ftt.ui.model import get_model
-from ftt.ui.portfolio.data import getPortfolioVersionWeights
 from ftt.ui.state import get_state
+
+
+class WeightsModel(QAbstractTableModel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.weights: list[WeightedSecurity] = []
+
+    def rowCount(self, parent: Union[QModelIndex, QPersistentModelIndex] = ...) -> int:
+        return len(self.weights)
+
+    def columnCount(
+        self, parent: Union[QModelIndex, QPersistentModelIndex] = ...
+    ) -> int:
+        return WeightedSecurity.__fields__.keys().__len__()
+
+    def data(self, index: QModelIndex, role: int = Qt.DisplayRole):
+        if not index.isValid():
+            return None
+
+        if not 0 <= index.row() < len(self.weights):
+            return None
+
+        if role == Qt.DisplayRole:
+            return self.weights[index.row()][index.column()]
+
+        return None
+
+    def setData(
+        self,
+        index: Union[QModelIndex, QPersistentModelIndex],
+        value: Any,
+        role: int = Qt.EditRole,
+    ) -> bool:
+        if not index.isValid():
+            return False
+
+        if not 0 <= index.row() < len(self.weights):
+            return False
+
+        if role == Qt.EditRole:
+            self.weights[index.row()][index.column()] = value
+            return True
+
+        return False
+
+    def headerData(
+        self, section: int, orientation: Qt.Orientation, role: int = Qt.DisplayRole
+    ):
+        if role != Qt.DisplayRole:
+            return None
+
+        if orientation == Qt.Horizontal:
+            return WeightedSecurity.__fields__.keys().__getitem__(section)
+
+        return None
+
+    def flags(self, index: Union[QModelIndex, QPersistentModelIndex]) -> Qt.ItemFlags:
+        if not index.isValid():
+            return Qt.NoItemFlags
+
+        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
 
 class PortfolioVersionWeightsTable(QWidget):
@@ -103,7 +168,18 @@ class PortfolioVersionWeightsTable(QWidget):
         ):
             return
 
-        weights = getPortfolioVersionWeights(self._model.portfolio_version_id)
+        result = WeightsListLoadHandler().handle(
+            portfolio_version=schemas.PortfolioVersion(
+                id=self._model.portfolio_version_id
+            )
+        )
+        # weights = getPortfolioVersionWeights(self._model.portfolio_version_id)
+        match result:
+            case Err(e):
+                print(f"Error: {e}")
+                return
+
+        weights = result.unwrap()
         self._table.setRowCount(len(weights))
         for idx, item in enumerate(weights):
             security = QTableWidgetItem(item.security.symbol)

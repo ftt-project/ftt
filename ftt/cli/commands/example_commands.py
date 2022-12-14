@@ -11,7 +11,7 @@ from ftt.handlers.portfolio_stats_handler import PortfoliosStatsHandler
 from ftt.handlers.securities_information_prices_loading_handler import (
     SecuritiesInformationPricesLoadingHandler,
 )
-from ftt.handlers.weights_list_handler import WeightsListHandler
+from ftt.handlers.weights_list_load_handler import WeightsListLoadHandler
 from ftt.portfolio_management.allocation_strategies import AllocationStrategyResolver
 from ftt.portfolio_management.optimization_strategies import (
     OptimizationStrategyResolver,
@@ -78,7 +78,7 @@ def example():
     else:
         ctx.console.print(result.unwrap_err())
 
-    weights_result = WeightsListHandler().handle(
+    weights_result = WeightsListLoadHandler().handle(
         portfolio_version=portfolio.versions[0]
     )
     WeightsList(ctx, weights_result.value).render()
