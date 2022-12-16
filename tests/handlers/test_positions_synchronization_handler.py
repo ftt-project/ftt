@@ -3,6 +3,7 @@ import pytest
 from ftt.handlers.positions_synchronization_handler import (
     PositionsSynchronizationHandler,
 )
+from ftt.storage import schemas
 from ftt.storage.models import Order
 
 
@@ -11,20 +12,20 @@ class TestPositionsSynchronizationHandler:
     def subject(self):
         return PositionsSynchronizationHandler()
 
-    @pytest.fixture(autouse=True)
-    def mock_server_request(self, mocker):
-        mocked_place_orders = mocker.patch(
-            "ftt.handlers.order_steps.orders_place_step.build_brokerage_service"
-        )
-        mocked_place_orders.return_value.place_order.return_value = 1782
+    @pytest.fixture
+    def broker_service(self, mocker):
+        service = mocker.Mock()
+        service.open_positions.return_value = []
+        service.place_order.return_value = 1782
+        return service
 
-        mocked_open_positions = mocker.patch(
-            "ftt.handlers.position_steps.request_open_positions_step.build_brokerage_service"
+    def test_returns_created_orders(
+        self, subject, portfolio_version, weight, broker_service
+    ):
+        result = subject.handle(
+            portfolio_version=schemas.PortfolioVersion(id=portfolio_version.id),
+            brokerage_service=broker_service,
         )
-        mocked_open_positions.return_value.open_positions.return_value = []
-
-    def test_returns_created_orders(self, subject, portfolio_version, weight):
-        result = subject.handle(portfolio_version_id=portfolio_version.id)
 
         assert result.is_ok()
         assert type(result.value) == list

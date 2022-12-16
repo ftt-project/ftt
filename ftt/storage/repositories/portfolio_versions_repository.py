@@ -1,10 +1,7 @@
 from datetime import datetime
 from typing import List, Optional, Union
 
-import peewee
-
 from ftt.storage import schemas
-from ftt.storage.value_objects import PortfolioVersionValueObject
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.repositories.repository import Repository
@@ -46,10 +43,6 @@ class PortfolioVersionsRepository(Repository):
         )
 
     @classmethod
-    def get_by_id_(cls, id: int) -> PortfolioVersion:
-        return PortfolioVersion.get(id)
-
-    @classmethod
     def get_by_name(cls, name: str) -> PortfolioVersion:
         raise NotImplementedError()
 
@@ -75,15 +68,16 @@ class PortfolioVersionsRepository(Repository):
     def get_active_version(
         cls, portfolio: schemas.Portfolio
     ) -> Optional[schemas.PortfolioVersion]:
-        try:
-            return (
-                PortfolioVersion.select()
-                .join(Portfolio)
-                .where(Portfolio.id == portfolio.id)
-                .where(PortfolioVersion.active == True)  # noqa: E712
-                .get()
-            )
-        except peewee.DoesNotExist:
+        query = (
+            PortfolioVersion.select()
+            .join(Portfolio)
+            .where(Portfolio.id == portfolio.id)
+            .where(PortfolioVersion.active == True)  # noqa: E712
+        )
+
+        if query.exists():
+            return schemas.PortfolioVersion.from_orm(query.get())
+        else:
             return None
 
     @classmethod
@@ -107,19 +101,23 @@ class PortfolioVersionsRepository(Repository):
     def get_portfolio(cls, portfolio_version_id) -> Portfolio:
         """
         Deprecated
-        Use PortfolioRepository.find_by_portfolio_version instead
+        Use PortfoliosRepository.find_by_portfolio_version instead
         """
         portfolio_versions = PortfolioVersion.get_by_id(portfolio_version_id)
         return portfolio_versions.portfolio
 
     @classmethod
     def update(
-        cls, portfolio_version: PortfolioVersion, dto: PortfolioVersionValueObject
-    ) -> PortfolioVersion:
-        return cls._update(portfolio_version, dto)
+        cls, portfolio_version: schemas.PortfolioVersion
+    ) -> schemas.PortfolioVersion:
+        fields = portfolio_version.dict(exclude_unset=True)
+        record = cls._get_by_id(PortfolioVersion, portfolio_version.id)
+        result = cls._update(record, fields)
+        return schemas.PortfolioVersion.from_orm(result)
 
     @classmethod
     def delete(
         cls, portfolio_version: PortfolioVersion, soft_delete: bool = True
     ) -> bool:
-        return cls._delete(portfolio_version, soft_delete)
+        record = cls._get_by_id(PortfolioVersion, portfolio_version.id)
+        return cls._delete(record, soft_delete)

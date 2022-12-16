@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 
 from ftt.handlers.portfolio_optimization_handler import PortfolioOptimizationHandler
+from ftt.storage import schemas
 from tests.helpers import reload_record
 
 
@@ -24,20 +25,27 @@ class TestPortfolioOptimizationHandler:
         date_range = pd.date_range(start=period_start, end=period_end)
         interval = "1d"
 
-        portfolio_version = portfolio_version_factory(
-            period_start=period_start,
-            period_end=period_end,
-            interval=interval,
-        )
+        portfolio.period_start = period_start
+        portfolio.period_end = period_end
+        portfolio.interval = interval
+        portfolio.save()
+
+        portfolio_version = portfolio_version_factory()
+
         weights = securities_weights_list_factory(
             portfolio_version, n=5, interval=interval, date_range=date_range
         )
 
         result = subject.handle(
-            portfolio_version_id=portfolio_version.id,
-            optimization_strategy_name="historical",
-            allocation_strategy_name="default",
+            portfolio_version=schemas.PortfolioVersion(id=portfolio_version.id),
         )
 
         assert result.is_ok()
-        assert reload_record(weights[0]).planned_position != 0
+        assert reload_record(weights[0]).planned_position == 6
+        assert reload_record(weights[1]).planned_position == 6
+        assert reload_record(weights[2]).planned_position == 6
+        assert reload_record(weights[3]).planned_position == 6
+        assert reload_record(weights[4]).planned_position == 6
+        assert reload_record(portfolio_version).expected_annual_return == 31.0
+        assert round(reload_record(portfolio_version).annual_volatility, 2) == 8.82
+        assert round(reload_record(portfolio_version).sharpe_ratio, 2) == 1.79

@@ -1,4 +1,5 @@
 from datetime import datetime, date
+from enum import Enum
 from typing import Any
 
 import peewee
@@ -86,6 +87,17 @@ class PortfolioVersion(BaseModel):
         orm_mode = True
         getter_dict = PeeweeGetterDict
 
+    def __hash__(self):
+        return hash(
+            (
+                type(self),
+                self.id,
+            )
+        )
+
+    def __eq__(self, other):
+        return False if other is None else self.id == other.id
+
 
 class Weight(BaseModel):
     """
@@ -129,3 +141,100 @@ class WeightedSecurity(BaseModel):
     class Config:
         orm_mode = True
         getter_dict = PeeweeGetterDict
+
+
+class Order(BaseModel):
+    class Status(str, Enum):
+        CREATED = "Created"
+        SUBMITTED = "Submitted"
+        ACCEPTED = "Accepted"
+        PARTIAL = "Partial"
+        COMPLETED = "Completed"
+        CANCELED = "Canceled"
+        EXPIRED = "Expired"
+        MARGIN = "Margin"
+        REJECTED = "Rejected"
+
+    class OrderAction(str, Enum):
+        BUY = "BUY"
+        SELL = "SELL"
+
+    class OrderType(str, Enum):
+        """
+        See https://interactivebrokers.github.io/tws-api/basic_orders.html
+        """
+
+        MARKET = "MKT"
+        LIMIT = "LMT"
+
+    id: int | None
+    action: OrderAction
+    order_type: OrderType
+    security: Security
+    portfolio: Portfolio
+    portfolio_version: PortfolioVersion
+    weight: Weight
+    status: Status
+    external_id: str | None
+    executed_at: datetime | None
+    desired_size: float | None
+    desired_price: float | None
+    execution_size: int | None
+    execution_price: float | None
+    execution_value: float | None
+    execution_commission: float | None
+
+    class Config:
+        orm_mode = True
+        getter_dict = PeeweeGetterDict
+
+
+class Contract(BaseModel):
+    """
+    Value object that represents an operation that broker system performs
+    """
+
+    symbol: str
+    security_type: str | None
+    exchange: str | None
+    currency: str | None
+    local_symbol: str | None
+
+
+class BrokerOrder(BaseModel):
+    action: Order.OrderAction
+    total_quantity: float
+    order_type: Order.OrderType
+    limit_price: float | None
+
+
+class Position(BaseModel):
+    """
+    Value object that represents open position in the broker system
+    """
+
+    account: str
+    contract: Contract | None
+    position: float
+    avg_cost: float | None = 0.0
+
+
+class CalculatedPositionDifference(BaseModel):
+    """
+    Value object that represents a position operation that was calculated
+    and is a difference between actual and planned positions on a given security
+    """
+
+    class Difference(str, Enum):
+        """
+        See https://interactivebrokers.github.io/tws-api/basic_orders.html
+        """
+
+        BIGGER = "BIGGER"
+        SMALLER = "SMALLER"
+
+    symbol: str
+    actual_position_difference: Difference
+    planned_position: float
+    actual_position: float
+    delta: float

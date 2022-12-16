@@ -15,11 +15,12 @@ from ftt.handlers.portfolio_version_steps.portfolio_version_load_portfolio_step 
 from ftt.handlers.portfolio_version_steps.portfolio_version_load_step import (
     PortfolioVersionLoadStep,
 )
+from ftt.storage import schemas
 
 
 class PortfolioVersionActivationHandler(Handler):
     """
-    This handler performs all necessary operations to activate a portfolio version.
+    This handler performs all necessary operations to activate requested portfolio version.
 
     * Checks if the portfolio version is not active already
     * Checks if the portfolio version has associated weights
@@ -27,10 +28,10 @@ class PortfolioVersionActivationHandler(Handler):
     * Activates a portfolio version by ID
     """
 
-    params = ("portfolio_version_id",)
+    params = {"portfolio_version": schemas.PortfolioVersion}
 
     handlers = [
-        (PortfolioVersionLoadStep, "portfolio_version_id"),
+        (PortfolioVersionLoadStep, "portfolio_version"),
         (PortfolioVersionActivationValidateStep, PortfolioVersionLoadStep.key),
         (PortfolioVersionLoadPortfolioStep, PortfolioVersionLoadStep.key),
         (PortfolioDeactivateAllVersionsStep, PortfolioVersionLoadPortfolioStep.key),

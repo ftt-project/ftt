@@ -3,6 +3,7 @@ import pytest
 from ftt.handlers.portfolio_version_steps.portfolio_version_delete_step import (
     PortfolioVersionDeleteStep,
 )
+from ftt.storage import schemas
 from ftt.storage.models import PortfolioVersion, Weight
 
 
@@ -12,7 +13,9 @@ class TestPortfolioVersionDeleteStep:
         return PortfolioVersionDeleteStep
 
     def test_deletes_portfolio_version(self, subject, portfolio_version, weight):
-        result = subject.process(portfolio_version=portfolio_version)
+        result = subject.process(
+            portfolio_version=schemas.PortfolioVersion(id=portfolio_version.id)
+        )
 
         assert result.is_ok()
         assert result.value is True

@@ -18,3 +18,9 @@ class TestWeightsLoadStep:
         assert isinstance(result.value, list)
         assert isinstance(result.value[0], schemas.WeightedSecurity)
         assert result.value[0].id == weight.id
+
+    def test_returns_err_when_portfolio_version_not_found(self, subject):
+        result = subject.process(schemas.PortfolioVersion(id=567))
+
+        assert result.is_err()
+        assert result.value == "Portfolio Version with ID 567 does not exist"

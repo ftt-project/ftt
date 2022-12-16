@@ -5,6 +5,10 @@ from typing import Optional
 
 @dataclass(frozen=True)
 class Contract:
+    """
+    Deprecated in favor of schemas.Contract
+    """
+
     symbol: str
     security_type: Optional[str] = None
     exchange: Optional[str] = None

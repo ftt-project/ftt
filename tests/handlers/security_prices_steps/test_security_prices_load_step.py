@@ -3,6 +3,7 @@ import pytest
 from ftt.handlers.security_prices_steps.security_prices_load_step import (
     SecurityPricesLoadStep,
 )
+from ftt.storage import schemas
 
 
 class TestSecurityPricesLoadStep:
@@ -14,6 +15,7 @@ class TestSecurityPricesLoadStep:
         self,
         subject,
         portfolio_version,
+        portfolio,
         security_factory,
         weight_factory,
         security_price_factory,
@@ -22,11 +24,14 @@ class TestSecurityPricesLoadStep:
         weight_factory(portfolio_version, security)
         security_price = security_price_factory(
             security,
-            dt=portfolio_version.period_start,
-            interval=portfolio_version.interval,
+            dt=portfolio.period_start,
+            interval=portfolio.interval,
         )
 
-        result = subject.process(portfolio_version=portfolio_version)
+        result = subject.process(
+            portfolio_version=schemas.PortfolioVersion.from_orm(portfolio_version),
+            portfolio=schemas.Portfolio.from_orm(portfolio),
+        )
 
         assert result.is_ok()
         assert result.value.prices == {security.symbol: [security_price.close]}
@@ -35,6 +40,7 @@ class TestSecurityPricesLoadStep:
         self,
         subject,
         portfolio_version,
+        portfolio,
         security_factory,
         weight_factory,
         security_price_factory,
@@ -45,11 +51,14 @@ class TestSecurityPricesLoadStep:
         weight_factory(portfolio_version, security2)
         _ = security_price_factory(
             security1,  # only for security 1
-            dt=portfolio_version.period_start,
-            interval=portfolio_version.interval,
+            dt=portfolio.period_start,
+            interval=portfolio.interval,
         )
 
-        result = subject.process(portfolio_version=portfolio_version)
+        result = subject.process(
+            portfolio_version=schemas.PortfolioVersion.from_orm(portfolio_version),
+            portfolio=schemas.Portfolio.from_orm(portfolio),
+        )
 
         assert result.is_err()
         assert (

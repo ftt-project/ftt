@@ -4,6 +4,7 @@ from ftt.handlers.portfolio_steps.portfolio_optimization_result_persist_step imp
     PortfolioOptimizationResultPersistStep,
 )
 from ftt.handlers.weights_steps.weights_calculate_step import WeightsCalculateStepResult
+from ftt.storage import schemas
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.models.weight import Weight
 from tests.helpers import reload_record
@@ -24,15 +25,10 @@ class TestPortfolioOptimizationResultPersistStep:
             sharpe_ratio=15,
         )
 
-    @pytest.fixture
-    def optimization_strategy_name(self):
-        return "historical"
-
-    def test_persist_weights(
-        self, subject, calculation_result, portfolio_version, optimization_strategy_name
-    ):
+    def test_persist_weights(self, subject, calculation_result, portfolio_version):
         result = subject.process(
-            portfolio_version, calculation_result, optimization_strategy_name
+            schemas.PortfolioVersion.from_orm(portfolio_version),
+            calculation_result,
         )
 
         assert result.is_ok()
@@ -40,10 +36,11 @@ class TestPortfolioOptimizationResultPersistStep:
         assert isinstance(result.value[0], Weight)
 
     def test_updates_portfolio_version_with_stats(
-        self, subject, calculation_result, portfolio_version, optimization_strategy_name
+        self, subject, calculation_result, portfolio_version
     ):
         result = subject.process(
-            portfolio_version, calculation_result, optimization_strategy_name
+            schemas.PortfolioVersion.from_orm(portfolio_version),
+            calculation_result,
         )
 
         portfolio_version = reload_record(portfolio_version)
@@ -51,18 +48,3 @@ class TestPortfolioOptimizationResultPersistStep:
         assert portfolio_version.expected_annual_return is not None
         assert portfolio_version.annual_volatility is not None
         assert portfolio_version.sharpe_ratio is not None
-
-    def test_updates_portfolio_version_optimization_algorithm(
-        self, subject, portfolio_version, calculation_result, optimization_strategy_name
-    ):
-        assert portfolio_version.optimization_strategy_name is None
-
-        result = subject.process(
-            portfolio_version, calculation_result, optimization_strategy_name
-        )
-
-        assert result.is_ok()
-        assert (
-            reload_record(portfolio_version).optimization_strategy_name
-            == optimization_strategy_name
-        )

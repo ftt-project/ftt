@@ -48,7 +48,9 @@ class SecuritiesRepository(Repository):
         raise NotImplementedError()
 
     @classmethod
-    def find_securities(cls, portfolio_version: PortfolioVersion) -> List[Security]:
+    def find_securities(
+        cls, portfolio_version: schemas.PortfolioVersion
+    ) -> List[Security]:
         result = (
             Security.select()
             .join(Weight)

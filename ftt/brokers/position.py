@@ -6,6 +6,10 @@ from ftt.brokers.contract import Contract
 
 @dataclass(frozen=True, init=True)
 class Position:
+    """
+    Deprecated in favor of schemas.Position
+    """
+
     account: str
     contract: Contract
     position: float

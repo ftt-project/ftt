@@ -3,6 +3,7 @@ import pytest
 from ftt.handlers.portfolio_version_steps.portfolio_version_activation_validate_step import (
     PortfolioVersionActivationValidateStep,
 )
+from ftt.storage import schemas
 
 
 class TestPortfolioVersionActivationValidateStep:
@@ -16,9 +17,12 @@ class TestPortfolioVersionActivationValidateStep:
         portfolio_version.active = False
         portfolio_version.save()
 
-        result = subject.process(portfolio_version=portfolio_version)
+        result = subject.process(
+            portfolio_version=schemas.PortfolioVersion.from_orm(portfolio_version)
+        )
 
         assert result.is_ok()
+        assert isinstance(result.value, schemas.PortfolioVersion)
 
     def test_process_errors_when_the_same_version(
         self, subject, portfolio, portfolio_version, weight
@@ -33,6 +37,8 @@ class TestPortfolioVersionActivationValidateStep:
     def test_process_errors_when_no_weights(
         self, subject, portfolio, portfolio_version
     ):
+        portfolio_version.active = False
+        portfolio_version.save()
         result = subject.process(portfolio_version=portfolio_version)
 
         assert result.is_err()
@@ -44,6 +50,8 @@ class TestPortfolioVersionActivationValidateStep:
     def test_process_errors_when_weight_planned_position_is_zero(
         self, subject, portfolio, portfolio_version, weight, security
     ):
+        portfolio_version.active = False
+        portfolio_version.save()
         weight.planned_position = 0
         weight.save()
 

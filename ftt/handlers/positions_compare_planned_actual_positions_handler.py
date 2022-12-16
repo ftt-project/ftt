@@ -7,13 +7,17 @@ from ftt.handlers.position_steps.compare_planned_actual_positions_step import (
     ComparePlannedActualPositionsStep,
 )
 from ftt.handlers.weights_steps.weights_load_step import WeightsLoadStep
+from ftt.storage import schemas
 
 
 class PositionsComparePlannedActualPositionsHandler(Handler):
-    params = ("portfolio_version_id", "open_positions")
+    params = {
+        "portfolio_version": schemas.PortfolioVersion,
+        "open_positions": list[schemas.Position],
+    }
 
     handlers = [
-        (PortfolioVersionLoadStep, "portfolio_version_id"),
+        (PortfolioVersionLoadStep, "portfolio_version"),
         (WeightsLoadStep, PortfolioVersionLoadStep.key),
         (ComparePlannedActualPositionsStep, WeightsLoadStep.key, "open_positions"),
         (ReturnResult, ComparePlannedActualPositionsStep.key),

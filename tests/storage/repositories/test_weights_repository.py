@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pytest
 from pytest import fixture
 
 from ftt.storage import schemas
@@ -101,14 +102,16 @@ class TestWeightsRepository:
         assert result[0].id == weight.id
 
     def test_delete_returns_true(self, subject, weight):
-        result = subject.delete(weight)
+        result = subject.delete(schemas.Weight(id=weight.id))
 
         assert result is True
         assert not Weight.select().exists()
         assert Weight.select_deleted().exists()
 
     def test_delete_not_persisted_record_returns_false(self, subject, weight):
-        subject.delete(weight, soft_delete=False)
-        result = subject.delete(weight)
+        schema_weight = schemas.Weight(id=weight.id)
+        subject.delete(schema_weight, soft_delete=False)
+        with pytest.raises(Weight.DoesNotExist) as excinfo:
+            subject.delete(weight)
 
-        assert result is False
+        assert "instance matching query does not exist" in str(excinfo.value)

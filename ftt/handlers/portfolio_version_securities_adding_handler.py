@@ -19,6 +19,11 @@ from ftt.handlers.security_prices_steps.security_prices_upsert_step import (
 
 
 class PortfolioVersionSecuritiesAddingHandler(Handler):
+    """
+    Deprecated: securities must be added to Portfolio using
+    PortfolioSecurities association model
+    """
+
     params = ("portfolio_version_id", "securities")
 
     # TODO rename to steps

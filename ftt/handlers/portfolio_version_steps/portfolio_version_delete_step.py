@@ -1,11 +1,8 @@
-from typing import Optional
-
 import peewee
 from result import Result, Err, Ok
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage import Storage
-from ftt.storage.models import PortfolioVersion
+from ftt.storage import Storage, schemas
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )
@@ -16,9 +13,7 @@ class PortfolioVersionDeleteStep(AbstractStep):
     key = "portfolio_version_delete"
 
     @classmethod
-    def process(
-        cls, portfolio_version: PortfolioVersion
-    ) -> Result[bool, Optional[str]]:
+    def process(cls, portfolio_version: schemas.PortfolioVersion) -> Result[bool, str]:
         if portfolio_version.active:
             return Err("Cannot delete active portfolio version")
 

@@ -1,5 +1,4 @@
-from ftt.brokers.broker_order import BrokerOrder
-from ftt.brokers.contract import Contract
+from ftt.storage import schemas
 
 
 class BrokerageService:
@@ -23,8 +22,13 @@ class BrokerageService:
     def next_valid_id(self):
         return self._implementation.next_valid_id()
 
-    def place_order(self, contract: Contract, order: BrokerOrder):
-        return self._implementation.place_order(contract, order)
+    def place_order(
+        self,
+        contract: schemas.Contract,
+        order: schemas.BrokerOrder,
+        next_order_id: int = None,
+    ):
+        return self._implementation.place_order(contract, order, next_order_id)
 
     def open_orders(self):
         return self._implementation.open_orders()

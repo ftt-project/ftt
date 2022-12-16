@@ -7,8 +7,7 @@ from ibapi.wrapper import Contract as IBContract
 from ibapi.order import Order as IBOrder
 
 from ftt.logger import Logger
-from ftt.brokers.contract import Contract
-from ftt.brokers.broker_order import BrokerOrder
+from ftt.storage import schemas
 
 
 class IBClient(EClient):
@@ -134,8 +133,8 @@ class IBClient(EClient):
 
     def place_order(
         self,
-        contract: Contract,
-        order: BrokerOrder,
+        contract: schemas.Contract,
+        order: schemas.BrokerOrder,
         next_order_id: Optional[int] = None,
     ) -> Union[int, None]:
         """

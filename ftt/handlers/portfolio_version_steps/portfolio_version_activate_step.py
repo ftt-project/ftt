@@ -3,7 +3,7 @@ from typing import Optional
 from result import Ok, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.models import PortfolioVersion
+from ftt.storage import schemas
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )
@@ -18,8 +18,8 @@ class PortfolioVersionActivateStep(AbstractStep):
 
     @classmethod
     def process(
-        cls, portfolio_version: PortfolioVersion
-    ) -> Result[PortfolioVersion, Optional[str]]:
+        cls, portfolio_version: schemas.PortfolioVersion
+    ) -> Result[schemas.PortfolioVersion, Optional[str]]:
         portfolio_version.active = True
         result = PortfolioVersionsRepository.save(portfolio_version)
         return Ok(result)

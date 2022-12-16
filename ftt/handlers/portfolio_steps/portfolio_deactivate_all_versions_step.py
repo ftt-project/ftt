@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from result import Ok, Result
 
@@ -19,7 +19,7 @@ class PortfolioDeactivateAllVersionsStep(AbstractStep):
     @classmethod
     def process(
         cls, portfolio: schemas.Portfolio
-    ) -> Result[List[schemas.PortfolioVersion], Optional[str]]:
+    ) -> Result[List[schemas.PortfolioVersion], str]:
         versions = PortfolioVersionsRepository.get_all_by_portfolio(portfolio)
 
         for version in versions:

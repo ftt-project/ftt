@@ -21,8 +21,8 @@ class WeightsRepository(Repository):
     def upsert(cls, data: dict) -> Weight:
         id = (
             Weight.insert(
-                portfolio_version=data["portfolio_version"],
-                security=data["security"],
+                portfolio_version_id=data["portfolio_version"].id,
+                security_id=data["security"].id,
                 position=data["position"],
                 planned_position=data["planned_position"],
                 created_at=datetime.now(),
@@ -38,7 +38,7 @@ class WeightsRepository(Repository):
             id = (
                 Weight.select()
                 .where(
-                    Weight.portfolio_version == data["portfolio_version"],
+                    Weight.portfolio_version_id == data["portfolio_version"].id,
                     Weight.security == data["security"],
                 )
                 .get()
@@ -155,5 +155,6 @@ class WeightsRepository(Repository):
         return cls.get_by_id(weight.id)
 
     @classmethod
-    def delete(cls, weight: Weight, soft_delete: bool = True) -> bool:
-        return cls._delete(weight, soft_delete)
+    def delete(cls, weight: schemas.Weight, soft_delete: bool = True) -> bool:
+        record = cls._get_by_id(Weight, weight.id)
+        return cls._delete(record, soft_delete)

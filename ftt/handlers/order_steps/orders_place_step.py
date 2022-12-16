@@ -1,24 +1,23 @@
-from result import Result, Ok
+from result import Result, Ok, as_result
 
-from ftt.brokers.broker_order import BrokerOrder
-from ftt.brokers.contract import Contract
-from ftt.brokers.ib.ib_config import IBConfig
-from ftt.brokers.utils import build_brokerage_service
+from ftt.brokers.brokerage_service import BrokerageService
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.logger import Logger
+from ftt.storage import schemas
 from ftt.storage.models import Order
+from ftt.storage.repositories.orders_repository import OrdersRepository
 
 
 class OrdersPlaceStep(AbstractStep):
     key = "placed_orders"
 
     @classmethod
-    def process(cls, orders: list[Order]) -> Result[list[Order], str]:
-        brokerage_service = build_brokerage_service("Interactive Brokers", IBConfig)
-
+    def process(
+        cls, orders: list[schemas.Order], brokerage_service: BrokerageService
+    ) -> Result[list[Order], str]:
         order_ids = []
         for idx, order in enumerate(orders):
-            contract = Contract(
+            contract = schemas.Contract(
                 symbol=order.security.symbol,
                 # security_type=order.security.quote_type,
                 # TODO: use security.quote_type instead of hardcoded "STK" value
@@ -29,7 +28,7 @@ class OrdersPlaceStep(AbstractStep):
                 exchange="SMART",
                 currency=order.security.currency,
             )
-            broker_order = BrokerOrder(
+            broker_order = schemas.BrokerOrder(
                 action=order.action,
                 total_quantity=order.desired_size,
                 order_type=order.order_type,
@@ -44,8 +43,11 @@ class OrdersPlaceStep(AbstractStep):
             if order_id is not None:
                 order.status = order.__class__.Status.SUBMITTED
                 order.external_id = order_id
-                order.save()
-                order_ids.append(order_id)
+
+                update = as_result(Exception)(OrdersRepository.update)
+                result = update(order)
+
+                order_ids.append(result.unwrap().external_id)
             else:
                 # TODO Handle error
                 Logger.info(f"Error placing order {order.id}")

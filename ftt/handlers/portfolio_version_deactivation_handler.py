@@ -9,13 +9,14 @@ from ftt.handlers.portfolio_version_steps.portfolio_version_deactivation_validat
 from ftt.handlers.portfolio_version_steps.portfolio_version_load_step import (
     PortfolioVersionLoadStep,
 )
+from ftt.storage import schemas
 
 
 class PortfolioVersionDeactivationHandler(Handler):
-    params = ("portfolio_version_id",)
+    params = {"portfolio_version": schemas.PortfolioVersion}
 
     handlers = [
-        (PortfolioVersionLoadStep, "portfolio_version_id"),
+        (PortfolioVersionLoadStep, "portfolio_version"),
         (PortfolioVersionDeactivationValidateStep, PortfolioVersionLoadStep.key),
         (PortfolioVersionDeactivateStep, PortfolioVersionLoadStep.key),
         (ReturnResult, PortfolioVersionDeactivateStep.key),

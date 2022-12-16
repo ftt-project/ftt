@@ -3,6 +3,7 @@ import pytest
 from ftt.handlers.portfolio_version_activation_handler import (
     PortfolioVersionActivationHandler,
 )
+from ftt.storage import schemas
 from tests.helpers import reload_record
 
 
@@ -17,7 +18,9 @@ class TestPortfolioVersionActivationHandler:
         portfolio_version.active = False
         portfolio_version.save()
 
-        result = subject.handle(portfolio_version_id=portfolio_version.id)
+        result = subject.handle(
+            portfolio_version=schemas.PortfolioVersion(id=portfolio_version.id)
+        )
 
         assert result.is_ok()
         assert reload_record(portfolio_version).active
@@ -28,7 +31,9 @@ class TestPortfolioVersionActivationHandler:
         portfolio_version.active = True
         portfolio_version.save()
 
-        result = subject.handle(portfolio_version_id=portfolio_version.id)
+        result = subject.handle(
+            portfolio_version=schemas.PortfolioVersion(id=portfolio_version.id)
+        )
 
         assert result.is_err()
         assert result.unwrap_err() == "Portfolio version #1 is already active"
@@ -39,7 +44,9 @@ class TestPortfolioVersionActivationHandler:
         portfolio_version.active = False
         portfolio_version.save()
 
-        result = subject.handle(portfolio_version_id=portfolio_version.id)
+        result = subject.handle(
+            portfolio_version=schemas.PortfolioVersion(id=portfolio_version.id)
+        )
 
         assert result.is_err()
         assert (
@@ -50,10 +57,14 @@ class TestPortfolioVersionActivationHandler:
     def test_process_errors_when_weights_planned_positions_is_zero(
         self, subject, portfolio_version, portfolio, weight
     ):
+        portfolio_version.active = False
+        portfolio_version.save()
         weight.planned_position = 0
         weight.save()
 
-        result = subject.handle(portfolio_version_id=portfolio_version.id)
+        result = subject.handle(
+            portfolio_version=schemas.PortfolioVersion(id=portfolio_version.id)
+        )
 
         assert result.is_err()
         assert (
