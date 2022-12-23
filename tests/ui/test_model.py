@@ -6,7 +6,6 @@ from ftt.ui.model import CollectionModel
 
 
 class TestCollectionModel:
-
     class ShowFlake(BaseModel):
         id: int
         name: str
@@ -23,7 +22,11 @@ class TestCollectionModel:
 
     @pytest.fixture
     def headers(self):
-        return ["name", "age", "type"]
+        return {
+            "name": "Name",
+            "age": "Age",
+            "type": "Type",
+        }
 
     @pytest.fixture
     def subject(self, collection, headers):
@@ -51,9 +54,9 @@ class TestCollectionModel:
         assert subject.data(subject.index(0, 0), role=Qt.EditRole) is None
 
     def test_header_data(self, subject):
-        assert subject.headerData(0, Qt.Horizontal) == "name"
-        assert subject.headerData(1, Qt.Horizontal) == "age"
-        assert subject.headerData(2, Qt.Horizontal) == "type"
+        assert subject.headerData(0, Qt.Horizontal) == "Name"
+        assert subject.headerData(1, Qt.Horizontal) == "Age"
+        assert subject.headerData(2, Qt.Horizontal) == "Type"
         assert subject.headerData(3, Qt.Horizontal) is None
 
     def test_header_data_invalid_role(self, subject):
@@ -71,7 +74,9 @@ class TestCollectionModel:
         assert not subject.setData(subject.index(0, 3), "new value")
 
     def test_set_data_invalid_role(self, subject):
-        assert not subject.setData(subject.index(0, 0), "new value", role=Qt.DisplayRole)
+        assert not subject.setData(
+            subject.index(0, 0), "new value", role=Qt.DisplayRole
+        )
 
     def test_set_data_invalid_value(self, subject):
         assert not subject.setData(subject.index(0, 0), [])

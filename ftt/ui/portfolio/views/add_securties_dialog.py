@@ -187,7 +187,9 @@ class AddSecuritiesDialog(QDialog):
         super().__init__()
         self._layout = None
         self._state = get_state()
-        self.model = SecuritiesModel()
+        self.model = SecuritiesModel(
+            collection=[], headers=["Symbol", "Stock Exchange", "Currency"]
+        )
         self.createUI()
 
     def createUI(self):

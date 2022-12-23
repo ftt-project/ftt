@@ -42,10 +42,36 @@ class ApplicationModel:
 
 
 class CollectionModel(QAbstractTableModel):
-    def __init__(self, collection, headers, *args, **kwargs):
+    class HeaderMapping:
+        def __init__(self, headers):
+            self._headers = headers
+
+        def __getitem__(self, item: int) -> str:
+            """
+            Returns the numan readable header name for the given column index.
+            """
+            keys = list(self._headers.keys())
+            return self._headers[keys[item]]
+
+        def __len__(self):
+            return len(self._headers)
+
+        def keys(self) -> set:
+            """
+            Returns the keys for the model.
+            """
+            return set(self._headers.keys())
+
+        def key(self, param: int) -> str:
+            """
+            Returns the key for the given column index.
+            """
+            return list(self._headers.keys())[param]
+
+    def __init__(self, collection: list, headers: dict[str, str], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._collection = collection
-        self._headers = headers
+        self._headers = self.HeaderMapping(headers)
 
     def rowCount(self, parent=None, *args, **kwargs):
         return len(self._collection)
@@ -62,13 +88,18 @@ class CollectionModel(QAbstractTableModel):
 
         if role == Qt.DisplayRole:
             record = self._collection[index.row()]
-            return record.dict(include=set(self._headers))[
-                self._headers[index.column()]
+            return record.dict(include=self._headers.keys())[
+                self._headers.key(index.column())
             ]
 
         return None
 
-    def setData(self, index: Union[QModelIndex, QPersistentModelIndex], value: Any, role: int = Qt.EditRole):
+    def setData(
+        self,
+        index: Union[QModelIndex, QPersistentModelIndex],
+        value: Any,
+        role: int = Qt.EditRole,
+    ):
         if not index.isValid():
             return False
 
@@ -79,11 +110,11 @@ class CollectionModel(QAbstractTableModel):
             return False
 
         record = self._collection[index.row()]
-        updated_record = record.copy(update={self._headers[index.column()]: value})
+        updated_record = record.copy(update={self._headers.key(index.column()): value})
         try:
             record.validate(updated_record.dict(by_alias=False, exclude_unset=True))
             self._collection[index.row()] = updated_record
-        except ValidationError as e:
+        except ValidationError:
             return False
 
         return True
@@ -91,7 +122,9 @@ class CollectionModel(QAbstractTableModel):
     def flags(self, index):
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
-    def headerData(self, section: int, orientation: Qt.Orientation, role: int = Qt.DisplayRole):
+    def headerData(
+        self, section: int, orientation: Qt.Orientation, role: int = Qt.DisplayRole
+    ):
         if role != Qt.DisplayRole:
             return None
 

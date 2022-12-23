@@ -51,7 +51,7 @@ class NewPortfolioVersionDialog(QDialog):
             "Allocation Strategy", self._form_fields.allocation_strategy_input
         )
 
-        self._buttons = QDialogButtonBox(QDialogButtonBox.ButtonRole.Yes | QDialogButtonBox.ButtonRole.Cancel)
+        self._buttons = QDialogButtonBox(QDialogButtonBox.Yes | QDialogButtonBox.Cancel)
         self._buttons.accepted.connect(self.accept)
         self._buttons.rejected.connect(self.reject)
         self._layout.addWidget(self._buttons)

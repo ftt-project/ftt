@@ -1764,7 +1764,7 @@ tablib = ">=0.9.11"
 
 [[package]]
 name = "yfinance"
-version = "0.1.87"
+version = "0.1.96"
 description = "Download market data from Yahoo! Finance API"
 category = "main"
 optional = false
@@ -1772,10 +1772,11 @@ python-versions = "*"
 
 [package.dependencies]
 appdirs = ">=1.4.4"
-lxml = ">=4.5.1"
+cryptography = ">=3.3.2"
+lxml = ">=4.9.1"
 multitasking = ">=0.0.7"
-numpy = ">=1.15"
-pandas = ">=0.24.0"
+numpy = ">=1.16.5"
+pandas = ">=1.3.0"
 requests = ">=2.26"
 
 [[package]]
@@ -3582,8 +3583,8 @@ yahoo-ticker-downloader = [
     {file = "Yahoo-ticker-downloader-3.0.1.tar.gz", hash = "sha256:9f2e3ea8c65342e2122d3c251eada97727a352a2268f29ce6f286b5a6ccdb17d"},
 ]
 yfinance = [
-    {file = "yfinance-0.1.87-py2.py3-none-any.whl", hash = "sha256:1011dcb9f60a4eaffb87d7b24319acfa1e5f4cd124b412bfa5437d6143ad5170"},
-    {file = "yfinance-0.1.87.tar.gz", hash = "sha256:78eaeff72a2e903cae08a2b45febeac2d0f99556febfae24f702f198bfc34fd4"},
+    {file = "yfinance-0.1.96-py2.py3-none-any.whl", hash = "sha256:5fd928297c9ed052f76e657694f6f1ac50ab9e154edcad80f3c262704ac81bcd"},
+    {file = "yfinance-0.1.96.tar.gz", hash = "sha256:f96be344330c4b04a985cb4e2a81bbe7db14499838e09f3d869ae85d989576e2"},
 ]
 zipp = [
     {file = "zipp-3.11.0-py3-none-any.whl", hash = "sha256:83a28fcb75844b5c0cdaf5aa4003c2d728c77e05f5aeabe8e95e56727005fbaa"},

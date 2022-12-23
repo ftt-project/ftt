@@ -1,8 +1,4 @@
-from typing import Union, Any
-
 from PySide6.QtCore import (
-    QAbstractTableModel,
-    QPersistentModelIndex,
     QModelIndex,
     Slot,
     QDate,
@@ -37,7 +33,7 @@ from ftt.handlers.securities_external_information_upsert_handler import (
 )
 from ftt.storage import schemas
 from ftt.storage.schemas import ACCEPTABLE_INTERVALS
-from ftt.ui.model import get_model
+from ftt.ui.model import get_model, CollectionModel
 from ftt.ui.state import get_state
 from ftt.ui.workers import SecuritiesInformationLoadingWorker
 
@@ -70,83 +66,15 @@ class SecuritySymbolValidator(QValidator):
         return QValidator.State.Acceptable
 
 
-class SecuritiesModel(QAbstractTableModel):
+class SecuritiesModel(CollectionModel):
     """
     Used as an example
     https://github.com/pyside/Examples/blob/master/examples/itemviews/addressbook/tablemodel.py
     https://doc.qt.io/qtforpython-6.2/tutorials/datavisualize/add_tableview.html
     """
 
-    HEADERS = {
-        "symbol": "Symbol",
-        "currency": "Currency",
-        "exchange": "Stock Exchange",
-    }
-
-    def __init__(self, *args, securities: list[schemas.Security] = None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.securities: list[schemas.Security | None] = securities or []
-
     def get_securities(self):
-        return self.securities
-
-    def data(
-        self,
-        index: Union[QModelIndex, QPersistentModelIndex],
-        role: Qt.ItemDataRole.DisplayRole = Qt.DisplayRole,
-    ) -> Any:
-        if role == Qt.DisplayRole:
-            if self.securities[index.row()] is None:
-                return ""
-            header = [*self.HEADERS.keys()][index.column()]
-            return self.securities[index.row()].dict()[header]
-        elif role == Qt.TextAlignmentRole:
-            return Qt.AlignVCenter
-
-    def insertRow(self, row, parent=QModelIndex()):
-        self.beginInsertRows(parent, row, row)
-        self.securities.insert(row, None)
-        self.endInsertRows()
-        return True
-
-    def setData(
-        self,
-        index: Union[QModelIndex, QPersistentModelIndex],
-        value: schemas.Security,
-        role: int = Qt.EditRole,
-    ) -> bool:
-        if not index.isValid() or role != Qt.EditRole:
-            return False
-
-        self.securities[index.row()] = value
-        self.dataChanged.emit(index, index, [role])
-        return True
-
-    def headerData(
-        self,
-        section: int,
-        orientation: Qt.Orientation,
-        role: Qt.DisplayRole = Qt.DisplayRole,
-    ):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return [*self.HEADERS.values()][section]
-        return super().headerData(section, orientation, role)
-
-    def rowCount(self, index=None):
-        return len(self.securities)
-
-    def columnCount(self, parent=QModelIndex()):
-        return len(self.HEADERS)
-
-    def removeRows(
-        self, position: int, rows: int = 1, index: QModelIndex = QModelIndex()
-    ):
-        self.beginRemoveRows(index, position, position + rows - 1)
-        for i in range(rows):
-            del self.securities[position]
-        self.endRemoveRows()
-        self.layoutChanged.emit()
-        return True
+        return self._collection
 
 
 class SearchSecurityFormElementBuilder(QWidget):
@@ -237,9 +165,7 @@ class SearchSecurityFormElementBuilder(QWidget):
 
     @Slot()
     def on_securities_information_loaded(self, securities: list[schemas.Security]):
-        last = self.model.rowCount()
-        self.model.insertRow(last)
-        self.model.setData(self.model.index(last, 0), securities[0])
+        self.model.add(securities[0])
 
     @Slot()
     def on_securities_information_load_error(self, error: list[str]):
@@ -294,11 +220,9 @@ class SecuritiesTableFormElementBuilder(QWidget):
         dialog.layout().addRow(w)
 
         self._state.signals.selectedPortfolioVersionSecuritiesChanged.connect(
-            lambda: self.model.removeRows(0, self.model.rowCount(), QModelIndex())
+            lambda: self.model.clear()
         )
-        self._state.signals.addSecurityDialogClosed.connect(
-            lambda: self.model.removeRows(0, self.model.rowCount(), QModelIndex())
-        )
+        self._state.signals.addSecurityDialogClosed.connect(lambda: self.model.clear())
 
     def validate(self):
         return True
@@ -492,7 +416,14 @@ class NewPortfolioDialog(QDialog):
 
         self._state = get_state()
         self._model = get_model()
-        self._securities_model = SecuritiesModel()
+        self._securities_model = SecuritiesModel(
+            collection=[],
+            headers={
+                "symbol": "Symbol",
+                "currency": "Currency",
+                "exchange": "Stock Exchange",
+            },
+        )
         self._hint_message = None
         self._buttons = None
         self._layout = None
