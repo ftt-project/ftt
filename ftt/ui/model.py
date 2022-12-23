@@ -1,3 +1,8 @@
+from typing import Any, Union
+
+from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex, QPersistentModelIndex
+from pydantic import ValidationError
+
 model = None
 
 
@@ -31,6 +36,105 @@ class ApplicationModel:
 
     def __repr__(self):
         return f"ApplicationModel(portfolio_id={self.portfolio_id}, portfolio_version_id={self.portfolio_version_id})"
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class CollectionModel(QAbstractTableModel):
+    def __init__(self, collection, headers, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._collection = collection
+        self._headers = headers
+
+    def rowCount(self, parent=None, *args, **kwargs):
+        return len(self._collection)
+
+    def columnCount(self, parent=None, *args, **kwargs):
+        return len(self._headers)
+
+    def data(self, index: QModelIndex, role: int = Qt.DisplayRole):
+        if not index.isValid():
+            return None
+
+        if not 0 <= index.row() < len(self._collection):
+            return None
+
+        if role == Qt.DisplayRole:
+            record = self._collection[index.row()]
+            return record.dict(include=set(self._headers))[
+                self._headers[index.column()]
+            ]
+
+        return None
+
+    def setData(self, index: Union[QModelIndex, QPersistentModelIndex], value: Any, role: int = Qt.EditRole):
+        if not index.isValid():
+            return False
+
+        if not 0 <= index.row() < len(self._collection):
+            return False
+
+        if role != Qt.EditRole:
+            return False
+
+        record = self._collection[index.row()]
+        updated_record = record.copy(update={self._headers[index.column()]: value})
+        try:
+            record.validate(updated_record.dict(by_alias=False, exclude_unset=True))
+            self._collection[index.row()] = updated_record
+        except ValidationError as e:
+            return False
+
+        return True
+
+    def flags(self, index):
+        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
+    def headerData(self, section: int, orientation: Qt.Orientation, role: int = Qt.DisplayRole):
+        if role != Qt.DisplayRole:
+            return None
+
+        if orientation == Qt.Horizontal and section < len(self._headers):
+            return self._headers[section]
+
+        return None
+
+    def add(self, item):
+        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
+        self._collection.append(item)
+        self.endInsertRows()
+
+    def remove(self, index):
+        if not index.isValid():
+            return False
+
+        self.beginRemoveRows(index, index.row(), index.row())
+        self._collection.pop(index.row())
+        self.endRemoveRows()
+
+    def clear(self):
+        self.beginResetModel()
+        self._collection.clear()
+        self.endResetModel()
+
+    def __contains__(self, item):
+        return item in self._collection
+
+    def __getitem__(self, item):
+        return self._collection[item]
+
+    def __setitem__(self, key, value):
+        self._collection[key] = value
+
+    def __delitem__(self, key):
+        self.remove(key)
+
+    def __len__(self):
+        return len(self._collection)
+
+    def __repr__(self):
+        return f"CollectionModel({self._collection})"
 
     def __str__(self):
         return self.__repr__()
