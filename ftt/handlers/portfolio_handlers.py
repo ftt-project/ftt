@@ -20,6 +20,10 @@ class PortfolioSecuritiesAndWeightsLoadHandler(Handler):
 
     It combines PortfolioSecurities with Weights and gives a unified
     picture of securities on Portfolio weighted or not.
+
+    Returns:
+    --------
+        Result[list[schemas.WeightedSecurity], str]: Result with list of WeightedSecurity
     """
 
     params = {

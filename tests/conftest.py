@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from pandas import DataFrame, DatetimeIndex
 
-from ftt.storage import Storage, schemas
+from ftt.storage import schemas
 from ftt.storage.models import PortfolioSecurity
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio
@@ -17,14 +17,14 @@ from ftt.application import Application
 Application.initialize(test_mode=True)
 
 
-@pytest.fixture(autouse=True, scope="function")
-def transactional():
-    connection = Storage.get_database()
-    with connection.atomic() as transaction:
-        try:
-            yield
-        finally:
-            transaction.rollback()
+# @pytest.fixture(autouse=True, scope="function")
+# def transactional():
+#     connection = Storage.get_database()
+#     # with connection.atomic() as transaction:
+#         try:
+#             yield
+#         finally:
+#             transaction.rollback()
 
 
 @pytest.fixture

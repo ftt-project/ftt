@@ -13,12 +13,14 @@ from result import Ok, Err
 from ftt.handlers.positions_synchronization_handler import (
     PositionsSynchronizationHandler,
 )
+from ftt.storage import schemas
 from ftt.ui.model import get_model
 from ftt.ui.portfolio.portfolio_synchronization_flow import PortfolioSynchronizationFlow
 from ftt.ui.portfolio.views.portfolio_version_synchronization_confirmation_dialog import (
     PortfolioVersionSynchronizationConfirmationDialog,
 )
 from ftt.ui.portfolio.workers import RequestPortfolioChangesWorker
+from ftt.ui.workers import PortfolioVersionOptimizationWorker
 from ftt.ui.state import get_state
 
 
@@ -40,7 +42,7 @@ class PortfolioVersionDetailsView(QWidget):
         self.createUI()
 
         self._state.signals.selectedPortfolioVersionChanged.connect(
-            self.onPortfolioVersionChanged
+            self.on_portfolio_version_changed
         )
 
     def createUI(self):
@@ -57,10 +59,10 @@ class PortfolioVersionDetailsView(QWidget):
         self._edit_button.setEnabled(False)
         self._controls.addButton(self._edit_button)
 
-        self._rebalance_button = QPushButton("Rebalance")
+        self._rebalance_button = QPushButton("Optimize")
         self._rebalance_button.setEnabled(False)
         self._controls.addButton(self._rebalance_button)
-        self._rebalance_button.clicked.connect(self.onRebalanceClicked)
+        self._rebalance_button.clicked.connect(self.on_optimization_clicked)
 
         self._backtesting_button = QPushButton("Run Backtesting")
         self._backtesting_button.setEnabled(False)
@@ -73,7 +75,7 @@ class PortfolioVersionDetailsView(QWidget):
         self._synch_button = QPushButton("Synchronize with broker")
         self._synch_button.setEnabled(False)
         self._controls.addButton(self._synch_button)
-        self._synch_button.clicked.connect(self.onSynchronizeClicked)
+        self._synch_button.clicked.connect(self.on_synchronize_clicked)
 
         self._sync_button_help = QPushButton()
         self._sync_button_help.setIcon(
@@ -93,11 +95,30 @@ class PortfolioVersionDetailsView(QWidget):
         layout.addLayout(second_row_layout)
 
     @Slot()
-    def onRebalanceClicked(self):
-        pass
+    def on_optimization_clicked(self):
+        PortfolioVersionOptimizationWorker.perform(
+            portfolio_version=schemas.PortfolioVersion(
+                id=self._model.portfolio_version_id
+            ),
+            success_callback=lambda result: self.on_optimization_success(result),
+            failure_callback=lambda result: self.on_optimization_failure(result),
+            complete_callback=lambda: self.on_optimization_complete(),
+        )
 
     @Slot()
-    def onSynchronizeClicked(self):
+    def on_optimization_success(self, result):
+        print("success", result)
+
+    @Slot()
+    def on_optimization_failure(self, result):
+        print("failure", result)
+
+    @Slot()
+    def on_optimization_complete(self):
+        print("complete")
+
+    @Slot()
+    def on_synchronize_clicked(self):
         self.thread = PortfolioSynchronizationFlow(self).run()
         # self.thread.quit()
 
@@ -133,7 +154,7 @@ class PortfolioVersionDetailsView(QWidget):
                 raise e
 
     @Slot(int)
-    def onPortfolioVersionChanged(self):
+    def on_portfolio_version_changed(self):
         match self._model.portfolio_version_id:
             case -1 | None:
                 print(

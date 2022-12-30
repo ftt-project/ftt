@@ -3,15 +3,15 @@ import datetime
 import pandas as pd
 import pytest
 
-from ftt.handlers.portfolio_optimization_handler import PortfolioOptimizationHandler
+from ftt.handlers.portfolio_version_handlers import PortfolioVersionOptimizationHandler
 from ftt.storage import schemas
 from tests.helpers import reload_record
 
 
-class TestPortfolioOptimizationHandler:
+class TestPortfolioVersionOptimizationHandler:
     @pytest.fixture
     def subject(self):
-        return PortfolioOptimizationHandler()
+        return PortfolioVersionOptimizationHandler()
 
     def test_handle_optimize_weights(
         self,

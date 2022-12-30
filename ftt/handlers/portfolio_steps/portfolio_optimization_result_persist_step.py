@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from result import Ok, Result, as_result, Err
 
@@ -21,7 +21,7 @@ class PortfolioOptimizationResultPersistStep(AbstractStep):
         cls,
         portfolio_version: schemas.PortfolioVersion,
         portfolio_version_allocation: PortfolioAllocationDTO,
-    ) -> Result[List[Weight], Optional[str]]:
+    ) -> Result[list[Weight], Optional[str]]:
         result = []
 
         for symbol, qty in portfolio_version_allocation.allocation.items():
@@ -49,4 +49,5 @@ class PortfolioOptimizationResultPersistStep(AbstractStep):
             case Err(e):
                 return Err(f"Error while updating portfolio version: {e}")
 
+        # TODO: use schema entity instead of Weight model
         return Ok(result)

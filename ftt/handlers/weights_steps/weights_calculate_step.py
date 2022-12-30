@@ -21,7 +21,7 @@ class WeightsCalculateStepResult:
 
 class WeightsCalculateStep(AbstractStep):
     """
-    TODO: deprecate and remove
+    TODO: deprecate in favor to PortfolioVersionOptimizationHandler
     """
 
     key = "weights"

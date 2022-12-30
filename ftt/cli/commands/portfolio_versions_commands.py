@@ -9,7 +9,7 @@ from ftt.cli.renderers.portfolio_versions.portfolio_version_details import (
 )
 from ftt.cli.renderers.weights.weights_list import WeightsList
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
-from ftt.handlers.portfolio_optimization_handler import PortfolioOptimizationHandler
+from ftt.handlers.portfolio_version_handlers import PortfolioVersionOptimizationHandler
 from ftt.handlers.portfolio_version_activation_handler import (
     PortfolioVersionActivationHandler,
 )
@@ -92,7 +92,7 @@ class PortfolioVersionsCommands:
             self.context.console.print(f"[red]{portfolio_version_result.unwrap_err()}")
             return
 
-        optimization_result = PortfolioOptimizationHandler().handle(
+        optimization_result = PortfolioVersionOptimizationHandler().handle(
             portfolio_version_id=portfolio_version_result.value.id,
             optimization_strategy_name=optimization_strategy,
             allocation_strategy_name=allocation_strategy,

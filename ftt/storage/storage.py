@@ -1,3 +1,4 @@
+import atexit
 import pathlib
 from typing import List
 
@@ -40,7 +41,7 @@ class Storage:
         return cls._instance.get_storage_manager()
 
     @staticmethod
-    def get_models() -> List[Base]:
+    def get_models() -> list[Base]:
         return Base.__subclasses__()
 
     @classmethod
@@ -54,3 +55,8 @@ class Storage:
     @classmethod
     def get_database(cls) -> Database:
         return cls.storage_manager().database
+
+
+@atexit.register
+def _stop_worker_threads():
+    Storage.get_database().stop()

@@ -6,7 +6,7 @@ from ftt.handlers.portfolio_version_associate_securities_hanlder import (
     PortfolioVersionAssociateSecuritiesHandler,
 )
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
-from ftt.handlers.portfolio_optimization_handler import PortfolioOptimizationHandler
+from ftt.handlers.portfolio_version_handlers import PortfolioVersionOptimizationHandler
 from ftt.handlers.portfolio_stats_handler import PortfoliosStatsHandler
 from ftt.handlers.securities_information_prices_loading_handler import (
     SecuritiesInformationPricesLoadingHandler,
@@ -66,7 +66,7 @@ def example():
         )
 
     with ctx.console.status("[bold green]Calculating weights") as _:
-        _ = PortfolioOptimizationHandler().handle(
+        _ = PortfolioVersionOptimizationHandler().handle(
             portfolio_version_id=portfolio.versions[0].id,
             optimization_strategy_name=OptimizationStrategyResolver.strategies()[0],
             allocation_strategy_name=AllocationStrategyResolver._strategies[0],

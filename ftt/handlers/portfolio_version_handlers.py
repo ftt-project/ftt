@@ -21,7 +21,15 @@ from ftt.handlers.security_prices_steps.security_prices_load_step import (
 from ftt.storage import schemas
 
 
-class PortfolioOptimizationHandler(Handler):
+class PortfolioVersionOptimizationHandler(Handler):
+    """
+    Optimizes a portfolio version by given portfolio version id.
+
+    Returns:
+    --------
+        Result[List[Weight], Optional[str]] - Result with list of weights and error message if any.
+    """
+
     params = {
         "portfolio_version": schemas.PortfolioVersion,
     }
