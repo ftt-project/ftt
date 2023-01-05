@@ -48,6 +48,24 @@ class Security(BaseModel):
         orm_mode = True
 
 
+class SecurityPrice(BaseModel):
+    symbol: str
+    security: Security | None
+    datetime: datetime | None
+    interval: str | None
+    open: float | None
+    high: float | None
+    low: float | None
+    close: float | None
+    volume: int | None
+    change: float | None
+    percent_change: float | None
+
+    class Config:
+        orm_mode = True
+        getter_dict = PeeweeGetterDict
+
+
 class Portfolio(BaseModel):
     id: int | None
     name: str | None
@@ -238,3 +256,13 @@ class CalculatedPositionDifference(BaseModel):
     planned_position: float
     actual_position: float
     delta: float
+
+
+class SecurityPricesTimeVector(BaseModel):
+    """
+    Value object that represents a time vector with prices for a given security
+    """
+
+    security: Security
+    prices: list[float]
+    time_vector: list[datetime]

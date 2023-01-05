@@ -17,16 +17,16 @@ class TestSecurityPricesLoadStep:
         portfolio_version,
         portfolio,
         security_factory,
-        weight_factory,
         security_price_factory,
+        portfolio_security_factory,
     ):
         security = security_factory()
-        weight_factory(portfolio_version, security)
         security_price = security_price_factory(
             security,
             dt=portfolio.period_start,
             interval=portfolio.interval,
         )
+        portfolio_security_factory(portfolio, security)
 
         result = subject.process(
             portfolio_version=schemas.PortfolioVersion.from_orm(portfolio_version),
@@ -34,7 +34,10 @@ class TestSecurityPricesLoadStep:
         )
 
         assert result.is_ok()
-        assert result.value.prices == {security.symbol: [security_price.close]}
+        assert isinstance(result.value, list)
+        assert result.value[0].security.symbol == security.symbol
+        assert result.value[0].prices == [security_price.close]
+        assert result.value[0].time_vector == [security_price.datetime]
 
     def test_process_returns_error_on_data_points_num_mismatch(
         self,
@@ -42,18 +45,19 @@ class TestSecurityPricesLoadStep:
         portfolio_version,
         portfolio,
         security_factory,
-        weight_factory,
         security_price_factory,
+        portfolio_security_factory
     ):
         security1 = security_factory(symbol="AA")
-        security2 = security_factory(symbol="BB")
-        weight_factory(portfolio_version, security1)
-        weight_factory(portfolio_version, security2)
+        portfolio_security_factory(portfolio, security1)
         _ = security_price_factory(
             security1,  # only for security 1
             dt=portfolio.period_start,
             interval=portfolio.interval,
         )
+
+        security2 = security_factory(symbol="BB")
+        portfolio_security_factory(portfolio, security2)
 
         result = subject.process(
             portfolio_version=schemas.PortfolioVersion.from_orm(portfolio_version),

@@ -18,3 +18,9 @@ class PortfolioSecurityRepository(Repository):
             defaults={"updated_at": datetime.now(), "created_at": datetime.now()},
         )
         return schemas.PortfolioSecurity.from_orm(result)
+
+    @classmethod
+    def list(cls, portfolio: schemas.Portfolio) -> list[schemas.PortfolioSecurity]:
+        portfolio_record = models.Portfolio.get_by_id(portfolio.id)
+        records = PortfolioSecurity.select().where(PortfolioSecurity.portfolio == portfolio_record)
+        return [schemas.PortfolioSecurity.from_orm(record) for record in records]

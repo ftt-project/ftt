@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from pandas import DataFrame, DatetimeIndex
 
-from ftt.storage import schemas
+from ftt.storage import schemas, Storage
 from ftt.storage.models import PortfolioSecurity
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio
@@ -17,14 +17,22 @@ from ftt.application import Application
 Application.initialize(test_mode=True)
 
 
-# @pytest.fixture(autouse=True, scope="function")
-# def transactional():
-#     connection = Storage.get_database()
-#     # with connection.atomic() as transaction:
-#         try:
-#             yield
-#         finally:
-#             transaction.rollback()
+@pytest.fixture(autouse=True, scope="function")
+def transactional():
+    try:
+        yield
+    finally:
+        for model in Storage.get_models():
+            model.delete().execute()
+
+
+@pytest.fixture(autouse=True, scope="session")
+def db_reinitialize():
+    try:
+        yield
+    finally:
+        sm = Storage.storage_manager()
+        sm.drop_tables(Storage.get_models())
 
 
 @pytest.fixture
@@ -203,6 +211,20 @@ def portfolio_security(portfolio, security) -> PortfolioSecurity:
     finally:
         portfolio_security.delete_instance()
 
+
+@pytest.fixture
+def portfolio_security_factory():
+    def _portfolio_security_factory(portfolio, security):
+        return PortfolioSecurity.create(
+            portfolio=portfolio,
+            security=security,
+            updated_at=datetime.now(),
+            created_at=datetime.now(),
+        )
+
+    yield _portfolio_security_factory
+
+    SecurityPrice.delete().execute()
 
 @pytest.fixture
 def data_portfolio_version(portfolio):

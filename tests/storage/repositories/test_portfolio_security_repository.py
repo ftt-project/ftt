@@ -20,3 +20,16 @@ class TestPortfolioSecurityRepository:
         assert result.id is not None
         assert result.portfolio.id == portfolio.id
         assert result.security.id == security.id
+
+    def test_list(self, subject, portfolio, security):
+        subject.associate(
+            schemas.Portfolio.from_orm(portfolio), schemas.Security.from_orm(security)
+        )
+
+        result = subject.list(schemas.Portfolio.from_orm(portfolio))
+
+        assert type(result) == list
+        assert len(result) == 1
+        assert result[0].id is not None
+        assert result[0].portfolio.id == portfolio.id
+        assert result[0].security.id == security.id

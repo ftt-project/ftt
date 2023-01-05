@@ -2,6 +2,7 @@ import datetime
 
 import pytest
 
+from ftt.storage import schemas
 from ftt.storage.models.security_price import SecurityPrice
 from ftt.storage.repositories.security_prices_repository import SecurityPricesRepository
 
@@ -40,15 +41,16 @@ class TestSecurityPricesRepository:
         assert flag is not True
         assert result1 == result2
 
-    def test_find_by_security_prices_returns_list_of_prices(
+    def test_security_price_time_vector(
         self, subject, security, security_price
     ):
-        result = subject.find_by_security_prices(
-            security=security,
+        result = subject.security_price_time_vector(
+            security=schemas.Security.from_orm(security),
             interval=security_price.interval,
             period_start=(security_price.datetime - datetime.timedelta(days=1)),
             period_end=(security_price.datetime + datetime.timedelta(days=1)),
         )
 
         assert len(result) == 1
-        assert result[0] == security_price
+        assert isinstance(result[0], schemas.SecurityPrice)
+        assert result[0].symbol == security.symbol
