@@ -22,5 +22,7 @@ class PortfolioSecurityRepository(Repository):
     @classmethod
     def list(cls, portfolio: schemas.Portfolio) -> list[schemas.PortfolioSecurity]:
         portfolio_record = models.Portfolio.get_by_id(portfolio.id)
-        records = PortfolioSecurity.select().where(PortfolioSecurity.portfolio == portfolio_record)
+        records = PortfolioSecurity.select().where(
+            PortfolioSecurity.portfolio == portfolio_record
+        )
         return [schemas.PortfolioSecurity.from_orm(record) for record in records]

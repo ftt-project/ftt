@@ -226,6 +226,7 @@ def portfolio_security_factory():
 
     SecurityPrice.delete().execute()
 
+
 @pytest.fixture
 def data_portfolio_version(portfolio):
     return {

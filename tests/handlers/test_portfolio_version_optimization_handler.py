@@ -19,6 +19,7 @@ class TestPortfolioVersionOptimizationHandler:
         portfolio,
         portfolio_version_factory,
         securities_weights_list_factory,
+        portfolio_security_factory,
     ):
         period_start = datetime.datetime(2020, 1, 1)
         period_end = datetime.datetime(2020, 12, 31)
@@ -35,6 +36,8 @@ class TestPortfolioVersionOptimizationHandler:
         weights = securities_weights_list_factory(
             portfolio_version, n=5, interval=interval, date_range=date_range
         )
+        for w in weights:
+            portfolio_security_factory(portfolio=portfolio, security=w.security)
 
         result = subject.handle(
             portfolio_version=schemas.PortfolioVersion(id=portfolio_version.id),

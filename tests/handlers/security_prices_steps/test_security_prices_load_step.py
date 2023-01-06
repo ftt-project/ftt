@@ -46,7 +46,7 @@ class TestSecurityPricesLoadStep:
         portfolio,
         security_factory,
         security_price_factory,
-        portfolio_security_factory
+        portfolio_security_factory,
     ):
         security1 = security_factory(symbol="AA")
         portfolio_security_factory(portfolio, security1)

@@ -37,7 +37,8 @@ class TestWeightsRepository:
     def test_upsert(self, subject, data, weight):
         result = subject.upsert(data)
 
-        assert result == weight
+        assert isinstance(result, schemas.Weight)
+        assert result.id == weight.id
 
     def test_upsert_returns_weight_always(self, subject, data, weight):
         result1 = subject.upsert(data)

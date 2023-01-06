@@ -44,7 +44,9 @@ class WeightsRepository(Repository):
                 .get()
                 .id
             )
-        return cls.get_by_id(id)
+
+        record = Weight.get_by_id(id)
+        return schemas.Weight.from_orm(record)
 
     @classmethod
     def find_by_security_and_portfolio(

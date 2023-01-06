@@ -3,9 +3,7 @@ from typing import Optional
 from result import Ok, Result, as_result, Err
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.portfolio_management.dtos import PortfolioAllocationDTO
 from ftt.storage import schemas
-from ftt.storage.models import Weight
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )
@@ -20,8 +18,8 @@ class PortfolioOptimizationResultPersistStep(AbstractStep):
     def process(
         cls,
         portfolio_version: schemas.PortfolioVersion,
-        portfolio_version_allocation: PortfolioAllocationDTO,
-    ) -> Result[list[Weight], Optional[str]]:
+        portfolio_version_allocation: schemas.PortfolioAllocation,
+    ) -> Result[list[schemas.Weight], Optional[str]]:
         result = []
 
         for symbol, qty in portfolio_version_allocation.allocation.items():

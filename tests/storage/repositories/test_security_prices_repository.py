@@ -41,9 +41,7 @@ class TestSecurityPricesRepository:
         assert flag is not True
         assert result1 == result2
 
-    def test_security_price_time_vector(
-        self, subject, security, security_price
-    ):
+    def test_security_price_time_vector(self, subject, security, security_price):
         result = subject.security_price_time_vector(
             security=schemas.Security.from_orm(security),
             interval=security_price.interval,

@@ -4,7 +4,6 @@ from typing import Tuple
 from playhouse.shortcuts import model_to_dict
 
 from ftt.storage import schemas
-from ftt.storage.models import Security
 from ftt.storage.models.security_price import SecurityPrice
 from ftt.storage.repositories.repository import Repository
 
@@ -40,7 +39,10 @@ class SecurityPricesRepository(Repository):
 
     @staticmethod
     def security_price_time_vector(
-        security: schemas.Security, interval: str, period_start: datetime, period_end: datetime
+        security: schemas.Security,
+        interval: str,
+        period_start: datetime,
+        period_end: datetime,
     ) -> list[schemas.SecurityPrice]:
         records = (
             SecurityPrice.select()
@@ -55,5 +57,8 @@ class SecurityPricesRepository(Repository):
             .order_by(SecurityPrice.datetime.asc())
         ).execute()
 
-        records_as_dict = [{**model_to_dict(record), **{"symbol": security.symbol}} for record in records]
+        records_as_dict = [
+            {**model_to_dict(record), **{"symbol": security.symbol}}
+            for record in records
+        ]
         return [schemas.SecurityPrice(**record) for record in records_as_dict]

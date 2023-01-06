@@ -266,3 +266,13 @@ class SecurityPricesTimeVector(BaseModel):
     security: Security
     prices: list[float]
     time_vector: list[datetime]
+
+
+class PortfolioAllocation(BaseModel):
+    allocation: dict[str, float]
+    weights: dict[str, float] | None
+    leftover: float | None
+    expected_annual_return: float | None
+    annual_volatility: float | None
+    sharpe_ratio: float | None
+    cov_matrix: Any

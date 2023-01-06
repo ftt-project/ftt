@@ -1,6 +1,5 @@
 import atexit
 import pathlib
-from typing import List
 
 from peewee import Database
 

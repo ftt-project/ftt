@@ -33,7 +33,7 @@ class TestPortfolioOptimizationResultPersistStep:
 
         assert result.is_ok()
         assert type(result.value) == list
-        assert isinstance(result.value[0], Weight)
+        assert result.value[0].id is not None
 
     def test_updates_portfolio_version_with_stats(
         self, subject, calculation_result, portfolio_version

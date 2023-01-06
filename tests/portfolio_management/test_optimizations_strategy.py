@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from ftt.portfolio_management.dtos import PortfolioAllocationDTO
+from ftt.storage.schemas import PortfolioAllocation
 from ftt.portfolio_management.optimization_strategies import (
     HistoricalOptimizationStrategy,
     OptimizationStrategyResolver,
@@ -19,7 +19,7 @@ class TestHistoricalOptimizationStrategy:
     ):
         result = subject(returns=prices_list_factory()).optimize()
 
-        assert type(result) == PortfolioAllocationDTO
+        assert type(result) == PortfolioAllocation
         assert {k: round(v, 2) for k, v in result.weights.items()} == {
             "A": 0.2,
             "B": 0.2,
@@ -41,7 +41,7 @@ class TestRiskParityOptimizationStrategy:
     ):
         result = subject(returns=prices_list_factory()).optimize()
 
-        assert type(result) == PortfolioAllocationDTO
+        assert type(result) == PortfolioAllocation
         assert {k: round(v, 2) for k, v in result.weights.items()} == {
             "A": 0.2,
             "B": 0.2,

@@ -1,7 +1,7 @@
 import abc
 from typing import ClassVar, Type
 
-from ftt.portfolio_management.dtos import PortfolioAllocationDTO
+from ftt.storage.schemas import PortfolioAllocation
 
 
 class AbstractOptimizationStrategy(metaclass=abc.ABCMeta):
@@ -42,7 +42,7 @@ class HistoricalOptimizationStrategy(AbstractOptimizationStrategy):
             rf=rf,
         )
 
-        return PortfolioAllocationDTO(
+        return PortfolioAllocation(
             weights=weights.to_dict()["weights"],
             sharpe_ratio=sharpe,
             cov_matrix=self.portfolio.cov,
@@ -89,7 +89,7 @@ class RiskParityOptimizationStrategy(AbstractOptimizationStrategy):
             rf=rf,
         )
 
-        return PortfolioAllocationDTO(
+        return PortfolioAllocation(
             weights=weights.to_dict()["weights"],
             sharpe_ratio=sharpe,
             cov_matrix=self.portfolio.cov,
