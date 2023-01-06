@@ -2,10 +2,9 @@ from typing import List, Iterable
 
 from result import Result, Ok
 
-from ftt.brokers.contract import Contract
-from ftt.brokers.broker_order import BrokerOrder, OrderAction, OrderType
 from ftt.brokers.position import Position
 from ftt.handlers.handler.abstract_step import AbstractStep
+from ftt.storage import schemas
 from ftt.storage.models import Weight
 
 
@@ -15,27 +14,25 @@ class ComparePlannedActualPositionsStep(AbstractStep):
     Returns a combination of Order and Contract that is enough to represent the difference for order placement
     """
 
-    key = "order_candidates"
+    key = "calculated_position_differences"
 
     @classmethod
     def process(
-        cls, weights: List[Weight], open_positions: List[Position]
-    ) -> Result[list[tuple[BrokerOrder, Contract]], str]:
+        cls, weights: list[schemas.Weight], open_positions: list[schemas.Position]
+    ) -> Result[list[schemas.CalculatedPositionDifference], str]:
         """
         Parameters
         ----------
         weights : array_like
-            List of Weight models to compare
+            List of schemas.Weight models to compare
         open_positions : array_like
-            Lit of Position value objects
+            Lit of schemas.Position value objects
 
         Returns
         -------
         list
-            Returns a list of contact, order that could be used for order placement
-            in the format List<Tuple<Contract, Order>> where Contract and Order
-            are value objects. Contract contains information about security order
-            action that must be applied to a contract.
+            Returns a list of schemas.CalculatedPositionDifference,
+            that contains all important information on further recommended actions.
         """
         normalized_by_symbol_planned_positions = cls._normalize_positions(
             open_positions
@@ -54,30 +51,22 @@ class ComparePlannedActualPositionsStep(AbstractStep):
             if weight and position:
                 if weight < position:
                     result.append(
-                        (
-                            BrokerOrder(
-                                action=OrderAction.SELL,
-                                total_quantity=float(position - weight),
-                                order_type=OrderType.MARKET,
-                            ),
-                            Contract(
-                                symbol=symbol,
-                                security_type=Contract.SecurityType.STOCK,
-                            ),
+                        schemas.CalculatedPositionDifference(
+                            symbol=symbol,
+                            actual_position_difference=schemas.CalculatedPositionDifference.Difference.BIGGER,
+                            planned_position=weight,
+                            actual_position=position,
+                            delta=float(position - weight),
                         )
                     )
                 elif weight > position:
                     result.append(
-                        (
-                            BrokerOrder(
-                                action=OrderAction.BUY,
-                                total_quantity=float(weight - position),
-                                order_type=OrderType.MARKET,
-                            ),
-                            Contract(
-                                symbol=symbol,
-                                security_type=Contract.SecurityType.STOCK,
-                            ),
+                        schemas.CalculatedPositionDifference(
+                            symbol=symbol,
+                            actual_position_difference=schemas.CalculatedPositionDifference.Difference.SMALLER,
+                            planned_position=weight,
+                            actual_position=position,
+                            delta=float(weight - position),
                         )
                     )
                 else:
@@ -85,16 +74,12 @@ class ComparePlannedActualPositionsStep(AbstractStep):
                     pass
             elif weight and not position:
                 result.append(
-                    (
-                        BrokerOrder(
-                            action=OrderAction.BUY,
-                            total_quantity=float(weight),
-                            order_type=OrderType.MARKET,
-                        ),
-                        Contract(
-                            symbol=symbol,
-                            security_type=Contract.SecurityType.STOCK,
-                        ),
+                    schemas.CalculatedPositionDifference(
+                        symbol=symbol,
+                        actual_position_difference=schemas.CalculatedPositionDifference.Difference.SMALLER,
+                        planned_position=weight,
+                        actual_position=0,
+                        delta=float(weight),
                     )
                 )
             else:

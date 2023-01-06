@@ -1,12 +1,11 @@
-from typing import Optional
-
 from result import Ok, Err, Result
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.models import PortfolioVersion
+from ftt.storage import schemas
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )
+from ftt.storage.repositories.weights_repository import WeightsRepository
 
 
 class PortfolioVersionActivationValidateStep(AbstractStep):
@@ -21,8 +20,8 @@ class PortfolioVersionActivationValidateStep(AbstractStep):
 
     @classmethod
     def process(
-        cls, portfolio_version: PortfolioVersion
-    ) -> Result[PortfolioVersion, Optional[str]]:
+        cls, portfolio_version: schemas.PortfolioVersion
+    ) -> Result[schemas.PortfolioVersion, str]:
         version = PortfolioVersionsRepository.get_active_version(
             portfolio_version.portfolio
         )
@@ -30,15 +29,14 @@ class PortfolioVersionActivationValidateStep(AbstractStep):
         if version == portfolio_version:
             return Err(f"Portfolio version #{portfolio_version.id} is already active")
 
-        if portfolio_version.weights.count() == 0:
+        weights = WeightsRepository.get_by_portfolio_version(portfolio_version)
+        if len(weights) == 0:
             return Err(
                 f"Portfolio version #{portfolio_version.id} does not have any "
                 "weights associated. Run balance step first."
             )
 
-        planned_positions_zero = [
-            weight.planned_position == 0 for weight in portfolio_version.weights
-        ]
+        planned_positions_zero = [weight.planned_position == 0 for weight in weights]
         if all(planned_positions_zero):
             return Err(
                 f"Portfolio version #{portfolio_version.id} do not have any planned position greater than 0. "

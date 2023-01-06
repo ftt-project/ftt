@@ -3,6 +3,7 @@ import pytest
 from ftt.handlers.portfolio_steps.portfolio_deactivate_all_versions_step import (
     PortfolioDeactivateAllVersionsStep,
 )
+from ftt.storage import schemas
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )
@@ -17,8 +18,7 @@ class TestPortfolioDeactivateAllVersionsStep:
         portfolio_version.active = True
         portfolio_version.save()
 
-        result = subject.process(portfolio)
+        result = subject.process(schemas.Portfolio.from_orm(portfolio))
 
         assert result.is_ok()
-        assert result.value == [portfolio_version]
-        assert PortfolioVersionsRepository.get_by_id(portfolio_version.id)
+        assert not result.value[0].active

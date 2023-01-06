@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytest
 
+from ftt.storage import schemas, models
 from ftt.storage.models.order import Order
 from ftt.storage.repositories.orders_repository import OrdersRepository
 
@@ -13,36 +14,22 @@ class TestOrdersRepository:
 
     def test_create(self, subject, security, portfolio_version, portfolio, weight):
         result = subject.create(
-            {
-                "security": security,
-                "portfolio": portfolio,
-                "portfolio_version": portfolio_version,
-                "weight": weight,
-                "status": "created",
-                "type": "buy",
-                "desired_price": 100,
-                "action": "BUY",
-                "order_type": "LIMIT",
-            }
+            schemas.Order(
+                security=security,
+                portfolio=portfolio,
+                portfolio_version=portfolio_version,
+                weight=weight,
+                status=schemas.Order.Status.CREATED,
+                order_type=schemas.Order.OrderType.MARKET,
+                desired_price=100,
+                action=schemas.Order.OrderAction.BUY,
+            )
         )
 
-        assert type(result) == Order
-        assert result.id is not None
-        result.delete_instance()
-
-    def test_build_and_create(self, subject, security, portfolio_version, weight):
-        result = subject.build_and_create(
-            symbol_name=security.symbol,
-            portfolio_version_id=portfolio_version.id,
-            weight_id=weight.id,
-            desired_price=1,
-            order_type="LIMIT",
-            action="BUY",
-        )
-        assert type(result) == Order
+        assert type(result) == schemas.Order
         assert result.id is not None
 
-        result.delete_instance()
+        models.Order.delete().execute()
 
     @pytest.mark.skip(reason="Not implemented")
     def test_save(self):
@@ -119,12 +106,28 @@ class TestOrdersRepository:
         assert sell_result is None
 
     def test_update_returns_success(self, subject, order):
-        from ftt.storage.value_objects import OrderValueObject
+        schema_order = schemas.Order(
+            id=order.id,
+            security=order.security,
+            portfolio=order.portfolio,
+            portfolio_version=order.portfolio_version,
+            weight=order.weight,
+            status=schemas.Order.Status(order.status),
+            order_type=schemas.Order.OrderType(order.order_type),
+            desired_price=order.desired_price,
+            action=schemas.Order.OrderAction(order.action),
+            desired_size=order.desired_size,
+            execution_size=order.execution_size,
+            execution_price=order.execution_price,
+            execution_value=order.execution_value,
+            execution_commission=order.execution_commission,
+        )
+        schema_order.status = Order.Status.COMPLETED
+        schema_order.execution_size = 1
 
-        dto = OrderValueObject(status=Order.Status.COMPLETED, execution_size=1)
-
-        result = subject.update(order, dto)
+        result = subject.update(schema_order)
 
         assert result.id == order.id
+        assert isinstance(result, schemas.Order)
         assert result.status == Order.Status.COMPLETED
         assert result.execution_size == 1

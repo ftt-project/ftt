@@ -1,31 +1,31 @@
 import numpy as np
 import pandas as pd
 
-from ftt.portfolio_management.dtos import PortfolioAllocationDTO
+from ftt.storage import schemas
 
 
 class DefaultAllocationStrategy:
     def __init__(
         self,
-        allocation_dto: PortfolioAllocationDTO,
+        portfolio_allocation: schemas.PortfolioAllocation,
         value: float,
         latest_prices: dict[str, float],
     ):
-        self.allocation_dto = allocation_dto
+        self.portfolio_allocation = portfolio_allocation
         self.value = value
         self.latest_prices = pd.Series(latest_prices)
 
-    def allocate(self):
+    def allocate(self) -> schemas.PortfolioAllocation:
         from pypfopt import DiscreteAllocation  # type: ignore
         from pypfopt.base_optimizer import BaseOptimizer, portfolio_performance  # type: ignore
 
         optimizer = BaseOptimizer(len(self.latest_prices))
-        weights = pd.Series(self.allocation_dto.weights)
+        weights = pd.Series(self.portfolio_allocation.weights)
         optimizer.set_weights(weights)
         cleaned_weights = optimizer.clean_weights()
 
         mu, sigma, sharpe = portfolio_performance(
-            weights, self.latest_prices, self.allocation_dto.cov_matrix
+            weights, self.latest_prices, self.portfolio_allocation.cov_matrix
         )
 
         da = DiscreteAllocation(
@@ -37,12 +37,12 @@ class DefaultAllocationStrategy:
 
         self.__set_expected_annual_return(mu)
         self.__set_annual_volatility(sigma)
-        self.allocation_dto.allocation = self.__normalize_allocation(
+        self.portfolio_allocation.allocation = self.__normalize_allocation(
             weights.keys().to_list(), alloc
         )
-        self.allocation_dto.leftover = leftover
+        self.portfolio_allocation.leftover = leftover
 
-        return self.allocation_dto
+        return self.portfolio_allocation
 
     def __normalize_allocation(self, symbols, allocation):
         """
@@ -59,29 +59,33 @@ class DefaultAllocationStrategy:
 
     def __set_expected_annual_return(self, mu):
         if (
-            self.allocation_dto.expected_annual_return is not None
-            and self.allocation_dto.expected_annual_return != mu
+            self.portfolio_allocation.expected_annual_return is not None
+            and self.portfolio_allocation.expected_annual_return != mu
         ):
             raise ValueError(
                 "Expected annual return is already set "
-                f"{self.allocation_dto.expected_annual_return} does not match actual {mu}"
+                f"{self.portfolio_allocation.expected_annual_return} does not match actual {mu}"
             )
-        self.allocation_dto.expected_annual_return = mu
+        self.portfolio_allocation.expected_annual_return = mu
 
     def __set_annual_volatility(self, sigma):
         if (
-            self.allocation_dto.annual_volatility is not None
-            and self.allocation_dto.annual_volatility != sigma
+            self.portfolio_allocation.annual_volatility is not None
+            and self.portfolio_allocation.annual_volatility != sigma
         ):
             raise ValueError(
                 "Expected volatility is already set "
-                f"{self.allocation_dto.annual_volatility} does not match actual {sigma}"
+                f"{self.portfolio_allocation.annual_volatility} does not match actual {sigma}"
             )
-        self.allocation_dto.annual_volatility = sigma
+        self.portfolio_allocation.annual_volatility = sigma
 
 
 class AllocationStrategyResolver:
-    strategies = ["default"]
+    _strategies = ["default"]
+
+    @classmethod
+    def strategies(cls) -> list[str]:
+        return cls._strategies
 
     @classmethod
     def resolve(cls, strategy_name: str):

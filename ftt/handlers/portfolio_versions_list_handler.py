@@ -3,6 +3,7 @@ from ftt.handlers.handler.return_result import ReturnResult
 from ftt.handlers.portfolio_steps.portfolio_versions_list_step import (
     PortfolioVersionsListStep,
 )
+from ftt.storage import schemas
 
 
 class PortfolioVersionsListHandler(Handler):
@@ -10,7 +11,7 @@ class PortfolioVersionsListHandler(Handler):
     Returns a list of all versions of a portfolio.
     """
 
-    params = ("portfolio",)
+    params = {"portfolio": schemas.Portfolio}
 
     handlers = [
         (PortfolioVersionsListStep, "portfolio"),

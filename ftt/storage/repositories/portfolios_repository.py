@@ -23,8 +23,13 @@ class PortfoliosRepository(Repository):
         return model
 
     @classmethod
-    def get_by_id(cls, id: int):
-        return Portfolio.get(id)
+    def get_by_id(cls, portfolio: schemas.Portfolio) -> schemas.Portfolio | None:
+        try:
+            record = Portfolio.get(portfolio.id)
+        except Portfolio.DoesNotExist:
+            return None
+
+        return schemas.Portfolio.from_orm(record)
 
     @classmethod
     def get_by_name(cls, name: str) -> Base:
@@ -73,3 +78,15 @@ class PortfoliosRepository(Repository):
     @classmethod
     def update(cls, portfolio: Portfolio, dto: ValueObjectInterface) -> Portfolio:
         return cls._update(portfolio, dto)
+
+    @classmethod
+    def find_by_portfolio_version(
+        cls, portfolio_version: schemas.PortfolioVersion
+    ) -> schemas.Portfolio:
+        portfolio_record = (
+            Portfolio.select()
+            .join(PortfolioVersion)
+            .where(PortfolioVersion.id == portfolio_version.id)
+            .get()
+        )
+        return schemas.Portfolio.from_orm(portfolio_record)

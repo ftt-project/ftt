@@ -11,9 +11,11 @@ from PySide6.QtWidgets import (
     QPushButton,
     QHBoxLayout,
 )
+from result import Err
 
+from ftt.handlers.portfolio_handlers import PortfolioSecuritiesAndWeightsLoadHandler
+from ftt.storage import schemas
 from ftt.ui.model import get_model
-from ftt.ui.portfolio.data import getPortfolioVersionWeights
 from ftt.ui.state import get_state
 
 
@@ -83,11 +85,6 @@ class PortfolioVersionWeightsTable(QWidget):
 
         self._layout.addLayout(buttons_layout)
 
-        # add_security_dialog = AddSecuritiesDialog()
-        # self._state.signals.addSecurityDialogDisplayed.connect(
-        #     lambda: add_security_dialog.exec()
-        # )
-
     def onPortfolioVersionSelected(self, portfolio_version_ids):
         print(f"Portfolio version selected: {portfolio_version_ids}")
         self.updateWeights()
@@ -103,13 +100,25 @@ class PortfolioVersionWeightsTable(QWidget):
         ):
             return
 
-        weights = getPortfolioVersionWeights(self._model.portfolio_version_id)
+        result = PortfolioSecuritiesAndWeightsLoadHandler().handle(
+            portfolio=schemas.Portfolio(id=self._model.portfolio_id),
+            portfolio_version=schemas.PortfolioVersion(
+                id=self._model.portfolio_version_id
+            ),
+        )
+
+        match result:
+            case Err(e):
+                print(f"Error: {e}")
+                return
+
+        weights = result.unwrap()
         self._table.setRowCount(len(weights))
         for idx, item in enumerate(weights):
-            security = QTableWidgetItem(item.security.symbol)
-            position = QTableWidgetItem(f"{item.position}")
-            planned_position = QTableWidgetItem(f"{item.planned_position}")
-            amount = QTableWidgetItem(f"{item.amount}")
+            security = QTableWidgetItem(item.symbol)
+            position = QTableWidgetItem(f"{item.position or '-/-'}")
+            planned_position = QTableWidgetItem(f"{item.planned_position or '-/-'}")
+            amount = QTableWidgetItem(f"{item.amount or '-/-'}")
 
             self._table.setItem(idx, 0, security)
             self._table.setItem(idx, 1, position)

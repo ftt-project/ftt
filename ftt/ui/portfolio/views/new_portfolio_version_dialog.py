@@ -1,10 +1,7 @@
-from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import (
     QDialog,
     QFormLayout,
     QDialogButtonBox,
-    QDateTimeEdit,
-    QLineEdit,
     QComboBox,
 )
 from result import Ok, Err
@@ -12,30 +9,23 @@ from result import Ok, Err
 from ftt.handlers.portfolio_version_creation_handler import (
     PortfolioVersionCreationHandler,
 )
+from ftt.portfolio_management.allocation_strategies import AllocationStrategyResolver
 from ftt.portfolio_management.optimization_strategies import (
     OptimizationStrategyResolver,
 )
-from ftt.storage.schemas import ACCEPTABLE_INTERVALS
+from ftt.storage import schemas
 from ftt.ui.model import get_model
-from ftt.ui.portfolio.data import getPortfolio
 from ftt.ui.state import get_state
 
 
 class NewVersionFormFields:
     def __init__(self):
-        self.value_input = QLineEdit()
-        self.period_from_input = QDateTimeEdit()
-        self.period_to_input = QDateTimeEdit()
-
-        self.interval_input = QComboBox()
-        self.interval_input.addItems(ACCEPTABLE_INTERVALS)
-
-        self.strategy_input = QComboBox()
-        self.strategy_input.addItems(OptimizationStrategyResolver.strategies())
-
-
-class NewPortfolioVersionDialogSignals(QObject):
-    newPortfolioVersionCreated = Signal(int)
+        self.optimization_strategy_input = QComboBox()
+        self.optimization_strategy_input.addItems(
+            OptimizationStrategyResolver.strategies()
+        )
+        self.allocation_strategy_input = QComboBox()
+        self.allocation_strategy_input.addItems(AllocationStrategyResolver.strategies())
 
 
 class NewPortfolioVersionDialog(QDialog):
@@ -46,7 +36,6 @@ class NewPortfolioVersionDialog(QDialog):
         self._state = get_state()
         self._buttons = None
         self._layout = None
-        self.signals = NewPortfolioVersionDialogSignals()
         self._form_fields = NewVersionFormFields()
         self.createUI()
 
@@ -55,11 +44,12 @@ class NewPortfolioVersionDialog(QDialog):
         self._layout = QFormLayout()
         self.setLayout(self._layout)
 
-        self._layout.addRow("Value", self._form_fields.value_input)
-        self._layout.addRow("Period Start", self._form_fields.period_from_input)
-        self._layout.addRow("Period End", self._form_fields.period_to_input)
-        self._layout.addRow("Interval", self._form_fields.interval_input)
-        self._layout.addRow("Optimization Strategy", self._form_fields.strategy_input)
+        self._layout.addRow(
+            "Optimization Strategy", self._form_fields.optimization_strategy_input
+        )
+        self._layout.addRow(
+            "Allocation Strategy", self._form_fields.allocation_strategy_input
+        )
 
         self._buttons = QDialogButtonBox(QDialogButtonBox.Yes | QDialogButtonBox.Cancel)
         self._buttons.accepted.connect(self.accept)
@@ -70,11 +60,11 @@ class NewPortfolioVersionDialog(QDialog):
         # TODO: self._form_fields.strategy_input is not saved
         # TODO: reset fields after creation
         result = PortfolioVersionCreationHandler().handle(
-            portfolio=getPortfolio(self._model.portfolio_id),
-            value=int(self._form_fields.value_input.text()),
-            interval=self._form_fields.interval_input.currentText(),
-            period_start=str(self._form_fields.period_from_input.dateTime().toPython()),
-            period_end=str(self._form_fields.period_to_input.dateTime().toPython()),
+            portfolio_version=schemas.PortfolioVersion(
+                portfolio=schemas.Portfolio(id=self._model.portfolio_id),
+                optimization_strategy_name=self._form_fields.optimization_strategy_input.currentText(),
+                allocation_strategy_name=self._form_fields.allocation_strategy_input.currentText(),
+            )
         )
         match result:
             case Ok(version):

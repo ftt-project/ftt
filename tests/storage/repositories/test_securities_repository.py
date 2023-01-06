@@ -72,7 +72,16 @@ class TestSecuritiesRepository:
         assert not result
 
     def test_find_securities(self, subject, portfolio_version, security, weight):
-        result = subject.find_securities(portfolio_version)
+        result = subject.find_securities(
+            schemas.PortfolioVersion.from_orm(portfolio_version)
+        )
 
         assert type(result) == list
         assert result[0] == security
+
+    def test_find_by_portfolio(self, subject, portfolio, portfolio_security):
+        result = subject.find_by_portfolio(schemas.Portfolio(id=portfolio.id))
+
+        assert isinstance(result, list)
+        assert isinstance(result[0], schemas.Security)
+        assert result[0].id == portfolio_security.security.id

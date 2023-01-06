@@ -1,18 +1,16 @@
 from abc import ABC
-from dataclasses import asdict
 from datetime import datetime
 
 import peewee
 from playhouse.shortcuts import update_model_from_dict  # type: ignore
 
-from ftt.storage.value_objects import ValueObjectInterface
 from ftt.storage.errors import PersistingError
 from ftt.storage.models.base import Base
 
 
 class Repository(ABC):
     @classmethod
-    def _create(cls, model_class, data) -> Base:
+    def _create(cls, model_class, data: dict) -> Base:
         """
         Generic method of creating a new record in the database.
         Creates a model based on a given class and data dictionary.
@@ -46,15 +44,13 @@ class Repository(ABC):
         return result
 
     @classmethod
-    def _update(cls, instance, data: ValueObjectInterface) -> Base:
+    def _update(cls, instance: Base, fields: dict) -> Base:
         try:
-            dict_data = asdict(data)
-            present_data = {k: v for k, v in dict_data.items() if v is not None}
-            present_data["updated_at"] = datetime.now()
-            model = update_model_from_dict(instance, present_data)
+            fields["updated_at"] = datetime.now()
+            model = update_model_from_dict(instance, fields)
             model.save()
         except (AttributeError, peewee.IntegrityError) as e:
-            raise PersistingError(instance, data, str(e))
+            raise PersistingError(instance, fields, str(e))
 
         return model
 
@@ -66,3 +62,7 @@ class Repository(ABC):
         else:
             result = instance.delete_instance()
         return result == 1
+
+    @classmethod
+    def _get_by_id(cls, model_class, id: int) -> Base:
+        return model_class.get(id)

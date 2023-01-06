@@ -9,7 +9,7 @@ from ftt.cli.renderers.portfolio_versions.portfolio_version_details import (
 )
 from ftt.cli.renderers.weights.weights_list import WeightsList
 from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
-from ftt.handlers.portfolio_optimization_handler import PortfolioOptimizationHandler
+from ftt.handlers.portfolio_version_handlers import PortfolioVersionOptimizationHandler
 from ftt.handlers.portfolio_version_activation_handler import (
     PortfolioVersionActivationHandler,
 )
@@ -33,7 +33,7 @@ from ftt.handlers.positions_synchronization_handler import (
     PositionsSynchronizationHandler,
 )
 from ftt.handlers.securities_load_handler import SecuritiesLoadHandler
-from ftt.handlers.weights_list_handler import WeightsListHandler
+from ftt.handlers.weights_list_load_handler import WeightsListLoadHandler
 from ftt.portfolio_management.allocation_strategies import AllocationStrategyResolver
 from ftt.portfolio_management.optimization_strategies import (
     OptimizationStrategyResolver,
@@ -72,7 +72,7 @@ class PortfolioVersionsCommands:
         "allocation_strategy",
         description="Allocation strategy",
         type=str,
-        choices=AllocationStrategyResolver.strategies,
+        choices=AllocationStrategyResolver._strategies,
     )
     def optimize(
         self,
@@ -92,7 +92,7 @@ class PortfolioVersionsCommands:
             self.context.console.print(f"[red]{portfolio_version_result.unwrap_err()}")
             return
 
-        optimization_result = PortfolioOptimizationHandler().handle(
+        optimization_result = PortfolioVersionOptimizationHandler().handle(
             portfolio_version_id=portfolio_version_result.value.id,
             optimization_strategy_name=optimization_strategy,
             allocation_strategy_name=allocation_strategy,
@@ -107,7 +107,7 @@ class PortfolioVersionsCommands:
             )
             return
 
-        result = WeightsListHandler().handle(
+        result = WeightsListLoadHandler().handle(
             portfolio_version=portfolio_version_result.value
         )
         WeightsList(
@@ -430,7 +430,7 @@ class PortfolioVersionsCommands:
             self.context.console.print(portfolio_version_result.unwrap_err())
             return
 
-        weights_result = WeightsListHandler().handle(
+        weights_result = WeightsListLoadHandler().handle(
             portfolio_version=portfolio_version_result.value
         )
 

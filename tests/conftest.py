@@ -3,7 +3,8 @@ from datetime import datetime
 import pytest
 from pandas import DataFrame, DatetimeIndex
 
-from ftt.storage import Storage, schemas
+from ftt.storage import schemas, Storage
+from ftt.storage.models import PortfolioSecurity
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -18,12 +19,20 @@ Application.initialize(test_mode=True)
 
 @pytest.fixture(autouse=True, scope="function")
 def transactional():
-    connection = Storage.get_database()
-    with connection.atomic() as transaction:
-        try:
-            yield
-        finally:
-            transaction.rollback()
+    try:
+        yield
+    finally:
+        for model in Storage.get_models():
+            model.delete().execute()
+
+
+@pytest.fixture(autouse=True, scope="session")
+def db_reinitialize():
+    try:
+        yield
+    finally:
+        sm = Storage.storage_manager()
+        sm.drop_tables(Storage.get_models())
 
 
 @pytest.fixture
@@ -158,9 +167,14 @@ def schema_portfolio(data_portfolio):
 
 
 @pytest.fixture
-def portfolio():
+def portfolio(data_portfolio):
     portfolio = Portfolio.create(
-        name="Portfolio TEST 1",
+        name=data_portfolio["name"],
+        description=data_portfolio["description"],
+        period_start=data_portfolio["period_start"],
+        period_end=data_portfolio["period_end"],
+        value=data_portfolio["value"],
+        interval=data_portfolio["interval"],
         updated_at=datetime.now(),
         created_at=datetime.now(),
     )
@@ -185,14 +199,63 @@ def portfolio_factory():
 
 
 @pytest.fixture
-def portfolio_version(portfolio):
+def portfolio_security(portfolio, security) -> PortfolioSecurity:
+    portfolio_security = PortfolioSecurity.create(
+        portfolio=portfolio,
+        security=security,
+        updated_at=datetime.now(),
+        created_at=datetime.now(),
+    )
+    try:
+        yield portfolio_security
+    finally:
+        portfolio_security.delete_instance()
+
+
+@pytest.fixture
+def portfolio_security_factory():
+    def _portfolio_security_factory(portfolio, security):
+        return PortfolioSecurity.create(
+            portfolio=portfolio,
+            security=security,
+            updated_at=datetime.now(),
+            created_at=datetime.now(),
+        )
+
+    yield _portfolio_security_factory
+
+    SecurityPrice.delete().execute()
+
+
+@pytest.fixture
+def data_portfolio_version(portfolio):
+    return {
+        "portfolio": portfolio,
+        "version": 1,
+        "active": True,
+        "optimization_strategy_name": "Test strategy",
+        "allocation_strategy_name": "Test allocation strategy",
+        "expected_annual_return": None,
+        "annual_volatility": None,
+        "sharpe_ratio": None,
+    }
+
+
+@pytest.fixture
+def schema_portfolio_version(data_portfolio_version):
+    return schemas.PortfolioVersion(**data_portfolio_version)
+
+
+@pytest.fixture
+def portfolio_version(portfolio, data_portfolio_version):
     portfolio_version = PortfolioVersion.create(
         portfolio=portfolio,
-        version=1,
-        value=30000.0,
-        period_start=datetime(2020, 1, 1),
-        period_end=datetime(2020, 10, 5),
-        interval="1mo",
+        version=data_portfolio_version["version"],
+        active=data_portfolio_version["active"],
+        optimization_strategy_name=data_portfolio_version["optimization_strategy_name"],
+        expected_annual_return=data_portfolio_version["expected_annual_return"],
+        annual_volatility=data_portfolio_version["annual_volatility"],
+        sharpe_ratio=data_portfolio_version["sharpe_ratio"],
         updated_at=datetime.now(),
         created_at=datetime.now(),
     )
@@ -208,17 +271,15 @@ def portfolio_version_factory(portfolio):
         value=30000.0,
         portfolio=portfolio,
         version=1,
-        interval="1mo",
-        period_start=datetime(2020, 1, 1),
-        period_end=datetime(2020, 10, 5),
+        optimization_strategy_name="historical",
+        allocation_strategy_name="default",
     ):
         return PortfolioVersion.create(
             portfolio=portfolio,
             version=version,
             value=value,
-            period_start=period_start,
-            period_end=period_end,
-            interval=interval,
+            optimization_strategy_name=optimization_strategy_name,
+            allocation_strategy_name=allocation_strategy_name,
             updated_at=datetime.now(),
             created_at=datetime.now(),
         )
@@ -262,6 +323,29 @@ def weight_factory():
 
 
 @pytest.fixture
+def weighted_security_factory():
+    def _weighted_security_factory(
+        security,
+        portfolio_version,
+        portfolio,
+        position=0,
+        planned_position=100,
+        amount=0,
+    ):
+        return schemas.WeightedSecurity(
+            symbol=security.symbol,
+            portfolio=schemas.Portfolio.from_orm(portfolio),
+            portfolio_version=schemas.PortfolioVersion.from_orm(portfolio_version),
+            security=schemas.Security.from_orm(security),
+            position=position,
+            planned_position=planned_position,
+            amount=amount,
+        )
+
+    yield _weighted_security_factory
+
+
+@pytest.fixture
 def order(security, portfolio_version, portfolio, weight):
     order = Order.create(
         security=security,
@@ -270,7 +354,7 @@ def order(security, portfolio_version, portfolio, weight):
         portfolio_version=portfolio_version,
         weight=weight,
         status="Created",
-        order_type="MARKET",
+        order_type="MKT",
         desired_price=100,
         updated_at=datetime.now(),
         created_at=datetime.now(),

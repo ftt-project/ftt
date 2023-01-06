@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import Tuple
 
-from ftt.storage.models import Security
+from playhouse.shortcuts import model_to_dict
+
+from ftt.storage import schemas
 from ftt.storage.models.security_price import SecurityPrice
 from ftt.storage.repositories.repository import Repository
 
@@ -36,13 +38,16 @@ class SecurityPricesRepository(Repository):
         pass
 
     @staticmethod
-    def find_by_security_prices(
-        security: Security, interval: str, period_start: datetime, period_end: datetime
-    ) -> list[SecurityPrice]:
-        query = (
+    def security_price_time_vector(
+        security: schemas.Security,
+        interval: str,
+        period_start: datetime,
+        period_end: datetime,
+    ) -> list[schemas.SecurityPrice]:
+        records = (
             SecurityPrice.select()
             .where(
-                SecurityPrice.security == security,
+                SecurityPrice.security_id == security.id,
                 SecurityPrice.interval == interval,
                 (
                     (SecurityPrice.datetime >= period_start)
@@ -50,6 +55,10 @@ class SecurityPricesRepository(Repository):
                 ),
             )
             .order_by(SecurityPrice.datetime.asc())
-        )
+        ).execute()
 
-        return query.execute()
+        records_as_dict = [
+            {**model_to_dict(record), **{"symbol": security.symbol}}
+            for record in records
+        ]
+        return [schemas.SecurityPrice(**record) for record in records_as_dict]

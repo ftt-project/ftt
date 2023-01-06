@@ -5,6 +5,7 @@ from ftt.brokers.position import Position
 from ftt.handlers.position_steps.request_open_positions_step import (
     RequestOpenPositionsStep,
 )
+from ftt.storage import schemas
 
 
 class TestRequestOpenPositionsStep:
@@ -14,21 +15,22 @@ class TestRequestOpenPositionsStep:
 
     @pytest.fixture
     def position(self):
-        Position(
+        schemas.Position(
             account="account-123",
-            contract=Contract(
+            contract=schemas.Contract(
                 symbol="AAPL",
             ),
             position=10.0,
         )
 
-    def test_returns_open_positions(self, subject, mocker, position):
-        mocked = mocker.patch(
-            "ftt.handlers.position_steps.request_open_positions_step.build_brokerage_service"
-        )
-        mocked.return_value.open_positions.return_value = [position]
+    @pytest.fixture
+    def broker_service(self, mocker, position):
+        service = mocker.Mock()
+        service.open_positions.return_value = [position]
+        return service
 
-        result = subject.process()
+    def test_returns_open_positions(self, subject, position, broker_service):
+        result = subject.process(broker_service)
 
         assert result.is_ok()
         assert result.value == [position]

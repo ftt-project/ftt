@@ -1,3 +1,4 @@
+from ftt.brokers.brokerage_service import BrokerageService
 from ftt.handlers.handler.handler import Handler
 from ftt.handlers.handler.return_result import ReturnResult
 from ftt.handlers.order_steps.orders_create_step import OrdersCreateStep
@@ -15,14 +16,18 @@ from ftt.handlers.position_steps.request_open_positions_step import (
     RequestOpenPositionsStep,
 )
 from ftt.handlers.weights_steps.weights_load_step import WeightsLoadStep
+from ftt.storage import schemas
 
 
 class PositionsSynchronizationHandler(Handler):
-    params = ("portfolio_version_id",)
+    params = {
+        "portfolio_version": schemas.PortfolioVersion,
+        "brokerage_service": BrokerageService,
+    }
 
     handlers = [
-        (RequestOpenPositionsStep,),
-        (PortfolioVersionLoadStep, "portfolio_version_id"),
+        (RequestOpenPositionsStep, "brokerage_service"),
+        (PortfolioVersionLoadStep, "portfolio_version"),
         (PortfolioVersionLoadPortfolioStep, PortfolioVersionLoadStep.key),
         (WeightsLoadStep, PortfolioVersionLoadStep.key),
         (
@@ -37,6 +42,6 @@ class PositionsSynchronizationHandler(Handler):
             PortfolioVersionLoadStep.key,
             PortfolioVersionLoadPortfolioStep.key,
         ),
-        (OrdersPlaceStep, OrdersCreateStep.key),
+        (OrdersPlaceStep, OrdersCreateStep.key, "brokerage_service"),
         (ReturnResult, OrdersPlaceStep.key),
     ]

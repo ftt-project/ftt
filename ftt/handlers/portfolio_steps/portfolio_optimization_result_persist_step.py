@@ -1,12 +1,9 @@
-from typing import List, Optional
+from typing import Optional
 
-from result import Ok, Result
+from result import Ok, Result, as_result, Err
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.portfolio_management.dtos import PortfolioAllocationDTO
-from ftt.storage.value_objects import PortfolioVersionValueObject
-from ftt.storage.models import Weight
-from ftt.storage.models.portfolio_version import PortfolioVersion
+from ftt.storage import schemas
 from ftt.storage.repositories.portfolio_versions_repository import (
     PortfolioVersionsRepository,
 )
@@ -20,18 +17,10 @@ class PortfolioOptimizationResultPersistStep(AbstractStep):
     @classmethod
     def process(
         cls,
-        portfolio_version: PortfolioVersion,
-        portfolio_version_allocation: PortfolioAllocationDTO,
-        optimization_strategy_name: str,
-    ) -> Result[List[Weight], Optional[str]]:
+        portfolio_version: schemas.PortfolioVersion,
+        portfolio_version_allocation: schemas.PortfolioAllocation,
+    ) -> Result[list[schemas.Weight], Optional[str]]:
         result = []
-
-        PortfolioVersionsRepository.update(
-            portfolio_version,
-            PortfolioVersionValueObject(
-                optimization_strategy_name=optimization_strategy_name,
-            ),
-        )
 
         for symbol, qty in portfolio_version_allocation.allocation.items():
             security = SecuritiesRepository.get_by_name(symbol)
@@ -52,6 +41,11 @@ class PortfolioOptimizationResultPersistStep(AbstractStep):
             portfolio_version_allocation.annual_volatility
         )
         portfolio_version.sharpe_ratio = portfolio_version_allocation.sharpe_ratio
-        portfolio_version.save()
 
+        update = as_result(Exception)(PortfolioVersionsRepository.update)
+        match update(portfolio_version):
+            case Err(e):
+                return Err(f"Error while updating portfolio version: {e}")
+
+        # TODO: use schema entity instead of Weight model
         return Ok(result)

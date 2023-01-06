@@ -1,12 +1,11 @@
 import pytest
 
-from ftt.brokers.broker_order import BrokerOrder, OrderAction, OrderType
-from ftt.brokers.contract import Contract
 from ftt.handlers.order_steps.orders_create_step import OrdersCreateStep
+from ftt.storage import schemas
 from ftt.storage.models import Order
 
 
-class TestCreateOrdersStep:
+class TestOrdersCreateStep:
     @pytest.fixture
     def subject(self):
         return OrdersCreateStep
@@ -20,27 +19,21 @@ class TestCreateOrdersStep:
         return security_factory(symbol="MSFT")
 
     @pytest.fixture
-    def order_candidates(self, security_factory, security_1, security_2):
+    def calculated_position_differences(self, security_1, security_2):
         return [
-            (
-                BrokerOrder(
-                    action=OrderAction.SELL,
-                    total_quantity=100,
-                    order_type=OrderType.MARKET,
-                ),
-                Contract(
-                    symbol=security_1.symbol,
-                ),
+            schemas.CalculatedPositionDifference(
+                symbol=security_1.symbol,
+                actual_position_difference=schemas.CalculatedPositionDifference.Difference.BIGGER,
+                planned_position=0,
+                actual_position=100,
+                delta=100,
             ),
-            (
-                BrokerOrder(
-                    action=OrderAction.SELL,
-                    total_quantity=75,
-                    order_type=OrderType.MARKET,
-                ),
-                Contract(
-                    symbol=security_2.symbol,
-                ),
+            schemas.CalculatedPositionDifference(
+                symbol=security_2.symbol,
+                actual_position_difference=schemas.CalculatedPositionDifference.Difference.BIGGER,
+                planned_position=0,
+                actual_position=75,
+                delta=75,
             ),
         ]
 
@@ -52,14 +45,19 @@ class TestCreateOrdersStep:
         ]
 
     def test_process_returns_created_order(
-        self, subject, order_candidates, weights, portfolio, portfolio_version
+        self,
+        subject,
+        calculated_position_differences,
+        weights,
+        portfolio,
+        portfolio_version,
     ):
         result = subject.process(
-            order_candidates, weights, portfolio, portfolio_version
+            calculated_position_differences, weights, portfolio, portfolio_version
         )
 
         assert result.is_ok()
         assert type(result.value) == list
-        assert type(result.value[0]) == Order
+        assert type(result.value[0]) == schemas.Order
         assert result.value[0].id is not None
         assert result.value[0].status == Order.Status.CREATED

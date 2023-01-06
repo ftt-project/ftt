@@ -6,6 +6,9 @@ from ftt.handlers.portfolio_steps.portfolio_optimization_result_persist_step imp
 from ftt.handlers.portfolio_version_steps.portfolio_version_allocation_step import (
     PortfolioVersionAllocationStep,
 )
+from ftt.handlers.portfolio_version_steps.portfolio_version_load_portfolio_step import (
+    PortfolioVersionLoadPortfolioStep,
+)
 from ftt.handlers.portfolio_version_steps.portfolio_version_load_step import (
     PortfolioVersionLoadStep,
 )
@@ -15,36 +18,46 @@ from ftt.handlers.portfolio_version_steps.portfolio_version_optimization_step im
 from ftt.handlers.security_prices_steps.security_prices_load_step import (
     SecurityPricesLoadStep,
 )
+from ftt.storage import schemas
 
 
-class PortfolioOptimizationHandler(Handler):
-    params = (
-        "portfolio_version_id",
-        "optimization_strategy_name",
-        "allocation_strategy_name",
-    )
+class PortfolioVersionOptimizationHandler(Handler):
+    """
+    Optimizes a portfolio version by given portfolio version id.
+
+    Returns:
+    --------
+        Result[List[Weight], Optional[str]] - Result with list of weights and error message if any.
+    """
+
+    params = {
+        "portfolio_version": schemas.PortfolioVersion,
+    }
 
     handlers = [
-        (PortfolioVersionLoadStep, "portfolio_version_id"),
-        (SecurityPricesLoadStep, PortfolioVersionLoadStep.key),
+        (PortfolioVersionLoadStep, "portfolio_version"),
+        (PortfolioVersionLoadPortfolioStep, PortfolioVersionLoadStep.key),
+        (
+            SecurityPricesLoadStep,
+            PortfolioVersionLoadStep.key,
+            PortfolioVersionLoadPortfolioStep.key,
+        ),
         (
             PortfolioVersionOptimizationStep,
             PortfolioVersionLoadStep.key,
             SecurityPricesLoadStep.key,
-            "optimization_strategy_name",
         ),
         (
             PortfolioVersionAllocationStep,
             PortfolioVersionLoadStep.key,
+            PortfolioVersionLoadPortfolioStep.key,
             SecurityPricesLoadStep.key,
             PortfolioVersionOptimizationStep.key,
-            "allocation_strategy_name",
         ),
         (
             PortfolioOptimizationResultPersistStep,
             PortfolioVersionLoadStep.key,
             PortfolioVersionAllocationStep.key,
-            "optimization_strategy_name",
         ),
         (ReturnResult, PortfolioOptimizationResultPersistStep.key),
     ]

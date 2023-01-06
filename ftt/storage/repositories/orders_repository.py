@@ -2,18 +2,13 @@ from datetime import datetime
 from typing import List
 
 from ftt.logger import Logger
-from ftt.storage.value_objects import OrderValueObject
+from ftt.storage import schemas
 from ftt.storage.models.base import Base
 from ftt.storage.models.order import Order
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.models.security import Security
-from ftt.storage.repositories.portfolio_versions_repository import (
-    PortfolioVersionsRepository,
-)
 from ftt.storage.repositories.repository import Repository
-from ftt.storage.repositories.securities_repository import SecuritiesRepository
-from ftt.storage.repositories.weights_repository import WeightsRepository
 
 
 class OrdersRepository(Repository):
@@ -22,10 +17,16 @@ class OrdersRepository(Repository):
         pass
 
     @classmethod
-    def create(cls, data: dict) -> Order:
-        data["created_at"] = datetime.now()
-        data["updated_at"] = datetime.now()
-        return Order.create(**data)
+    def create(cls, order: schemas.Order) -> Order:
+        fields = order.dict(
+            exclude_unset=True,
+            exclude={"portfolio_version", "portfolio", "security", "weight"},
+        )
+        fields["portfolio_id"] = order.portfolio.id
+        fields["security_id"] = order.security.id
+        fields["weight_id"] = order.weight.id
+        fields["portfolio_version_id"] = order.portfolio_version.id
+        return schemas.Order.from_orm(cls._create(Order, fields))
 
     @classmethod
     def update_status(cls, order_id: int, status: str) -> Order:
@@ -36,36 +37,11 @@ class OrdersRepository(Repository):
         return cls.get_by_id(order_id)
 
     @classmethod
-    def update(cls, order: Order, dto: OrderValueObject) -> Order:
-        return cls._update(order, dto)
-
-    @classmethod
-    def build_and_create(
-        cls,
-        symbol_name: str,
-        portfolio_version_id: int,
-        weight_id: int,
-        desired_price: float,
-        order_type: str,
-        action: str,
-    ) -> Order:
-        portfolio_version = PortfolioVersionsRepository().get_by_id(
-            portfolio_version_id
-        )
-        weight = WeightsRepository().get_by_id(weight_id)
-        order = cls.create(
-            {
-                "security": SecuritiesRepository().get_by_name(symbol_name),
-                "portfolio": portfolio_version.portfolio,
-                "portfolio_version": portfolio_version,
-                "weight": weight,
-                "desired_price": desired_price,
-                "status": Order.Status.CREATED,
-                "order_type": order_type,
-                "action": action,
-            }
-        )
-        return order
+    def update(cls, order: schemas.Order) -> schemas.Order:
+        fields = order.dict(exclude_unset=True)
+        record = cls._get_by_id(Order, order.id)
+        result = cls._update(record, fields)
+        return schemas.Order.from_orm(result)
 
     @classmethod
     def get_by_id(cls, id: int) -> Order:

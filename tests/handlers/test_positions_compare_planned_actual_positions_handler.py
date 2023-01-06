@@ -1,9 +1,9 @@
 import pytest
 
-from ftt.brokers.broker_order import OrderAction
 from ftt.handlers.positions_compare_planned_actual_positions_handler import (
     PositionsComparePlannedActualPositionsHandler,
 )
+from ftt.storage import schemas
 
 
 class TestPositionsComparePlannedActualPositionsHandler:
@@ -11,20 +11,23 @@ class TestPositionsComparePlannedActualPositionsHandler:
     def subject(self):
         return PositionsComparePlannedActualPositionsHandler()
 
-    @pytest.fixture(autouse=True)
-    def mock_server_request(self, mocker):
-        mocked_open_positions = mocker.patch(
-            "ftt.handlers.position_steps.request_open_positions_step.build_brokerage_service"
-        )
-        mocked_open_positions.return_value.open_positions.return_value = []
+    @pytest.fixture
+    def open_positions(self):
+        return []
 
     def test_returns_comparison_of_planned_and_actual_positions(
-        self, subject, portfolio_version, weight
+        self, subject, portfolio_version, weight, open_positions
     ):
-        result = subject.handle(portfolio_version_id=portfolio_version.id)
+        result = subject.handle(
+            portfolio_version=schemas.PortfolioVersion(id=portfolio_version.id),
+            open_positions=open_positions,
+        )
 
         assert result.is_ok()
         assert type(result.value) == list
         assert len(result.value) == 1
-        assert result.value[0][0].action == OrderAction.BUY
-        assert result.value[0][0].total_quantity == weight.planned_position
+        assert (
+            result.value[0].actual_position_difference
+            == schemas.CalculatedPositionDifference.Difference.SMALLER
+        )
+        assert result.value[0].delta == weight.planned_position

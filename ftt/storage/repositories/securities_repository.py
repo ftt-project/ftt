@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Tuple
 
-from ftt.storage import schemas
+from ftt.storage import schemas, models
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.models.security import Security
 from ftt.storage.models.weight import Weight
@@ -48,7 +48,9 @@ class SecuritiesRepository(Repository):
         raise NotImplementedError()
 
     @classmethod
-    def find_securities(cls, portfolio_version: PortfolioVersion) -> List[Security]:
+    def find_securities(
+        cls, portfolio_version: schemas.PortfolioVersion
+    ) -> List[Security]:
         result = (
             Security.select()
             .join(Weight)
@@ -56,3 +58,15 @@ class SecuritiesRepository(Repository):
             .where(PortfolioVersion.id == portfolio_version.id)
         )
         return list(result)
+
+    @classmethod
+    def find_by_portfolio(cls, portfolio: schemas.Portfolio) -> list[schemas.Security]:
+        portfolio_record = models.Portfolio.get(portfolio.id)
+
+        result = (
+            Security.select()
+            .join(models.PortfolioSecurity)
+            .join(models.Portfolio)
+            .where(models.Portfolio.id == portfolio_record.id)
+        )
+        return [schemas.Security.from_orm(record) for record in result]

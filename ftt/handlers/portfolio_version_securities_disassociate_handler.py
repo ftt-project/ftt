@@ -7,6 +7,10 @@ from ftt.handlers.weights_steps.weights_delete_step import WeightsDeleteStep
 
 
 class PortfolioVersionSecuritiesDisassociateHandler(Handler):
+    """
+    Deprecated: securities must be disassociated using PortfolioSecurities association model
+    """
+
     params = ("portfolio_version_id", "securities")
 
     handlers = [

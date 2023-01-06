@@ -20,6 +20,16 @@ class TestPortfoliosRepository:
     def data(self):
         return {"name": "Repository 1"}
 
+    def test_get_by_id(self, subject, portfolio):
+        result = subject.get_by_id(schemas.Portfolio.from_orm(portfolio))
+
+        assert result.id == portfolio.id
+
+    def test_get_by_id_returns_none(self, subject, portfolio):
+        result = subject.get_by_id(schemas.Portfolio(id=999))
+
+        assert result is None
+
     def test_get_by_name(self, portfolio, subject):
         found = subject.get_by_name(portfolio.name)
         assert found.id == portfolio.id
@@ -72,3 +82,11 @@ class TestPortfoliosRepository:
 
         assert "Failed to persist `Portfolio` with params" in str(exc.value)
         assert "CHECK constraint failed" in str(exc.value)
+
+    def test_find_by_portfolio_version(self, subject, portfolio_version):
+        result = subject.find_by_portfolio_version(
+            schemas.PortfolioVersion(id=portfolio_version.id)
+        )
+
+        assert isinstance(result, schemas.Portfolio)
+        assert result.id == portfolio_version.portfolio_id

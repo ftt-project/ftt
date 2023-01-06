@@ -28,21 +28,23 @@ class CentralPortfolioView(QWidget):
         layout.setAlignment(Qt.AlignTop)
 
         left_column = QWidget()
-        left_column_layout = QVBoxLayout(left_column)
+        left_column.setLayout(QVBoxLayout())
+        left_column.layout().setAlignment(Qt.AlignTop)
+        left_column.layout().setStretch(0, 0)
 
         right_column = QWidget()
         right_column_layout = QHBoxLayout(right_column)
 
         self._portfolioHeaderLabel = QLabel("")
-        left_column_layout.addWidget(self._portfolioHeaderLabel)
+        left_column.layout().addWidget(self._portfolioHeaderLabel)
 
         self._portfolioVersionsTable = PortfolioVersionsTable()
-        left_column_layout.addWidget(
+        left_column.layout().addWidget(
             self._portfolioVersionsTable, 0, alignment=Qt.AlignTop
         )
 
         self._portfolioWeightsTable = PortfolioVersionWeightsTable()
-        left_column_layout.addWidget(
+        left_column.layout().addWidget(
             self._portfolioWeightsTable, 0, alignment=Qt.AlignTop
         )
 

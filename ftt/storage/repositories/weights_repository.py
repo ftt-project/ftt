@@ -3,6 +3,7 @@ from typing import List
 
 import peewee
 
+from ftt.storage import schemas
 from ftt.storage.value_objects import ValueObjectInterface
 from ftt.storage.models.base import Base
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -20,8 +21,8 @@ class WeightsRepository(Repository):
     def upsert(cls, data: dict) -> Weight:
         id = (
             Weight.insert(
-                portfolio_version=data["portfolio_version"],
-                security=data["security"],
+                portfolio_version_id=data["portfolio_version"].id,
+                security_id=data["security"].id,
                 position=data["position"],
                 planned_position=data["planned_position"],
                 created_at=datetime.now(),
@@ -37,13 +38,15 @@ class WeightsRepository(Repository):
             id = (
                 Weight.select()
                 .where(
-                    Weight.portfolio_version == data["portfolio_version"],
+                    Weight.portfolio_version_id == data["portfolio_version"].id,
                     Weight.security == data["security"],
                 )
                 .get()
                 .id
             )
-        return cls.get_by_id(id)
+
+        record = Weight.get_by_id(id)
+        return schemas.Weight.from_orm(record)
 
     @classmethod
     def find_by_security_and_portfolio(
@@ -120,9 +123,15 @@ class WeightsRepository(Repository):
 
     @classmethod
     def get_by_portfolio_version(
-        cls, portfolio_version: PortfolioVersion
-    ) -> List[Weight]:
-        return list(portfolio_version.weights)
+        cls, portfolio_version: schemas.PortfolioVersion
+    ) -> List[schemas.Weight]:
+        portfolio_version_record = cls._get_by_id(
+            PortfolioVersion, portfolio_version.id
+        )
+        return [
+            schemas.Weight.from_orm(weight)
+            for weight in portfolio_version_record.weights
+        ]
 
     @classmethod
     def lock_weight(cls, weight: Weight, locked_at_amount: float) -> Weight:
@@ -148,5 +157,6 @@ class WeightsRepository(Repository):
         return cls.get_by_id(weight.id)
 
     @classmethod
-    def delete(cls, weight: Weight, soft_delete: bool = True) -> bool:
-        return cls._delete(weight, soft_delete)
+    def delete(cls, weight: schemas.Weight, soft_delete: bool = True) -> bool:
+        record = cls._get_by_id(Weight, weight.id)
+        return cls._delete(record, soft_delete)
