@@ -29,8 +29,7 @@ class TestSecurityPricesLoadStep:
         portfolio_security_factory(portfolio, security)
 
         result = subject.process(
-            portfolio_version=schemas.PortfolioVersion.from_orm(portfolio_version),
-            portfolio=schemas.Portfolio.from_orm(portfolio),
+                portfolio=schemas.Portfolio.from_orm(portfolio),
         )
 
         assert result.is_ok()
@@ -60,7 +59,6 @@ class TestSecurityPricesLoadStep:
         portfolio_security_factory(portfolio, security2)
 
         result = subject.process(
-            portfolio_version=schemas.PortfolioVersion.from_orm(portfolio_version),
             portfolio=schemas.Portfolio.from_orm(portfolio),
         )
 

@@ -19,7 +19,7 @@ class PortfolioSecuritiesLoadStep(AbstractStep):
     def process(
         cls, portfolio_version: PortfolioVersion
     ) -> Result[List[Security], Optional[str]]:
-        securities = SecuritiesRepository.find_securities(portfolio_version)
+        securities = SecuritiesRepository.load_securities_by_portfolio(portfolio_version)
 
         if len(securities) == 0:
             return Err(

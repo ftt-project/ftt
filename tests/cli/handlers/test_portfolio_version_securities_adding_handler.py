@@ -55,7 +55,7 @@ class TestPortfolioVersionSecuritiesAddingHandler:
 
         assert result.is_ok()
 
-        result = SecuritiesRepository.find_securities(
+        result = SecuritiesRepository.load_securities_by_portfolio(
             portfolio_version=portfolio_version
         )
         assert len(result) == 1

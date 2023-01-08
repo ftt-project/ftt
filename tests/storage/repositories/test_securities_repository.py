@@ -72,7 +72,7 @@ class TestSecuritiesRepository:
         assert not result
 
     def test_find_securities(self, subject, portfolio_version, security, weight):
-        result = subject.find_securities(
+        result = subject.load_securities_by_portfolio(
             schemas.PortfolioVersion.from_orm(portfolio_version)
         )
 

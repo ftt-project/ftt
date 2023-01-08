@@ -19,10 +19,6 @@ To enable every private investor to make a rational algorithmic decision.
 
 To create a compelling service that provides private investors opportunities to cast their investing believes through prism of statistic and analysis.
 
-## Problem statement
-
-FTT solves a concrete problem by assembling multiple features in one place. Refer to [PROBLEM_STATEMENT](PROBLEM_STATEMENT.md) document for details.
-
 ## Main features
 
 ### Done

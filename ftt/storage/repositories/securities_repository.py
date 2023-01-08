@@ -51,6 +51,9 @@ class SecuritiesRepository(Repository):
     def find_securities(
         cls, portfolio_version: schemas.PortfolioVersion
     ) -> List[Security]:
+        """
+        TODO: Deprecated in favor of find_by_portfolio
+        """
         result = (
             Security.select()
             .join(Weight)
