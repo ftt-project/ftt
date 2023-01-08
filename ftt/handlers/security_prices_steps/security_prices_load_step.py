@@ -11,11 +11,23 @@ from ftt.storage.repositories.security_prices_repository import SecurityPricesRe
 
 
 class SecurityPricesLoadStep(AbstractStep):
+    """
+    Loads security prices for a given portfolio version.
+
+    Params:
+    -------
+        portfolio_version: schemas.PortfolioVersion - Portfolio version to load security prices for.
+        portfolio: schemas.Portfolio - Portfolio to load security prices for. Used to load securities associated with the portfolio.
+
+    Returns:
+    --------
+        Result[List[schemas.SecurityPricesTimeVector], Optional[str]] - Result with list of security prices bound to timeline, and error message if any.
+    """
     key = "security_prices"
 
     @classmethod
     def process(
-        cls, portfolio_version: schemas.PortfolioVersion, portfolio: schemas.Portfolio
+        cls, portfolio: schemas.Portfolio
     ) -> Result[list[schemas.SecurityPricesTimeVector], Optional[str]]:
         list_all = as_result(Exception)(PortfolioSecurityRepository.list)
         securities_result: Result[list[schemas.PortfolioSecurity], str] = list_all(
@@ -26,7 +38,7 @@ class SecurityPricesLoadStep(AbstractStep):
             case Ok(securities):
                 if len(securities) == 0:
                     return Err(
-                        f"No securities associated with portfolio version {portfolio_version.id}"
+                        f"No securities associated with portfolio {portfolio.id}"
                     )
             case Err(err):
                 return Err(err)

@@ -1,3 +1,4 @@
+from ftt.handlers.handler.context import Context
 from ftt.handlers.handler.handler import Handler
 from ftt.handlers.handler.return_result import ReturnResult
 from ftt.handlers.portfolio_steps.portfolio_optimization_result_persist_step import (
@@ -15,6 +16,9 @@ from ftt.handlers.portfolio_version_steps.portfolio_version_load_step import (
 from ftt.handlers.portfolio_version_steps.portfolio_version_optimization_step import (
     PortfolioVersionOptimizationStep,
 )
+from ftt.handlers.securities_steps.securities_associated_with_portfolio_load_step import \
+    SecuritiesAssociatedWithPortfolioLoadStep
+from ftt.handlers.security_prices_steps.securities_prices_download_step import SecurityPricesDownloadStep
 from ftt.handlers.security_prices_steps.security_prices_load_step import (
     SecurityPricesLoadStep,
 )
@@ -37,9 +41,16 @@ class PortfolioVersionOptimizationHandler(Handler):
     handlers = [
         (PortfolioVersionLoadStep, "portfolio_version"),
         (PortfolioVersionLoadPortfolioStep, PortfolioVersionLoadStep.key),
+        (SecuritiesAssociatedWithPortfolioLoadStep, PortfolioVersionLoadPortfolioStep.key),
+        Context(assign="on_missing", to="mode"),
+        (
+            SecurityPricesDownloadStep,
+            SecuritiesAssociatedWithPortfolioLoadStep.key,
+            PortfolioVersionLoadPortfolioStep.key,
+            "mode",
+        ),
         (
             SecurityPricesLoadStep,
-            PortfolioVersionLoadStep.key,
             PortfolioVersionLoadPortfolioStep.key,
         ),
         (

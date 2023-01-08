@@ -20,6 +20,7 @@ class TestPortfolioVersionOptimizationHandler:
         portfolio_version_factory,
         securities_weights_list_factory,
         portfolio_security_factory,
+        mock_external_historic_data_requests,
     ):
         period_start = datetime.datetime(2020, 1, 1)
         period_end = datetime.datetime(2020, 12, 31)
