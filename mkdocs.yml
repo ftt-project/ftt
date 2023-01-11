@@ -2,3 +2,4 @@ site_name: "[FTT] Financial Trading Tools"
 theme:
   name: material
 
+repo_url: https://github.com/ftt-project/ftt
