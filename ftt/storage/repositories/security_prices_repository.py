@@ -17,8 +17,11 @@ class SecurityPricesRepository(Repository):
         data["percent_change"] = round(
             (data["close"] - data["open"]) / data["close"] * 100, 5
         )
+        from ftt.storage.models import Security
+
+        security = Security.get_by_id(data.pop("security").id)
         result = SecurityPrice.get_or_create(
-            security=data["security"],
+            security=security,
             datetime=data["datetime"],
             interval=data["interval"],
             defaults=data,
@@ -56,9 +59,9 @@ class SecurityPricesRepository(Repository):
             )
             .order_by(SecurityPrice.datetime.asc())
         ).execute()
-
         records_as_dict = [
             {**model_to_dict(record), **{"symbol": security.symbol}}
             for record in records
         ]
+
         return [schemas.SecurityPrice(**record) for record in records_as_dict]

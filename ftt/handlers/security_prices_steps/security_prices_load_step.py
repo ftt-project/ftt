@@ -17,12 +17,16 @@ class SecurityPricesLoadStep(AbstractStep):
     Params:
     -------
         portfolio_version: schemas.PortfolioVersion - Portfolio version to load security prices for.
-        portfolio: schemas.Portfolio - Portfolio to load security prices for. Used to load securities associated with the portfolio.
+        portfolio: schemas.Portfolio - Portfolio to load security prices for.
+            Used to load securities associated with the portfolio.
+
 
     Returns:
     --------
-        Result[List[schemas.SecurityPricesTimeVector], Optional[str]] - Result with list of security prices bound to timeline, and error message if any.
+        Result[List[schemas.SecurityPricesTimeVector], Optional[str]] - Result with list of security prices bound
+            to timeline, and error message if any.
     """
+
     key = "security_prices"
 
     @classmethod

@@ -1,7 +1,8 @@
 import pytest
 
-from ftt.handlers.securities_steps.securities_associated_with_portfolio_load_step import \
-    SecuritiesAssociatedWithPortfolioLoadStep
+from ftt.handlers.securities_steps.securities_associated_with_portfolio_load_step import (
+    SecuritiesAssociatedWithPortfolioLoadStep,
+)
 from ftt.storage import schemas
 
 

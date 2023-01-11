@@ -31,10 +31,10 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "3.10.4"
-yfinance = "^0.1.54"
+yfinance = "^0.2.3"
 pandas = "^1.4.0"
 pyyaml = "^6.0"
-pandas_datareader = "^0.9"
+pandas_datareader = "^0.10"
 Yahoo-ticker-downloader = "^3.0.1"
 peewee = "^3.14.0"
 rich = "^11.1"
