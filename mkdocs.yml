@@ -3,3 +3,4 @@ theme:
   name: material
 
 repo_url: https://github.com/ftt-project/ftt
+docs_dir: docs
