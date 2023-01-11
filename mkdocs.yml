@@ -1,6 +1,8 @@
 site_name: "[FTT] Financial Trading Tools"
 theme:
   name: material
+  features:
+    - navigation.tabs
 
 repo_url: https://github.com/ftt-project/ftt
 docs_dir: docs

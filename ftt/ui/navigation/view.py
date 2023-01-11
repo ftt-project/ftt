@@ -63,14 +63,13 @@ class NavigationView(QWidget):
                 del button
 
         result = PortfoliosListHandler().handle()
-        match result:
-            case Ok(portfolios):
-                for portfolio in portfolios:
-                    button = QPushButton(portfolio.name)
-                    button.clicked.connect(
-                        lambda *args, o=portfolio.id: self._state.display_portfolio(o)
-                    )
-                    self._portfolios_state_group.addButton(button)
-                    self._buttons_group.layout().addWidget(button)
-            case Err():
-                pass
+        if result.is_ok():
+            for portfolio in result.unwrap():
+                button = QPushButton(portfolio.name)
+                button.clicked.connect(
+                    lambda *args, o=portfolio.id: self._state.display_portfolio(o)
+                )
+                self._portfolios_state_group.addButton(button)
+                self._buttons_group.layout().addWidget(button)
+        else:
+            pass

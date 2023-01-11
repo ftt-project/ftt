@@ -14,6 +14,9 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Intended Audience :: Financial and Insurance Industry",
 ]
+homepage="https://fttproject.app"
+documentation="https://fttproject.app"
+repository="https://github.com/ftt-project/ftt"
 packages = [
     { include = "ftt" },
 ]
@@ -25,7 +28,6 @@ include = [
 readme = "README.md"
 
 [tool.poetry.urls]
-"Homepage" = "https://github.com/ftt-project/ftt"
 "Bug Tracker" = "https://github.com/ftt-project/ftt/issues"
 
 

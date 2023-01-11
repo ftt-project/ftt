@@ -44,7 +44,7 @@ ifndef FTT_ENV_CHECK
 else
 	@echo "FTT_ENV_CHECK: True"
 endif
-	
+
 install: prepare-environment
 	$(CONDA_ACTIVATE) $(FTT_ENV_NAME) \
 		&& conda-lock install --name $(FTT_ENV_NAME) conda-lock.yml \
@@ -86,13 +86,29 @@ build: clean
 	$(CONDA_ACTIVATE) $(FTT_ENV_NAME) && \
 		poetry build
 
+#	--onefile \
+
 package: clean
-	pyinstaller --onefile \
-	--hidden-import="sklearn.utils._typedefs" \
-	--hidden-import="numpy" --copy-metadata=numpy \
-	--copy-metadata=property_cached \
-	--hidden-import=property_cached \
-	--collect-all=property_cached \
-	--collect-all=ftt \
-	--name ftt \
-	ftt/__main__.py
+	$(CONDA_ACTIVATE) $(FTT_ENV_NAME) && \
+		nuitka --plugin-enable=pyside6 --macos-create-app-bundle --standalone ftt/ui/__main__.py
+#	pyinstaller \
+#	--windowed \
+#	--hidden-import="ftt.storage" \
+#	--hidden-import="ftt.brokers" \
+#	--hidden-import="sklearn.utils._typedefs" \
+#	--hidden-import="numpy" \
+#	--copy-metadata=numpy \
+#	--copy-metadata=property_cached \
+#	--hidden-import=property_cached \
+#	--collect-all=property_cached \
+#	--collect-all=ftt \
+#	--name ftt \
+#	ftt/ui/__main__.py
+
+nuitka-package-onefile: clean
+	$(CONDA_ACTIVATE) $(FTT_ENV_NAME) && \
+		python3 -m nuitka --plugin-enable=pyside6,anti-bloat --nofollow-import-to=tkinter --onefile --include-package-data=qtawesome ftt/ui
+
+nuitka-package-standalone: clean
+	$(CONDA_ACTIVATE) $(FTT_ENV_NAME) && \
+		python3 -m nuitka --plugin-enable=pyside6,anti-bloat --nofollow-import-to=tkinter --standalone --include-package-data=qtawesome ftt/ui/
