@@ -17,5 +17,5 @@ class SecurityPrice(Base):
     percent_change = peewee.FloatField()
 
     class Meta:
-        indexes = ((("security", "datetime", "interval"), True),)
+        indexes = ((("security_id", "datetime", "interval"), True),)
         table_name = "security_prices"

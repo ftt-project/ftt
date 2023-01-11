@@ -1,3 +1,42 @@
+Welcome to Financial Trading Tools Project home page.
+
+## What is FTT?
+
+FTT is a set of tools for portfolio management.
+FTT is a collection of tools that analyzes historical financial data, utilizes open-source algorithms, 
+optimizes portfolio based on user input, and stores portfolio composition, and tracks changes in its performance.
+
+### What does it do?
+
+- organizes securities into portfolios.
+- optimizes portfolio using historical financial data and known algorithms.
+- provides a user-friendly interface for portfolio management.
+
+### What is planned and on the roadmap?
+
+- integration with Interactive Brokers API for operations performing.
+- adding more portfolio optimization algorithms.
+- power tools for portfolio comparing and analyzing.
+- portfolio performance tracking.
+
+### What does FTT not do?
+
+- it does not perform day trading operations.
+- it does not stocks contain research tools.
+- it does not provide any financial advice use it on your own discretion.
+
+## Introduction and history of the project 
+
+FTT is a project that I started as a hobby.
+The project at the beginning had different name and was a collection of simple python scripts. It was a playground for me to learning python,
+trading algorithms and strategies.
+Over time the application grew into a CLI application. I found a CLI not so user-friendly, oriented only for an advanced user, and it didn't support my vision.
+At the moment FTT application is written using QT and PySide6 framework.
+
+The main objective of FTT is to provide a set of tools to help calculate and optimize a portfolio that is easy and intuitive to use.
+
+The future of the application is to be a tool that operates a collection of securities, and suggests financial operations such as hold, buy, sell, and optimize portfolio. Once mature, the application will autonomously perform financial operations on the live market via integration with a broker system.
+
 # Vision
 
 > Finance is hard. Programming is hard.

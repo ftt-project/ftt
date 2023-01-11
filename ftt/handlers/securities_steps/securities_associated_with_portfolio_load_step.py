@@ -11,7 +11,9 @@ class SecuritiesAssociatedWithPortfolioLoadStep(AbstractStep):
     key = "securities"
 
     @classmethod
-    def process(cls, portfolio: schemas.Portfolio) -> Result[list[schemas.Security], Optional[str]]:
+    def process(
+        cls, portfolio: schemas.Portfolio
+    ) -> Result[list[schemas.Security], Optional[str]]:
         find_by_portfolio = as_result(Exception)(SecuritiesRepository.find_by_portfolio)
         securities_result = find_by_portfolio(portfolio)
 
@@ -22,8 +24,6 @@ class SecuritiesAssociatedWithPortfolioLoadStep(AbstractStep):
                 return securities_result
 
         if len(securities_result.unwrap()) == 0:
-            return Err(
-                f"No securities associated with portfolio {portfolio.id}"
-            )
+            return Err(f"No securities associated with portfolio {portfolio.id}")
 
         return securities_result

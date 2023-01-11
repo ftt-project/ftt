@@ -46,15 +46,17 @@ class TestSecurityPricesDownloadStep:
         assert result.value[security.symbol] is not None
 
     def test_process_download_historical_prices_model_missing(
-            self,
-            subject,
-            security,
-            portfolio,
-            security_price_factory,
-            mock_external_historic_data_requests,
+        self,
+        subject,
+        security,
+        portfolio,
+        security_price_factory,
+        mock_external_historic_data_requests,
     ):
         # assuming portfolio.interval is 5min
-        date_range = pd.date_range(start=portfolio.period_start, end=portfolio.period_end, freq="5min")
+        date_range = pd.date_range(
+            start=portfolio.period_start, end=portfolio.period_end, freq="5min"
+        )
         for index, value in date_range.to_series().items():
             _ = security_price_factory(
                 security=security,
