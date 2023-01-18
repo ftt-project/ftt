@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 
 from result import Ok, Result
 
@@ -11,6 +11,6 @@ class PortfoliosListStep(AbstractStep):
     key = "list"
 
     @classmethod
-    def process(cls) -> Result[List[Portfolio], Optional[str]]:
+    def process(cls) -> Result[list[Portfolio], Optional[str]]:
         result = PortfoliosRepository.list()
         return Ok(list(result))
