@@ -1,7 +1,7 @@
 from PySide6.QtCore import QObject, Signal
 from result import Ok, Err
 
-from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
+from ftt.handlers.portfolio_handlers import PortfolioLoadHandler
 
 
 class MainApplicationModel(QObject):

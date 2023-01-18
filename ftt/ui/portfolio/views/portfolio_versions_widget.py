@@ -25,7 +25,7 @@ from ftt.ui.portfolio.views.new_portfolio_version_dialog import (
 from ftt.ui.state import get_state
 
 
-class PortfolioVersionsTable(QWidget):
+class PortfolioVersionsWidget(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -36,7 +36,7 @@ class PortfolioVersionsTable(QWidget):
         self._table = None
         self._state = get_state()
 
-        self.createUI()
+        self.create_ui()
 
         self._state.signals.selectedPortfolioChanged.connect(self.updateVersionsRows)
         # TODO: clears up and redraws the whole table. Which is overkill in case of selection change. \
@@ -45,10 +45,10 @@ class PortfolioVersionsTable(QWidget):
             self.updateVersionsRows
         )
 
-    def createUI(self):
+    def create_ui(self):
         self._layout = QVBoxLayout(self)
+        self._layout.setContentsMargins(10, 10, 10, 10)
         self._layout.setAlignment(Qt.AlignTop)
-        self._layout.setContentsMargins(0, 0, 0, 0)
 
         self._table = QTableWidget()
         self._table.setMaximumHeight(300)
@@ -74,7 +74,7 @@ class PortfolioVersionsTable(QWidget):
         self._layout.addWidget(
             QLabel("<h4>Portfolio Versions</h4>"), 0, alignment=Qt.AlignTop
         )
-        self._layout.addWidget(self._table)
+        self._layout.addWidget(self._table, 0, alignment=Qt.AlignTop)
 
         buttons_layout = QHBoxLayout()
         buttons_layout.setAlignment(Qt.AlignRight)

@@ -41,9 +41,9 @@ class MainWidget(QWidget):
         self._center = None
         self._state = get_state()
 
-        self.createUI()
+        self.create_ui()
 
-    def createUI(self):
+    def create_ui(self):
         self._layout = QHBoxLayout(self)
         self._layout.setAlignment(Qt.AlignTop)
 

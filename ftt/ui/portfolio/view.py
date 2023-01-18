@@ -1,57 +1,58 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QLabel, QFrame
 
-from ftt.ui.portfolio.views.portfolio_version_details_views import (
-    PortfolioVersionDetailsView,
-)
-from ftt.ui.portfolio.views.portfolio_version_weights_table import (
-    PortfolioVersionWeightsTable,
-)
-from ftt.ui.portfolio.views.portfolio_versions_table import PortfolioVersionsTable
+from ftt.handlers.portfolio_handlers import PortfolioLoadHandler
+from ftt.storage import schemas
+from ftt.ui.model import get_model
+from ftt.ui.portfolio.views.portfolio_details_widget import PortfolioDetailsWidget
+from ftt.ui.portfolio.views.portfolio_versions_widget import PortfolioVersionsWidget
 from ftt.ui.state import get_state
 
 
 class CentralPortfolioView(QWidget):
     def __init__(self):
         super().__init__()
-
-        self._portfolioVersionDetails = None
-        self._portfolioHeaderLabel = None
-        self._portfolioWeightsTable = None
-        self._portfolioVersionsTable = None
+        self.tabs = QTabWidget(self)
+        self.layout = QVBoxLayout(self)
+        self.portfolio_name_label = QLabel()
+        self._model = get_model()
         self._state = get_state()
+        self.create_ui()
 
-        self.createUI()
+    def create_ui(self):
+        self.portfolio_name_label.setStyleSheet("font-size: 20px")
 
-    def createUI(self):
-        layout = QHBoxLayout(self)
-        layout.setAlignment(Qt.AlignTop)
-
-        left_column = QWidget()
-        left_column.setLayout(QVBoxLayout())
-        left_column.layout().setAlignment(Qt.AlignTop)
-        left_column.layout().setStretch(0, 0)
-
-        right_column = QWidget()
-        right_column_layout = QHBoxLayout(right_column)
-
-        self._portfolioHeaderLabel = QLabel("")
-        left_column.layout().addWidget(self._portfolioHeaderLabel)
-
-        self._portfolioVersionsTable = PortfolioVersionsTable()
-        left_column.layout().addWidget(
-            self._portfolioVersionsTable, 0, alignment=Qt.AlignTop
+        self._state.signals.selectedPortfolioChanged.connect(
+            self.update_portfolio_name_label
         )
 
-        self._portfolioWeightsTable = PortfolioVersionWeightsTable()
-        left_column.layout().addWidget(
-            self._portfolioWeightsTable, 0, alignment=Qt.AlignTop
+        self.layout.addWidget(self.portfolio_name_label)
+
+        separator = QFrame()
+        separator.setFixedHeight(30)
+        separator.setFrameStyle(QFrame.HLine | QFrame.NoFrame)
+        self.layout.addWidget(separator)
+
+        self.layout.addWidget(self.tabs)
+
+        self.tabs.addTab(
+            PortfolioVersionsWidget(),
+            "Versions"
         )
 
-        self._portfolioVersionDetails = PortfolioVersionDetailsView()
-        right_column_layout.addWidget(
-            self._portfolioVersionDetails, 0, alignment=Qt.AlignTop
+        self.tabs.addTab(
+            PortfolioDetailsWidget(),
+            "Portfolio Details"
         )
 
-        layout.addWidget(left_column)
-        layout.addWidget(right_column)
+    def update_portfolio_name_label(self):
+        result = PortfolioLoadHandler().handle(
+            portfolio=schemas.Portfolio(id=self._model.portfolio_id)
+        )
+        if result.is_err():
+            print(result.err())
+            return
+
+        self.portfolio_name_label.setText(result.unwrap().name)
+
+

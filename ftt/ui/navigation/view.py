@@ -162,7 +162,7 @@ class NavigationView(QWidget):
         dialog = NewPortfolioDialog()
         self._state.signals.newPortfolioDialogDisplayed.connect(lambda: dialog.exec())
 
-    def portfoliosListToNavigation(self, *_):
+    def portfolios_list_to_navigation(self, *_):
         for button in self._portfolios_state_group.buttons():
             self._portfolios_state_group.removeButton(button)
 

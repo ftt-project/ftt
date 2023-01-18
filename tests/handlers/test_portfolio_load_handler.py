@@ -1,6 +1,6 @@
 import pytest
 
-from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
+from ftt.handlers.portfolio_handlers import PortfolioLoadHandler
 from ftt.storage import schemas
 
 

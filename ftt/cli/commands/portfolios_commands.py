@@ -18,7 +18,7 @@ from ftt.handlers.portfolio_version_associate_securities_hanlder import (
     PortfolioVersionAssociateSecuritiesHandler,
 )
 from ftt.handlers.portfolio_config_handler import PortfolioConfigHandler
-from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
+from ftt.handlers.portfolio_handlers import PortfolioLoadHandler
 from ftt.handlers.portfolio_update_handler import PortfolioUpdateHandler
 from ftt.handlers.portfolio_version_load_active_handler import (
     PortfolioVersionLoadActiveHandler,

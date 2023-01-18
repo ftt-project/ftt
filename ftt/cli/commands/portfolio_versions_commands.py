@@ -8,7 +8,7 @@ from ftt.cli.renderers.portfolio_versions.portfolio_version_details import (
     PortfolioVersionDetails,
 )
 from ftt.cli.renderers.weights.weights_list import WeightsList
-from ftt.handlers.portfolio_load_handler import PortfolioLoadHandler
+from ftt.handlers.portfolio_handlers import PortfolioLoadHandler
 from ftt.handlers.portfolio_version_handlers import PortfolioVersionOptimizationHandler
 from ftt.handlers.portfolio_version_activation_handler import (
     PortfolioVersionActivationHandler,
