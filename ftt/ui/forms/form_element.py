@@ -1,8 +1,6 @@
-from PySide6 import QtGui
-from PySide6.QtCore import QPoint, QEvent
+from PySide6.QtCore import QEvent
 from PySide6.QtGui import QValidator, Qt
-from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QDateEdit
-from qtpy import QtCore
+from PySide6.QtWidgets import QWidget, QLabel
 
 from ftt.ui.shared_elements import EditElementInterface, ErrorLabel
 

@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from PySide6 import QtCore
 from PySide6.QtCore import Qt, QDate, Signal, QEvent, QPoint
 from PySide6.QtWidgets import (
     QLabel,
@@ -38,6 +37,7 @@ class ErrorLabel(QLabel):
     The label acts as a tooltip and is displayed above the input.
     The label is hidden when the input is valid, and when the input is not hovered.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -76,6 +76,7 @@ class StyledLabelComponent(QWidget):
     A widget that contains a label and a separator.
     Used as a header for a section.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

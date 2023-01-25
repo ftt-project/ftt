@@ -1,5 +1,4 @@
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QLabel, QFrame
+from PySide6.QtWidgets import QWidget, QTabWidget, QVBoxLayout
 
 from ftt.handlers.portfolio_handlers import PortfolioLoadHandler
 from ftt.storage import schemas

@@ -1,5 +1,4 @@
-from PySide6.QtCore import Qt, Slot
-from PySide6.QtGui import QAction
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -7,7 +6,6 @@ from PySide6.QtWidgets import (
     QPushButton,
     QButtonGroup,
     QHBoxLayout,
-    QToolButton,
     QSizePolicy,
 )
 import qtawesome as qta

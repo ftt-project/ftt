@@ -1,16 +1,13 @@
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QIntValidator, QDoubleValidator
+from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import (
     QWidget,
     QLabel,
-    QGridLayout,
     QTableView,
     QAbstractItemView,
     QHeaderView,
     QSizePolicy,
     QVBoxLayout,
-    QLineEdit,
-    QDateEdit,
 )
 
 from ftt.handlers.portfolio_handlers import PortfolioLoadHandler
@@ -154,7 +151,7 @@ class DetailsElementWidget(QWidget):
                     initial_value=result.unwrap().name,
                 ),
                 error_message="- Portfolio name must be unique longer than 2 symbols<br>"
-                              "- Portfolio name must shorter than 30 symbols"
+                "- Portfolio name must shorter than 30 symbols",
             )
         )
         form.add_element(
@@ -166,7 +163,7 @@ class DetailsElementWidget(QWidget):
                     placeholder="$000.00",
                     initial_value=str(result.unwrap().value),
                 ),
-                error_message="- Portfolio value must be a number"
+                error_message="- Portfolio value must be a number",
             )
         )
         form.add_element(
