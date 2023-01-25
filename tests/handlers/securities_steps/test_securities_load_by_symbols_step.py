@@ -1,12 +1,14 @@
 import pytest
 
-from ftt.handlers.securities_steps.securities_load_step import SecuritiesLoadStep
+from ftt.handlers.securities_steps.securities_load_by_symbols_step import (
+    SecuritiesLoadBySymbolsStep,
+)
 
 
-class TestSecuritiesLoadStep:
+class TestSecuritiesLoadBySymbolsStep:
     @pytest.fixture
     def subject(self):
-        return SecuritiesLoadStep
+        return SecuritiesLoadBySymbolsStep
 
     def test_process_return_list_of_securities(self, subject, security):
         result = subject.process(security_symbols=[security.symbol])

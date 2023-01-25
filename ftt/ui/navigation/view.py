@@ -1,7 +1,15 @@
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QButtonGroup, QHBoxLayout, QToolButton, \
-    QSizePolicy
+from PySide6.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QLabel,
+    QPushButton,
+    QButtonGroup,
+    QHBoxLayout,
+    QToolButton,
+    QSizePolicy,
+)
 import qtawesome as qta
 
 from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHandler
@@ -36,7 +44,9 @@ class NavigationTilesBuilder:
         return button
 
     @classmethod
-    def build_portfolio_tile(cls, portfolio: schemas.Portfolio, parent: QWidget) -> NavigationButton:
+    def build_portfolio_tile(
+        cls, portfolio: schemas.Portfolio, parent: QWidget
+    ) -> NavigationButton:
         button = NavigationButton(portfolio.name, parent)
         button.setCheckable(True)
         button.setObjectName(portfolio.name)
@@ -45,7 +55,9 @@ class NavigationTilesBuilder:
         return button
 
     @classmethod
-    def build_version_tile(cls, version: schemas.PortfolioVersion, parent: QWidget) -> NavigationButton:
+    def build_version_tile(
+        cls, version: schemas.PortfolioVersion, parent: QWidget
+    ) -> NavigationButton:
         button = NavigationButton(version.optimization_strategy_name, parent)
         button.setCheckable(True)
         button.setObjectName(version.optimization_strategy_name)

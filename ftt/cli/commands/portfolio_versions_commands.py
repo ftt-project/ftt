@@ -32,7 +32,7 @@ from ftt.handlers.portfolio_version_updation_handler import (
 from ftt.handlers.positions_synchronization_handler import (
     PositionsSynchronizationHandler,
 )
-from ftt.handlers.securities_load_handler import SecuritiesLoadHandler
+from ftt.handlers.securities_handler import SecuritiesLoadHandler
 from ftt.handlers.weights_list_load_handler import WeightsListLoadHandler
 from ftt.portfolio_management.allocation_strategies import AllocationStrategyResolver
 from ftt.portfolio_management.optimization_strategies import (
