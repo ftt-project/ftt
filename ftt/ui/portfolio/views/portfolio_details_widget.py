@@ -153,6 +153,8 @@ class DetailsElementWidget(QWidget):
                     placeholder="Portfolio name",
                     initial_value=result.unwrap().name,
                 ),
+                error_message="- Portfolio name must be unique longer than 2 symbols<br>"
+                              "- Portfolio name must shorter than 30 symbols"
             )
         )
         form.add_element(
@@ -164,6 +166,7 @@ class DetailsElementWidget(QWidget):
                     placeholder="$000.00",
                     initial_value=str(result.unwrap().value),
                 ),
+                error_message="- Portfolio value must be a number"
             )
         )
         form.add_element(

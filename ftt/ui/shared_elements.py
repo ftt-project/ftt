@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from PySide6.QtCore import Qt, QDate, Signal
+from PySide6 import QtCore
+from PySide6.QtCore import Qt, QDate, Signal, QEvent, QPoint
 from PySide6.QtWidgets import (
     QLabel,
     QWidget,
@@ -31,6 +32,39 @@ class H1QSeparator(QFrame):
         self.setFixedHeight(30)
 
 
+class ErrorLabel(QLabel):
+    """
+    A label that is displayed when the input is invalid.
+    The label acts as a tooltip and is displayed above the input.
+    The label is hidden when the input is valid, and when the input is not hovered.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.setWindowFlag(Qt.ToolTip)
+        self.setVisible(False)
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setStyleSheet(
+            """
+            border: 1px solid red;
+            background-color: #f8d7da;
+            """
+        )
+
+        self.installEventFilter(self)
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.Type.Show:
+            qpoint = QPoint(
+                self.buddy().rect().center().x(),
+                self.buddy().rect().top() - self.height() - 10,
+            )
+            global_qpoint = self.buddy().mapToGlobal(QPoint(0, 0))
+            self.move(qpoint + global_qpoint)
+
+        return super().eventFilter(obj, event)
+
+
 _mapper = {
     "h1": (H1QLabel, H1QSeparator),
     "h2": (H2QLabel, H1QSeparator),
@@ -38,6 +72,10 @@ _mapper = {
 
 
 class StyledLabelComponent(QWidget):
+    """
+    A widget that contains a label and a separator.
+    Used as a header for a section.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -70,8 +108,16 @@ class LabelBuilder:
 
 
 class EditElementInterface:
+    ERROR_STYLES = "border: 1px solid red;"
+
     def valid(self) -> bool:
         return True
+
+    def set_error_state(self):
+        pass
+
+    def set_correct_state(self):
+        pass
 
 
 class NoFrameLineEdit(QLineEdit, EditElementInterface):
@@ -90,6 +136,12 @@ class NoFrameLineEdit(QLineEdit, EditElementInterface):
 
     def valid(self) -> bool:
         return self.hasAcceptableInput()
+
+    def set_error_state(self):
+        self.setStyleSheet(self.ERROR_STYLES)
+
+    def set_correct_state(self):
+        self.setStyleSheet("")
 
 
 class NoFrameDateEdit(QDateEdit, EditElementInterface):
@@ -117,6 +169,12 @@ class NoFrameDateEdit(QDateEdit, EditElementInterface):
 
     def valid(self) -> bool:
         return self.hasAcceptableInput()
+
+    def set_error_state(self):
+        self.setStyleSheet(self.ERROR_STYLES)
+
+    def set_correct_state(self):
+        self.setStyleSheet("")
 
 
 class ComboBoxEdit(QComboBox, EditElementInterface):
