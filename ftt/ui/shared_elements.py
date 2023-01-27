@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from PySide6.QtCore import Qt, QDate, Signal, QEvent, QPoint
+from PySide6.QtCore import Qt, QDate, Signal, QEvent, QPoint, QObject
 from PySide6.QtWidgets import (
     QLabel,
     QWidget,
@@ -108,8 +108,19 @@ class LabelBuilder:
         return wrapper
 
 
+class EditElementSignals(QObject):
+    input_changed = Signal()
+
+
 class EditElementInterface:
     ERROR_STYLES = "border: 1px solid red;"
+
+    signals = EditElementSignals()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # self.signals = EditElementSignals()
 
     def valid(self) -> bool:
         return True
@@ -120,10 +131,14 @@ class EditElementInterface:
     def set_correct_state(self):
         pass
 
+    def is_modified(self):
+        raise NotImplementedError
+
+    def value(self):
+        raise NotImplementedError
+
 
 class NoFrameLineEdit(QLineEdit, EditElementInterface):
-    inputChanged = Signal()
-
     def __init__(self, parent=None, *args, **kwargs):
         super().__init__(parent)
         self.setFrame(False)
@@ -133,24 +148,30 @@ class NoFrameLineEdit(QLineEdit, EditElementInterface):
         self.setValidator(kwargs.get("validator", None))
         self.setText(kwargs.get("initial_value", None))
 
-        self.textChanged.connect(self.inputChanged)
+        self.textChanged.connect(self.signals.input_changed)
 
     def valid(self) -> bool:
         return self.hasAcceptableInput()
 
-    def set_error_state(self):
+    def is_modified(self) -> bool:
+        return self.isModified()
+
+    def set_error_state(self) -> None:
         self.setStyleSheet(self.ERROR_STYLES)
 
-    def set_correct_state(self):
+    def set_correct_state(self) -> None:
         self.setStyleSheet("")
+
+    def value(self):
+        return self.text()
 
 
 class NoFrameDateEdit(QDateEdit, EditElementInterface):
-    inputChanged = Signal()
-
     def __init__(self, parent=None, *args, **kwargs):
         super().__init__(parent)
         self.setFrame(False)
+
+        self._is_modified = False
 
         initial_value = kwargs.get("initial_value", None)
         if isinstance(initial_value, QDate):
@@ -166,27 +187,40 @@ class NoFrameDateEdit(QDateEdit, EditElementInterface):
         self.setMaximumDate(kwargs.get("max_date", QDate(9999, 12, 31)))
         self.setMinimumDate(kwargs.get("min_date", QDate(1900, 1, 1)))
 
-        self.dateChanged.connect(self.inputChanged)
+        self.dateChanged.connect(self.signals.input_changed)
+        self.dateChanged.connect(lambda _: setattr(self, "_is_modified", True))
 
     def valid(self) -> bool:
         return self.hasAcceptableInput()
 
-    def set_error_state(self):
+    def set_error_state(self) -> None:
         self.setStyleSheet(self.ERROR_STYLES)
 
-    def set_correct_state(self):
+    def set_correct_state(self) -> None:
         self.setStyleSheet("")
+
+    def is_modified(self) -> bool:
+        return self._is_modified
+
+    def value(self):
+        return self.date().toPython()
 
 
 class ComboBoxEdit(QComboBox, EditElementInterface):
-    inputChanged = Signal()
-
     def __init__(self, parent=None, *args, **kwargs):
         super().__init__(parent)
         self.setFrame(False)
+        self._is_modified = False
 
         self.setObjectName(kwargs.get("object_name", ""))
         self.addItems(kwargs.get("items", []))
 
-        self.currentTextChanged.connect(self.inputChanged)
+        self.currentTextChanged.connect(self.signals.input_changed)
+        self.currentTextChanged.connect(lambda _: setattr(self, "_is_modified", True))
         self.setCurrentText(kwargs.get("initial_value", None))
+
+    def is_modified(self) -> bool:
+        return self._is_modified
+
+    def value(self):
+        return self.currentText()

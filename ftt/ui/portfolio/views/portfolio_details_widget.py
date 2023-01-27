@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import (
     QWidget,
@@ -10,11 +10,11 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
 )
 
-from ftt.handlers.portfolio_handlers import PortfolioLoadHandler
+from ftt.handlers.portfolio_handlers import PortfolioLoadHandler, PortfolioUpdateHandler
 from ftt.handlers.securities_handler import PortfolioSecuritiesLoadHandler
 from ftt.storage import schemas
 from ftt.storage.schemas import ACCEPTABLE_INTERVALS
-from ftt.ui.forms.form_element import FormElementBuilder
+from ftt.ui.forms.form_element import FormElement
 from ftt.ui.forms.forms import Form
 from ftt.ui.model import get_model, CollectionModel
 from ftt.ui.shared_elements import (
@@ -108,7 +108,6 @@ class DetailsElementWidget(QWidget):
         self._state = get_state()
         self._model = get_model()
         self.setFixedHeight(250)
-        # self.setFixedWidth(400)
         self.setObjectName("portfolio-details")
         self.setStyleSheet(
             """
@@ -120,6 +119,7 @@ class DetailsElementWidget(QWidget):
             }
             """
         )
+        self.form = Form(self)
 
         self.create_ui()
 
@@ -139,10 +139,9 @@ class DetailsElementWidget(QWidget):
             print(result.err())
             return
 
-        form = Form(self)
-        form.setFixedWidth(400)
-        form.add_element(
-            FormElementBuilder(
+        self.form.setFixedWidth(400)
+        self.form.add_element(
+            FormElement(
                 label=QLabel("Portfolio name"),
                 edit_element=NoFrameLineEdit(
                     object_name="portfolio-name",
@@ -154,8 +153,8 @@ class DetailsElementWidget(QWidget):
                 "- Portfolio name must shorter than 30 symbols",
             )
         )
-        form.add_element(
-            FormElementBuilder(
+        self.form.add_element(
+            FormElement(
                 label=QLabel("Portfolio value"),
                 edit_element=NoFrameLineEdit(
                     object_name="portfolio-value",
@@ -166,34 +165,52 @@ class DetailsElementWidget(QWidget):
                 error_message="- Portfolio value must be a number",
             )
         )
-        form.add_element(
-            FormElementBuilder(
+        self.form.add_element(
+            FormElement(
                 label=QLabel("Period start"),
                 edit_element=NoFrameDateEdit(
+                    object_name="portfolio-period-start",
                     initial_value=result.unwrap().period_start,
                 ),
             )
         )
-        form.add_element(
-            FormElementBuilder(
+        self.form.add_element(
+            FormElement(
                 label=QLabel("Period end"),
                 edit_element=NoFrameDateEdit(
+                    object_name="portfolio-period-end",
                     initial_value=result.unwrap().period_end,
                 ),
             )
         )
-        form.add_element(
-            FormElementBuilder(
+        self.form.add_element(
+            FormElement(
                 label=QLabel("Interval"),
                 edit_element=ComboBoxEdit(
+                    object_name="portfolio-interval",
                     items=ACCEPTABLE_INTERVALS,
                     initial_value=result.unwrap().interval,
-                    object_name="portfolio-interval",
                 ),
             ),
         )
-        form.create_ui()
-        self.layout().addWidget(form)
+        self.form.create_ui()
+        self.form.signals.on_accept.connect(self.update_portfolio)
+        self.layout().addWidget(self.form)
+
+    @Slot()
+    def update_portfolio(self):
+        portfolio = schemas.Portfolio(
+            id=self._model.portfolio_id,
+            name=self.form.get_element_value("portfolio-name"),
+            value=self.form.get_element_value("portfolio-value"),
+            period_start=self.form.get_element_value("portfolio-period-start"),
+            period_end=self.form.get_element_value("portfolio-period-end"),
+            interval=self.form.get_element_value("portfolio-interval"),
+            securities=[],
+        )
+        print(portfolio)
+        # result = PortfolioUpdateHandler().handle(portfolio=portfolio)
+        # print(result)
 
 
 class PortfolioDetailsWidget(QWidget):

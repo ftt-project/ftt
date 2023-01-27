@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QWidget, QLabel
 from ftt.ui.shared_elements import EditElementInterface, ErrorLabel
 
 
-class FormElementBuilder(QWidget):
+class FormElement(QWidget):
     def __init__(
         self,
         label=QLabel,
@@ -29,7 +29,7 @@ class FormElementBuilder(QWidget):
 
     def create_ui(self, parent: QWidget) -> None:
         parent.layout().addRow(self._label, self._edit_element)
-        self._edit_element.inputChanged.connect(self.validate)
+        self._edit_element.signals.input_changed.connect(self.validate)
         self._edit_element.setAttribute(Qt.WidgetAttribute.WA_Hover)
         self._label.setBuddy(self._edit_element)
 
@@ -54,6 +54,9 @@ class FormElementBuilder(QWidget):
     def valid(self) -> bool:
         return self._edit_element.valid()
 
+    def is_modified(self) -> bool:
+        return self._edit_element.is_modified()
+
     def eventFilter(self, obj, event):
         if obj == self._edit_element:
             match event.type():
@@ -66,8 +69,11 @@ class FormElementBuilder(QWidget):
         return super().eventFilter(obj, event)
 
     def reset(self):
-        self._edit.clear()
-        self._edit.setStyleSheet("")
+        self._edit_element.clear()
+        self._edit_element.setStyleSheet("")
         self._error_label.setText("")
         self._error_label.setStyleSheet("")
         self._error_label.setVisible(False)
+
+    def on_change(self, callback):
+        self._edit_element.signals.input_changed.connect(callback)

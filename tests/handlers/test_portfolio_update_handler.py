@@ -1,6 +1,6 @@
 import pytest
 
-from ftt.handlers.portfolio_update_handler import PortfolioUpdateHandler
+from ftt.handlers.portfolio_handlers import PortfolioUpdateHandler
 from ftt.storage.value_objects import PortfolioValueObject
 
 
