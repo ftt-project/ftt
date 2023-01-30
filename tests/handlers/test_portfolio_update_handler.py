@@ -15,9 +15,7 @@ class TestPortfolioUpdateHandler:
         name = "new name"
         portfolio_schema = schemas.Portfolio.from_orm(portfolio)
         portfolio_schema.name = name
-        result = subject.handle(
-            portfolio=portfolio_schema
-        )
+        result = subject.handle(portfolio=portfolio_schema)
 
         assert result.is_ok()
         assert reload_record(portfolio).name == name

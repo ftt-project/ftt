@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from PySide6.QtCore import Qt, QDate, Signal, QEvent, QPoint, QObject
 from PySide6.QtWidgets import (
@@ -91,15 +92,15 @@ class StyledLabelComponent(QWidget):
 
 class LabelBuilder:
     @classmethod
-    def h1_build(cls, text: str, parent: QWidget = None) -> QWidget:
+    def h1_build(cls, text: str, parent: Optional[QWidget] = None) -> QWidget:
         return cls.build("h1", text, parent)
 
     @classmethod
-    def h2_build(cls, text: str, parent: QWidget = None) -> QWidget:
+    def h2_build(cls, text: str, parent: Optional[QWidget] = None) -> QWidget:
         return cls.build("h2", text, parent)
 
     @classmethod
-    def build(cls, size: str, text: str, parent: QWidget = None) -> QWidget:
+    def build(cls, size: str, text: str, parent: Optional[QWidget] = None) -> QWidget:
         label_class, separator_class = _mapper[size]
         wrapper = StyledLabelComponent(parent)
         wrapper.layout().addWidget(label_class(text))

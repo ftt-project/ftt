@@ -25,7 +25,7 @@ from PySide6.QtWidgets import (
     QAbstractItemView,
 )
 from result import Ok, Err
-import qtawesome as qta
+import qtawesome as qta  # type: ignore[import]
 
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from ftt.handlers.securities_external_information_upsert_handler import (

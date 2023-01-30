@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from result import Ok, Result, as_result, Err
+from result import Result, as_result, Err, Ok
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage import schemas, models
@@ -20,9 +20,9 @@ class WeightsLoadStep(AbstractStep):
         result = get_by_portfolio_version(portfolio_version)
 
         match result:
-            case Ok(_):
-                return result
             case Err(models.PortfolioVersion.DoesNotExist()):
                 return Err(
                     f"Portfolio Version with ID {portfolio_version.id} does not exist"
                 )
+
+        return Ok(result.unwrap())

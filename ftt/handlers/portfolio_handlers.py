@@ -62,6 +62,7 @@ class PortfolioUpdateHandler(Handler):
     """
     Updates a portfolio record based on the provided schema model and returns the updated schema model.
     """
+
     params = {
         "portfolio": schemas.Portfolio,
     }

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import (
@@ -43,13 +45,13 @@ class SecuritiesTable(QTableView):
         self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
         horizontal_header = self.horizontalHeader()
-        horizontal_header.setSectionResizeMode(QHeaderView.ResizeToContents)
+        horizontal_header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         horizontal_header.setStretchLastSection(True)
 
         vertical_header = self.verticalHeader()
         vertical_header.setVisible(False)
 
-        size = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        size = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         size.setHorizontalStretch(1)
         self.setSizePolicy(size)
 
@@ -105,7 +107,7 @@ class SecuritiesElementWidget(QWidget):
 
 
 class DetailsElementWidget(QWidget):
-    def __init__(self, parent: QWidget = None):
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         self.setLayout(QVBoxLayout())
         self._state = get_state()
@@ -137,7 +139,7 @@ class DetailsElementWidget(QWidget):
                     placeholder="Portfolio name",
                 ),
                 error_message="- Portfolio name must be unique longer than 2 symbols<br>"
-                              "- Portfolio name must shorter than 30 symbols",
+                "- Portfolio name must shorter than 30 symbols",
             )
         )
         self.form.add_element(
@@ -194,7 +196,9 @@ class DetailsElementWidget(QWidget):
 
         self.form.set_element_value("portfolio-name", result.unwrap().name)
         self.form.set_element_value("portfolio-value", str(result.unwrap().value))
-        self.form.set_element_value("portfolio-period-start", result.unwrap().period_start)
+        self.form.set_element_value(
+            "portfolio-period-start", result.unwrap().period_start
+        )
         self.form.set_element_value("portfolio-period-end", result.unwrap().period_end)
         self.form.set_element_value("portfolio-interval", result.unwrap().interval)
 
@@ -214,7 +218,6 @@ class DetailsElementWidget(QWidget):
         match result:
             case Err(e):
                 print(e)
-
 
 
 class PortfolioDetailsWidget(QWidget):

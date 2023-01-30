@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import List
 
 from ftt.storage import schemas, models
-from ftt.storage.value_objects import ValueObjectInterface
 from ftt.storage.models.base import Base
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -23,7 +22,7 @@ class PortfoliosRepository(Repository):
         return model
 
     @classmethod
-    def get_by_id(cls, portfolio: schemas.Portfolio) -> schemas.Portfolio | None:
+    def get_by_id(cls, portfolio: schemas.Portfolio) -> schemas.Portfolio:
         instance = models.Portfolio.get(models.Portfolio.id == portfolio.id)
 
         return schemas.Portfolio.from_orm(instance)

@@ -22,7 +22,7 @@ class Logger:
         cls,
         name: str = "ftt",
         environment: str = "development",
-        root_path: Path = None,
+        root_path: Optional[Path] = None,
     ):
         if cls._instance is None:
             cls._instance = super(Logger, cls).__new__(cls)

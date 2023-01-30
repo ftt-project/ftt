@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QSizePolicy,
 )
-import qtawesome as qta
+import qtawesome as qta  # type: ignore
 
 from ftt.handlers.portfolio_versions_list_handler import PortfolioVersionsListHandler
 from ftt.handlers.portfolios_list_handler import PortfoliosListHandler

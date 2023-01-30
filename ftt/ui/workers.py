@@ -59,9 +59,9 @@ class PortfolioVersionOptimizationWorker(QRunnable):
     def perform(
         cls,
         portfolio_version: schemas.PortfolioVersion,
-        success_callback: Callable = None,
-        failure_callback: Callable = None,
-        complete_callback: Callable = None,
+        success_callback: Optional[Callable] = None,
+        failure_callback: Optional[Callable] = None,
+        complete_callback: Optional[Callable] = None,
     ) -> QRunnable:
         threadpool = QThreadPool.globalInstance()
         worker = cls(portfolio_version=portfolio_version)

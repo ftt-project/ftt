@@ -15,14 +15,14 @@ class SecuritiesInfoDownloadStep(AbstractStep):
     @classmethod
     def process(
         cls, securities: list[schemas.Security]
-    ) -> Result[list[schemas.Security], list[str]]:
+    ) -> Result[list[schemas.Security], str]:
         results = [cls.__load_security(security) for security in securities]
         if all([result.is_ok() for result in results]):
-            securities_info = [result.value for result in results]
+            securities_info = [result.unwrap() for result in results]
             return Ok(securities_info)
         else:
-            errors = [result.err() for result in results if result.is_err()]
-            return Err(errors)
+            errors = [result.unwrap_err() for result in results if result.is_err()]
+            return Err("\n".join(errors))
 
     @staticmethod
     def __load_security(security: schemas.Security) -> Result[schemas.Security, str]:

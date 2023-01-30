@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional, Union
 
-from ftt.storage import schemas
+from ftt.storage import schemas, models
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
 from ftt.storage.repositories.repository import Repository
@@ -12,6 +12,9 @@ class PortfolioVersionsRepository(Repository):
     def save(
         cls, model: schemas.PortfolioVersion
     ) -> Union[schemas.PortfolioVersion, None]:
+        if not model.id:
+            raise ValueError("Portfolio version ID is required")
+
         record = cls._get_by_id(PortfolioVersion, model.id)
         fields = model.dict(exclude_unset=True, exclude={"portfolio"})
         fields["updated_at"] = datetime.now()
@@ -28,6 +31,9 @@ class PortfolioVersionsRepository(Repository):
     def create(
         cls, portfolio_version: schemas.PortfolioVersion
     ) -> schemas.PortfolioVersion:
+        if not portfolio_version.portfolio:
+            raise ValueError("Portfolio is required")
+
         fields = portfolio_version.dict(exclude_unset=True, exclude={"portfolio"})
         fields["portfolio_id"] = portfolio_version.portfolio.id
 
@@ -84,6 +90,9 @@ class PortfolioVersionsRepository(Repository):
     def get_all_by_portfolio(
         cls, portfolio: schemas.Portfolio
     ) -> List[schemas.PortfolioVersion]:
+        if not portfolio.id:
+            raise ValueError("Portfolio ID is required")
+
         from ftt.storage.repositories.portfolios_repository import PortfoliosRepository
 
         portfolio_model = PortfoliosRepository.get_by_id(portfolio)
@@ -110,6 +119,9 @@ class PortfolioVersionsRepository(Repository):
     def update(
         cls, portfolio_version: schemas.PortfolioVersion
     ) -> schemas.PortfolioVersion:
+        if not portfolio_version.id:
+            raise ValueError("Portfolio version ID is required")
+
         fields = portfolio_version.dict(exclude_unset=True)
         record = cls._get_by_id(PortfolioVersion, portfolio_version.id)
         result = cls._update(record, fields)
@@ -117,7 +129,10 @@ class PortfolioVersionsRepository(Repository):
 
     @classmethod
     def delete(
-        cls, portfolio_version: PortfolioVersion, soft_delete: bool = True
+        cls, portfolio_version: schemas.PortfolioVersion, soft_delete: bool = True
     ) -> bool:
-        record = cls._get_by_id(PortfolioVersion, portfolio_version.id)
+        if not portfolio_version.id:
+            raise ValueError("Portfolio version ID is required")
+
+        record = cls._get_by_id(models.PortfolioVersion, portfolio_version.id)
         return cls._delete(record, soft_delete)

@@ -1,4 +1,4 @@
-from result import Err, Result, as_result
+from result import Err, Result, as_result, Ok
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage import schemas, models
@@ -27,4 +27,4 @@ class PortfolioVersionLoadStep(AbstractStep):
                     f"Portfolio Version with ID {portfolio_version.id} does not exist"
                 )
 
-        return result
+        return Ok(result.unwrap())

@@ -23,4 +23,4 @@ class PortfolioVersionUpdateStep(AbstractStep):
         except PersistingError as e:
             return Err(str(e))
 
-        return Ok(result)
+        return Ok(result.unwrap())

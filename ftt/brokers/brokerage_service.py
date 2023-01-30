@@ -1,3 +1,5 @@
+from typing import Optional
+
 from ftt.storage import schemas
 
 
@@ -26,7 +28,7 @@ class BrokerageService:
         self,
         contract: schemas.Contract,
         order: schemas.BrokerOrder,
-        next_order_id: int = None,
+        next_order_id: Optional[int] = None,
     ):
         return self._implementation.place_order(contract, order, next_order_id)
 

@@ -21,7 +21,7 @@ class SecuritiesAssociatedWithPortfolioLoadStep(AbstractStep):
             case Err(models.Portfolio.DoesNotExist()):
                 return Err(f"Portfolio with id {portfolio.id} not found")
             case Err(_):
-                return securities_result
+                return Err(securities_result.unwrap_err())
 
         if len(securities_result.unwrap()) == 0:
             return Err(f"No securities associated with portfolio {portfolio.id}")

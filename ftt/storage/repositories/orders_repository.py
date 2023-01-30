@@ -14,10 +14,10 @@ from ftt.storage.repositories.repository import Repository
 class OrdersRepository(Repository):
     @classmethod
     def save(cls, model: Base) -> Order:
-        pass
+        raise NotImplementedError()
 
     @classmethod
-    def create(cls, order: schemas.Order) -> Order:
+    def create(cls, order: schemas.Order) -> schemas.Order:
         fields = order.dict(
             exclude_unset=True,
             exclude={"portfolio_version", "portfolio", "security", "weight"},
@@ -38,6 +38,9 @@ class OrdersRepository(Repository):
 
     @classmethod
     def update(cls, order: schemas.Order) -> schemas.Order:
+        if not order.id:
+            raise ValueError("Order ID is required")
+
         fields = order.dict(exclude_unset=True)
         record = cls._get_by_id(Order, order.id)
         result = cls._update(record, fields)

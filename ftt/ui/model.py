@@ -1,6 +1,6 @@
 from typing import Any, Union
 
-from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex, QPersistentModelIndex
+from PySide6.QtCore import QAbstractTableModel, QModelIndex, QPersistentModelIndex, Qt
 from pydantic import ValidationError
 
 model = None
@@ -79,14 +79,18 @@ class CollectionModel(QAbstractTableModel):
     def columnCount(self, parent=None, *args, **kwargs):
         return len(self._headers)
 
-    def data(self, index: QModelIndex, role: int = Qt.DisplayRole):
+    def data(
+        self,
+        index: Union[QModelIndex, QPersistentModelIndex],
+        role: int = Qt.ItemDataRole.DisplayRole,
+    ):
         if not index.isValid():
             return None
 
         if not 0 <= index.row() < len(self._collection):
             return None
 
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             record = self._collection[index.row()]
             return record.dict(include=self._headers.keys())[
                 self._headers.key(index.column())
@@ -98,7 +102,7 @@ class CollectionModel(QAbstractTableModel):
         self,
         index: Union[QModelIndex, QPersistentModelIndex],
         value: Any,
-        role: int = Qt.EditRole,
+        role: int = Qt.ItemDataRole.EditRole,
     ):
         if not index.isValid():
             return False
@@ -106,7 +110,7 @@ class CollectionModel(QAbstractTableModel):
         if not 0 <= index.row() < len(self._collection):
             return False
 
-        if role != Qt.EditRole:
+        if role != Qt.ItemDataRole.EditRole:
             return False
 
         record = self._collection[index.row()]
@@ -123,12 +127,15 @@ class CollectionModel(QAbstractTableModel):
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
     def headerData(
-        self, section: int, orientation: Qt.Orientation, role: int = Qt.DisplayRole
+        self,
+        section: int,
+        orientation: Qt.Orientation,
+        role: int = Qt.ItemDataRole.DisplayRole,
     ):
-        if role != Qt.DisplayRole:
+        if role != Qt.ItemDataRole.DisplayRole:
             return None
 
-        if orientation == Qt.Horizontal and section < len(self._headers):
+        if orientation == Qt.Orientation.Horizontal and section < len(self._headers):
             return self._headers[section]
 
         return None

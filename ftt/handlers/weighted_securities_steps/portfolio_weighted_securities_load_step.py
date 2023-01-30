@@ -13,9 +13,7 @@ class PortfolioWeightedSecuritiesLoadStep(AbstractStep):
         cls, portfolio: schemas.Portfolio
     ) -> Result[list[schemas.WeightedSecurity], str]:
         find_by_portfolio = as_result(Exception)(SecuritiesRepository.find_by_portfolio)
-        securities_result: Result[list[schemas.Security]] = find_by_portfolio(
-            portfolio=portfolio
-        )
+        securities_result = find_by_portfolio(portfolio=portfolio)
 
         match securities_result:
             case Err(models.Portfolio.DoesNotExist()):

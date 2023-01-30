@@ -3,7 +3,7 @@ import pathlib
 from types import TracebackType
 from typing import List, Optional, Protocol, Type
 
-from playhouse.sqliteq import SqliteQueueDatabase
+from playhouse.sqliteq import SqliteQueueDatabase  # type: ignore
 
 from ftt.storage.models.base import Base, database_proxy
 

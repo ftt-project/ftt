@@ -1,6 +1,6 @@
 from typing import Optional
 
-from result import as_result, Result
+from result import as_result, Result, Ok
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.models import Portfolio
@@ -12,9 +12,10 @@ class PortfolioUpdateStep(AbstractStep):
 
     @classmethod
     def process(
-        cls, portfolio: Portfolio,
+        cls,
+        portfolio: Portfolio,
     ) -> Result[Portfolio, Optional[str]]:
         update = as_result(Exception)(PortfoliosRepository.update)
         result = update(portfolio)
 
-        return result
+        return Ok(result.unwrap())
