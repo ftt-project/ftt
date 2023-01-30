@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QVBoxLayout,
 )
+from result import Err
 
 from ftt.handlers.portfolio_handlers import PortfolioLoadHandler, PortfolioUpdateHandler
 from ftt.handlers.securities_handler import PortfolioSecuritiesLoadHandler
@@ -197,7 +198,6 @@ class DetailsElementWidget(QWidget):
         self.form.set_element_value("portfolio-period-end", result.unwrap().period_end)
         self.form.set_element_value("portfolio-interval", result.unwrap().interval)
 
-
     @Slot()
     def update_portfolio(self):
         portfolio = schemas.Portfolio(
@@ -209,9 +209,12 @@ class DetailsElementWidget(QWidget):
             interval=self.form.get_element_value("portfolio-interval"),
             securities=[],
         )
-        print(portfolio)
         result = PortfolioUpdateHandler().handle(portfolio=portfolio)
-        print(result)
+
+        match result:
+            case Err(e):
+                print(e)
+
 
 
 class PortfolioDetailsWidget(QWidget):
