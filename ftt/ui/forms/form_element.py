@@ -54,8 +54,8 @@ class FormElement(QWidget):
     def valid(self) -> bool:
         return self._edit_element.valid()
 
-    def is_modified(self) -> bool:
-        return self._edit_element.is_modified()
+    def value(self):
+        return self._edit_element.value()
 
     def eventFilter(self, obj, event):
         if obj == self._edit_element:

@@ -75,6 +75,8 @@ class SecuritiesElementWidget(QWidget):
         self._state = get_state()
         self._model = get_model()
 
+        self.create_ui()
+
     def create_ui(self):
         self._layout.addWidget(
             LabelBuilder.h2_build("Securities"), alignment=Qt.AlignTop
@@ -119,26 +121,11 @@ class DetailsElementWidget(QWidget):
             }
             """
         )
-        self.form = Form(self)
+        self.form = Form()
 
         self.create_ui()
 
     def create_ui(self):
-        self._state.signals.selectedPortfolioChanged.connect(
-            self.display_portfolio_details
-        )
-
-    def display_portfolio_details(self):
-        for i in reversed(range(self.layout().count())):
-            self.layout().itemAt(i).widget().deleteLater()
-
-        result = PortfolioLoadHandler().handle(
-            portfolio=schemas.Portfolio(id=self._model.portfolio_id)
-        )
-        if result.is_err():
-            print(result.err())
-            return
-
         self.form.setFixedWidth(400)
         self.form.add_element(
             FormElement(
@@ -147,10 +134,9 @@ class DetailsElementWidget(QWidget):
                     object_name="portfolio-name",
                     validator=PortfolioNameValidator(),
                     placeholder="Portfolio name",
-                    initial_value=result.unwrap().name,
                 ),
                 error_message="- Portfolio name must be unique longer than 2 symbols<br>"
-                "- Portfolio name must shorter than 30 symbols",
+                              "- Portfolio name must shorter than 30 symbols",
             )
         )
         self.form.add_element(
@@ -160,7 +146,6 @@ class DetailsElementWidget(QWidget):
                     object_name="portfolio-value",
                     validator=QDoubleValidator(1.0, 1000000000.0, 2),
                     placeholder="$000.00",
-                    initial_value=str(result.unwrap().value),
                 ),
                 error_message="- Portfolio value must be a number",
             )
@@ -170,7 +155,6 @@ class DetailsElementWidget(QWidget):
                 label=QLabel("Period start"),
                 edit_element=NoFrameDateEdit(
                     object_name="portfolio-period-start",
-                    initial_value=result.unwrap().period_start,
                 ),
             )
         )
@@ -179,7 +163,6 @@ class DetailsElementWidget(QWidget):
                 label=QLabel("Period end"),
                 edit_element=NoFrameDateEdit(
                     object_name="portfolio-period-end",
-                    initial_value=result.unwrap().period_end,
                 ),
             )
         )
@@ -189,13 +172,31 @@ class DetailsElementWidget(QWidget):
                 edit_element=ComboBoxEdit(
                     object_name="portfolio-interval",
                     items=ACCEPTABLE_INTERVALS,
-                    initial_value=result.unwrap().interval,
                 ),
             ),
         )
         self.form.create_ui()
         self.form.signals.on_accept.connect(self.update_portfolio)
         self.layout().addWidget(self.form)
+
+        self._state.signals.selectedPortfolioChanged.connect(
+            self.display_portfolio_details
+        )
+
+    def display_portfolio_details(self):
+        result = PortfolioLoadHandler().handle(
+            portfolio=schemas.Portfolio(id=self._model.portfolio_id)
+        )
+        if result.is_err():
+            print(result.err())
+            return
+
+        self.form.set_element_value("portfolio-name", result.unwrap().name)
+        self.form.set_element_value("portfolio-value", str(result.unwrap().value))
+        self.form.set_element_value("portfolio-period-start", result.unwrap().period_start)
+        self.form.set_element_value("portfolio-period-end", result.unwrap().period_end)
+        self.form.set_element_value("portfolio-interval", result.unwrap().interval)
+
 
     @Slot()
     def update_portfolio(self):
@@ -209,8 +210,8 @@ class DetailsElementWidget(QWidget):
             securities=[],
         )
         print(portfolio)
-        # result = PortfolioUpdateHandler().handle(portfolio=portfolio)
-        # print(result)
+        result = PortfolioUpdateHandler().handle(portfolio=portfolio)
+        print(result)
 
 
 class PortfolioDetailsWidget(QWidget):
@@ -225,5 +226,5 @@ class PortfolioDetailsWidget(QWidget):
 
     def create_ui(self):
         self.layout().addWidget(DetailsElementWidget(self))
-        # self.layout().addWidget(SecuritiesElementWidget())
+        self.layout().addWidget(SecuritiesElementWidget(self))
         self._layout.addStretch(1)

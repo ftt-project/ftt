@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from PySide6.QtCore import Signal, QObject, QDate
+from PySide6.QtCore import Signal, QObject
 from PySide6.QtWidgets import QWidget, QFormLayout, QDialogButtonBox
 from ftt.ui.forms.form_element import FormElement
 
@@ -11,7 +11,7 @@ class FormSignals(QObject):
 
 
 class Form(QWidget):
-    def __init__(self, parent: QWidget, elements: list = None, layout_class=QFormLayout):
+    def __init__(self, parent: QWidget = None, elements: list = None, layout_class=QFormLayout):
         super().__init__(parent)
         self.setLayout(layout_class())
         self._elements = elements or []
@@ -26,6 +26,9 @@ class Form(QWidget):
         element.create_ui(self)
         self._elements.append(element)
 
+    def set_element_value(self, name: str, value: str | datetime) -> None:
+        self.findChild(QWidget, name).set_value(value)
+
     def get_element_value(self, name: str) -> str | datetime:
         return self.findChild(QWidget, name).value()
 
@@ -36,8 +39,8 @@ class Form(QWidget):
         for element in self._elements:
             element.on_change(lambda *args, el=element: self._on_change(args, el))
 
-        for button in self._buttons_box.buttons():
-            button.setEnabled(False)
+        # for button in self._buttons_box.buttons():
+        #     button.setEnabled(False)
         self.layout().addWidget(self._buttons_box)
 
         self._buttons_box.accepted.connect(self._on_accept)
@@ -53,10 +56,7 @@ class Form(QWidget):
             element.reset()
 
     def _on_change(self, args: str, element: FormElement) -> None:
-        if any([element.is_modified() for element in self._elements]):
-            self._enable_buttons()
-        else:
-            self._disable_buttons()
+        pass
 
     def _enable_buttons(self) -> None:
         for button in self._buttons_box.buttons():

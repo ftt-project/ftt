@@ -120,8 +120,6 @@ class EditElementInterface:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # self.signals = EditElementSignals()
-
     def valid(self) -> bool:
         return True
 
@@ -131,10 +129,13 @@ class EditElementInterface:
     def set_correct_state(self):
         pass
 
-    def is_modified(self):
+    def value(self):
         raise NotImplementedError
 
-    def value(self):
+    def set_value(self, value):
+        """
+        The initial value, the value that is set from DB before user modifies it.
+        """
         raise NotImplementedError
 
 
@@ -146,21 +147,22 @@ class NoFrameLineEdit(QLineEdit, EditElementInterface):
         self.setObjectName(kwargs.get("object_name", ""))
         self.setPlaceholderText(kwargs.get("placeholder", ""))
         self.setValidator(kwargs.get("validator", None))
-        self.setText(kwargs.get("initial_value", None))
+        self.set_value(kwargs.get("initial_value", None))
 
-        self.textChanged.connect(self.signals.input_changed)
+        self.textEdited.connect(self.signals.input_changed)
+        self.textEdited.connect(lambda _: setattr(self, "_is_modified", True))
 
     def valid(self) -> bool:
         return self.hasAcceptableInput()
-
-    def is_modified(self) -> bool:
-        return self.isModified()
 
     def set_error_state(self) -> None:
         self.setStyleSheet(self.ERROR_STYLES)
 
     def set_correct_state(self) -> None:
         self.setStyleSheet("")
+
+    def set_value(self, value):
+        self.setText(value)
 
     def value(self):
         return self.text()
@@ -171,16 +173,7 @@ class NoFrameDateEdit(QDateEdit, EditElementInterface):
         super().__init__(parent)
         self.setFrame(False)
 
-        self._is_modified = False
-
-        initial_value = kwargs.get("initial_value", None)
-        if isinstance(initial_value, QDate):
-            self.setDate(initial_value)
-        elif isinstance(initial_value, datetime):
-            d = QDate()
-            d.setDate(initial_value.year, initial_value.month, initial_value.day)
-            self.setDate(d)
-
+        self.set_value(kwargs.get("initial_value", None))
         self.setObjectName(kwargs.get("object_name", ""))
         self.setDisplayFormat("yyyy-MM-dd")
         self.setCalendarPopup(True)
@@ -199,28 +192,31 @@ class NoFrameDateEdit(QDateEdit, EditElementInterface):
     def set_correct_state(self) -> None:
         self.setStyleSheet("")
 
-    def is_modified(self) -> bool:
-        return self._is_modified
-
     def value(self):
         return self.date().toPython()
+
+    def set_value(self, value):
+        if isinstance(value, QDate):
+            self.setDate(value)
+        elif isinstance(value, datetime):
+            d = QDate()
+            d.setDate(value.year, value.month, value.day)
+            self.setDate(d)
 
 
 class ComboBoxEdit(QComboBox, EditElementInterface):
     def __init__(self, parent=None, *args, **kwargs):
         super().__init__(parent)
         self.setFrame(False)
-        self._is_modified = False
 
         self.setObjectName(kwargs.get("object_name", ""))
         self.addItems(kwargs.get("items", []))
+        self.set_value(kwargs.get("initial_value", None))
 
         self.currentTextChanged.connect(self.signals.input_changed)
-        self.currentTextChanged.connect(lambda _: setattr(self, "_is_modified", True))
-        self.setCurrentText(kwargs.get("initial_value", None))
-
-    def is_modified(self) -> bool:
-        return self._is_modified
 
     def value(self):
         return self.currentText()
+
+    def set_value(self, value):
+        self.setCurrentText(value)

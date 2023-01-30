@@ -59,12 +59,14 @@ class PortfolioLoadHandler(Handler):
 
 
 class PortfolioUpdateHandler(Handler):
-    params = (
-        "portfolio",
-        "dto",
-    )
+    """
+    Updates a portfolio record based on the provided schema model and returns the updated schema model.
+    """
+    params = {
+        "portfolio": schemas.Portfolio,
+    }
 
     handlers = [
-        (PortfolioUpdateStep, "portfolio", "dto"),
+        (PortfolioUpdateStep, "portfolio"),
         (ReturnResult, PortfolioUpdateStep.key),
     ]
