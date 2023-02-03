@@ -29,9 +29,9 @@ class PortfolioVersionDeactivateStep(AbstractStep):
         result = update(portfolio_version)
 
         match result:
-            case Ok(updated_portfolio_version):
-                return Ok(updated_portfolio_version)
             case Err(models.PortfolioVersion.DoesNotExist()):
                 return Err(
                     f"Portfolio Version with ID {portfolio_version.id} does not exist"
                 )
+
+        return Ok(result.unwrap())

@@ -4,7 +4,6 @@ from ftt.brokers.brokerage_service import BrokerageService
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.logger import Logger
 from ftt.storage import schemas
-from ftt.storage.models import Order
 from ftt.storage.repositories.orders_repository import OrdersRepository
 
 
@@ -14,7 +13,7 @@ class OrdersPlaceStep(AbstractStep):
     @classmethod
     def process(
         cls, orders: list[schemas.Order], brokerage_service: BrokerageService
-    ) -> Result[list[Order], str]:
+    ) -> Result[list[schemas.Order], str]:
         order_ids = []
         for idx, order in enumerate(orders):
             contract = schemas.Contract(

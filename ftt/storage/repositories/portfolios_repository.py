@@ -1,8 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from ftt.storage import schemas
-from ftt.storage.value_objects import ValueObjectInterface
+from ftt.storage import schemas, models
 from ftt.storage.models.base import Base
 from ftt.storage.models.portfolio import Portfolio
 from ftt.storage.models.portfolio_version import PortfolioVersion
@@ -23,13 +22,10 @@ class PortfoliosRepository(Repository):
         return model
 
     @classmethod
-    def get_by_id(cls, portfolio: schemas.Portfolio) -> schemas.Portfolio | None:
-        try:
-            record = Portfolio.get(portfolio.id)
-        except Portfolio.DoesNotExist:
-            return None
+    def get_by_id(cls, portfolio: schemas.Portfolio) -> schemas.Portfolio:
+        instance = models.Portfolio.get(models.Portfolio.id == portfolio.id)
 
-        return schemas.Portfolio.from_orm(record)
+        return schemas.Portfolio.from_orm(instance)
 
     @classmethod
     def get_by_name(cls, name: str) -> Base:
@@ -76,8 +72,11 @@ class PortfoliosRepository(Repository):
         return list(result)
 
     @classmethod
-    def update(cls, portfolio: Portfolio, dto: ValueObjectInterface) -> Portfolio:
-        return cls._update(portfolio, dto)
+    def update(cls, portfolio: schemas.Portfolio) -> schemas.Portfolio:
+        instance = models.Portfolio.get(models.Portfolio.id == portfolio.id)
+        updated_instance = cls._update(instance, portfolio.dict())
+
+        return schemas.Portfolio.from_orm(updated_instance)
 
     @classmethod
     def find_by_portfolio_version(

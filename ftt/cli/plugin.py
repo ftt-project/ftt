@@ -13,7 +13,7 @@ from ftt.cli.status_bar import StatusBar
 class Plugin(PluginInterface):
     def __init__(self):
         self.context = None
-        self.environment: Optional[str] = None
+        self.environment: Optional[str] = None  # type: ignore[annotation-unchecked]
 
     def create_context(self):
         self.context = Context()

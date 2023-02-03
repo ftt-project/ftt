@@ -25,7 +25,7 @@ from PySide6.QtWidgets import (
     QAbstractItemView,
 )
 from result import Ok, Err
-import qtawesome as qta
+import qtawesome as qta  # type: ignore[import]
 
 from ftt.handlers.portfolio_creation_handler import PortfolioCreationHandler
 from ftt.handlers.securities_external_information_upsert_handler import (
@@ -33,37 +33,11 @@ from ftt.handlers.securities_external_information_upsert_handler import (
 )
 from ftt.storage import schemas
 from ftt.storage.schemas import ACCEPTABLE_INTERVALS
+from ftt.ui.forms.forms import Form
 from ftt.ui.model import get_model, CollectionModel
 from ftt.ui.state import get_state
+from ftt.ui.validators import PortfolioNameValidator, SecuritySymbolValidator
 from ftt.ui.workers import SecuritiesInformationLoadingWorker
-
-
-class PortfolioNameValidator(QValidator):
-    def validate(self, text: str, pos: int) -> QValidator.State:
-        if len(text) < 1:
-            return QValidator.State.Intermediate
-        elif len(text) >= 30:
-            return QValidator.State.Invalid
-        else:
-            return QValidator.State.Acceptable
-
-
-class SecuritySymbolValidator(QValidator):
-    def validate(self, text: str, pos: int) -> QValidator.State:
-        if len(text) == 0:
-            return QValidator.State.Intermediate
-        elif len(text) >= 10:
-            return QValidator.State.Invalid
-        else:
-            return QValidator.State.Acceptable
-
-    def validate_uniquness(
-        self, text: str, added_securities: list[str]
-    ) -> QValidator.State:
-        if text in added_securities:
-            return QValidator.State.Invalid
-
-        return QValidator.State.Acceptable
 
 
 class SecuritiesModel(CollectionModel):
@@ -87,7 +61,7 @@ class SearchSecurityFormElementBuilder(QWidget):
         self._state = get_state()
         self.completer = QCompleter(self.model)
 
-    def createUI(self, dialog: QDialog):
+    def create_ui(self, dialog: QDialog):
         self.search_input = QLineEdit()
         self.search_input.setMinimumWidth(300)
         self.search_input.setObjectName("search_input")
@@ -184,7 +158,7 @@ class SecuritiesTableFormElementBuilder(QWidget):
         self.table = None
         self.model = model
 
-    def createUI(self, dialog: QDialog):
+    def create_ui(self, dialog: QDialog):
         self.table = QTableView()
         self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
@@ -251,7 +225,7 @@ class PortfolioDetailsFormElementBuilder(QWidget):
         self.main_layout = None
         self.name_field = None
 
-    def createUI(self, dialog: QDialog):
+    def create_ui(self, dialog: QDialog):
         self.name_field = QLineEdit()
         self.name_field.setMinimumWidth(300)
         self.name_field.setObjectName("name_input")
@@ -323,7 +297,7 @@ class PortfolioDateRangeFormElementBuilder(QWidget):
         self.start_date_field = None
         self.end_date_field = None
 
-    def createUI(self, dialog: QDialog):
+    def create_ui(self, dialog: QDialog):
         self.interval_field = QComboBox()
         self.interval_field.setObjectName("interval_input")
         self.interval_field.addItems(ACCEPTABLE_INTERVALS)
@@ -393,23 +367,6 @@ class PortfolioDateRangeFormElementBuilder(QWidget):
         self.validation_message.setVisible(False)
 
 
-class FormElements:
-    def __init__(self, *elements: QWidget):
-        self._elements = elements or []
-        self.i = len(self._elements) - 1
-
-    def validate(self) -> bool:
-        return all([element.validate() for element in self._elements])
-
-    def createUI(self, dialog: QDialog):
-        for element in self._elements:
-            element.createUI(dialog)
-
-    def reset(self):
-        for element in self._elements:
-            element.reset()
-
-
 class NewPortfolioDialog(QDialog):
     def __init__(self):
         super().__init__()
@@ -428,19 +385,20 @@ class NewPortfolioDialog(QDialog):
         self._buttons = None
         self._layout = None
         self._form_elements = None
-        self.createUI()
+        self.create_ui()
 
-    def createUI(self):
+    def create_ui(self):
         self.setWindowTitle("New Portfolio")
         self._layout = QFormLayout(self)
+        return
 
-        self._form_elements = FormElements(
+        self._form_elements = Form(
             PortfolioDetailsFormElementBuilder(),
             PortfolioDateRangeFormElementBuilder(),
             SearchSecurityFormElementBuilder(self._securities_model),
             SecuritiesTableFormElementBuilder(self._securities_model),
         )
-        self._form_elements.createUI(self)
+        self._form_elements.create_ui(self)
 
         self._layout.addRow("", self._hint_message)
         self._buttons = QDialogButtonBox(

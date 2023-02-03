@@ -19,10 +19,8 @@ class SecuritiesAssociateWithPortfolioStep(AbstractStep):
         cls, portfolio: schemas.Portfolio, securities: list[schemas.Security]
     ) -> Result[list[schemas.Security], str]:
         associated_securities: list[schemas.Security] = []
-        for security in securities:
-            security: schemas.Security = SecuritiesRepository.get_by_name(
-                security.symbol
-            )
+        for s in securities:
+            security: schemas.Security = SecuritiesRepository.get_by_name(s.symbol)
             result: schemas.PortfolioSecurity = PortfolioSecurityRepository.associate(
                 portfolio, security
             )

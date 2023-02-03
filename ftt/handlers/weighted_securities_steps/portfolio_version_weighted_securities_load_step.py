@@ -22,9 +22,7 @@ class PortfolioVersionWeightedSecuritiesLoadStep(AbstractStep):
         portfolio_version_record = as_result(Exception)(
             PortfolioVersionsRepository.get_by_id
         )
-        portfolio_version_result: Result[
-            schemas.PortfolioVersion
-        ] = portfolio_version_record(portfolio_version)
+        portfolio_version_result = portfolio_version_record(portfolio_version)
 
         match portfolio_version_result:
             case Err(models.PortfolioVersion.DoesNotExist()):

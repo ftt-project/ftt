@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Tuple
 
-from playhouse.shortcuts import model_to_dict
+from playhouse.shortcuts import model_to_dict  # type: ignore
 
 from ftt.storage import schemas
 from ftt.storage.models.security_price import SecurityPrice
@@ -30,15 +30,15 @@ class SecurityPricesRepository(Repository):
 
     @staticmethod
     def create(self, data: dict) -> SecurityPrice:
-        pass
+        raise NotImplementedError()
 
     @staticmethod
     def save(self, model: SecurityPrice) -> SecurityPrice:
-        pass
+        raise NotImplementedError()
 
     @staticmethod
     def get_by_id(self, id: int) -> SecurityPrice:
-        pass
+        raise NotImplementedError()
 
     @staticmethod
     def security_price_time_vector(

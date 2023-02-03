@@ -34,20 +34,18 @@ class SecurityPricesLoadStep(AbstractStep):
         cls, portfolio: schemas.Portfolio
     ) -> Result[list[schemas.SecurityPricesTimeVector], Optional[str]]:
         list_all = as_result(Exception)(PortfolioSecurityRepository.list)
-        securities_result: Result[list[schemas.PortfolioSecurity], str] = list_all(
-            portfolio=portfolio
-        )
+        securities_result = list_all(portfolio=portfolio)
 
         match securities_result:
-            case Ok(securities):
-                if len(securities) == 0:
+            case Ok(s):
+                if len(s) == 0:
                     return Err(
                         f"No securities associated with portfolio {portfolio.id}"
                     )
             case Err(err):
                 return Err(err)
 
-        securities: list[schemas.Security] = [
+        securities: list[schemas.PortfolioSecurity] = [
             ps.security for ps in securities_result.unwrap()
         ]
 

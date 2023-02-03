@@ -2,10 +2,8 @@ from typing import List, Iterable
 
 from result import Result, Ok
 
-from ftt.brokers.position import Position
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage import schemas
-from ftt.storage.models import Weight
 
 
 class ComparePlannedActualPositionsStep(AbstractStep):
@@ -91,9 +89,17 @@ class ComparePlannedActualPositionsStep(AbstractStep):
         return Ok(result)
 
     @staticmethod
-    def _normalize_positions(positions: List[Position]) -> dict[str, float]:
-        return {position.contract.symbol: position.position for position in positions}
+    def _normalize_positions(positions: List[schemas.Position]) -> dict[str, float]:
+        return {
+            position.contract.symbol: position.position
+            for position in positions
+            if position.contract
+        }
 
     @staticmethod
-    def _normalize_weights(weights: List[Weight]) -> dict[str, float]:
-        return {weight.security.symbol: weight.planned_position for weight in weights}
+    def _normalize_weights(weights: List[schemas.Weight]) -> dict[str, float]:
+        return {
+            weight.security.symbol: weight.planned_position
+            for weight in weights
+            if weight.security and weight.security.symbol
+        }

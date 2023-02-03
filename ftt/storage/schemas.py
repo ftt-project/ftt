@@ -83,8 +83,8 @@ class Portfolio(BaseModel):
 
 class PortfolioSecurity(BaseModel):
     id: int | None
-    portfolio: Portfolio = ...
-    security: Security = ...
+    portfolio: Portfolio
+    security: Security
 
     class Config:
         orm_mode = True
@@ -124,7 +124,7 @@ class Weight(BaseModel):
 
     id: int | None
     portfolio_version: PortfolioVersion | None
-    security: Security | None
+    security: Security | None = ...
     position: float | None
     planned_position: float | None
     amount: float | None

@@ -1,6 +1,6 @@
 import pytest
 
-from ftt.handlers.securities_load_handler import SecuritiesLoadHandler
+from ftt.handlers.securities_handler import SecuritiesLoadHandler
 
 
 class TestSecuritiesLoadHandler:

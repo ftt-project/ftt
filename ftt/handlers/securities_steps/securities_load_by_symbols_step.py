@@ -7,7 +7,7 @@ from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage.repositories.securities_repository import SecuritiesRepository
 
 
-class SecuritiesLoadStep(AbstractStep):
+class SecuritiesLoadBySymbolsStep(AbstractStep):
     key = "securities"
 
     @classmethod

@@ -1,6 +1,7 @@
 from enum import Enum
-from typing import Union, Any
+from typing import Union, Any, Optional, Literal
 
+from PySide6 import QtCore
 from PySide6.QtCore import (
     Qt,
     QMetaObject,
@@ -49,17 +50,17 @@ class SecuritiesModel(QAbstractTableModel):
 
     def data(
         self,
-        index: Union[QModelIndex, QPersistentModelIndex],
-        role: Qt.ItemDataRole.DisplayRole,
-    ) -> Any:
-        if role == Qt.DisplayRole:
+        index: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex],
+        role: Literal[Qt.ItemDataRole.DisplayRole],
+    ) -> Any:  # type: ignore[override]
+        if role == Qt.ItemDataRole.DisplayRole:
             return self.securities[index.row()][
                 list(self.Headers)[index.column()].value
             ]
-        elif role == Qt.BackgroundRole:
-            return QColor(Qt.white)
-        elif role == Qt.TextAlignmentRole:
-            return Qt.AlignVCenter
+        elif role == Qt.ItemDataRole.BackgroundRole:
+            return QColor(Qt.GlobalColor.white)
+        elif role == Qt.ItemDataRole.TextAlignmentRole:
+            return Qt.AlignmentFlag.AlignVCenter
 
     def insertRow(self, row, parent=QModelIndex()):
         self.beginInsertRows(parent, row, row)
@@ -71,17 +72,17 @@ class SecuritiesModel(QAbstractTableModel):
         self,
         index: Union[QModelIndex, QPersistentModelIndex],
         value: Any,
-        role: int = Qt.EditRole,
+        role: int = Qt.ItemDataRole.EditRole,
     ) -> bool:
-        if not index.isValid() or role != Qt.EditRole:
+        if not index.isValid() or role != Qt.ItemDataRole.EditRole:
             return False
 
         self.securities[index.row()][list(self.Headers)[index.column()].value] = value
-        self.dataChanged.emit(index, index, [role])
+        self.dataChanged.emit(index, index, [role])  # type: ignore[attr-defined]
         return True
 
     def headerData(self, section, orientation, role):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+        if orientation == Qt.Horizontal and role == Qt.ItemDataRole.DisplayRole:
             return list(self.Headers)[section].value
         return super().headerData(section, orientation, role)
 
@@ -96,22 +97,22 @@ class SecuritiesModel(QAbstractTableModel):
         for i in range(rows):
             del self.securities[position]
         self.endRemoveRows()
-        self.layoutChanged.emit()
+        self.layoutChanged.emit()  # type: ignore[attr-defined]
         return True
 
 
 class SearchSecurityFormElement(QWidget):
     def __init__(self, model: SecuritiesModel):
         super().__init__()
-        self.confirm_button = None
-        self.search_input = None
+        self.confirm_button: Optional[QPushButton] = None
+        self.search_input: Optional[QLineEdit] = None
         self.model = model
         self._state = get_state()
         self.completer = QCompleter(self.model)
 
-    def createUI(self, dialog: QDialog):
+    def create_ui(self, dialog: QDialog):
         layout = QHBoxLayout(self)
-        layout.setAlignment(Qt.AlignTop)
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         layout.addWidget(QLabel("Name"))
 
         self.search_input = QLineEdit()
@@ -150,7 +151,7 @@ class SecuritiesTable(QWidget):
     def __init__(self, model: SecuritiesModel):
         super().__init__()
         self._state = get_state()
-        self.table = None
+        self.table: Optional[QTableView] = None
         self.model = model
 
     def createUI(self, dialog: QDialog):
@@ -160,13 +161,13 @@ class SecuritiesTable(QWidget):
         self.table.setModel(self.model)
 
         horizontal_header = self.table.horizontalHeader()
-        horizontal_header.setSectionResizeMode(QHeaderView.ResizeToContents)
+        horizontal_header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         horizontal_header.setStretchLastSection(True)
 
         vertical_header = self.table.verticalHeader()
         vertical_header.setVisible(False)
 
-        size = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        size = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         size.setHorizontalStretch(1)
         self.table.setSizePolicy(size)
 
@@ -197,7 +198,7 @@ class AddSecuritiesDialog(QDialog):
         self.resize(500, 500)
         self._layout = QVBoxLayout(self)
 
-        SearchSecurityFormElement(self.model).createUI(self)
+        SearchSecurityFormElement(self.model).create_ui(self)
         SecuritiesTable(self.model).createUI(self)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Save)

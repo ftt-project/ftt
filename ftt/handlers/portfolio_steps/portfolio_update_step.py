@@ -1,10 +1,8 @@
 from typing import Optional
 
-from result import Ok, Err, Result
+from result import as_result, Result, Ok
 
 from ftt.handlers.handler.abstract_step import AbstractStep
-from ftt.storage.value_objects import ValueObjectInterface
-from ftt.storage.errors import PersistingError
 from ftt.storage.models import Portfolio
 from ftt.storage.repositories.portfolios_repository import PortfoliosRepository
 
@@ -14,11 +12,10 @@ class PortfolioUpdateStep(AbstractStep):
 
     @classmethod
     def process(
-        cls, portfolio: Portfolio, dto: ValueObjectInterface
+        cls,
+        portfolio: Portfolio,
     ) -> Result[Portfolio, Optional[str]]:
-        try:
-            result = PortfoliosRepository.update(portfolio, dto)
-        except PersistingError as e:
-            return Err(str(e))
+        update = as_result(Exception)(PortfoliosRepository.update)
+        result = update(portfolio)
 
-        return Ok(result)
+        return Ok(result.unwrap())

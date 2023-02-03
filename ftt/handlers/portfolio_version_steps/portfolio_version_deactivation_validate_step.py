@@ -30,7 +30,7 @@ class PortfolioVersionDeactivationValidateStep(AbstractStep):
                     f"Portfolio Version with ID {portfolio_version.id} does not exist"
                 )
             case Ok(record):
-                if record.active:
-                    return Ok(portfolio_version)
-                else:
+                if not record.active:
                     return Err(f"Portfolio version #{record.id} is not active")
+
+        return Ok(portfolio_version)

@@ -37,9 +37,9 @@ class NewPortfolioVersionDialog(QDialog):
         self._buttons = None
         self._layout = None
         self._form_fields = NewVersionFormFields()
-        self.createUI()
+        self.create_ui()
 
-    def createUI(self):
+    def create_ui(self):
         self.setWindowTitle("New Portfolio Version")
         self._layout = QFormLayout()
         self.setLayout(self._layout)

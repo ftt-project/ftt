@@ -14,11 +14,11 @@ from ftt.storage.repositories.repository import Repository
 
 class WeightsRepository(Repository):
     @classmethod
-    def save(cls, model: Weight) -> Weight:
+    def save(cls, model: schemas.Weight) -> schemas.Weight:
         raise NotImplementedError()
 
     @classmethod
-    def upsert(cls, data: dict) -> Weight:
+    def upsert(cls, data: dict) -> schemas.Weight:
         id = (
             Weight.insert(
                 portfolio_version_id=data["portfolio_version"].id,
@@ -51,11 +51,11 @@ class WeightsRepository(Repository):
     @classmethod
     def find_by_security_and_portfolio(
         cls, security: Security, portfolio_version_id: int
-    ) -> Weight:
+    ) -> schemas.Weight:
         """
         TODO: use portfolio version model instead of id
         """
-        return (
+        record = (
             Weight.select()
             .join(PortfolioVersion)
             .switch(Weight)
@@ -64,6 +64,8 @@ class WeightsRepository(Repository):
             .where(Security.id == security.id)
             .get()
         )
+
+        return schemas.Weight.from_orm(record)
 
     @classmethod
     def update_amount(cls, weight: Weight, amount: float) -> None:
@@ -125,6 +127,9 @@ class WeightsRepository(Repository):
     def get_by_portfolio_version(
         cls, portfolio_version: schemas.PortfolioVersion
     ) -> List[schemas.Weight]:
+        if not portfolio_version.id:
+            raise ValueError("Portfolio version id is required")
+
         portfolio_version_record = cls._get_by_id(
             PortfolioVersion, portfolio_version.id
         )
@@ -158,5 +163,8 @@ class WeightsRepository(Repository):
 
     @classmethod
     def delete(cls, weight: schemas.Weight, soft_delete: bool = True) -> bool:
+        if not weight.id:
+            raise ValueError("Weight id is required")
+
         record = cls._get_by_id(Weight, weight.id)
         return cls._delete(record, soft_delete)

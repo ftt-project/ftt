@@ -1,4 +1,4 @@
-from result import Result, as_result
+from result import Result, as_result, Ok
 
 from ftt.handlers.handler.abstract_step import AbstractStep
 from ftt.storage import schemas
@@ -27,4 +27,4 @@ class PortfolioVersionLoadPortfolioStep(AbstractStep):
         )
         result = find_by_portfolio_version(portfolio_version)
 
-        return result
+        return Ok(result.unwrap())
