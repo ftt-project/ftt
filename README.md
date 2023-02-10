@@ -2,12 +2,27 @@
 
 > Finance is hard. Programming is hard.
 
-![PyPI](https://img.shields.io/pypi/v/ftt)
-[![Testing](https://github.com/ftt-project/ftt/actions/workflows/testing.yml/badge.svg)](https://github.com/ftt-project/ftt/actions/workflows/testing.yml)
-[![Linting](https://github.com/ftt-project/ftt/actions/workflows/linting.yml/badge.svg)](https://github.com/ftt-project/ftt/actions/workflows/linting.yml)
-![GitHub](https://img.shields.io/github/license/ftt-project/ftt)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ftt)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/ftt-project/ftt.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ftt-project/ftt/context:python)
+[![PyPI](https://img.shields.io/pypi/v/ftt.svg)][pypi_]
+[![Status](https://img.shields.io/pypi/status/ftt.svg)][status]
+[![Python Version](https://img.shields.io/pypi/pyversions/ftt)][python version]
+[![License](https://img.shields.io/pypi/l/ftt)][license]
+
+[![Read the documentation at https://ftt.readthedocs.io/](https://img.shields.io/readthedocs/ftt/latest.svg?label=Read%20the%20Docs)][read the docs]
+[![Tests](https://github.com/fttproject/ftt/workflows/Tests/badge.svg)][tests]
+[![Codecov](https://codecov.io/gh/fttproject/ftt/branch/main/graph/badge.svg)][codecov]
+
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)][pre-commit]
+[![Black](https://img.shields.io/badge/code%20style-black-000000.svg)][black]
+
+[pypi_]: https://pypi.org/project/ftt/
+[status]: https://pypi.org/project/ftt/
+[python version]: https://pypi.org/project/ftt
+[read the docs]: https://ftt.readthedocs.io/
+[tests]: https://github.com/fttproject/ftt/actions?workflow=Tests
+[codecov]: https://app.codecov.io/gh/fttproject/ftt
+[pre-commit]: https://github.com/pre-commit/pre-commit
+[black]: https://github.com/psf/black
+[license]: https://www.gnu.org/licenses/agpl-3.0.en.html
 
 FTT is a financial asset management application that helps to make right decision on time.
 
@@ -18,40 +33,3 @@ To enable every private investor to make a rational algorithmic decision.
 ## Vision
 
 To create a compelling service that provides private investors opportunities to cast their investing believes through prism of statistic and analysis.
-
-## Main features
-
-### Done
-
-* Foundation for organized data storing and viewing.
-* Calculation of weights in portfolio using multiple algorithms.
-* CLI Interface
-
-### Not done
-
-* Backtest portfolios to choose one.
-* Complement portfolio with additional securities for better balancing.
-* Initiate and control financial operations in the brokerage system.
-* Monitor portfolio performance and automatically rebalance it.
-* Take automated decisions on buy and sell operations to prevent losses.
-* Web interface
-
-
-## Collaborators
-- [Artem M](https://github.com/ignar)
-- [Ihor M](https://github.com/IhorMok)
-
-
-## Quickstart
-
-```
-$> pip install ftt
-$> ftt
-ftt> example
-```
-
-## Principles
-- UI actions don't change data.
-- UI actions change global state of the application.
-- UI actions don't send signals to another components.
-- The only reason for UI component to change is a global state change.
