@@ -1,0 +1,13 @@
+name: ftt
+channels:
+  - nodefaults
+  - conda-forge
+dependencies:
+  - python=3.10.4
+  - pip
+  - conda-lock=1.*
+  - poetry=1.*
+platforms:
+  - osx-64
+  - linux-64
+  - osx-arm64
