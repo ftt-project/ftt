@@ -1,0 +1,14 @@
+{
+  "_output_dir": "/Users/artem.melnykov/src/github.com/ftt-project/ftt",
+  "_template": "gh:cjolowicz/cookiecutter-hypermodern-python",
+  "author": "Artem Melnykov",
+  "copyright_year": "2023",
+  "development_status": "Development Status :: 1 - Planning",
+  "email": "melnykov.artem.v@gmail.com",
+  "friendly_name": "FTT",
+  "github_user": "fttproject",
+  "license": "MIT",
+  "package_name": "ftt",
+  "project_name": "ftt",
+  "version": "0.0.1"
+}
