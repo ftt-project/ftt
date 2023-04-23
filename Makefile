@@ -54,3 +54,7 @@ update: install conda-activate
 	$(CONDA_ACTIVATE) $(FTT_ENV_NAME) && \
 		conda env update -n $(FTT_ENV_NAME) && \
 		poetry update
+
+run:
+	$(CONDA_ACTIVATE) $(FTT_ENV_NAME) && \
+			poetry run python -m $(FTT_ENV_NAME)
