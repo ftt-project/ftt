@@ -27,6 +27,8 @@ Changelog = "https://github.com/fttproject/ftt/releases"
 [tool.poetry.dependencies]
 python = ">=3.10.0,<3.12"
 PySide6 = "^6.4.2"
+yfinance = "^0.2.11"
+financedatabase = "^1.0.2"
 
 
 [tool.poetry.dev-dependencies]

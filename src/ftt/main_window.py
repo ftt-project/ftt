@@ -1,9 +1,60 @@
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtSql import QSqlRelationalTableModel, QSqlTableModel
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMainWindow, QApplication, QStyleFactory, \
-    QGroupBox, QFormLayout, QLineEdit, QVBoxLayout, QDialogButtonBox, QWidget, QHBoxLayout
+    QGroupBox, QLineEdit, QVBoxLayout, QDialogButtonBox, QWidget, QHBoxLayout, QCompleter
 
-from ftt.book_table import BookTable
+import yfinance as yf
+
+from ftt import models
+from ftt.ticker_table import BookTable
+from ftt.workers import TickersLoadWorker
+
+
+class SearchTickerWidget(QWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.model = models.tracking_symbols_model_instance()
+
+        self.setLayout(QHBoxLayout())
+        self.layout().setAlignment(Qt.AlignmentFlag.AlignRight)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+
+        search_input = QLineEdit()
+        search_input.setMaximumWidth(200)
+        search_input.setPlaceholderText("Search ticker")
+        search_input.setObjectName("search-input")
+
+        equity_model = models.equity_model_instance()
+        completer = QCompleter(self)
+        completer.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+        completer.setCompletionColumn(equity_model.fieldIndex("symbol"))
+        completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        completer.setModel(equity_model)
+        # completer.activated.connect(search_input.textChanged)
+        search_input.setCompleter(completer)
+        equity_model.select()
+
+        self.layout().addWidget(search_input)
+
+        search_button_group = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
+        search_button_group.setMaximumWidth(100)
+        search_button_group.setObjectName("search-button-group")
+        search_button_group.button(QDialogButtonBox.StandardButton.Ok).setText("Search")
+        # search_button_group.clicked.connect(self.on_search_button_clicked)
+        self.layout().addWidget(search_button_group)
+
+    def on_search_button_clicked(self, _):
+        ticker_value = self.findChild(QLineEdit, "search-input").text()
+        ticker = yf.Ticker(ticker_value)
+
+        r = self.model.record()
+        r.setGenerated("id", False)
+        r.setValue("symbol", ticker.info['symbol'])
+        r.setValue("exchange", ticker.info['exchange'])
+        r.setValue("currency", ticker.info['currency'])
+        r.setValue("is_enabled", True)
+        result = self.model.insertRecord(-1, r)
+        print(result)
 
 
 class TickersTableWidget(QGroupBox):
@@ -14,34 +65,17 @@ class TickersTableWidget(QGroupBox):
 
         book_table = BookTable()
 
-        self.model = QSqlRelationalTableModel(book_table)
-        self.model.setEditStrategy(QSqlTableModel.EditStrategy.OnManualSubmit)
-        self.model.setTable("tickers")
+        self.model = models.tracking_symbols_model_instance()
+        self.model.setParent(book_table)
+
         book_table.setModel(self.model)
-
-        self.model.setHeaderData(self.model.fieldIndex("symbol"), Qt.Horizontal, "Symbol")
-        self.model.setHeaderData(self.model.fieldIndex("exchange"), Qt.Horizontal, "Exchange")
-        self.model.setHeaderData(self.model.fieldIndex("currency"), Qt.Horizontal, "Currency")
-
         book_table.setColumnHidden(self.model.fieldIndex("id"), True)
         book_table.setColumnHidden(self.model.fieldIndex("is_enabled"), True)
 
         if not self.model.select():
             print(self.model.lastError())
 
-        search_widget = QWidget(self)
-        search_widget.setLayout(QHBoxLayout())
-        search_widget.layout().setAlignment(Qt.AlignmentFlag.AlignRight)
-        search_widget.layout().setContentsMargins(0, 0, 0, 0)
-        search_input = QLineEdit()
-        search_input.setMaximumWidth(200)
-        search_input.setPlaceholderText("Search ticker")
-        search_input.setObjectName("search-input")
-        search_widget.layout().addWidget(search_input)
-        search_button_group = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
-        search_button_group.setMaximumWidth(100)
-        search_button_group.setObjectName("search-button-group")
-        search_widget.layout().addWidget(search_button_group)
+        search_widget = SearchTickerWidget(self)
 
         self.layout().addWidget(search_widget)
         self.layout().addWidget(book_table)
@@ -67,3 +101,5 @@ class MainWindow(QMainWindow):
 
         main_widget = MainWidget()
         self.setCentralWidget(main_widget)
+
+        TickersLoadWorker.perform()
