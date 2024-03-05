@@ -24,12 +24,4 @@
 [black]: https://github.com/psf/black
 [license]: https://www.gnu.org/licenses/agpl-3.0.en.html
 
-FTT is a financial asset management application that helps to make right decision on time.
-
-## Mission
-
-To enable every private investor to make a rational algorithmic decision.
-
-## Vision
-
-To create a compelling service that provides private investors opportunities to cast their investing believes through prism of statistic and analysis.
+FTT is a financial asset management application that helps to make the right decision on time.
